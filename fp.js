@@ -4,7 +4,7 @@ const max_size = 100
 const scale = 5
 
 var targets = []
-var number = 50
+var number = 30
 var offset = 0
 var initialArc = 0
 
@@ -14,12 +14,15 @@ function setup() {
     strokeWeight(3)
     frameRate(15)
     stroke(255, 204, 0, 25)
+    background(0,0,0)
 
     initialArc = 0
 }
 
 function draw() {
-    background(255, 255, 255, 10)
+    setRandomStroke()
+
+    background(0,0,0, 10)
 
     var numRings = 30
 
@@ -27,7 +30,7 @@ function draw() {
         drawCircle(number * i + offset)
     }
 
-    if(offset > 100)
+    if(offset > 50)
         offset = 0
 
     offset++
@@ -60,4 +63,12 @@ function drawCircle(radius) {
 
         ellipse(xCoordinate, yCoordinate, 25)
     }
+}
+
+function setRandomStroke() {
+    r = random(255)
+    g = random(255)
+    b = random(255)
+
+    stroke(r,g,b,50)
 }
