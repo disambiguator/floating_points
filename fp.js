@@ -4,6 +4,9 @@ const max_size = 100
 const scale = 5
 
 var targets = []
+var number = 50
+var offset = 0
+var initialArc = 0
 
 function setup() {
     createCanvas(windowWidth, windowHeight)
@@ -11,16 +14,28 @@ function setup() {
     strokeWeight(3)
     frameRate(15)
     stroke(255, 204, 0, 25)
+
+    initialArc = 0
 }
 
 function draw() {
-    background(255, 255, 255, 25)
+    background(255, 255, 255, 10)
 
-    var numRings = 10
+    var numRings = 30
 
     for (var i = 0; i < numRings; i++) {
-        drawCircle(50 * i)
+        drawCircle(number * i + offset)
     }
+
+    if(offset > 100)
+        offset = 0
+
+    offset++
+
+    if(initialArc === 360)
+        initialArc = 0
+
+    initialArc++
 }
 
 function mousePressed() {
@@ -38,7 +53,7 @@ function drawCircle(radius) {
     var arc = 360 / numPoints
 
     for (var i = 0; i < numPoints; i++) {
-        var angle = arc * i * Math.PI / 180;
+        var angle = (arc * i + initialArc) * Math.PI / 180;
 
         var xCoordinate = windowWidth / 2 + radius * Math.cos(angle)
         var yCoordinate = windowHeight / 2 + radius * Math.sin(angle)
