@@ -1,67 +1,46 @@
-const colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e']
-
-const max_size = 100
-const scale = 5
-
-var targets = []
-var number = 30
-var offset = 0
-var initialArc = 0
+var fft, mySound, peakDetect
 
 function setup() {
     createCanvas(windowWidth, windowHeight)
     noFill()
-    strokeWeight(3)
-    frameRate(15)
+    strokeWeight(5)
+    frameRate(60)
     stroke(255, 204, 0, 25)
-    background(0,0,0)
+    background(0, 0, 0)
 
-    initialArc = 0
+    setupVisualizer()
 }
 
 function draw() {
-    setRandomStroke()
+    background(0, 0, 0, 10)
 
-    background(0,0,0, 10)
-
-    var numRings = 30
-
-    for (var i = 0; i < numRings; i++) {
-        drawCircle(number * i + offset)
-    }
-
-    if(offset > 50)
-        offset = 0
-
-    offset++
-
-    if(initialArc === 360)
-        initialArc = 0
-
-    initialArc++
+    drawCircle()
 }
 
-function mousePressed() {
-    stroke(255, 204, 0, 25)
-    ellipse(mouseX, mouseY, 25)
-}
-
-function randomColor() {
-    return _.sample(colors)
-}
-
-function drawCircle(radius) {
-    var numPoints = 20
-
+function drawCircle() {
+    var numPoints = 360
+    var spectrum = fft.analyze()
+    // peakDetect.update(fft)
     var arc = 360 / numPoints
 
+    // if (peakDetect.isDetected) {
+    //     strokeWeight(200)
+    // } else {
+    //     strokeWeight(5)
+    // }
+
+
+
     for (var i = 0; i < numPoints; i++) {
-        var angle = (arc * i + initialArc) * Math.PI / 180;
+        var radius = 40 + spectrum[i]
+
+        var angle = (arc * i) * Math.PI / 180;
 
         var xCoordinate = windowWidth / 2 + radius * Math.cos(angle)
         var yCoordinate = windowHeight / 2 + radius * Math.sin(angle)
 
-        ellipse(xCoordinate, yCoordinate, 25)
+        setRandomStroke()
+        point(xCoordinate, yCoordinate)
     }
 }
 
@@ -70,5 +49,22 @@ function setRandomStroke() {
     g = random(255)
     b = random(255)
 
-    stroke(r,g,b,50)
+    stroke(r, g, b, 100)
 }
+
+function preload() {
+    mySound = loadSound('/sound.wav')
+    // mySound = new p5.AudioIn()
+    // mySound.start()
+}
+
+function setupVisualizer() {
+    mySound.setVolume(0.1)
+    mySound.play()
+
+    fft = new p5.FFT()
+    fft.setInput(mySound)
+
+    peakDetect = new p5.PeakDetect(20, 500)
+}
+
