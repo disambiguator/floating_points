@@ -1,20 +1,20 @@
 const colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e']
 
-const max_size = 100
-const scale = 5
-
-var targets = []
-var number = 30
-var offset = 0
+var radiusScale = 40
+var offset = 1
 var initialArc = 0
+var amplitude
+var direction = 0.1
 
 function setup() {
+    setupVisualizer()
+
     createCanvas(windowWidth, windowHeight)
     noFill()
     strokeWeight(3)
-    frameRate(15)
+    frameRate(60)
     stroke(255, 204, 0, 25)
-    background(0,0,0)
+    background(0, 0, 0)
 
     initialArc = 0
 }
@@ -22,23 +22,28 @@ function setup() {
 function draw() {
     setRandomStroke()
 
-    background(0,0,0, 10)
+    background(0, 0, 0, 10)
 
-    var numRings = 30
+    // var numRings = 5
 
-    for (var i = 0; i < numRings; i++) {
-        drawCircle(number * i + offset)
-    }
+    var buckets = ['bass', 'lowMid', 'mid', 'highMid', 'treble']
 
-    if(offset > 50)
-        offset = 0
+    drawCircle(radiusScale * 0, buckets[0])
+    drawCircle(radiusScale * 1, buckets[1])
+    drawCircle(radiusScale * 2, buckets[2])
+    drawCircle(radiusScale * 3, buckets[3])
+    drawCircle(radiusScale * 4, buckets[4])
+    drawCircle(radiusScale * 5, buckets[3])
+    drawCircle(radiusScale * 6, buckets[2])
+    drawCircle(radiusScale * 7, buckets[1])
+    drawCircle(radiusScale * 8, buckets[0])
 
-    offset++
+    if (Math.abs(offset) > 15)
+        direction = -direction
 
-    if(initialArc === 360)
-        initialArc = 0
+    offset += direction
 
-    initialArc++
+    initialArc += 0.2
 }
 
 function mousePressed() {
@@ -50,25 +55,42 @@ function randomColor() {
     return _.sample(colors)
 }
 
-function drawCircle(radius) {
-    var numPoints = 20
+function drawCircle(radius, bucket) {
+    var numPoints = radius / 8
+
+    fft.analyze()
 
     var arc = 360 / numPoints
 
     for (var i = 0; i < numPoints; i++) {
-        var angle = (arc * i + initialArc) * Math.PI / 180;
+        var angle = (arc * i + initialArc) * Math.PI / 180
 
-        var xCoordinate = windowWidth / 2 + radius * Math.cos(angle)
-        var yCoordinate = windowHeight / 2 + radius * Math.sin(angle)
+        var xCoordinate = windowWidth / 2 + (radius + offset * radius) * Math.cos(angle)
+        var yCoordinate = windowHeight / 2 + (radius + offset * radius) * Math.sin(angle)
 
-        ellipse(xCoordinate, yCoordinate, 25)
+        ellipse(xCoordinate, yCoordinate, Math.pow(fft.getEnergy(bucket), 2)/100)
     }
 }
 
-function setRandomStroke() {
-    r = random(255)
-    g = random(255)
-    b = random(255)
+function preload() {
+    mySound = loadSound('/matzomix011.mp3')
+}
 
-    stroke(r,g,b,50)
+function setRandomStroke() {
+    r = random(127, 255)
+    g = random(127, 255)
+    b = random(127, 255)
+
+    stroke(r, g, b, 50)
+}
+
+function setupVisualizer() {
+    mySound.setVolume(0.1)
+    mySound.jump(random(0, mySound.duration()))
+    mySound.play()
+
+    fft = new p5.FFT()
+    fft.setInput(mySound)
+
+    amplitude = new p5.Amplitude()
 }
