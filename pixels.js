@@ -4,7 +4,7 @@ let height
 
 function preload() {
   // img = loadImage('rainbow.png')
-  img = loadImage('/mirror.jpg')
+  img = loadImage('http://i.imgur.com/b6xoYA6.jpg')
 }
 
 function sortColumn(x, y_start, y_end) {
