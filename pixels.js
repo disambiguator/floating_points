@@ -8,11 +8,9 @@ function preload() {
 }
 
 function sortColumn(x) {
-  // loadPixels();
-
   const col = []
   for (let y = 0; y < height; y++) {
-    col.push(color(...get(x, y)))
+    col.push(getPixelArray(x, y))
   }
 
   col.sort(col, (a, b) => {
@@ -20,26 +18,46 @@ function sortColumn(x) {
   })
 
   col.forEach((o, y) => {
-    set(x, y, o)
+    setPixelArray(x, y, o)
   })
 
-  updatePixels()
 }
 
 function setup() {
-  pixelDensity(1);
+  pixelDensity(1)
   width = 1000
   height = 1000
-  // colorMode(HSB, 255);
   createCanvas(width, height)
 
   image(img, 0, 0, width, height)
 
-  // for (let x = 0; x < width; x++) {
-  //   sortColumn(x);
-  // }
+  loadPixels()
+
+  for (let x = 0; x < width; x++) {
+    sortColumn(x);
+  }
+
+  updatePixels()
 }
 
 function mousePressed() {
   sortColumn(mouseX)
+}
+
+function setPixelArray(x, y, o) {
+  const idx = 4 * (y * width + x)
+  pixels[idx] = o[0]
+  pixels[idx + 1] = o[1]
+  pixels[idx + 2] = o[2]
+  pixels[idx + 3] = o[3]
+}
+
+function getPixelArray(x, y) {
+  const off = (y * width + x) * 4
+  return [
+    pixels[off],
+    pixels[off + 1],
+    pixels[off + 2],
+    pixels[off + 3]
+  ]
 }
