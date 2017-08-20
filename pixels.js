@@ -13,9 +13,7 @@ function sortColumn(x) {
     col.push(getPixelArray(x, y))
   }
 
-  col.sort(col, (a, b) => {
-    return hue(a) < hue(b)
-  })
+  col.sort((a, b) => hue(b) - hue(a))
 
   col.forEach((o, y) => {
     setPixelArray(x, y, o)
@@ -25,8 +23,8 @@ function sortColumn(x) {
 
 function setup() {
   pixelDensity(1)
-  width = 1000
-  height = 1000
+  width = 700
+  height = 300
   createCanvas(width, height)
 
   image(img, 0, 0, width, height)
@@ -41,7 +39,12 @@ function setup() {
 }
 
 function mousePressed() {
+  loadPixels()
+
   sortColumn(mouseX)
+
+  updatePixels()
+
 }
 
 function setPixelArray(x, y, o) {
