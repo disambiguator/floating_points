@@ -63,15 +63,11 @@ function draw() {
       sortColumn(p.currentX + x, p.currentY, height)
     }
 
-    if (minimumY > p.currentY) {
-      frameRate(0)
-    }
-
-    p.currentY -= 15
+    p.currentY = Math.max(p.currentY - 15, p.minimumY)
   })
 
   positions = positions.filter(function (p) {
-    return p.currentY > p.minimumY
+    return p.currentY >= p.minimumY
   })
 
   updatePixels()
