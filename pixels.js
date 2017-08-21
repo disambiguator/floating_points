@@ -4,7 +4,8 @@ let height
 let minimumY
 let currentX
 let currentY
-const colWidth = 30
+let positions = []
+const colWidth = 2
 
 function preload() {
   // img = loadImage('rainbow.png')
@@ -12,7 +13,9 @@ function preload() {
 }
 
 function sortColumn(x, y_start, y_end) {
-  if(x >= width) { return }
+  if (x >= width) {
+    return
+  }
 
   const col = []
   for (let y = y_start; y < y_end; y++) {
@@ -32,45 +35,46 @@ function setup() {
   width = 700
   height = 400
   createCanvas(width, height)
+  frameRate(30)
 
   image(img, 0, 0, width, height)
-
-  // loadPixels()
-  //
-  // for (let x = 0; x < width; x++) {
-  //   sortColumn(x);
-  // }
-  //
-  // updatePixels()
 }
 
-function mouseClicked() {
-  if(mouseX >= width) { return }
+function mouseMoved() {
+  if (mouseX >= width) {
+    return
+  }
 
   // const colWidth = randRange(10, 100)
   // const position = randRange(0, width)
 
-  frameRate(30)
-
-  minimumY = mouseY
-  currentY = height
-  currentX = mouseX
+  positions.push({
+    minimumY: mouseY,
+    currentY: height,
+    currentX: mouseX
+  })
 }
 
 function draw() {
   loadPixels()
 
-  for (let x = 0; x < colWidth; x++) {
-    sortColumn(currentX + x, currentY, height)
-  }
+  positions.forEach(function (p) {
+    for (let x = 0; x < colWidth; x++) {
+      sortColumn(p.currentX + x, p.currentY, height)
+    }
+
+    if (minimumY > p.currentY) {
+      frameRate(0)
+    }
+
+    p.currentY -= 15
+  })
+
+  positions = positions.filter(function (p) {
+    return p.currentY > p.minimumY
+  })
 
   updatePixels()
-
-  if(minimumY > currentY) {
-    frameRate(0)
-  }
-
-  currentY -= 3
 }
 
 function setPixelArray(x, y, o) {
