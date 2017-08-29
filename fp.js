@@ -73,7 +73,7 @@ function drawCircle(radius, bucket) {
 }
 
 function preload() {
-    mySound = loadSound('/matzomix011.mp3')
+    mySound = loadSound('/quantic.mp3')
 }
 
 function setRandomStroke() {
@@ -87,7 +87,6 @@ function setRandomStroke() {
 function setupVisualizer() {
     mySound.setVolume(0.1)
     mySound.jump(random(0, mySound.duration()))
-    mySound.play()
 
     fft = new p5.FFT()
     fft.setInput(mySound)
