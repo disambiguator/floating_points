@@ -15,8 +15,6 @@ function setup() {
   frameRate(60)
   stroke(255, 204, 0, 25)
   background(0, 0, 0)
-
-  initialArc = 0
 }
 
 function draw() {
@@ -41,7 +39,7 @@ function draw() {
   if (Math.abs(offset) > 15)
     direction = -direction
 
-  offset += direction
+//  offset += direction
 
   initialArc += 0.2
 }
@@ -92,4 +90,10 @@ function setupVisualizer() {
   fft.setInput(mySound)
 
   amplitude = new p5.Amplitude()
+}
+
+window.onload = function () {
+  document.getElementById('offset').onchange = function (e) {
+    offset = e.target.value
+  }
 }
