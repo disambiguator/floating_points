@@ -1,9 +1,6 @@
 let img
 let width
 let height
-let minimumY
-let currentX
-let currentY
 let positions = {}
 
 function preload() {
@@ -43,9 +40,6 @@ function mouseMoved() {
   if (mouseX >= width) {
     return
   }
-
-  // const colWidth = randRange(10, 100)
-  // const position = randRange(0, width)
 
   positions[mouseX] = {
     minimumY: mouseY,
