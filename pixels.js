@@ -4,8 +4,7 @@ let height
 let minimumY
 let currentX
 let currentY
-let positions = []
-const colWidth = 2
+let positions = {}
 
 function preload() {
   // img = loadImage('rainbow.png')
@@ -48,26 +47,20 @@ function mouseMoved() {
   // const colWidth = randRange(10, 100)
   // const position = randRange(0, width)
 
-  positions.push({
+  positions[mouseX] = {
     minimumY: mouseY,
-    currentY: height,
-    currentX: mouseX
-  })
+    currentY: height
+  }
 }
 
 function draw() {
   loadPixels()
 
-  positions.forEach(function (p) {
-    for (let x = 0; x < colWidth; x++) {
-      sortColumn(p.currentX + x, p.currentY, height)
+  Object.keys(positions).forEach(function(currentX) {
+    if (positions[currentX].currentY > positions[currentX].minimumY) {
+      sortColumn(int(currentX), positions[currentX].currentY, height)
+      positions[currentX].currentY = Math.max(positions[currentX].currentY - 15, positions[currentX].minimumY)
     }
-
-    p.currentY = Math.max(p.currentY - 15, p.minimumY)
-  })
-
-  positions = positions.filter(function (p) {
-    return p.currentY >= p.minimumY
   })
 
   updatePixels()
