@@ -6,20 +6,17 @@ let positions = {}
 function preload() {
   // img = loadImage('rainbow.png')
   img = loadImage('http://i.imgur.com/Fx6BGlt.jpg')
+  // img = loadImage('https://i.imgur.com/IwnuBWX.jpg')
 }
 
-function sortColumn(x, y_start, y_end) {
-  const col = []
-  for (let y = y_start; y < y_end; y++) {
-    col.push(getPixelArray(x, y))
+function step(x, y) {
+  const temp = getPixelArray(x, y)
+  let j = y + 1
+  while (j <= height && hue(getPixelArray(x, j)) > hue(temp)) {
+    setPixelArray(x, j - 1, getPixelArray(x, j))
+    j++
   }
-
-  col.sort((a, b) => -(hue(b) - hue(a)))
-
-  col.forEach((o, y) => {
-    setPixelArray(x, y_start + y, o)
-  })
-
+  setPixelArray(x, j - 1, temp)
 }
 
 function setup() {
@@ -27,7 +24,7 @@ function setup() {
   width = 700
   height = 400
   createCanvas(width, height)
-  frameRate(30)
+  frameRate(100)
 
   image(img, 0, 0, width, height)
 }
@@ -49,10 +46,10 @@ function mouseMoved() {
 function draw() {
   loadPixels()
 
-  Object.keys(positions).forEach(function(currentX) {
+  Object.keys(positions).forEach(function (currentX) {
     if (positions[currentX].currentY > positions[currentX].minimumY) {
-      positions[currentX].currentY = Math.max(positions[currentX].currentY - randRange(1, 5), positions[currentX].minimumY)
-      sortColumn(int(currentX), positions[currentX].currentY, height)
+      positions[currentX].currentY = Math.max(positions[currentX].currentY - 1, positions[currentX].minimumY)
+      step(int(currentX), positions[currentX].currentY)
     }
   })
 
