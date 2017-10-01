@@ -46,9 +46,17 @@ function mouseMoved() {
     return
   }
 
-  positions[x] = {
-    minimumY: y,
-    currentY: positions[x] ? positions[x].currentY : height
+  if(positions[x]) {
+    positions[x] = {
+      minimumY: Math.min(y, positions[x].minimumY),
+      currentY: positions[x].currentY
+    }
+  }
+  else {
+    positions[x] = {
+      minimumY: y,
+      currentY: height
+    }
   }
 }
 
