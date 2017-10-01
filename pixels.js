@@ -37,13 +37,16 @@ function setup() {
 }
 
 function mouseMoved() {
-  if (mouseX >= width) {
+  const x = mouseX
+  const y = mouseY
+
+  if (x >= width) {
     return
   }
 
-  positions[mouseX] = {
-    minimumY: mouseY,
-    currentY: height
+  positions[x] = {
+    minimumY: y,
+    currentY: positions[x] ? positions[x].currentY : height
   }
 }
 
@@ -52,8 +55,8 @@ function draw() {
 
   Object.keys(positions).forEach(function(currentX) {
     if (positions[currentX].currentY > positions[currentX].minimumY) {
+      positions[currentX].currentY = Math.max(positions[currentX].currentY - randRange(1, 5), positions[currentX].minimumY)
       sortColumn(int(currentX), positions[currentX].currentY, height)
-      positions[currentX].currentY = Math.max(positions[currentX].currentY - 15, positions[currentX].minimumY)
     }
   })
 
