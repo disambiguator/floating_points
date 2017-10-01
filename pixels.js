@@ -9,10 +9,6 @@ function preload() {
 }
 
 function sortColumn(x, y_start, y_end) {
-  if (x >= width) {
-    return
-  }
-
   const col = []
   for (let y = y_start; y < y_end; y++) {
     col.push(getPixelArray(x, y))
