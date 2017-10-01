@@ -4,9 +4,18 @@ let height
 let positions = {}
 
 function preload() {
-  // img = loadImage('rainbow.png')
-  img = loadImage('http://i.imgur.com/Fx6BGlt.jpg')
-  // img = loadImage('https://i.imgur.com/IwnuBWX.jpg')
+  img = loadImage(imageLibrary())
+}
+
+function imageLibrary() {
+  return sample([
+    'http://i.imgur.com/Fx6BGlt.jpg',
+    'https://i.imgur.com/IwnuBWX.jpg'
+  ])
+}
+
+function sample(array) {
+  return array[Math.floor(Math.random() * array.length)]
 }
 
 function step(x, y) {
