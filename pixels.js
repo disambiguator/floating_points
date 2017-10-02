@@ -1,6 +1,6 @@
 let img
-let width
-let height
+const width = 700
+const height = 400
 let positions = {}
 
 function preload() {
@@ -18,10 +18,10 @@ function sample(array) {
   return array[Math.floor(Math.random() * array.length)]
 }
 
-function step(x, y) {
+function step(x, y, yMax) {
   const temp = getPixelArray(x, y)
   let j = y + 1
-  while (j <= height && hue(getPixelArray(x, j)) > hue(temp)) {
+  while (j <= yMax && hue(getPixelArray(x, j)) > hue(temp)) {
     setPixelArray(x, j - 1, getPixelArray(x, j))
     j++
   }
@@ -30,12 +30,56 @@ function step(x, y) {
 
 function setup() {
   pixelDensity(1)
-  width = 700
-  height = 400
   createCanvas(width, height)
   frameRate(100)
 
-  image(img, 0, 0, width, height)
+  reset()
+
+  document.getElementById('reset').onclick = function () {
+    reset()
+  }
+  document.getElementById('fullySort').onclick = function () {
+    fullySort()
+  }
+  document.getElementById('slice').onclick = function () {
+    slice()
+  }
+}
+
+function slice() {
+  const positive = sample([true, false])
+  const slope = randRangeDouble(0, height / width)
+
+  let m, b
+
+  if (positive) {
+    m = -slope
+    b = height
+  } else {
+    m = slope
+    b = 0
+  }
+
+
+  for (let x = 0; x < width; x++) {
+    const y = int(m * x + b)
+    const maximumY =  y + randRange(3, 50)
+    positions[x] = {
+      minimumY: y,
+      currentY: maximumY,
+      maximumY: maximumY
+    }
+  }
+}
+
+function fullySort() {
+  for (let x = 0; x < width; x++) {
+    positions[x] = {
+      minimumY: 0,
+      currentY: height,
+      maximumY: height
+    }
+  }
 }
 
 function mouseMoved() {
@@ -46,16 +90,18 @@ function mouseMoved() {
     return
   }
 
-  if(positions[x]) {
+  if (positions[x]) {
     positions[x] = {
       minimumY: Math.min(y, positions[x].minimumY),
-      currentY: positions[x].currentY
+      currentY: positions[x].currentY,
+      maximumY: height
     }
   }
   else {
     positions[x] = {
       minimumY: y,
-      currentY: height
+      currentY: height,
+      maximumY: height
     }
   }
 }
@@ -66,7 +112,7 @@ function draw() {
   Object.keys(positions).forEach(function (currentX) {
     if (positions[currentX].currentY > positions[currentX].minimumY) {
       positions[currentX].currentY = Math.max(positions[currentX].currentY - 1, positions[currentX].minimumY)
-      step(int(currentX), positions[currentX].currentY)
+      step(int(currentX), positions[currentX].currentY, positions[currentX].maximumY)
     }
   })
 
@@ -91,6 +137,15 @@ function getPixelArray(x, y) {
   ]
 }
 
+function reset() {
+  image(img, 0, 0, width, height)
+  positions = {}
+}
+
 function randRange(min, max) {
   return int(Math.random() * (max - min) + min)
+}
+
+function randRangeDouble(min, max) {
+  return Math.random() * (max - min) + min
 }
