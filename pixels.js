@@ -82,7 +82,7 @@ function fullySort() {
   }
 }
 
-function mouseMoved() {
+function mouseDragged() {
   const x = mouseX
   const y = mouseY
 
