@@ -47,23 +47,15 @@ function setup() {
 }
 
 function slice() {
-  const positive = sample([true, false])
-  const slope = randRangeDouble(0, height / width)
+  const m = randRangeDouble(-height / width, height / width)
+  const b = randRange(0, height)
 
-  let m, b
 
-  if (positive) {
-    m = -slope
-    b = height
-  } else {
-    m = slope
-    b = 0
-  }
-
+  const sliceSize = randRange(3, 50)
 
   for (let x = 0; x < width; x++) {
     const y = int(m * x + b)
-    const maximumY =  y + randRange(3, 50)
+    const maximumY = y + sliceSize
     positions[x] = {
       minimumY: y,
       currentY: maximumY,
@@ -110,9 +102,11 @@ function draw() {
   loadPixels()
 
   Object.keys(positions).forEach(function (currentX) {
-    if (positions[currentX].currentY > positions[currentX].minimumY) {
-      positions[currentX].currentY = Math.max(positions[currentX].currentY - 1, positions[currentX].minimumY)
-      step(int(currentX), positions[currentX].currentY, positions[currentX].maximumY)
+    const p = positions[currentX]
+
+    if (p.currentY > p.minimumY) {
+      p.currentY = Math.max(p.currentY - 1, p.minimumY)
+      step(int(currentX), p.currentY, p.maximumY)
     }
   })
 
