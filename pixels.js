@@ -2,6 +2,7 @@ let img
 const width = 700
 const height = 400
 let positions = {}
+let autoSlice = false
 
 function preload() {
   img = loadImage(imageLibrary())
@@ -44,6 +45,9 @@ function setup() {
   document.getElementById('slice').onclick = function () {
     slice()
   }
+  document.getElementById('autoSlice').onclick = function () {
+    toggleAutoSlice()
+  }
 }
 
 function slice() {
@@ -58,6 +62,17 @@ function slice() {
   }
 }
 
+function toggleAutoSlice() {
+  if (autoSlice) {
+    document.getElementById('autoSlice').innerText = 'Auto-Slice Start'
+  } else {
+    document.getElementById('autoSlice').innerText = 'Auto-Slice Stop'
+  }
+
+  autoSlice = !autoSlice
+  frameRate(100)
+}
+
 function fullySort() {
   for (let x = 0; x < width; x++) {
     updatePositions(x, 0, height)
@@ -68,7 +83,7 @@ function mouseMoved() {
   const x = mouseX
   const y = mouseY
 
-  if (x >= width) {
+  if (x >= width || y <= 0) {
     return
   }
 
@@ -106,7 +121,7 @@ function draw() {
   updatePixels()
 
   if (Object.keys(positions).length === 0) {
-    frameRate(0)
+    autoSlice ? slice() : frameRate(0)
   }
 }
 
