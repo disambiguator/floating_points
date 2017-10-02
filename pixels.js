@@ -48,6 +48,9 @@ function setup() {
   document.getElementById('autoSlice').onclick = function () {
     toggleAutoSlice()
   }
+  document.getElementById('reflect').onclick = function () {
+    reflectImage()
+  }
   document.getElementById('save').onclick = function () {
     save('pixelSorted.jpg')
   }
@@ -157,4 +160,16 @@ function randRange(min, max) {
 
 function randRangeDouble(min, max) {
   return Math.random() * (max - min) + min
+}
+
+function reflectImage() {
+  loadPixels()
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height/2; y++) {
+      setPixelArray(x, height - y, getPixelArray(x, y))
+    }
+  }
+
+  updatePixels()
 }
