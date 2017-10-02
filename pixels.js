@@ -50,27 +50,17 @@ function slice() {
   const m = randRangeDouble(-height / width, height / width)
   const b = randRange(0, height)
 
-
   const sliceSize = randRange(3, 50)
 
   for (let x = 0; x < width; x++) {
     const y = int(m * x + b)
-    const maximumY = y + sliceSize
-    positions[x] = {
-      minimumY: y,
-      currentY: maximumY,
-      maximumY: maximumY
-    }
+    updatePositions(x, y, y + sliceSize)
   }
 }
 
 function fullySort() {
   for (let x = 0; x < width; x++) {
-    positions[x] = {
-      minimumY: 0,
-      currentY: height,
-      maximumY: height
-    }
+    updatePositions(x, 0, height)
   }
 }
 
@@ -83,19 +73,20 @@ function mouseMoved() {
   }
 
   if (positions[x]) {
-    positions[x] = {
-      minimumY: Math.min(y, positions[x].minimumY),
-      currentY: positions[x].currentY,
-      maximumY: height
-    }
+    updatePositions(x, Math.min(y, positions[x].minimumY), height)
+  } else {
+    updatePositions(x, y, height)
   }
-  else {
-    positions[x] = {
-      minimumY: y,
-      currentY: height,
-      maximumY: height
-    }
+}
+
+function updatePositions(x, yMin, yMax) {
+  positions[x] = {
+    minimumY: yMin,
+    currentY: yMax,
+    maximumY: yMax
   }
+
+  frameRate(100)
 }
 
 function draw() {
@@ -107,10 +98,16 @@ function draw() {
     if (p.currentY > p.minimumY) {
       p.currentY = Math.max(p.currentY - 1, p.minimumY)
       step(int(currentX), p.currentY, p.maximumY)
+    } else {
+      delete positions[currentX]
     }
   })
 
   updatePixels()
+
+  if (Object.keys(positions).length === 0) {
+    frameRate(0)
+  }
 }
 
 function setPixelArray(x, y, o) {
