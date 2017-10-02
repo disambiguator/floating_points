@@ -54,6 +54,12 @@ function setup() {
   document.getElementById('save').onclick = function () {
     save('pixelSorted.jpg')
   }
+  document.getElementById('imageSubmit').onclick = function () {
+    const path = document.getElementById('imageUrl').value
+
+    console.log(path)
+    img = loadImage(path, reset)
+  }
 }
 
 function slice() {
