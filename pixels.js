@@ -48,6 +48,9 @@ function setup() {
   document.getElementById('autoSlice').onclick = function () {
     toggleAutoSlice()
   }
+  document.getElementById('save').onclick = function () {
+    save('pixelSorted.jpg')
+  }
 }
 
 function slice() {
