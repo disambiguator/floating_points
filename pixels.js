@@ -3,6 +3,8 @@ const width = 700
 const height = 400
 let positions = {}
 let autoSlice = false
+let slope
+let reflectMode = false
 
 function preload() {
   img = loadImage(imageLibrary())
@@ -19,14 +21,20 @@ function sample(array) {
   return array[Math.floor(Math.random() * array.length)]
 }
 
-function step(x, y, yMax) {
+function step(x, y, yMax, reflect) {
   const temp = getPixelArray(x, y)
   let j = y + 1
   while (j <= yMax && hue(getPixelArray(x, j)) > hue(temp)) {
     setPixelArray(x, j - 1, getPixelArray(x, j))
+    if (reflect) {
+      setPixelArray(x, height - j - 1, getPixelArray(x, j))
+    }
     j++
   }
   setPixelArray(x, j - 1, temp)
+  if (reflect) {
+    setPixelArray(x, height - j - 1, temp)
+  }
 }
 
 function setup() {
@@ -43,7 +51,7 @@ function setup() {
     fullySort()
   }
   document.getElementById('slice').onclick = function () {
-    slice()
+    slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50))
   }
   document.getElementById('autoSlice').onclick = function () {
     toggleAutoSlice()
@@ -60,14 +68,17 @@ function setup() {
     console.log(path)
     img = loadImage(path, reset)
   }
+  document.getElementById('fanSlice').onclick = function () {
+    slope = -5
+    slice(slope, height / 2, 5)
+  }
 }
 
-function slice() {
-  const m = randRangeDouble(-height / width, height / width)
-  const b = randRange(0, height)
+function reflectButton(e) {
+  reflectMode = e.checked
+}
 
-  const sliceSize = randRange(3, 50)
-
+function slice(m, b, sliceSize) {
   for (let x = 0; x < width; x++) {
     const y = int(m * x + b)
     updatePositions(x, y, y + sliceSize)
@@ -124,7 +135,7 @@ function draw() {
 
     if (p.currentY > p.minimumY) {
       p.currentY = Math.max(p.currentY - 1, p.minimumY)
-      step(int(currentX), p.currentY, p.maximumY)
+      step(int(currentX), p.currentY, p.maximumY, reflectMode)
     } else {
       delete positions[currentX]
     }
@@ -133,7 +144,17 @@ function draw() {
   updatePixels()
 
   if (Object.keys(positions).length === 0) {
-    autoSlice ? slice() : frameRate(0)
+    autoSlice ? slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50)) : frameRate(0)
+
+    if (fanSlice) {
+      slope += height / width
+
+      if (slope > 0) {
+        frameRate(0)
+      } else {
+        slice(slope, height / 2, 10)
+      }
+    }
   }
 }
 
@@ -172,7 +193,7 @@ function reflectImage() {
   loadPixels()
 
   for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height/2; y++) {
+    for (let y = 0; y < height / 2; y++) {
       setPixelArray(x, height - y, getPixelArray(x, y))
     }
   }
