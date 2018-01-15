@@ -37,41 +37,26 @@ function step(x, y, yMax, reflect) {
   }
 }
 
+function sliceRand() {
+  slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50))
+}
+
 function setup() {
   pixelDensity(1)
   createCanvas(width, height)
   frameRate(100)
 
   reset()
+}
 
-  document.getElementById('reset').onclick = function () {
-    reset()
-  }
-  document.getElementById('fullySort').onclick = function () {
-    fullySort()
-  }
-  document.getElementById('slice').onclick = function () {
-    slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50))
-  }
-  document.getElementById('autoSlice').onclick = function () {
-    toggleAutoSlice()
-  }
-  document.getElementById('reflect').onclick = function () {
-    reflectImage()
-  }
-  document.getElementById('save').onclick = function () {
-    save('pixelSorted.jpg')
-  }
-  document.getElementById('imageSubmit').onclick = function () {
-    const path = document.getElementById('imageUrl').value
+function fanSlice() {
+  slope = -5
+  slice(slope, height / 2, 5)
+}
 
-    console.log(path)
-    img = loadImage(path, reset)
-  }
-  document.getElementById('fanSlice').onclick = function () {
-    slope = -5
-    slice(slope, height / 2, 5)
-  }
+function imageSubmit() {
+  const path = document.getElementById('imageUrl').value
+  img = loadImage(path, reset)
 }
 
 function reflectButton(e) {
@@ -144,8 +129,7 @@ function draw() {
   updatePixels()
 
   if (Object.keys(positions).length === 0) {
-    autoSlice ? slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50)) : frameRate(0)
-
+    autoSlice ? sliceRand() : frameRate(0)
     if (fanSlice) {
       slope += height / width
 

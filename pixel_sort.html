@@ -7,18 +7,18 @@
     <style> body {padding: 0; margin: 0;} </style>
 </head>
 <body>
-    <button id='reset'>Reset</button>
-    <button id='fullySort'>Just sort the thing</button>
-    <button id='slice'>Slice</button>
-    <button id='autoSlice'>Auto-Slice Start</button>
-    <button id='fanSlice'>Fan Slice</button>
-    <button id='reflect'>Reflect Whole Image</button>
+    <button id='reset' onclick="reset()">Reset</button>
+    <button id='fullySort' onclick="fullySort()">Just sort the thing</button>
+    <button id='slice' onclick="sliceRand()">Slice</button>
+    <button id='autoSlice' onclick="toggleAutoSlice()">Auto-Slice Start</button>
+    <button id='fanSlice' onclick="fanSlice()">Fan Slice</button>
+    <button id='reflect' onclick="reflectImage()">Reflect Whole Image</button>
     <input type="checkbox" id='reflectMode' onchange="reflectButton(this)">Reflect Mode</input>
-    <button id='save'>Save Image</button>
+    <button id='save' onclick="save('pixelSorted.jpg')">Save Image</button>
 
     <label for="imageUrl">Custom Image Path</label>
     <input type="url" id='imageUrl' />
-    <button id="imageSubmit">Submit</button>
+    <button id="imageSubmit" onclick="imageSubmit()">Submit</button>
     <div>
         <script type="text/javascript" src="pixels.js"></script>
     </div>
