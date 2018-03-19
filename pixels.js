@@ -3,6 +3,7 @@ const width = 700
 const height = 400
 let positions = {}
 let autoSlice = false
+let fanSlice = false
 let slope
 let reflectMode = false
 
@@ -49,9 +50,10 @@ function setup() {
   reset()
 }
 
-function fanSlice() {
+function enableFanSlice() {
   slope = -5
   slice(slope, height / 2, 5)
+  fanSlice = true
 }
 
 function imageSubmit() {
