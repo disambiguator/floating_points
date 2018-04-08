@@ -90,8 +90,8 @@ function fullySort() {
 }
 
 function mouseDragged() {
-  const x = mouseX
-  const y = mouseY
+  const x = Math.floor(mouseX)
+  const y = Math.floor(mouseY)
 
   if (x >= width || y <= 0) {
     return
