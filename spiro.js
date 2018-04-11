@@ -1,4 +1,4 @@
-const numPoints = 20000
+const numPoints = 50000
 
 let positions = []
 let arc_1 = 0
@@ -6,9 +6,10 @@ let arc_2 = 0
 
 function setup() {
   createCanvas(windowWidth, windowHeight)
-  frameRate(300)
-  background(255, 255, 255)
-  stroke(0, 0, 0)
+  frameRate(30)
+  background('black')
+  fill('white')
+  stroke('white')
   strokeWeight(1)
 
   positions = [
@@ -26,17 +27,30 @@ function setRandomStroke() {
 }
 
 function draw() {
-  point_1 = getPoint(200, arc_1)
-  point_2 = getPoint(100, arc_2)
+  for (let i = 0; i < 20; i++) {
+    point_1 = getPoint(200, arc_1)
+    point_2 = getPoint(100, arc_2)
 
-  point(
-    (point_1.x + point_2.x) / 2,
-    (point_1.y + point_2.y) / 2
-  )
+    // point(
+    //   (point_1.x + point_2.x) / 2,
+    //   (point_1.y + point_2.y) / 2
+    // )
 
-  arc_1 += 2* 360 / numPoints
-  arc_2 += 7 * (360 / numPoints)
+    arc_1 += 2 * 360 / (numPoints + 200)
+    arc_2 += 7 * (360 / numPoints)
+
+    point_3 = getPoint(200, arc_1)
+    point_4 = getPoint(100, arc_2)
+
+    line(
+      (point_1.x + point_2.x) / 2,
+      (point_1.y + point_2.y) / 2,
+      (point_3.x + point_4.x) / 2,
+      (point_3.y + point_4.y) / 2
+    )
+  }
 }
+
 
 function drawPoint(radius, angle) {
   setRandomStroke()
