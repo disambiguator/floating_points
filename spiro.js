@@ -1,8 +1,13 @@
 const numPoints = 50000
+let renderSpeed = 2000
 
 let positions = [
-  {radius: 200, arc: 0, speed: 2, offset: 200},
-  {radius: 100, arc: 0, speed: 7, offset: 0}
+  {radius: randInt(50, 300), arc: 0, speed: 2, offset: randInt(0,200)},
+  {radius: randInt(50, 300), arc: 0, speed: 7, offset: randInt(10,20)},
+  {radius: randInt(50, 300), arc: 0, speed: 1, offset: randInt(10,20)},
+  {radius: randInt(50, 300), arc: 0, speed: 12, offset: randInt(10,20)},
+  {radius: randInt(50, 300), arc: 0, speed: 8, offset: randInt(10,20)},
+  {radius: randInt(50, 300), arc: 0, speed: 4, offset: randInt(80,200)}
 ]
 
 let counter=0
@@ -24,14 +29,22 @@ function setRandomStroke() {
   stroke(r, g, b, 100)
 }
 
+function randInt(min, max) {
+  return Math.floor(Math.random() * max) + min;
+}
+
+function setRenderSpeed(v) {
+  renderSpeed = v
+}
+
 function draw() {
-  for (let i = 0; i < 20; i++) {
+  background(0,0,0,5)
+  for (let i = 0; i < renderSpeed; i++) {
     points = positions.map(function(p) {
       return getPoint(p.radius, p.arc)
     })
 
     positions.forEach(function(p) {
-      console.log(p)
       p.arc += (p.speed * 360 / (numPoints + p.offset))
     })
 
@@ -40,10 +53,10 @@ function draw() {
     })
 
     line(
-      (points[0].x + points[1].x) / 2,
-      (points[0].y + points[1].y) / 2,
-      (points_2[0].x + points_2[1].x) / 2,
-      (points_2[0].y + points_2[1].y) / 2,
+      sum(points, p => p.x)/points.length,
+      sum(points, p => p.y)/points.length,
+      sum(points_2, p => p.x)/points.length,
+      sum(points_2, p => p.y)/points.length,
     )
   }
 
@@ -53,6 +66,9 @@ function draw() {
   counter++
 }
 
+function sum(array, f) {
+  return array.reduce(function(accum, p) {return accum + f(p)}, 0)
+}
 
 function drawPoint(radius, angle) {
   setRandomStroke()
