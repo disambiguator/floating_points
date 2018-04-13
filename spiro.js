@@ -1,5 +1,5 @@
 const numPoints = 50000
-let renderSpeed = 2000
+let renderSpeed = 2500
 
 let positions = [
   {radius: randInt(50, 300), arc: 0, speed: 2, offset: randInt(0,200)},
