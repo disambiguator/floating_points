@@ -1,8 +1,11 @@
 const numPoints = 50000
 
-let positions = []
-let arc_1 = 0
-let arc_2 = 0
+let positions = [
+  {radius: 200, arc: 0, speed: 2, offset: 200},
+  {radius: 100, arc: 0, speed: 7, offset: 0}
+]
+
+let counter=0
 
 function setup() {
   createCanvas(windowWidth, windowHeight)
@@ -11,11 +14,6 @@ function setup() {
   fill('white')
   stroke('white')
   strokeWeight(1)
-
-  positions = [
-    {radius: 200, arc: 0},
-    {radius: 100, arc: 0},
-  ]
 }
 
 function setRandomStroke() {
@@ -28,27 +26,31 @@ function setRandomStroke() {
 
 function draw() {
   for (let i = 0; i < 20; i++) {
-    point_1 = getPoint(200, arc_1)
-    point_2 = getPoint(100, arc_2)
+    points = positions.map(function(p) {
+      return getPoint(p.radius, p.arc)
+    })
 
-    // point(
-    //   (point_1.x + point_2.x) / 2,
-    //   (point_1.y + point_2.y) / 2
-    // )
+    positions.forEach(function(p) {
+      console.log(p)
+      p.arc += (p.speed * 360 / (numPoints + p.offset))
+    })
 
-    arc_1 += 2 * 360 / (numPoints + 200)
-    arc_2 += 7 * (360 / numPoints)
-
-    point_3 = getPoint(200, arc_1)
-    point_4 = getPoint(100, arc_2)
+    points_2 = positions.map(function(p) {
+      return getPoint(p.radius, p.arc)
+    })
 
     line(
-      (point_1.x + point_2.x) / 2,
-      (point_1.y + point_2.y) / 2,
-      (point_3.x + point_4.x) / 2,
-      (point_3.y + point_4.y) / 2
+      (points[0].x + points[1].x) / 2,
+      (points[0].y + points[1].y) / 2,
+      (points_2[0].x + points_2[1].x) / 2,
+      (points_2[0].y + points_2[1].y) / 2,
     )
   }
+
+  if(counter > 1000) {
+    frameRate(0)
+  }
+  counter++
 }
 
 
