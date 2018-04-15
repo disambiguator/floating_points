@@ -13,13 +13,13 @@ function setup() {
   stroke('white')
   strokeWeight(1)
 
-  _.times(6, addComplexity)
+  _.times(10, addComplexity)
 }
 
 function addComplexity() {
   positions.push({
     radius: randInt(50, 300),
-    arc: 0,
+    arc: randInt(0, 360),
     speed: randInt(1, 10),
     offset: randInt(10, 100)
   })
