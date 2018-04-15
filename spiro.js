@@ -1,6 +1,6 @@
 const numPoints = 50000
 let renderSpeed = 2500
-
+let colorEnabled = false
 let positions = []
 
 let counter = 0
@@ -43,7 +43,7 @@ function setRenderSpeed(v) {
 
 function draw() {
   background(0, 0, 0, 5)
-  for (let i = 0; i < renderSpeed; i++) {
+  for(let i = 0; i < renderSpeed; i++) {
     points = positions.map(function(p) {
       return getPoint(p.radius, p.arc)
     })
@@ -56,9 +56,17 @@ function draw() {
       return getPoint(p.radius, p.arc)
     })
 
+
+    const x1 = sum(points, p => p.x) / points.length
+    const y1 = sum(points, p => p.y) / points.length
+
+    if(colorEnabled) {
+      strokeColor(x1, y1)
+    }
+
     line(
-      sum(points, p => p.x) / points.length,
-      sum(points, p => p.y) / points.length,
+      x1,
+      y1,
       sum(points_2, p => p.x) / points.length,
       sum(points_2, p => p.y) / points.length
     )
@@ -68,6 +76,23 @@ function draw() {
     frameRate(0)
   }
   counter++
+}
+
+function strokeColor(x, y) {
+  r = random(x / windowWidth * 255)
+  g = random(y / windowHeight * 255)
+  b = random(y / windowHeight * 255)
+
+  stroke(r, g, b)
+}
+
+function toggleColor() {
+  if(colorEnabled) {
+    stroke('white')
+    colorEnabled = false
+  } else {
+    colorEnabled = true
+  }
 }
 
 function sum(array, f) {
