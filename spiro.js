@@ -44,17 +44,13 @@ function setRenderSpeed(v) {
 function draw() {
   background(0, 0, 0, 5)
   for(let i = 0; i < renderSpeed; i++) {
-    points = positions.map(function(p) {
-      return getPoint(p.radius, p.arc)
-    })
+    points = positions.map(p => getPoint(p.radius, p.arc))
 
     positions.forEach(function(p) {
       p.arc += (p.speed * 360 / (numPoints + p.offset))
     })
 
-    points_2 = positions.map(function(p) {
-      return getPoint(p.radius, p.arc)
-    })
+    points_2 = positions.map(p => getPoint(p.radius, p.arc))
 
 
     const x1 = sum(points, p => p.x) / points.length
