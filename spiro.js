@@ -20,8 +20,7 @@ function addComplexity() {
   positions.push({
     radius: randInt(50, 300),
     arc: randInt(0, 360),
-    speed: randInt(1, 10),
-    offset: randInt(10, 100)
+    speed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints)
   })
 }
 
@@ -47,7 +46,7 @@ function draw() {
     points = positions.map(p => getPoint(p.radius, p.arc))
 
     positions.forEach(function(p) {
-      p.arc += (p.speed * 360 / (numPoints + p.offset))
+      p.arc += p.speed
     })
 
     points_2 = positions.map(p => getPoint(p.radius, p.arc))
