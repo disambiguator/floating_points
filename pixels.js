@@ -117,7 +117,7 @@ function updatePositions(x, yMin, yMax) {
 function draw() {
   loadPixels()
 
-  Object.keys(positions).forEach(function (currentX) {
+  Object.keys(positions).forEach(function(currentX) {
     const p = positions[currentX]
 
     if (p.currentY > p.minimumY) {

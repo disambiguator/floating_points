@@ -1,0 +1,23 @@
+{
+  "name": "floating_points",
+  "version": "1.0.0",
+  "description": "my graphics experiments",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "pretest": "eslint --ignore-path .gitignore ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/disambiguator/floating_points.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/disambiguator/floating_points/issues"
+  },
+  "homepage": "https://github.com/disambiguator/floating_points#readme",
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "eslint-config-p5js": "^1.0.1"
+  }
+}

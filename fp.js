@@ -39,7 +39,7 @@ function draw() {
   if (Math.abs(offset) > 15)
     direction = -direction
 
-//  offset += direction
+  //  offset += direction
 
   initialArc += 0.2
 }
@@ -92,8 +92,8 @@ function setupVisualizer() {
   amplitude = new p5.Amplitude()
 }
 
-window.onload = function () {
-  document.getElementById('offset').onchange = function (e) {
+window.onload = function() {
+  document.getElementById('offset').onchange = function(e) {
     offset = e.target.value
   }
 }
