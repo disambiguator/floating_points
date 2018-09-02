@@ -1,0 +1,42 @@
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
+    <script src="https://s.cdpn.io/25480/OrbitControls.js"></script>
+</head>
+<script id="fragment" type="x-shader/x-fragment">
+uniform float time;
+uniform vec2 resolution, mouse;
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy*time,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+void main()	{
+    vec2 st = gl_FragCoord.xy/resolution;
+    vec2 mouseV = mouse.xy/resolution.xy;
+    float pct = 0.0;
+
+    // a. The DISTANCE from the pixel to the center
+    pct = step(0.7, fract(distance(st,vec2(0.5))*100.));
+//    pct = rand(st)*step(0.8, fract(distance(st,mouseV)*10*fract(time))) ;
+
+    // b. The LENGTH of the vector
+    //    from the pixel to the center
+    // vec2 toCenter = vec2(0.5)-st;
+    // pct = length(toCenter);
+
+    // c. The SQUARE ROOT of the vector
+    //    from the pixel to the center
+    // vec2 tC = vec2(0.5)-st;
+    // pct = sqrt(tC.x*tC.x+tC.y*tC.y);
+
+    vec3 color = vec3(pct);
+
+    gl_FragColor = vec4( color, 1.0 );
+}
+
+</script>
+<body>
+<script src="shades.js"></script>
+</body>
+</html>
