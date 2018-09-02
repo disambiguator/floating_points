@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    title Pixel Sort
+    script(src='dist/main.js')
+    style.
+      body {
+        padding: 0;
+        margin: 0;
+      }
+  body
+    label Speed
+    input(type='range', min='0', max='5000', step='1', onchange='setRenderSpeed(this.value)')
+    button(onclick='toggleColor(this)') Enable Color
+    div
+      script(type='text/javascript', src='spiro.js')
