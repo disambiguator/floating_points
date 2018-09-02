@@ -4,7 +4,8 @@
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
   "scripts": {
-    "pretest": "eslint --ignore-path .gitignore ."
+    "pretest": "eslint --ignore-path .gitignore .",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -17,12 +18,17 @@
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
+    "css-loader": "^1.0.0",
     "eslint": "^5.5.0",
     "eslint-config-p5js": "^1.0.1",
+    "style-loader": "^0.23.0",
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "bootstrap": "^4.1.3",
+    "jquery": "^3.3.1",
+    "lodash": "^4.17.10",
+    "popper.js": "^1.14.4"
   }
 }
