@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
+  "engines": {
+    "npm": "6.2.0"
+  },
   "scripts": {
-    "pretest": "eslint --ignore-path .gitignore .",
+    "test": "eslint --ignore-path .gitignore .",
     "build": "webpack",
     "start": "node server.js",
     "heroku-postbuild": "webpack -p"
@@ -32,6 +35,7 @@
     "express": "^4.16.3",
     "jquery": "^3.3.1",
     "lodash": "^4.17.10",
+    "p5": "^0.7.1",
     "popper.js": "^1.14.4"
   }
 }

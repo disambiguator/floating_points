@@ -6,6 +6,9 @@ module.exports = {
   "extends": [
     "p5js",
   ],
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "rules": {
     "indent": [
       "error",
