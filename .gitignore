@@ -4,3 +4,4 @@
 *.jpg
 *.wav
 node_modules/
+dist/
