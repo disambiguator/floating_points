@@ -10,7 +10,8 @@
     "test": "eslint --ignore-path .gitignore .",
     "build": "webpack",
     "start": "node server.js",
-    "heroku-postbuild": "webpack -p"
+    "heroku-postbuild": "webpack -p",
+    "watch": "webpack --watch --mode development"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,8 @@
     "lodash": "^4.17.10",
     "p5": "^0.7.1",
     "popper.js": "^1.14.4",
-    "pug": "^2.0.3"
+    "pug": "^2.0.3",
+    "three": "^0.96.0",
+    "three-orbit-controls": "^82.1.0"
   }
 }
