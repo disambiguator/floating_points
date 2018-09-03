@@ -7,6 +7,7 @@ let counter = 0
 const numPoints = 50000
 const windowWidth = window.innerWidth
 const windowHeight = window.innerHeight
+const vertices = new Array(renderSpeed)
 
 function randInt (min, max) {
   return Math.floor(Math.random() * max) + min
@@ -26,16 +27,11 @@ function getPoint (radius, angle) {
   return {x: xCoordinate, y: yCoordinate}
 }
 
-function sum(array, f) {
+function sum (array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
 function animate () {
-  while(scene.children.length > 0){
-    scene.remove(scene.children[0]);
-  }
-
-  // scene.background(0, 0, 0, 5)
   for (let i = 0; i < renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc))
 
@@ -47,19 +43,12 @@ function animate () {
 
     const x1 = sum(points, p => p.x) / points.length
     const y1 = sum(points, p => p.y) / points.length
+    const x2 = sum(points_2, p => p.x) / points.length
+    const y2 = sum(points_2, p => p.y) / points.length
 
-    const material = new THREE.LineBasicMaterial({color: 0xffffff})
-
-    const geometry = new THREE.Geometry()
-    geometry.vertices.push(new THREE.Vector3(x1, y1, 0))
-
-    let x2 = sum(points_2, p => p.x) / points.length
-    let y2 = sum(points_2, p => p.y) / points.length
-    geometry.vertices.push(new THREE.Vector3(x2, y2, 0))
-
-    const line = new THREE.Line(geometry, material)
-
-    scene.add(line)
+    vertices[i].geometry.vertices[0].set(x1, y1, 0)
+    vertices[i].geometry.vertices[1].set(x2, y2, 0)
+    vertices[i].geometry.verticesNeedUpdate = true
   }
 
   if (counter > 1000) {
@@ -75,7 +64,6 @@ function runSpiro (bindingElement) {
   _.times(10, addComplexity)
 
   renderer = new THREE.WebGLRenderer()
-  console.log(windowWidth, windowHeight)
   renderer.setSize(windowWidth, windowHeight)
   bindingElement.appendChild(renderer.domElement)
 
@@ -90,6 +78,16 @@ function runSpiro (bindingElement) {
 
   scene = new THREE.Scene()
   renderer.render(scene, camera)
+
+  const material = new THREE.LineBasicMaterial({color: 0xffffff})
+  for (let i = 0; i < renderSpeed; i++) {
+    const geometry = new THREE.Geometry()
+    geometry.vertices.push(new THREE.Vector3(0, 0, 0))
+    geometry.vertices.push(new THREE.Vector3(0, 0, 0))
+    const line = new THREE.Line(geometry, material)
+    vertices[i] = line
+    scene.add(line)
+  }
 
   animate()
 }
