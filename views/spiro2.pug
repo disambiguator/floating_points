@@ -5,6 +5,5 @@ html(lang='en')
     label Speed
     input(type='range', min='0', max='5000', step='1', onchange='setRenderSpeed(this.value)')
     button(onclick='toggleColor(this)') Enable Color
-    div
-      script(type='text/javascript', src='dist/main.js')
-      script(type='text/javascript', src='spiro.js')
+    div#spiro
+    script(type='text/javascript', src='dist/main.js')

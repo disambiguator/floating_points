@@ -16,4 +16,8 @@ app.get('/spiro', function (req, res) {
   res.render('spiro.pug');
 })
 
+app.get('/spiro2', function (req, res) {
+  res.render('spiro2.pug');
+})
+
 app.listen(port)
