@@ -12,12 +12,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
 })
 
-app.get('/spiro', function (req, res) {
-  res.render('spiro.pug');
-})
+const pages = ['spiro', 'spiro2', 'micromovements']
 
-app.get('/spiro2', function (req, res) {
-  res.render('spiro2.pug');
+pages.forEach(function (page) {
+  app.get('/' + page, function (req, res) {
+    res.render(page + '.pug')
+  })
 })
 
 app.listen(port)

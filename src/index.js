@@ -4,9 +4,13 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import p5 from 'p5'
 import runShades from './shades.js'
 import runSpiro from './spiro.js'
+import runMicromovements from './micromovements.js'
 
-let shades = document.getElementById('shades')
+const shades = document.getElementById('shades')
 if (shades) {runShades(shades)}
 
-let spiro = document.getElementById('spiro')
+const spiro = document.getElementById('spiro')
 if (spiro) {runSpiro(spiro)}
+
+const micromovements = document.getElementById('micromovements')
+if (micromovements) {runMicromovements(micromovements)}
