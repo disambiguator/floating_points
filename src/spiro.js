@@ -9,6 +9,8 @@ let scene, renderer, camera, controls
 const numPoints = 50000
 const windowWidth = window.innerWidth
 const windowHeight = window.innerHeight
+const near = 0.1
+const far = 10000
 const vertices = new Array(renderSpeed)
 let glitchEnabled = false
 
@@ -47,9 +49,9 @@ function depthGlitch() {
   } else {
     glitchEnabled = true
 
-    vertices.forEach(function (v) {
-      v.geometry.vertices[0].setComponent(2, randInt(1, 1000))
-      v.geometry.vertices[1].setComponent(2, randInt(1, 1000))
+    vertices.forEach(function(v) {
+      v.geometry.vertices[0].setComponent(2, randInt(near, far))
+      v.geometry.vertices[1].setComponent(2, randInt(near, far))
       v.geometry.verticesNeedUpdate = true
     })
   }
