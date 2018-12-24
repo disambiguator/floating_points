@@ -57,7 +57,7 @@ function depthGlitch() {
 }
 
 function animate() {
-  for (let i = 0; i < renderSpeed; i++) {
+  vertices.forEach(function(v) {
     const points = positions.map(p => getPoint(p.radius, p.arc))
 
     positions.forEach(function(p) {
@@ -71,13 +71,14 @@ function animate() {
     const x2 = sum(points_2, p => p.x) / points.length
     const y2 = sum(points_2, p => p.y) / points.length
 
-    vertices[i].geometry.vertices[0].setComponent(0, x1)
-    vertices[i].geometry.vertices[0].setComponent(1, y1)
+    v.geometry.vertices[0].setComponent(0, x1)
+    v.geometry.vertices[0].setComponent(1, y1)
 
-    vertices[i].geometry.vertices[1].setComponent(0, x2)
-    vertices[i].geometry.vertices[1].setComponent(1, y2)
-    vertices[i].geometry.verticesNeedUpdate = true
-  }
+    v.geometry.vertices[1].setComponent(0, x2)
+    v.geometry.vertices[1].setComponent(1, y2)
+    v.geometry.verticesNeedUpdate = true
+  })
+
 
   if (counter > 1000) {
     frameRate(0)
