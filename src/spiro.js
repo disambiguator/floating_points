@@ -13,11 +13,11 @@ const windowHeight = window.innerHeight
 const vertices = new Array(renderSpeed)
 let glitchEnabled = false
 
-function randInt (min, max) {
+function randInt(min, max) {
   return Math.floor(Math.random() * max) + min
 }
 
-function addComplexity () {
+function addComplexity() {
   positions.push({
     radius: randInt(50, 300),
     arc: randInt(0, 360),
@@ -25,21 +25,21 @@ function addComplexity () {
   })
 }
 
-function getPoint (radius, angle) {
+function getPoint(radius, angle) {
   const xCoordinate = windowWidth / 2 + radius * Math.cos(angle)
   const yCoordinate = windowHeight / 2 + radius * Math.sin(angle)
   return {x: xCoordinate, y: yCoordinate}
 }
 
-function sum (array, f) {
+function sum(array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
-function depthGlitch () {
+function depthGlitch() {
   if (glitchEnabled) {
     glitchEnabled = false
 
-    vertices.forEach(function (v) {
+    vertices.forEach(function(v) {
       v.geometry.vertices[0].setComponent(2, 0)
       v.geometry.vertices[1].setComponent(2, 0)
       v.geometry.verticesNeedUpdate = true
@@ -56,11 +56,11 @@ function depthGlitch () {
   }
 }
 
-function animate () {
+function animate() {
   for (let i = 0; i < renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc))
 
-    positions.forEach(function (p) {
+    positions.forEach(function(p) {
       p.arc += p.speed
     })
 
@@ -90,7 +90,7 @@ function animate () {
   requestAnimationFrame(animate)
 }
 
-function runSpiro (bindingElement) {
+function runSpiro(bindingElement) {
   _.times(10, addComplexity)
 
   renderer = new THREE.WebGLRenderer()
@@ -126,7 +126,7 @@ function runSpiro (bindingElement) {
   animate()
 }
 
-(function (window) {
+(function(window) {
   window.depthGlitch = depthGlitch
 })(window)
 
