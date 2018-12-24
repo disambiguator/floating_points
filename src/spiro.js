@@ -1,13 +1,17 @@
 import * as THREE from 'three'
+import orbitControlsConstructor from 'three-orbit-controls'
+
+const OrbitControls = orbitControlsConstructor(THREE)
 
 let positions = []
 let renderSpeed = 2500
-let scene, renderer, camera
+let scene, renderer, camera, controls
 let counter = 0
 const numPoints = 50000
 const windowWidth = window.innerWidth
 const windowHeight = window.innerHeight
 const vertices = new Array(renderSpeed)
+let glitchEnabled = false
 
 function randInt (min, max) {
   return Math.floor(Math.random() * max) + min
@@ -31,6 +35,27 @@ function sum (array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
+function depthGlitch () {
+  if (glitchEnabled) {
+    glitchEnabled = false
+
+    vertices.forEach(function (v) {
+      v.geometry.vertices[0].setComponent(2, 0)
+      v.geometry.vertices[1].setComponent(2, 0)
+      v.geometry.verticesNeedUpdate = true
+    })
+
+  } else {
+    glitchEnabled = true
+
+    vertices.forEach(function (v) {
+      v.geometry.vertices[0].setComponent(2, randInt(1, 1000))
+      v.geometry.vertices[1].setComponent(2, randInt(1, 1000))
+      v.geometry.verticesNeedUpdate = true
+    })
+  }
+}
+
 function animate () {
   for (let i = 0; i < renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc))
@@ -46,8 +71,11 @@ function animate () {
     const x2 = sum(points_2, p => p.x) / points.length
     const y2 = sum(points_2, p => p.y) / points.length
 
-    vertices[i].geometry.vertices[0].set(x1, y1, 0)
-    vertices[i].geometry.vertices[1].set(x2, y2, 0)
+    vertices[i].geometry.vertices[0].setComponent(0, x1)
+    vertices[i].geometry.vertices[0].setComponent(1, y1)
+
+    vertices[i].geometry.vertices[1].setComponent(0, x2)
+    vertices[i].geometry.vertices[1].setComponent(1, y2)
     vertices[i].geometry.verticesNeedUpdate = true
   }
 
@@ -55,6 +83,8 @@ function animate () {
     frameRate(0)
   }
   counter++
+
+  controls.update()
 
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
@@ -79,6 +109,10 @@ function runSpiro (bindingElement) {
   scene = new THREE.Scene()
   renderer.render(scene, camera)
 
+
+  // Add OrbitControls so that we can pan around with the mouse.
+  controls = new OrbitControls(camera, renderer.domElement)
+
   const material = new THREE.LineBasicMaterial({color: 0xffffff})
   for (let i = 0; i < renderSpeed; i++) {
     const geometry = new THREE.Geometry()
@@ -91,5 +125,9 @@ function runSpiro (bindingElement) {
 
   animate()
 }
+
+(function (window) {
+  window.depthGlitch = depthGlitch
+})(window)
 
 export default runSpiro
