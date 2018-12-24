@@ -6,7 +6,6 @@ const OrbitControls = orbitControlsConstructor(THREE)
 let positions = []
 let renderSpeed = 2500
 let scene, renderer, camera, controls
-let counter = 0
 const numPoints = 50000
 const windowWidth = window.innerWidth
 const windowHeight = window.innerHeight
@@ -79,11 +78,6 @@ function animate() {
     v.geometry.verticesNeedUpdate = true
   })
 
-
-  if (counter > 1000) {
-    frameRate(0)
-  }
-  counter++
 
   controls.update()
 
