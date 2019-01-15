@@ -11,8 +11,7 @@ const windowWidth = window.innerWidth
 const windowHeight = window.innerHeight
 const near = 0.1
 const far = 10000
-const vertices = new Array(renderSpeed)
-let glitchEnabled = false
+const geometry = new THREE.BufferGeometry()
 
 function randInt(min, max) {
   return Math.floor(Math.random() * max) + min
@@ -39,29 +38,10 @@ function sum(array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
-function depthGlitch() {
-  if (glitchEnabled) {
-    glitchEnabled = false
-
-    vertices.forEach(function(v) {
-      v.geometry.vertices[0].setComponent(2, 0)
-      v.geometry.vertices[1].setComponent(2, 0)
-      v.geometry.verticesNeedUpdate = true
-    })
-
-  } else {
-    glitchEnabled = true
-
-    vertices.forEach(function(v) {
-      v.geometry.vertices[0].setComponent(2, randInt(near, far))
-      v.geometry.vertices[1].setComponent(2, randInt(near, far))
-      v.geometry.verticesNeedUpdate = true
-    })
-  }
-}
-
 function animate() {
-  vertices.forEach(function(v) {
+  const vertices = new Array(renderSpeed)
+
+  for(let i=0; i<renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc, p.phi))
 
     positions.forEach(function(p) {
@@ -69,20 +49,15 @@ function animate() {
       p.phi += p.phiSpeed
     })
 
-    const points_2 = positions.map(p => getPoint(p.radius, p.arc, p.phi))
-
     const x1 = sum(points, p => p.x) / points.length
     const y1 = sum(points, p => p.y) / points.length
     const z1 = sum(points, p => p.z) / points.length
-    const x2 = sum(points_2, p => p.x) / points.length
-    const y2 = sum(points_2, p => p.y) / points.length
-    const z2 = sum(points_2, p => p.z) / points.length
 
-    v.geometry.vertices[0].set(x1, y1, z1)
-    v.geometry.vertices[1].set(x2, y2, z2)
-    v.geometry.verticesNeedUpdate = true
-  })
+    vertices.push(x1, y1, z1)
+  }
 
+  geometry.attributes.position = new THREE.Float32BufferAttribute(vertices, 3)
+  geometry.attributes.position.needsUpdate = true
 
   controls.update()
 
@@ -118,20 +93,19 @@ function runSpiro(bindingElement) {
   controls = new OrbitControls(camera, renderer.domElement)
 
   const material = new THREE.LineBasicMaterial({color: 0xffffff})
+  const vertices = new Array(renderSpeed)
+
   for (let i = 0; i < renderSpeed; i++) {
-    const geometry = new THREE.Geometry()
-    geometry.vertices.push(new THREE.Vector3(0, 0, 1))
-    geometry.vertices.push(new THREE.Vector3(0, 0, 1))
-    const line = new THREE.Line(geometry, material)
-    vertices[i] = line
-    scene.add(line)
+    vertices.push(0, 0, 1)
   }
+  geometry.attributes.position = new THREE.Float32BufferAttribute(positions, 3)
+  const line = new THREE.Line(geometry, material)
+  scene.add(line)
 
   animate()
 }
 
 (function(window) {
-  window.depthGlitch = depthGlitch
   window.zSlider = zSlider
 })(window)
 
