@@ -4,7 +4,7 @@ import orbitControlsConstructor from 'three-orbit-controls'
 const OrbitControls = orbitControlsConstructor(THREE)
 
 let positions = []
-let renderSpeed = 2500
+let renderSpeed = 1000
 let scene, renderer, camera, controls
 const numPoints = 50000
 const windowWidth = window.innerWidth
@@ -12,6 +12,12 @@ const windowHeight = window.innerHeight
 const near = 0.1
 const far = 10000
 const geometry = new THREE.BufferGeometry()
+const uniforms = {
+  amplitude: {
+    type: 'f', // a float
+    value: 0
+  }
+}
 
 function randInt(min, max) {
   return Math.floor(Math.random() * max) + min
@@ -39,8 +45,7 @@ function sum(array, f) {
 }
 
 function animate() {
-  const vertices = new Array(renderSpeed)
-
+  const vertices = []
   for(let i=0; i<renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc, p.phi))
 
@@ -65,8 +70,8 @@ function animate() {
   requestAnimationFrame(animate)
 }
 
-function zSlider(element) {
-  camera.position.z = element.value
+function amplitudeSlider(element) {
+  uniforms.amplitude.value = element.value
 }
 
 function runSpiro(bindingElement) {
@@ -79,10 +84,10 @@ function runSpiro(bindingElement) {
   camera = new THREE.PerspectiveCamera(
     45,
     windowWidth/windowHeight,
-    1,
-    1000
+    near,
+    far
   )
-  camera.position.set(0, 0, 1000)
+  camera.position.set(0, 0, 300)
   camera.lookAt(0, 0, 0)
 
   scene = new THREE.Scene()
@@ -92,13 +97,21 @@ function runSpiro(bindingElement) {
   // Add OrbitControls so that we can pan around with the mouse.
   controls = new OrbitControls(camera, renderer.domElement)
 
-  const material = new THREE.LineBasicMaterial({color: 0xffffff})
-  const vertices = new Array(renderSpeed)
+  const material =
+    new THREE.ShaderMaterial({
+      uniforms:       uniforms,
+      vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+      fragmentShader: document.getElementById( 'fragmentshader' ).textContent
+    })
 
-  for (let i = 0; i < renderSpeed; i++) {
-    vertices.push(0, 0, 1)
+  const displacement = new Float32Array( renderSpeed )
+  for(let i=0; i<renderSpeed; i++) {
+    displacement[i] = Math.random() * 5
   }
-  geometry.attributes.position = new THREE.Float32BufferAttribute(positions, 3)
+
+  geometry.addAttribute( 'displacement', new THREE.BufferAttribute(displacement, 1))
+  geometry.computeBoundingSphere()
+
   const line = new THREE.Line(geometry, material)
   scene.add(line)
 
@@ -106,7 +119,7 @@ function runSpiro(bindingElement) {
 }
 
 (function(window) {
-  window.zSlider = zSlider
+  window.amplitudeSlider = amplitudeSlider
 })(window)
 
 export default runSpiro
