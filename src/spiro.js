@@ -12,11 +12,10 @@ const windowHeight = window.innerHeight
 const near = 0.1
 const far = 10000
 const geometry = new THREE.BufferGeometry()
+
 const uniforms = {
-  amplitude: {
-    type: 'f', // a float
-    value: 0
-  }
+  amplitude: new THREE.Uniform(0.0001),
+  mouse: new THREE.Uniform(new THREE.Vector2(1,1))
 }
 
 function randInt(min, max) {
@@ -44,7 +43,7 @@ function sum(array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
-function animate() {
+function generateVertices() {
   const vertices = []
   for(let i=0; i<renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc, p.phi))
@@ -54,14 +53,18 @@ function animate() {
       p.phi += p.phiSpeed
     })
 
-    const x1 = sum(points, p => p.x) / points.length
-    const y1 = sum(points, p => p.y) / points.length
-    const z1 = sum(points, p => p.z) / points.length
+    const x = sum(points, p => p.x) / points.length
+    const y = sum(points, p => p.y) / points.length
+    const z = sum(points, p => p.z) / points.length
 
-    vertices.push(x1, y1, z1)
+    vertices.push(x, y, z)
   }
 
-  geometry.attributes.position = new THREE.Float32BufferAttribute(vertices, 3)
+  return vertices
+}
+
+function animate() {
+  geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
   geometry.attributes.position.needsUpdate = true
 
   controls.update()
@@ -74,8 +77,17 @@ function amplitudeSlider(element) {
   uniforms.amplitude.value = element.value
 }
 
+function mouseMove(event) {
+  const mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
+  const mouseY = - ( event.clientY / window.innerHeight ) * 2 + 1
+
+  console.log(mouseX, mouseY)
+
+  uniforms.mouse.value = new THREE.Vector2(mouseX, mouseY)
+}
+
 function runSpiro(bindingElement) {
-  _.times(10, addComplexity)
+  _.times(2, addComplexity)
 
   renderer = new THREE.WebGLRenderer()
   renderer.setSize(windowWidth, windowHeight)
@@ -109,11 +121,14 @@ function runSpiro(bindingElement) {
     displacement[i] = Math.random() * 5
   }
 
+  geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
   geometry.addAttribute( 'displacement', new THREE.BufferAttribute(displacement, 1))
   geometry.computeBoundingSphere()
 
   const line = new THREE.Line(geometry, material)
   scene.add(line)
+
+  document.addEventListener( 'mousemove', mouseMove, false )
 
   animate()
 }
