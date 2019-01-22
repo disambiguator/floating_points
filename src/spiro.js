@@ -16,7 +16,8 @@ const geometry = new THREE.BufferGeometry()
 const uniforms = {
   amplitude: new THREE.Uniform(0.002),
   origin: new THREE.Uniform(new THREE.Vector3(0,0,0)),
-  direction: new THREE.Uniform(new THREE.Vector3(0,0,0))
+  direction: new THREE.Uniform(new THREE.Vector3(0,0,0)),
+  color: new THREE.Uniform(0.0)
 }
 
 function randInt(min, max) {
@@ -76,6 +77,10 @@ function animate() {
 
 function amplitudeSlider(element) {
   uniforms.amplitude.value = parseFloat(element.value)
+}
+
+function enableColor(element) {
+  uniforms.color.value = element.checked ? 1. : 0.
 }
 
 function mouseMove(event) {
@@ -139,6 +144,7 @@ function runSpiro(bindingElement) {
 
 (function(window) {
   window.amplitudeSlider = amplitudeSlider
+  window.enableColor = enableColor
 })(window)
 
 export default runSpiro
