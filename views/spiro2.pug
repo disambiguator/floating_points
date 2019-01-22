@@ -7,20 +7,25 @@ html(lang='en')
     #endif
 
     uniform float amplitude;
-    uniform vec2 mouse;
+    uniform vec3 origin;
+    uniform vec3 direction;
     attribute float displacement;
-    varying vec3 vNormal;
+
+    varying vec3 vPosition;
+
+    float computeDistance(vec3 mouseOrigin, vec3 mouseDirection, vec3 vertexPosition) {
+      vec3 d = normalize(mouseDirection);
+      vec3 v = vertexPosition - mouseOrigin;
+      float t = dot(v, d);
+      vec3 P = mouseOrigin + t * d;
+      return distance(P, vertexPosition);
+    }
 
     void main() {
 
-    vNormal = normal;
+    vPosition = position;
 
-    vec4 oldPosition = projectionMatrix *
-           modelViewMatrix *
-           vec4(position,1.0);
-
-    vec3 newPosition = position +
-    displacement * amplitude * pow(distance(oldPosition.xy, mouse),2.) * vec3(mouse, 0.);
+    vec3 newPosition = position + amplitude * displacement * pow(computeDistance(origin, direction, position),2.) * direction;
 
     gl_Position = projectionMatrix *
       modelViewMatrix *
@@ -32,25 +37,18 @@ html(lang='en')
     #endif
 
     // same name and type as VS
-    varying vec3 vNormal;
+    varying vec3 vPosition;
 
     void main() {
 
-      // calc the dot product and clamp
-      // 0 -> 1 rather than -1 -> 1
-      vec3 light = vec3(0.5,0.2,1.0);
+    vec3 color = normalize(vPosition);
 
-      // ensure it's normalized
-    light = normalize(light);
-
-      float dProd = max(0.0, dot(vNormal, light));
-
-      // feed into our frag colour
-    gl_FragColor = vec4(1.0);
+    // feed into our frag colour
+    gl_FragColor = vec4(vec3(color), 1.0);
 
     }
   body
     label Amplitude
-    input(type='range', min='0', max='0.001', step='0.00001', oninput='amplitudeSlider(this)')
+    input(type='range', min='0', max='.005', step='.00001', oninput='amplitudeSlider(this)')
     div#spiro
     script(type='text/javascript', src='dist/main.js')

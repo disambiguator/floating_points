@@ -14,8 +14,9 @@ const far = 10000
 const geometry = new THREE.BufferGeometry()
 
 const uniforms = {
-  amplitude: new THREE.Uniform(0.0001),
-  mouse: new THREE.Uniform(new THREE.Vector2(1,1))
+  amplitude: new THREE.Uniform(0.002),
+  origin: new THREE.Uniform(new THREE.Vector3(0,0,0)),
+  direction: new THREE.Uniform(new THREE.Vector3(0,0,0))
 }
 
 function randInt(min, max) {
@@ -74,16 +75,20 @@ function animate() {
 }
 
 function amplitudeSlider(element) {
-  uniforms.amplitude.value = element.value
+  uniforms.amplitude.value = parseFloat(element.value)
 }
 
 function mouseMove(event) {
-  const mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
-  const mouseY = - ( event.clientY / window.innerHeight ) * 2 + 1
+  const mouse = new THREE.Vector2(
+    ( event.clientX / window.innerWidth ) * 2 - 1,
+    - ( event.clientY / window.innerHeight ) * 2 + 1
+  )
 
-  console.log(mouseX, mouseY)
+  const raycaster = new THREE.Raycaster()
+  raycaster.setFromCamera( mouse, camera )
 
-  uniforms.mouse.value = new THREE.Vector2(mouseX, mouseY)
+  uniforms.origin.value = raycaster.ray.origin
+  uniforms.direction.value = raycaster.ray.direction
 }
 
 function runSpiro(bindingElement) {
@@ -123,7 +128,6 @@ function runSpiro(bindingElement) {
 
   geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
   geometry.addAttribute( 'displacement', new THREE.BufferAttribute(displacement, 1))
-  geometry.computeBoundingSphere()
 
   const line = new THREE.Line(geometry, material)
   scene.add(line)
