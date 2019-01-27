@@ -5,3 +5,4 @@
 *.wav
 node_modules/
 dist/
+.next/
