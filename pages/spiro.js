@@ -126,7 +126,7 @@ function enableColor (event) {
   uniforms.color.value = event.target.checked ? 1. : 0.
 }
 
-class ThreeScene extends React.Component {
+class Spiro extends React.Component {
   componentDidMount () {
     const width = window.innerWidth;
     const height = window.innerHeight;
