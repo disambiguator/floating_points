@@ -1,76 +1,61 @@
-import React, {Component} from 'react';
+import React from 'react';
+import styled from 'styled-components';
 import * as THREE from 'three';
 import orbitControlsConstructor from 'three-orbit-controls'
 
 const OrbitControls = orbitControlsConstructor(THREE)
-
-const vertexShader = `
-#ifdef GL_ES
-precision highp float;
-#endif
-
-uniform float amplitude;
-uniform vec3 origin;
-uniform vec3 direction;
-uniform float color;
-attribute float displacement;
-
-void main() {
-vec4 newPosition = projectionMatrix *
-  modelViewMatrix *
-  vec4(position,1.0);
-  
-gl_Position = vec4(mod(newPosition.x + 0.0,1.0), newPosition.y, newPosition.z, newPosition.w);
-}
-`
 
 const fragmentShader = `
 #ifdef GL_ES
 precision highp float;
 #endif
 
-void main() {
+uniform vec2 resolution;
+uniform float distortion[300];
 
-// feed into our frag colour
-gl_FragColor = vec4(1.0);
+float lookup(int index) {
+  for(int i = 0; i < 300; i++) {
+    if(index==i) {
+      return distortion[i];
+    }
+  }
+  
+  return 0.0;
+}
+
+void main() {
+    vec2 st = gl_FragCoord.xy/resolution;
+    
+    int index = int(floor((st.y+1.)/(2./300.)));
+    
+    vec2 distorted = vec2(mod(st.x + lookup(index),1.),  st.y);
+    
+    vec2 center = vec2(0.5);
+
+    vec3 color = vec3(step(0.3, distance(distorted,center))) * vec3(step(distance(distorted,center),0.305));
+
+    gl_FragColor = vec4( color, 1.0 );
 }
 `
 
-function generateVertices() {
-  const v = []
-  const radius = 100;
-  const phi = Math.PI/4;
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+`
 
-  for(let theta=0; theta<10; theta = theta + 0.01) {
-    v.push(
-      radius * Math.sin(theta*Math.PI) * Math.cos(phi),
-      radius * Math.cos(theta*Math.PI) * Math.sin(phi),
-      radius * Math.cos(theta*Math.PI))
+const generateDistortion = () => {
+  const d = new Array(300)
+  d[0] = 0
+  for (let i = 1; i < 300; i++) {
+    d[i] = d[i - 1] + Math.random() * 0.01 - 0.005
   }
-
-  return v;
+  return d
 }
 
-function generateDisplacement() {
-  const v = []
-
-  for(let theta=0; theta<10; theta = theta + 0.01) {
-    v.push(Math.random())
-  }
-
-  return v;
-}
-
-
-function getPoint(radius, theta, phi) {
-  const xCoordinate = radius * Math.sin(theta) * Math.cos(phi)
-  const yCoordinate = radius * Math.cos(theta) * Math.sin(phi)
-  const zCoordinate = radius * Math.cos(theta)
-  return {x: xCoordinate, y: yCoordinate, z: zCoordinate}
-}
-
-class ThreeScene extends Component {
-  componentDidMount() {
+class Scatter extends React.Component {
+  componentDidMount () {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
 
@@ -84,7 +69,7 @@ class ThreeScene extends Component {
       0.1,
       1000
     )
-    this.camera.position.z = 300
+    this.camera.position.z = 100
 
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer({antialias: true})
@@ -95,22 +80,23 @@ class ThreeScene extends Component {
     // Add OrbitControls so that we can pan around with the mouse.
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 
-    const material =
+    this.uniforms = {
+      resolution: { value: new THREE.Vector2(800, 800), type: 'v2' },
+      distortion: new THREE.Uniform(generateDistortion())
+    };
+    this.redCube = new THREE.Mesh(
+      new THREE.PlaneGeometry(300, 300, 32),
       new THREE.ShaderMaterial({
-        vertexShader: vertexShader,
+        uniforms: this.uniforms,
+        // vertexShader: vertexShader,
         fragmentShader: fragmentShader
       })
-
-    const geometry = new THREE.BufferGeometry()
-    geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
-    geometry.attributes.displacement = new THREE.Float32BufferAttribute(generateDisplacement(), 1)
-
-    const line = new THREE.Line(geometry, material)
-    this.scene.add(line)
+    );
+    this.scene.add(this.redCube);
     this.start()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.stop()
     this.mount.removeChild(this.renderer.domElement)
   }
@@ -128,6 +114,7 @@ class ThreeScene extends Component {
   animate = () => {
     this.renderScene()
     this.controls.update()
+    this.uniforms.distortion = new THREE.Uniform(generateDistortion())
     this.frameId = window.requestAnimationFrame(this.animate)
   }
 
@@ -135,16 +122,27 @@ class ThreeScene extends Component {
     this.renderer.render(this.scene, this.camera)
   }
 
-  render() {
+  render () {
     return (
-      <div
-        style={{width: '400px', height: '400px'}}
-        ref={(mount) => {
-          this.mount = mount
-        }}
-      />
+      <Container>
+        <style global jsx>{`
+      html,
+      body,
+      body > div:first-child,
+      div#__next,
+      div#__next > div,
+      div#__next > div > div {
+        height: 100%;
+      }
+    `}</style>
+
+        <div
+          style={{ width: '800px', height: '800px' }}
+          ref={mount => this.mount = mount}
+        />
+      </Container>
     )
   }
 }
 
-export default ThreeScene
+export default Scatter
