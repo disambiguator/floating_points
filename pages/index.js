@@ -1,16 +1,17 @@
+const pages = [
+  { name: 'Pixelsorting', path: '/pixel_sort' },
+  { name: 'Spirographs', path: '/spiro' },
+  { name: 'Visualizer', path: '/visualizer' },
+  { name: 'Scatter', path: '/scatter' },
+  { name: 'Cubes', path: '/cubes' },
+]
+
 export default () => (
-  <ul className="nav flex-column">
-    <li className="nav-item">
-      <a className="nav-link" href="/pixel_sort">Pixelsorting</a>
-    </li>
-    <li className="nav-item">
-      <a className="nav-link" href="/spiro">Spirographs</a>
-    </li>
-    <li className="nav-item">
-      <a className="nav-link" href="/visualizer">Visualizer</a>
-    </li>
-    <li className="nav-item">
-      <a className="nav-link" href="#"></a>
-    </li>
+  <ul>
+    {pages.map((p) => (
+      <li>
+        <a href={p.path}>{p.name}</a>
+      </li>
+    ))}
   </ul>
 );
