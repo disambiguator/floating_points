@@ -3,5 +3,6 @@
   "name": "nextjs",
   "builds": [
     { "src": "package.json", "use": "@now/next" }
-  ]
+  ],
+  "alias": ["floating-points.now.sh"]
 }
