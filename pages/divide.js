@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const translateDistance = 1
+let timer = 0
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -11,9 +14,9 @@ const Container = styled.div`
 class Scatter extends React.Component {
   componentDidMount () {
     this.ctx = this.mount.getContext('2d');
-    this.ctx.lineWidth = 10;
+    this.ctx.lineWidth = 5;
 
-    setInterval(this.animate, 50)
+    setInterval(this.animate, 20)
   }
 
   componentWillUnmount () {
@@ -32,24 +35,25 @@ class Scatter extends React.Component {
   }
 
   animate = () => {
-    const translateDistance = 5
-    const topX = Math.random() * 800
-    const bottomX = Math.random() * 800
+    if(timer % 5 === 0) {
+      this.topX = Math.random() * 800
+      this.bottomX = Math.random() * 800
+
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
+      this.ctx.moveTo(this.topX, 0);
+      this.ctx.lineTo(this.bottomX, 800);
+      this.ctx.stroke();
+    }
 
     this.ctx.save();
 
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
-    this.ctx.moveTo(topX, 0);
-    this.ctx.lineTo(bottomX, 800);
-    this.ctx.stroke();
-
     const rightRegion = new Path2D()
-    rightRegion.moveTo(topX, 0)
-    rightRegion.lineTo(bottomX, 800)
+    rightRegion.moveTo(this.topX, 0)
+    rightRegion.lineTo(this.bottomX, 800)
     rightRegion.lineTo(800, 800)
     rightRegion.lineTo(800, 0)
-    rightRegion.lineTo(topX, 0)
+    rightRegion.lineTo(this.topX, 0)
     this.ctx.clip(rightRegion);
     this.ctx.translate(translateDistance, 0);
     this.ctx.drawImage(this.mount, translateDistance, 0);
@@ -57,16 +61,17 @@ class Scatter extends React.Component {
 
     this.ctx.save();
     const leftRegion = new Path2D()
-    leftRegion.moveTo(topX, 0)
-    leftRegion.lineTo(bottomX, 800)
+    leftRegion.moveTo(this.topX, 0)
+    leftRegion.lineTo(this.bottomX, 800)
     leftRegion.lineTo(0, 800)
     leftRegion.lineTo(0, 0)
-    leftRegion.lineTo(topX, 0)
+    leftRegion.lineTo(this.topX, 0)
     this.ctx.clip(leftRegion);
     this.ctx.translate(-translateDistance, 0);
     this.ctx.drawImage(this.mount, -translateDistance, 0);
     this.ctx.restore();
 
+    timer++;
   }
 
   renderScene = () => {
