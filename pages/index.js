@@ -69,7 +69,7 @@ class Scatter extends React.Component {
   }
 
   setNewFragmentWidth = () => {
-    this.fragmentWidth = Math.floor(Math.random() * 40) + 1
+    this.fragmentWidth = Math.floor(Math.random() * 15) + 1
   }
 
   animate = () => {
@@ -96,7 +96,7 @@ class Scatter extends React.Component {
     rightRegion.lineTo(this.points[1].x, this.points[1].y);
     rightRegion.lineTo(this.state.width, this.state.height)
     rightRegion.lineTo(this.state.width, 0)
-    rightRegion.lineTo(this.points[0].x, 0)
+    rightRegion.lineTo(this.points[0].x, this.points[0].y)
     this.ctx.clip(rightRegion);
     this.ctx.translate(translateDistance, 0);
     this.ctx.drawImage(this.mount, translateDistance, 0);
@@ -104,11 +104,11 @@ class Scatter extends React.Component {
 
     this.ctx.save();
     const leftRegion = new Path2D()
-    leftRegion.moveTo(this.topX, 0)
-    leftRegion.lineTo(this.bottomX, this.state.width)
+    leftRegion.moveTo(this.points[0].x, this.points[0].y);
+    leftRegion.lineTo(this.points[1].x, this.points[1].y);
     leftRegion.lineTo(0, this.state.height)
     leftRegion.lineTo(0, 0)
-    leftRegion.lineTo(this.topX, 0)
+    leftRegion.lineTo(this.points[0].x, this.points[0].y)
     this.ctx.clip(leftRegion);
     this.ctx.translate(-translateDistance, 0);
     this.ctx.drawImage(this.mount, -translateDistance, 0);
