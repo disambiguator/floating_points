@@ -1,22 +1,16 @@
+import React from 'react';
+import styled from 'styled-components';
+import Link from 'next/link'
+
 const pages = [
-  { name: 'Pixelsorting', path: '/pixel_sort' },
+  // { name: 'Pixelsorting', path: '/pixel_sort' },
   { name: 'Spirographs', path: '/spiro' },
-  { name: 'Visualizer', path: '/visualizer' },
+  // { name: 'Visualizer', path: '/visualizer' },
   { name: 'Scatter', path: '/scatter' },
   { name: 'Cubes', path: '/cubes' },
 ]
 
-import React from 'react';
-import styled from 'styled-components';
-
 const translateDistance = 1
-let timer = 0
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
 
 const Contents = styled.h1`
   color: white;
@@ -25,16 +19,21 @@ const Contents = styled.h1`
   top: 0;
   left: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: Arial;
+  background-color: rgba(255,255,255,0.2);
+  
+  a, a:visited, a:hover, a:active {
+    color: inherit;
+  }
 `
 
-const endPoints = ({ width, height }) => {
-  const slopeX = Math.random() * 10 - 5
-  const slopeY = Math.random() * 10 - 5
+const endPoints = ({ width, height, slope }) => {
   const interceptX = Math.random() * width
   const interceptY = Math.random() * height
-  const m = slopeY / slopeX
+  const m = slope
   const b = interceptY - m * interceptX
 
   return [
@@ -50,11 +49,16 @@ class Scatter extends React.Component {
     super(props)
     this.state = { width: 0, height: 0 }
     this.setNewFragmentWidth()
+    this.timer = 0
   }
 
-  componentDidMount() {
-    setInterval(this.animate, 10)
+  componentDidMount () {
+    this.interval = setInterval(this.animate, 10)
     this.setState({ width: window.innerWidth, height: window.innerHeight })
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.interval)
   }
 
   componentDidUpdate () {
@@ -65,7 +69,7 @@ class Scatter extends React.Component {
     this.ctx.fillStyle = '#ffffff'
     this.ctx.textAlign = "center";
     this.ctx.font = "50px Courier New";
-    this.ctx.fillText("disambiguator", this.state.width/2, this.state.height/2);
+    this.ctx.fillText("disambiguator", this.state.width / 2, this.state.height / 2);
   }
 
   setNewFragmentWidth = () => {
@@ -73,16 +77,30 @@ class Scatter extends React.Component {
   }
 
   animate = () => {
-    if (timer % this.fragmentWidth === 0) {
-      this.points = endPoints({ width: this.state.width, height: this.state.height })
+    if (this.timer % this.fragmentWidth === 0) {
+      this.slopeX = Math.random() * 10 - 5
+      this.slopeY = Math.random() * 10 - 5
+      const slope = this.slopeY / this.slopeX
+
+      this.points = endPoints({ width: this.state.width, height: this.state.height, slope: slope })
 
       this.ctx.beginPath();
       // this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
 
-      const r = Math.random() * 80;
+      const r = Math.random() * 100 + 30;
 
       this.ctx.strokeStyle = `rgb(${r},${r},${r})`;
       this.ctx.moveTo(this.points[0].x, this.points[0].y);
+
+      // const a = this.points[0].x < this.points[1].x ? this.points[0].x : this.points[1].x
+      // const b = this.points[0].x < this.points[1].x ? this.points[1].x : this.points[0].x
+      //
+      // for(let i=a; i<b; i++) {
+      //   const y = this.points[0].y + slope*(i-this.points[0].x) + Math.random() * 10 - 2
+      //
+      //   this.ctx.lineTo(i, y);
+      // }
+
       this.ctx.lineTo(this.points[1].x, this.points[1].y);
       this.ctx.stroke();
 
@@ -98,7 +116,7 @@ class Scatter extends React.Component {
     rightRegion.lineTo(this.state.width, 0)
     rightRegion.lineTo(this.points[0].x, this.points[0].y)
     this.ctx.clip(rightRegion);
-    this.ctx.translate(translateDistance, 0);
+    this.ctx.translate(this.slopeX, this.slopeY);
     this.ctx.drawImage(this.mount, translateDistance, 0);
     this.ctx.restore();
 
@@ -110,26 +128,23 @@ class Scatter extends React.Component {
     leftRegion.lineTo(0, 0)
     leftRegion.lineTo(this.points[0].x, this.points[0].y)
     this.ctx.clip(leftRegion);
-    this.ctx.translate(-translateDistance, 0);
+    this.ctx.translate(-this.slopeX, -this.slopeY);
     this.ctx.drawImage(this.mount, -translateDistance, 0);
     this.ctx.restore();
 
-    timer++;
+    this.timer++;
   }
 
   render () {
     return (
-      <Contents>
-        <h1>disambiguator</h1>
-        {/*<ul>*/}
-          {/*{pages.map((p) => (*/}
-            {/*<li>*/}
-              {/*<a href={p.path}>{p.name}</a>*/}
-            {/*</li>*/}
-          {/*))}*/}
-        {/*</ul>*/}
-        <Container>
-          <style global jsx>{`
+      <div>
+        <Contents>
+          <h2>disambiguator</h2>
+          {pages.map((p) => (
+            <Link href={p.path}><a>{p.name}</a></Link>
+          ))}
+        </Contents>
+        <style global jsx>{`
       html,
       body,
       body > div:first-child,
@@ -140,14 +155,13 @@ class Scatter extends React.Component {
         background: black;
       }
     `}</style>
-          <canvas
-            style={{ position: 'fixed', top: 0, left: 0 }}
-            width={this.state.width}
-            height={this.state.height}
-            ref={mount => this.mount = mount}
-          />
-        </Container>
-      </Contents>
+        <canvas
+          style={{ position: 'fixed', top: 0, left: 0 }}
+          width={this.state.width}
+          height={this.state.height}
+          ref={mount => this.mount = mount}
+        />
+      </div>
     )
   }
 }
