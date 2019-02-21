@@ -16,22 +16,11 @@ class Scatter extends React.Component {
     this.ctx = this.mount.getContext('2d');
     this.ctx.lineWidth = 5;
 
-    setInterval(this.animate, 20)
+    this.interval = setInterval(this.animate, 20)
   }
 
   componentWillUnmount () {
-    this.stop()
-    this.mount.removeChild(this.renderer.domElement)
-  }
-
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
-    }
-  }
-
-  stop = () => {
-    cancelAnimationFrame(this.frameId)
+    clearInterval(this.interval)
   }
 
   animate = () => {
@@ -72,10 +61,6 @@ class Scatter extends React.Component {
     this.ctx.restore();
 
     timer++;
-  }
-
-  renderScene = () => {
-    this.renderer.render(this.scene, this.camera)
   }
 
   render () {

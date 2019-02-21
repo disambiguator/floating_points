@@ -7,6 +7,7 @@ const pages = [
   { name: 'Spirographs', path: '/spiro' },
   // { name: 'Visualizer', path: '/visualizer' },
   { name: 'Scatter', path: '/scatter' },
+  { name: 'Divide', path: '/divide' },
   { name: 'Cubes', path: '/cubes' },
 ]
 
