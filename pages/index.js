@@ -47,29 +47,39 @@ const endPoints = ({ width, height, slope }) => {
 class Scatter extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { width: 0, height: 0 }
     this.setNewFragmentWidth()
     this.timer = 0
   }
 
   componentDidMount () {
+    this.ctx = this.mount.getContext('2d');
+
+    this.updateDimensions()
+    const width = this.mount.width
+    const height = this.mount.height
+
     this.interval = setInterval(this.animate, 10)
-    this.setState({ width: window.innerWidth, height: window.innerHeight })
+    window.addEventListener("resize", this.updateDimensions)
+    this.ctx.lineWidth = 5;
+    this.ctx.fillRect(0, 0, width, height)
+    this.ctx.fillStyle = '#ffffff'
+    this.ctx.textAlign = "center";
+    this.ctx.font = "50px Courier New";
+    this.ctx.fillText("disambiguator", width / 2, height / 2);
+  }
+
+  updateDimensions = () => {
+    const temp = this.ctx.getImageData(0,0,this.mount.width, this.mount.height)
+
+    this.mount.width = window.innerWidth
+    this.mount.height = window.innerHeight
+
+    this.ctx.putImageData(temp,0,0)
   }
 
   componentWillUnmount () {
     clearInterval(this.interval)
-  }
-
-  componentDidUpdate () {
-    this.ctx = this.mount.getContext('2d');
-    this.ctx.lineWidth = 5;
-    this.ctx.fillStyle = '#000000'
-    this.ctx.fillRect(0, 0, this.state.width, this.state.height)
-    this.ctx.fillStyle = '#ffffff'
-    this.ctx.textAlign = "center";
-    this.ctx.font = "50px Courier New";
-    this.ctx.fillText("disambiguator", this.state.width / 2, this.state.height / 2);
+    window.removeEventListener("resize", this.updateDimensions)
   }
 
   setNewFragmentWidth = () => {
@@ -77,12 +87,15 @@ class Scatter extends React.Component {
   }
 
   animate = () => {
+    const width = this.mount.width
+    const height = this.mount.height
+
     if (this.timer % this.fragmentWidth === 0) {
       this.slopeX = Math.random() * 10 - 5
       this.slopeY = Math.random() * 10 - 5
       const slope = this.slopeY / this.slopeX
 
-      this.points = endPoints({ width: this.state.width, height: this.state.height, slope: slope })
+      this.points = endPoints({ width: width, height: height, slope: slope })
 
       this.ctx.beginPath();
       // this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
@@ -112,8 +125,8 @@ class Scatter extends React.Component {
     const rightRegion = new Path2D()
     rightRegion.moveTo(this.points[0].x, this.points[0].y);
     rightRegion.lineTo(this.points[1].x, this.points[1].y);
-    rightRegion.lineTo(this.state.width, this.state.height)
-    rightRegion.lineTo(this.state.width, 0)
+    rightRegion.lineTo(width, height)
+    rightRegion.lineTo(width, 0)
     rightRegion.lineTo(this.points[0].x, this.points[0].y)
     this.ctx.clip(rightRegion);
     this.ctx.translate(this.slopeX, this.slopeY);
@@ -124,7 +137,7 @@ class Scatter extends React.Component {
     const leftRegion = new Path2D()
     leftRegion.moveTo(this.points[0].x, this.points[0].y);
     leftRegion.lineTo(this.points[1].x, this.points[1].y);
-    leftRegion.lineTo(0, this.state.height)
+    leftRegion.lineTo(0, height)
     leftRegion.lineTo(0, 0)
     leftRegion.lineTo(this.points[0].x, this.points[0].y)
     this.ctx.clip(leftRegion);
@@ -157,8 +170,8 @@ class Scatter extends React.Component {
     `}</style>
         <canvas
           style={{ position: 'fixed', top: 0, left: 0 }}
-          width={this.state.width}
-          height={this.state.height}
+          width={1}
+          height={1}
           ref={mount => this.mount = mount}
         />
       </div>
