@@ -67,7 +67,7 @@ const fragmentShader = `
 `
 
 const uniforms = {
-  amplitude: new THREE.Uniform(0.002),
+  amplitude: new THREE.Uniform(0.0005),
   origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   color: new THREE.Uniform(0.0)
@@ -173,6 +173,7 @@ class Spiro extends React.Component {
 
     const line = new THREE.Line(geometry, material)
     this.scene.add(line)
+    this.updateRayCaster(0, 0)
     this.start()
   }
 
@@ -204,12 +205,8 @@ class Spiro extends React.Component {
     this.renderer.render(this.scene, this.camera)
   }
 
-  mouseMove = (event) => {
-    const mouse = new THREE.Vector2(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    )
-
+  updateRayCaster (x, y) {
+    const mouse = new THREE.Vector2(x, y)
     const raycaster = new THREE.Raycaster()
     raycaster.setFromCamera(mouse, this.camera)
 
