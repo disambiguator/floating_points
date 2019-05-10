@@ -1,6 +1,7 @@
 let delta = 10
 const l = 15
-const colors = ['#ff0000', '#00ff00', '#0000ff']
+// const colors = ['#ff0000', '#00ff00', '#0000ff']
+const colors = ['#4018FF', '#1F43E8', '#1E95FF', '#11CDE8', '#1EFFC9', '#2846FF', '#117AE8', '#2EDDFF']
 
 import React from 'react';
 
@@ -9,6 +10,7 @@ class Spiral extends React.Component {
     super(props)
     // this.setNewFragmentWidth()
     this.timer = 0
+    this.sides = 3
   }
 
   componentDidMount () {
@@ -23,14 +25,17 @@ class Spiral extends React.Component {
 
     // this.ctx.fillRect(0, 0, width, height)
     // this.ctx.fillStyle = '#ffffff'
-    // this.ctx.textAlign = "center";
-    // this.ctx.font = "50px Courier New";
-    // this.ctx.fillText("disambiguator", width / 2, height / 2);
+    this.ctx.textAlign = "center";
+    this.ctx.font = "50px Courier New";
   }
 
   updateDimensions = () => {
     this.mount.width = window.innerWidth
     this.mount.height = window.innerHeight
+  }
+
+  onInput = (event) => {
+    this.timer = event.currentTarget.value * Math.PI/180
   }
 
   componentWillUnmount () {
@@ -57,45 +62,36 @@ class Spiral extends React.Component {
   animate = () => {
     const width = this.mount.width
     const height = this.mount.height
+    const timer = this.timer
+    const sides = this.sides
     this.ctx.fillRect(0, 0, width, height)
-    const SIDE_COUNT = 3
-    // for (let SIDE_COUNT = 3; SIDE_COUNT < 13; SIDE_COUNT++) {
     const i = 0
-    // for (let i = 0; i < 10; i++) {
-      const theta = 2 * Math.PI / SIDE_COUNT
-      const x0 = width / 2
-      const y0 = height / 2
+    const theta = 2 * Math.PI / sides
+    const x0 = width / 2
+    const y0 = height / 2
 
-      let coords = [...Array(SIDE_COUNT).keys()].map((n) => (
-        [x0 + l * Math.cos(n * theta), y0 + l * Math.sin(n * theta)]
-      ))
+    let coords = [...Array(sides).keys()].map((n) => (
+      [x0 + l * Math.cos(n * theta + timer), y0 + l * Math.sin(n * theta + timer)]
+    ))
 
-    this.ctx.beginPath()
-      this.ctx.moveTo(x0 + l * Math.cos(0), y0 + l * Math.sin(0))
-
-      const range = [...Array(SIDE_COUNT - 1).keys()]
-      range.forEach((n) => {
-        this.ctx.lineTo(x0 + 1 + l * Math.cos(n * theta), y0 + 1 + l * Math.sin(n * theta))
-      })
-    this.ctx.stroke()
-
-    delta = 50 + 50 * Math.cos(this.timer)
-
-      for (let x = 0; x < 1000; x++) {
-        coords = [...Array(SIDE_COUNT).keys()].map((y) => {
-          this.ctx.strokeStyle = colors[(y - 1 + SIDE_COUNT) % SIDE_COUNT]
-          return this.drawLine(coords[(y - 1 + SIDE_COUNT) % SIDE_COUNT], coords[y])
-        })
+    // delta = 43 + 40 * Math.cos(this.timer*Math.PI/180)
+    delta = 4
+    if(delta === 3) {
+      this.sides++
+      if(this.sides > 8) {
+        this.sides = 3
       }
+    }
 
-      // this.ctx.stroke();
 
+    for (let x = 0; x < 1000; x++) {
+      coords = [...Array(sides).keys()].map((y) => {
+        this.ctx.strokeStyle = colors[(y - 1 + sides) % sides]
+        return this.drawLine(coords[(y - 1 + sides) % sides], coords[y])
+      })
+    }
 
-      // this.ctx.fillRect(0, 0, width, height)
-      // }
-    // }
-
-    this.timer=this.timer + 0.01
+    // this.timer = this.timer + 1
 
   }
 
@@ -107,6 +103,7 @@ class Spiral extends React.Component {
           height={1}
           ref={mount => this.mount = mount}
         />
+        <input type='range' min={0} max={100} onInput={this.onInput} />
       </div>
     )
   }
