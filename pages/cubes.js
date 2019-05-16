@@ -4,47 +4,8 @@ import * as THREE from 'three';
 import orbitControlsConstructor from 'three-orbit-controls'
 
 const OrbitControls = orbitControlsConstructor(THREE)
-const vertexShader = `
-#ifdef GL_ES
-precision highp float;
-#endif
 
-uniform float amplitude;
-uniform vec3 origin;
-uniform vec3 direction;
-uniform float color;
-attribute float displacement;
-
-void main() {
-gl_Position = projectionMatrix *
-  modelViewMatrix *
-  vec4(position,1.0);
-}
-`
-
-const fragmentShader = `
-#ifdef GL_ES
-precision highp float;
-#endif
-
-void main() {
-
-// feed into our frag colour
-gl_FragColor = vec4(1.0);
-}
-`
-
-function generateDisplacement() {
-  const v = []
-
-  for(let theta=0; theta<10; theta = theta + 0.01) {
-    v.push(Math.random())
-  }
-
-  return v;
-}
-
-const generateCube = (length, color) => {
+const generateCube = (length) => {
   const geometry = new THREE.BoxGeometry(length, length, length);
   for ( var i = 0; i < geometry.faces.length; i ++ ) {
     geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
@@ -54,13 +15,6 @@ const generateCube = (length, color) => {
     geometry,
     new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } )
   );
-}
-
-function getPoint(radius, theta, phi) {
-  const xCoordinate = radius * Math.sin(theta) * Math.cos(phi)
-  const yCoordinate = radius * Math.cos(theta) * Math.sin(phi)
-  const zCoordinate = radius * Math.cos(theta)
-  return {x: xCoordinate, y: yCoordinate, z: zCoordinate}
 }
 
 const Container = styled.div`
@@ -104,13 +58,13 @@ class Scatter extends React.Component {
     let yellowLength = 500;
     let redLength = 2500;
 
-    this.redCube = generateCube(redLength, 'red');
+    this.redCube = generateCube(redLength);
     this.redCube.position.z = -(2*greenLength*Math.sin(Math.PI/4) + 2*yellowLength*Math.sin(Math.PI/4) + redLength*Math.sin(Math.PI/4))
 
-    this.yellowCube = generateCube(yellowLength, 'yellow');
+    this.yellowCube = generateCube(yellowLength);
     this.yellowCube.position.z = -(2*greenLength*Math.sin(Math.PI/4) + yellowLength*Math.sin(Math.PI/4))
 
-    this.greenCube = generateCube(greenLength, 'green');
+    this.greenCube = generateCube(greenLength);
     this.greenCube.position.z = 0
 
     this.scene.add( this.redCube );
