@@ -1,20 +1,11 @@
 import React from 'react';
-import styled from 'styled-components';
+import Scene from '../components/scene';
 import * as THREE from 'three';
 import orbitControlsConstructor from 'three-orbit-controls'
 
 const OrbitControls = orbitControlsConstructor(THREE)
 
-class Edge extends React.Component {
-  constructor (props) {
-    super(props)
-
-    this.scene = null;
-    this.camera = null;
-    this.renderer = null;
-    this.quad = null;
-  }
-
+class Edge extends Scene {
   componentDidMount () {
     this.mount.width = window.innerWidth
     this.mount.height = window.innerHeight
@@ -22,8 +13,6 @@ class Edge extends React.Component {
     this.width = this.mount.width
     this.height = this.mount.height
     this.time = 0
-    //ADD SCENE
-    this.scene = new THREE.Scene()
 
     //ADD CAMERA
     this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 1000);
@@ -108,26 +97,11 @@ gl_FragColor.xyz = col;
     this.mount.removeChild(this.renderer.domElement)
   }
 
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
-    }
-  }
-
-  stop = () => {
-    cancelAnimationFrame(this.frameId)
-  }
-
-  animate = () => {
-    this.renderScene()
+  renderScene = () => {
     this.time += 0.02
     this.bufferMaterial.uniforms.time.value = this.time
-    this.frameId = window.requestAnimationFrame(this.animate)
-  }
-
-  renderScene = () => {
-    this.controls.update()
     this.renderer.render(this.scene, this.camera);
+    this.controls.update()
   }
 
   render () {

@@ -1,4 +1,5 @@
 import React from 'react';
+import Scene from '../components/scene';
 import styled from 'styled-components';
 import * as THREE from 'three';
 import orbitControlsConstructor from 'three-orbit-controls'
@@ -24,7 +25,7 @@ const Container = styled.div`
   background: lightgray;
 `
 
-class Scatter extends React.Component {
+class Scatter extends Scene {
   componentDidMount() {
     this.timer = 0
     this.isRotating = false
@@ -32,10 +33,6 @@ class Scatter extends React.Component {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
 
-    //ADD SCENE
-    this.scene = new THREE.Scene()
-
-    //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(
       75,
       width / height,
@@ -44,15 +41,12 @@ class Scatter extends React.Component {
     )
     this.camera.position.z = 300
 
-
-    //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer()
     this.renderer.setClearColor('#000000')
     this.renderer.setSize(width, height)
     this.mount.appendChild(this.renderer.domElement)
     // Add OrbitControls so that we can pan around with the mouse.
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-
 
     let greenLength = 100;
     let yellowLength = 500;
@@ -73,22 +67,7 @@ class Scatter extends React.Component {
     this.start()
   }
 
-  componentWillUnmount() {
-    this.stop()
-    this.mount.removeChild(this.renderer.domElement)
-  }
-
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
-    }
-  }
-
-  stop = () => {
-    cancelAnimationFrame(this.frameId)
-  }
-
-  animate = () => {
+  renderScene = () => {
     this.timer++
 
     if(this.timer % 32 === 0) {
@@ -102,11 +81,6 @@ class Scatter extends React.Component {
     }
 
     this.controls.update()
-    this.renderScene()
-    this.frameId = window.requestAnimationFrame(this.animate)
-  }
-
-  renderScene = () => {
     this.renderer.render(this.scene, this.camera)
   }
 
