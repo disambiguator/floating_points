@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js"></script>
 </head>
 <body>
 
@@ -14,8 +14,7 @@
 		uniform float time;
 		void main() {
 			vec2 st = gl_FragCoord.xy / res;
-			vec2 uv = st;
-			uv *= 0.9985;
+			vec2 uv = st * 0.9985;
 			vec4 sum = texture2D(bufferTexture, uv);
 			vec4 src = texture2D(videoTexture, uv);
 			sum.rgb = mix(sum.rbg, src.rgb, 0.01);
@@ -32,9 +31,6 @@
   var textureA;
   var textureB;
   var bufferMaterial;
-  var plane;
-  var bufferObject;
-  var finalMaterial;
   var quad;
   var video;
   var videoTexture;
@@ -91,11 +87,11 @@
       },
       fragmentShader: document.getElementById('fragShader').innerHTML
     });
-    plane = new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight);
-    bufferObject = new THREE.Mesh(plane, bufferMaterial);
+    const plane = new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight);
+    const bufferObject = new THREE.Mesh(plane, bufferMaterial);
     bufferScene.add(bufferObject);
     //Draw textureB to screen
-    finalMaterial = new THREE.MeshBasicMaterial({ map: textureB });
+    const finalMaterial = new THREE.MeshBasicMaterial({ map: textureB });
     quad = new THREE.Mesh(plane, finalMaterial);
     scene.add(quad);
   }
@@ -109,7 +105,8 @@
   function render () {
     requestAnimationFrame(render);
     //Draw to textureB
-    renderer.render(bufferScene, camera, textureB, true);
+    renderer.setRenderTarget(textureB);
+    renderer.render(bufferScene, camera);
 
     //Swap textureA and B
     var t = textureA;
@@ -120,6 +117,7 @@
     //Update time
     bufferMaterial.uniforms.time.value += 0.01;
     //Finally, draw to the screen
+    renderer.setRenderTarget(null);
     renderer.render(scene, camera);
   }
 
