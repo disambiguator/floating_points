@@ -4,5 +4,5 @@
 
 `npm install`
 
-# To compile webpack resources
-`npm run watch`
+# Development
+`now dev`
