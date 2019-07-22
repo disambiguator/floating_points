@@ -9,6 +9,7 @@ const pages = [
   { name: 'Scatter', path: '/scatter' },
   { name: 'Divide', path: '/divide' },
   { name: 'Cubes', path: '/cubes' },
+  { name: 'Overlap', path: '/overlap' },
 ]
 
 const translateDistance = 1
