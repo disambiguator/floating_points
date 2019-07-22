@@ -29,7 +29,7 @@
     "eslint-config-p5js": "^1.0.1"
   },
   "dependencies": {
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "next": "^8.0.0-canary.7",
     "p5": "^0.7.1",
     "react": "^16.7.0",
