@@ -77,15 +77,13 @@ function randInt (min, max) {
   return Math.floor(Math.random() * max) + min
 }
 
-function addComplexity () {
-  positions.push({
+const randPosition = () => ({
     radius: randInt(50, 300),
     arc: randInt(0, 360),
     phi: randInt(0, 360),
     speed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints),
     phiSpeed: 0
-  })
-}
+})
 
 function getPoint (radius, theta, phi) {
   const xCoordinate = radius * Math.sin(theta) * Math.cos(phi)
@@ -126,6 +124,8 @@ function enableColor (event) {
   uniforms.color.value = event.target.checked ? 1. : 0.
 }
 
+const initPositions = () => positions = [randPosition(), randPosition()]
+
 class Spiro extends React.Component {
   componentDidMount () {
     const width = window.innerWidth;
@@ -136,7 +136,7 @@ class Spiro extends React.Component {
       height: height
     })
 
-    _.times(2, addComplexity)
+    initPositions()
 
     this.scene = new THREE.Scene()
 
@@ -227,6 +227,7 @@ class Spiro extends React.Component {
         <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider}/>
         <label>Color</label>
         <input type="checkbox" onInput={enableColor}/>
+        <button onClick={initPositions}>New Positions</button>
       </div>
     )
   }
