@@ -83,7 +83,7 @@ function addComplexity () {
     arc: randInt(0, 360),
     phi: randInt(0, 360),
     speed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints),
-    phiSpeed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints)
+    phiSpeed: 0
   })
 }
 
