@@ -124,7 +124,34 @@ function enableColor (event) {
   uniforms.color.value = event.target.checked ? 1. : 0.
 }
 
-const initPositions = () => positions = [randPosition(), randPosition()]
+const addToPresets = () => (
+  fetch('/api/addPreset', {
+    method: 'POST',
+    body: JSON.stringify({seeds: seeds})
+  })
+)
+
+const initPositions = () => {
+  seeds = [randPosition(), randPosition()]
+  positions = [...seeds]
+}
+
+let seeds = []
+let presets = []
+
+const initFromPreset = () => {
+  const randomPreset = _.sample(presets)
+
+  fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
+    .then((response) => response.json())
+    .then((responses) => {positions = responses})
+}
+
+const getInitialPresets = async () => {
+  const response = await fetch('/api/getPresets')
+  const json = await response.json()
+  presets = json.presets
+}
 
 class Spiro extends React.Component {
   componentDidMount () {
@@ -137,6 +164,7 @@ class Spiro extends React.Component {
     })
 
     initPositions()
+    getInitialPresets()
 
     this.scene = new THREE.Scene()
 
@@ -227,7 +255,10 @@ class Spiro extends React.Component {
         <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider}/>
         <label>Color</label>
         <input type="checkbox" onInput={enableColor}/>
+
+        <button onClick={addToPresets}>Add to Presets</button>
         <button onClick={initPositions}>New Positions</button>
+        <button onClick={initFromPreset}>Random Preset</button>
       </div>
     )
   }

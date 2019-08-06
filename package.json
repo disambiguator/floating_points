@@ -8,10 +8,8 @@
   },
   "scripts": {
     "test": "eslint --ignore-path .gitignore .",
-    "dev": "next",
     "build": "next build",
-    "start": "next start",
-    "now-build": "next build"
+    "start": "next start"
   },
   "repository": {
     "type": "git",
@@ -31,6 +29,7 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "next": "^8.1.0",
+    "node-fetch": "^2.6.0",
     "p5": "^0.7.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
