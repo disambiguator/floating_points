@@ -2,6 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 import _ from 'lodash'
+import Scene from '../components/scene'
 
 const OrbitControls = orbitControlsConstructor(THREE)
 
@@ -153,7 +154,7 @@ const getInitialPresets = async () => {
   presets = json.presets
 }
 
-class Spiro extends React.Component {
+class Spiro extends Scene {
   componentDidMount () {
     const width = window.innerWidth
     const height = window.innerHeight
@@ -165,8 +166,6 @@ class Spiro extends React.Component {
 
     initPositions()
     getInitialPresets()
-
-    this.scene = new THREE.Scene()
 
     this.camera = new THREE.PerspectiveCamera(
       45,
@@ -205,32 +204,12 @@ class Spiro extends React.Component {
     this.start()
   }
 
-  componentWillUnmount () {
-    this.stop()
-    this.mount.removeChild(this.renderer.domElement)
-  }
-
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = window.requestAnimationFrame(this.animate)
-    }
-  }
-
-  stop = () => {
-    window.cancelAnimationFrame(this.frameId)
-  }
-
-  animate = () => {
+  renderScene = () => {
     geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
     geometry.attributes.position.needsUpdate = true
 
-    this.renderScene()
-    this.controls.update()
-    this.frameId = window.requestAnimationFrame(this.animate)
-  }
-
-  renderScene = () => {
     this.renderer.render(this.scene, this.camera)
+    this.controls.update()
   }
 
   updateRayCaster (x, y) {
