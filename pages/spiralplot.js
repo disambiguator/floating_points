@@ -43,9 +43,9 @@ class Spiral extends React.Component {
     window.removeEventListener('resize', this.updateDimensions)
   }
 
-  drawLine = (points_1, points_2) => {
-    const [x1, y1] = points_1
-    let [x2, y2] = points_2
+  drawLine = (points1, points2) => {
+    const [x1, y1] = points1
+    let [x2, y2] = points2
     const l = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
 
     x2 = x1 + (l + delta) * (x2 - x1) / l
@@ -65,7 +65,6 @@ class Spiral extends React.Component {
     const timer = this.timer
     const sides = this.sides
     this.ctx.fillRect(0, 0, width, height)
-    const i = 0
     const theta = 2 * Math.PI / sides
     const x0 = width / 2
     const y0 = height / 2
@@ -99,7 +98,7 @@ class Spiral extends React.Component {
         <canvas
           width={1}
           height={1}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
         <input type='range' min={0} max={100} onInput={this.onInput} />
       </div>

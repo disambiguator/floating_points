@@ -107,7 +107,7 @@ gl_FragColor.xyz = col;
   render () {
     return (
       <div>
-        <div ref={mount => this.mount = mount} />
+        <div ref={mount => { this.mount = mount }} />
       </div>
     )
   }

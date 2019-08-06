@@ -14,12 +14,12 @@ class Scene extends React.Component {
 
   start = () => {
     if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
+      this.frameId = window.requestAnimationFrame(this.animate)
     }
   }
 
   stop = () => {
-    cancelAnimationFrame(this.frameId)
+    window.cancelAnimationFrame(this.frameId)
   }
 
   animate = () => {

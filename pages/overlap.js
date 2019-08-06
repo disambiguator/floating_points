@@ -94,7 +94,7 @@ class CubeZoom extends Scene {
 
         <div
           style={{ width: '1200px', height: '1200px' }}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
       </Container>
     )

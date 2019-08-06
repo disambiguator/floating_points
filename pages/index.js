@@ -174,7 +174,7 @@ class Scatter extends React.Component {
           style={{ position: 'fixed', top: 0, left: 0 }}
           width={1}
           height={1}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
       </div>
     )

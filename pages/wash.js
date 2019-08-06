@@ -4,7 +4,6 @@ import styled from 'styled-components'
 const width = 800
 const height = 800
 
-const translateDistance = 1
 let timer = 0
 
 const Container = styled.div`
@@ -46,12 +45,12 @@ class Scatter extends React.Component {
 
   start = () => {
     if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
+      this.frameId = window.requestAnimationFrame(this.animate)
     }
   }
 
   stop = () => {
-    cancelAnimationFrame(this.frameId)
+    window.cancelAnimationFrame(this.frameId)
   }
 
   animate = () => {
@@ -67,7 +66,7 @@ class Scatter extends React.Component {
 
     this.ctx.save()
 
-    const rightRegion = new Path2D()
+    // const rightRegion = new Path2D()
     // rightRegion.moveTo(this.points[0].x, this.points[0].y);
     // rightRegion.lineTo(this.points[1].x, this.points[1].y);
     // rightRegion.lineTo(width, height)
@@ -114,7 +113,7 @@ class Scatter extends React.Component {
         <canvas
           width={width}
           height={height}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
       </Container>
     )

@@ -1,7 +1,6 @@
 // this doesnt work yet
 
 import React from 'react'
-import styled from 'styled-components'
 import * as THREE from 'three'
 
 const fragmentShader = `
@@ -114,12 +113,12 @@ class Feedback extends React.Component {
 
   start = () => {
     if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
+      this.frameId = window.requestAnimationFrame(this.animate)
     }
   }
 
   stop = () => {
-    cancelAnimationFrame(this.frameId)
+    window.cancelAnimationFrame(this.frameId)
   }
 
   animate = () => {
@@ -147,10 +146,8 @@ class Feedback extends React.Component {
   render () {
     return (
       <div>
-        <video id='video' autoPlay ref={video => this.video = video} />
-        <div
-          ref={mount => this.mount = mount}
-        />
+        <video id='video' autoPlay ref={video => { this.video = video }} />
+        <div ref={mount => { this.mount = mount }} />
       </div>
     )
   }

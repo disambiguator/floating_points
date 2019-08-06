@@ -79,7 +79,7 @@ class Scatter extends React.Component {
         <canvas
           width={800}
           height={800}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
       </Container>
     )

@@ -100,7 +100,7 @@ class Scatter extends Scene {
 
         <div
           style={{ width: '400px', height: '400px' }}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
       </Container>
     )

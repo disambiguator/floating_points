@@ -12,10 +12,6 @@ const constraints = {
 }
 
 class Micromovements extends React.Component {
-  constructor (props) {
-    super(props)
-  }
-
   componentDidMount () {
     navigator.mediaDevices.getUserMedia(constraints)
       .then((stream) => (this.video.srcObject = stream))
@@ -52,7 +48,7 @@ class Micromovements extends React.Component {
       <canvas
         width={width}
         height={height}
-        ref={(c) => this.context = c.getContext('2d')}
+        ref={(c) => { this.context = c.getContext('2d') }}
       />
     </div>
   )

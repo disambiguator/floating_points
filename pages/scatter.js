@@ -103,12 +103,12 @@ class Scatter extends React.Component {
 
   start = () => {
     if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
+      this.frameId = window.requestAnimationFrame(this.animate)
     }
   }
 
   stop = () => {
-    cancelAnimationFrame(this.frameId)
+    window.cancelAnimationFrame(this.frameId)
   }
 
   animate = () => {
@@ -138,7 +138,7 @@ class Scatter extends React.Component {
 
         <div
           style={{ width: '800px', height: '800px' }}
-          ref={mount => this.mount = mount}
+          ref={mount => { this.mount = mount }}
         />
       </Container>
     )

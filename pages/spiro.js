@@ -125,7 +125,7 @@ function enableColor (event) {
 }
 
 const addToPresets = () => (
-  fetch('/api/addPreset', {
+  window.fetch('/api/addPreset', {
     method: 'POST',
     body: JSON.stringify({ seeds: seeds })
   })
@@ -142,13 +142,13 @@ let presets = []
 const initFromPreset = () => {
   const randomPreset = _.sample(presets)
 
-  fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
+  window.fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
     .then((response) => response.json())
     .then((responses) => { positions = responses })
 }
 
 const getInitialPresets = async () => {
-  const response = await fetch('/api/getPresets')
+  const response = await window.fetch('/api/getPresets')
   const json = await response.json()
   presets = json.presets
 }
@@ -212,12 +212,12 @@ class Spiro extends React.Component {
 
   start = () => {
     if (!this.frameId) {
-      this.frameId = requestAnimationFrame(this.animate)
+      this.frameId = window.requestAnimationFrame(this.animate)
     }
   }
 
   stop = () => {
-    cancelAnimationFrame(this.frameId)
+    window.cancelAnimationFrame(this.frameId)
   }
 
   animate = () => {
