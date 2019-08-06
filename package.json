@@ -21,15 +21,21 @@
     "url": "https://github.com/disambiguator/floating_points/issues"
   },
   "standard": {
-    "parser": "babel-eslint"
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint/eslint-plugin"
+    ]
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
-    "babel-eslint": "^10.0.2",
+    "@types/node": "^12.6.9",
+    "@types/react": "^16.8.24",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
     "babel-plugin-styled-components": "^1.10.6",
     "eslint": "^6.1.0",
-    "eslint-config-p5js": "^1.0.1",
-    "standard": "^13.1.0"
+    "standard": "^13.1.0",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
     "lodash": "^4.17.15",
