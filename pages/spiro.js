@@ -1,5 +1,5 @@
-import React from 'react';
-import * as THREE from 'three';
+import React from 'react'
+import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 import _ from 'lodash'
 
@@ -78,11 +78,11 @@ function randInt (min, max) {
 }
 
 const randPosition = () => ({
-    radius: randInt(50, 300),
-    arc: randInt(0, 360),
-    phi: randInt(0, 360),
-    speed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints),
-    phiSpeed: 0
+  radius: randInt(50, 300),
+  arc: randInt(0, 360),
+  phi: randInt(0, 360),
+  speed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints),
+  phiSpeed: 0
 })
 
 function getPoint (radius, theta, phi) {
@@ -121,13 +121,13 @@ function amplitudeSlider (event) {
 }
 
 function enableColor (event) {
-  uniforms.color.value = event.target.checked ? 1. : 0.
+  uniforms.color.value = event.target.checked ? 1.0 : 0.0
 }
 
 const addToPresets = () => (
   fetch('/api/addPreset', {
     method: 'POST',
-    body: JSON.stringify({seeds: seeds})
+    body: JSON.stringify({ seeds: seeds })
   })
 )
 
@@ -144,7 +144,7 @@ const initFromPreset = () => {
 
   fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
     .then((response) => response.json())
-    .then((responses) => {positions = responses})
+    .then((responses) => { positions = responses })
 }
 
 const getInitialPresets = async () => {
@@ -155,8 +155,8 @@ const getInitialPresets = async () => {
 
 class Spiro extends React.Component {
   componentDidMount () {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = window.innerWidth
+    const height = window.innerHeight
 
     this.setState({
       width: width,
@@ -252,9 +252,9 @@ class Spiro extends React.Component {
         onMouseMove={this.mouseMove}
       >
         <label>Amplitude</label>
-        <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider}/>
+        <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider} />
         <label>Color</label>
-        <input type="checkbox" onInput={enableColor}/>
+        <input type='checkbox' onInput={enableColor} />
 
         <button onClick={addToPresets}>Add to Presets</button>
         <button onClick={initPositions}>New Positions</button>
@@ -264,4 +264,4 @@ class Spiro extends React.Component {
   }
 }
 
-export default Spiro;
+export default Spiro

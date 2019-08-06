@@ -1,13 +1,13 @@
-import React from 'react';
-import Scene from '../components/scene';
-import styled from 'styled-components';
-import * as THREE from 'three';
+import React from 'react'
+import Scene from '../components/scene'
+import styled from 'styled-components'
+import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 
 const OrbitControls = orbitControlsConstructor(THREE)
 
 const generateCube = (length) => {
-  const geometry = new THREE.BoxGeometry(length, length, length);
+  const geometry = new THREE.BoxGeometry(length, length, length)
   // for ( var i = 0; i < geometry.faces.length; i ++ ) {
   //   geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
   // }
@@ -20,7 +20,7 @@ const generateCube = (length) => {
       transparent: true,
       opacity: 0.1
     })
-  );
+  )
 }
 
 const Container = styled.div`
@@ -57,11 +57,11 @@ class CubeZoom extends Scene {
     let previousCube = generateCube(increment)
     this.scene.add(previousCube)
     const direction = () => Math.random() > 0.5 ? -1 : -1
-    for (let i = increment*2; i < 500; i = i + increment) {
+    for (let i = increment * 2; i < 500; i = i + increment) {
       const newCube = generateCube(i)
-      newCube.position.x = previousCube.position.x + direction() * increment/2
-      newCube.position.y = previousCube.position.y + direction() * increment/2
-      newCube.position.z = previousCube.position.z + direction() * increment/2
+      newCube.position.x = previousCube.position.x + direction() * increment / 2
+      newCube.position.y = previousCube.position.y + direction() * increment / 2
+      newCube.position.z = previousCube.position.z + direction() * increment / 2
       this.scene.add(newCube)
       previousCube = newCube
     }

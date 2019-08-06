@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 let section = 0
 const size = 50
@@ -43,7 +43,7 @@ class Micromovements extends React.Component {
   render = () => (
     <div>
       <video
-        autoPlay={true}
+        autoPlay
         ref={(v) => {
           console.log(v)
           this.video = v
@@ -58,4 +58,4 @@ class Micromovements extends React.Component {
   )
 }
 
-export default Micromovements;
+export default Micromovements

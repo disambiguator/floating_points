@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import * as THREE from 'three';
+import React from 'react'
+import styled from 'styled-components'
+import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 
 const OrbitControls = orbitControlsConstructor(THREE)
@@ -59,10 +59,10 @@ class Scatter extends React.Component {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
 
-    //ADD SCENE
+    // ADD SCENE
     this.scene = new THREE.Scene()
 
-    //ADD CAMERA
+    // ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(
       75,
       width / height,
@@ -71,8 +71,8 @@ class Scatter extends React.Component {
     )
     this.camera.position.z = 100
 
-    //ADD RENDERER
-    this.renderer = new THREE.WebGLRenderer({antialias: true})
+    // ADD RENDERER
+    this.renderer = new THREE.WebGLRenderer({ antialias: true })
     this.renderer.setClearColor('#000000')
     this.renderer.setSize(width, height)
     this.mount.appendChild(this.renderer.domElement)
@@ -83,7 +83,7 @@ class Scatter extends React.Component {
     this.uniforms = {
       resolution: { value: new THREE.Vector2(800, 800), type: 'v2' },
       distortion: new THREE.Uniform(generateDistortion())
-    };
+    }
     this.redCube = new THREE.Mesh(
       new THREE.PlaneGeometry(300, 300, 32),
       new THREE.ShaderMaterial({
@@ -91,8 +91,8 @@ class Scatter extends React.Component {
         // vertexShader: vertexShader,
         fragmentShader: fragmentShader
       })
-    );
-    this.scene.add(this.redCube);
+    )
+    this.scene.add(this.redCube)
     this.start()
   }
 

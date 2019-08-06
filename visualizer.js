@@ -1,6 +1,6 @@
 var fft, mySound, peakDetect
 
-function setup() {
+function setup () {
   createCanvas(windowWidth, windowHeight)
   noFill()
   strokeWeight(5)
@@ -11,13 +11,13 @@ function setup() {
   setupVisualizer()
 }
 
-function draw() {
+function draw () {
   background(0, 0, 0, 10)
 
   drawCircle()
 }
 
-function drawCircle() {
+function drawCircle () {
   var numPoints = 360
   var spectrum = fft.analyze()
   // peakDetect.update(fft)
@@ -28,8 +28,6 @@ function drawCircle() {
   // } else {
   //     strokeWeight(5)
   // }
-
-
 
   for (var i = 0; i < numPoints; i++) {
     var radius = 40 + spectrum[i]
@@ -44,7 +42,7 @@ function drawCircle() {
   }
 }
 
-function setRandomStroke() {
+function setRandomStroke () {
   r = random(255)
   g = random(255)
   b = random(255)
@@ -52,13 +50,13 @@ function setRandomStroke() {
   stroke(r, g, b, 100)
 }
 
-function preload() {
+function preload () {
   mySound = loadSound('/sound.wav')
   // mySound = new p5.AudioIn()
   // mySound.start()
 }
 
-function setupVisualizer() {
+function setupVisualizer () {
   mySound.setVolume(0.1)
   mySound.play()
 
@@ -67,4 +65,3 @@ function setupVisualizer() {
 
   peakDetect = new p5.PeakDetect(20, 500)
 }
-

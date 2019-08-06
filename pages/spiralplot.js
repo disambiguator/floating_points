@@ -1,9 +1,9 @@
+import React from 'react'
+
 let delta = 10
 const l = 15
 // const colors = ['#ff0000', '#00ff00', '#0000ff']
 const colors = ['#4018FF', '#1F43E8', '#1E95FF', '#11CDE8', '#1EFFC9', '#2846FF', '#117AE8', '#2EDDFF']
-
-import React from 'react';
 
 class Spiral extends React.Component {
   constructor (props) {
@@ -14,19 +14,19 @@ class Spiral extends React.Component {
   }
 
   componentDidMount () {
-    this.ctx = this.mount.getContext('2d');
+    this.ctx = this.mount.getContext('2d')
 
     this.updateDimensions()
     this.interval = setInterval(this.animate, 10)
-    window.addEventListener("resize", this.updateDimensions)
-    this.ctx.lineWidth = 1;
+    window.addEventListener('resize', this.updateDimensions)
+    this.ctx.lineWidth = 1
     this.ctx.fillStyle = '#000000'
     // this.animate()
 
     // this.ctx.fillRect(0, 0, width, height)
     // this.ctx.fillStyle = '#ffffff'
-    this.ctx.textAlign = "center";
-    this.ctx.font = "50px Courier New";
+    this.ctx.textAlign = 'center'
+    this.ctx.font = '50px Courier New'
   }
 
   updateDimensions = () => {
@@ -35,12 +35,12 @@ class Spiral extends React.Component {
   }
 
   onInput = (event) => {
-    this.timer = event.currentTarget.value * Math.PI/180
+    this.timer = event.currentTarget.value * Math.PI / 180
   }
 
   componentWillUnmount () {
     clearInterval(this.interval)
-    window.removeEventListener("resize", this.updateDimensions)
+    window.removeEventListener('resize', this.updateDimensions)
   }
 
   drawLine = (points_1, points_2) => {
@@ -52,9 +52,9 @@ class Spiral extends React.Component {
     y2 = y1 + (l + delta) * (y2 - y1) / l
     // pygame.draw.aalines(self.screen, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), False, [(x1, y1), (x2, y2)], 1)
     this.ctx.beginPath()
-    this.ctx.moveTo(x1, y1);
-    this.ctx.lineTo(x2, y2);
-    this.ctx.stroke();
+    this.ctx.moveTo(x1, y1)
+    this.ctx.lineTo(x2, y2)
+    this.ctx.stroke()
 
     return [x2, y2]
   }
@@ -76,13 +76,12 @@ class Spiral extends React.Component {
 
     // delta = 43 + 40 * Math.cos(this.timer*Math.PI/180)
     delta = 4
-    if(delta === 3) {
+    if (delta === 3) {
       this.sides++
-      if(this.sides > 8) {
+      if (this.sides > 8) {
         this.sides = 3
       }
     }
-
 
     for (let x = 0; x < 1000; x++) {
       coords = [...Array(sides).keys()].map((y) => {
@@ -92,7 +91,6 @@ class Spiral extends React.Component {
     }
 
     // this.timer = this.timer + 1
-
   }
 
   render () {

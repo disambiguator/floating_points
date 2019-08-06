@@ -1,4 +1,4 @@
-import {airtablePut} from '../lib/airtable'
+import { airtablePut } from '../lib/airtable'
 
 const addToPositions = (seed) => airtablePut('position', seed)
 
@@ -8,7 +8,7 @@ module.exports = (req, res) => {
     Promise.all(positionRequest)
       .then((responses) => (
         airtablePut('preset', {
-          positions: [responses[0].id, responses[1].id],
+          positions: [responses[0].id, responses[1].id]
         })
       ))
       .then((response) => { res.json(response) })

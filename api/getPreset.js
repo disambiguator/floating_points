@@ -1,4 +1,4 @@
-import {airtableShow} from '../lib/airtable'
+import { airtableShow } from '../lib/airtable'
 
 module.exports = (req, res) => {
   const ids = JSON.parse(req.query.ids)

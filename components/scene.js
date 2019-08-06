@@ -1,13 +1,13 @@
-import React from 'react';
-import * as THREE from 'three';
+import React from 'react'
+import * as THREE from 'three'
 
 class Scene extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.scene = new THREE.Scene()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.stop()
     this.mount.removeChild(this.renderer.domElement)
   }

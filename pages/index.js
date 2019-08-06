@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 import Link from 'next/link'
 
 const pages = [
@@ -9,7 +9,7 @@ const pages = [
   { name: 'Scatter', path: '/scatter' },
   { name: 'Divide', path: '/divide' },
   { name: 'Cubes', path: '/cubes' },
-  { name: 'Overlap', path: '/overlap' },
+  { name: 'Overlap', path: '/overlap' }
 ]
 
 const translateDistance = 1
@@ -42,8 +42,8 @@ const endPoints = ({ width, height, slope }) => {
     { x: -b / m, y: 0 },
     { x: 0, y: b },
     { x: (height - b) / m, y: height },
-    { x: width, y: m * width + b },
-  ].filter((point) => (0 <= point.x && point.x <= width && 0 <= point.y && point.y <= height))
+    { x: width, y: m * width + b }
+  ].filter((point) => (point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height))
 }
 
 class Scatter extends React.Component {
@@ -54,34 +54,34 @@ class Scatter extends React.Component {
   }
 
   componentDidMount () {
-    this.ctx = this.mount.getContext('2d');
+    this.ctx = this.mount.getContext('2d')
 
     this.updateDimensions()
     const width = this.mount.width
     const height = this.mount.height
 
     this.interval = setInterval(this.animate, 10)
-    window.addEventListener("resize", this.updateDimensions)
-    this.ctx.lineWidth = 5;
+    window.addEventListener('resize', this.updateDimensions)
+    this.ctx.lineWidth = 5
     this.ctx.fillRect(0, 0, width, height)
     this.ctx.fillStyle = '#ffffff'
-    this.ctx.textAlign = "center";
-    this.ctx.font = "50px Courier New";
-    this.ctx.fillText("disambiguator", width / 2, height / 2);
+    this.ctx.textAlign = 'center'
+    this.ctx.font = '50px Courier New'
+    this.ctx.fillText('disambiguator', width / 2, height / 2)
   }
 
   updateDimensions = () => {
-    const temp = this.ctx.getImageData(0,0,this.mount.width, this.mount.height)
+    const temp = this.ctx.getImageData(0, 0, this.mount.width, this.mount.height)
 
     this.mount.width = window.innerWidth
     this.mount.height = window.innerHeight
 
-    this.ctx.putImageData(temp,0,0)
+    this.ctx.putImageData(temp, 0, 0)
   }
 
   componentWillUnmount () {
     clearInterval(this.interval)
-    window.removeEventListener("resize", this.updateDimensions)
+    window.removeEventListener('resize', this.updateDimensions)
   }
 
   setNewFragmentWidth = () => {
@@ -99,13 +99,13 @@ class Scatter extends React.Component {
 
       this.points = endPoints({ width: width, height: height, slope: slope })
 
-      this.ctx.beginPath();
+      this.ctx.beginPath()
       // this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
 
-      const r = Math.random() * 100 + 30;
+      const r = Math.random() * 100 + 30
 
-      this.ctx.strokeStyle = `rgb(${r},${r},${r})`;
-      this.ctx.moveTo(this.points[0].x, this.points[0].y);
+      this.ctx.strokeStyle = `rgb(${r},${r},${r})`
+      this.ctx.moveTo(this.points[0].x, this.points[0].y)
 
       // const a = this.points[0].x < this.points[1].x ? this.points[0].x : this.points[1].x
       // const b = this.points[0].x < this.points[1].x ? this.points[1].x : this.points[0].x
@@ -116,38 +116,38 @@ class Scatter extends React.Component {
       //   this.ctx.lineTo(i, y);
       // }
 
-      this.ctx.lineTo(this.points[1].x, this.points[1].y);
-      this.ctx.stroke();
+      this.ctx.lineTo(this.points[1].x, this.points[1].y)
+      this.ctx.stroke()
 
       this.setNewFragmentWidth()
     }
 
-    this.ctx.save();
+    this.ctx.save()
 
     const rightRegion = new Path2D()
-    rightRegion.moveTo(this.points[0].x, this.points[0].y);
-    rightRegion.lineTo(this.points[1].x, this.points[1].y);
+    rightRegion.moveTo(this.points[0].x, this.points[0].y)
+    rightRegion.lineTo(this.points[1].x, this.points[1].y)
     rightRegion.lineTo(width, height)
     rightRegion.lineTo(width, 0)
     rightRegion.lineTo(this.points[0].x, this.points[0].y)
-    this.ctx.clip(rightRegion);
-    this.ctx.translate(this.slopeX, this.slopeY);
-    this.ctx.drawImage(this.mount, translateDistance, 0);
-    this.ctx.restore();
+    this.ctx.clip(rightRegion)
+    this.ctx.translate(this.slopeX, this.slopeY)
+    this.ctx.drawImage(this.mount, translateDistance, 0)
+    this.ctx.restore()
 
-    this.ctx.save();
+    this.ctx.save()
     const leftRegion = new Path2D()
-    leftRegion.moveTo(this.points[0].x, this.points[0].y);
-    leftRegion.lineTo(this.points[1].x, this.points[1].y);
+    leftRegion.moveTo(this.points[0].x, this.points[0].y)
+    leftRegion.lineTo(this.points[1].x, this.points[1].y)
     leftRegion.lineTo(0, height)
     leftRegion.lineTo(0, 0)
     leftRegion.lineTo(this.points[0].x, this.points[0].y)
-    this.ctx.clip(leftRegion);
-    this.ctx.translate(-this.slopeX, -this.slopeY);
-    this.ctx.drawImage(this.mount, -translateDistance, 0);
-    this.ctx.restore();
+    this.ctx.clip(leftRegion)
+    this.ctx.translate(-this.slopeX, -this.slopeY)
+    this.ctx.drawImage(this.mount, -translateDistance, 0)
+    this.ctx.restore()
 
-    this.timer++;
+    this.timer++
   }
 
   render () {

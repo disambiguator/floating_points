@@ -1,6 +1,6 @@
-import React from 'react';
-import Scene from '../components/scene';
-import * as THREE from 'three';
+import React from 'react'
+import Scene from '../components/scene'
+import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 
 const OrbitControls = orbitControlsConstructor(THREE)
@@ -14,11 +14,11 @@ class Edge extends Scene {
     this.height = this.mount.height
     this.time = 0
 
-    //ADD CAMERA
-    this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 1000);
-    this.camera.position.z = 2;
+    // ADD CAMERA
+    this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 1000)
+    this.camera.position.z = 2
 
-    //ADD RENDERER
+    // ADD RENDERER
     this.renderer = new THREE.WebGLRenderer()
     this.renderer.setSize(this.width, this.height)
     this.mount.appendChild(this.renderer.domElement)
@@ -81,15 +81,15 @@ gl_FragColor.xyz = col;
     this.bufferMaterial = new THREE.ShaderMaterial({
       uniforms: {
         res: { type: 'v2', value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        videoTexture: { type: "t", value: new THREE.TextureLoader().load( "/static/bernal.jpg" ) },
-        distortion: {type: "f", value: 1.0},
-        time: { type: "f", value: Math.random() * Math.PI * 2 + Math.PI }
+        videoTexture: { type: 't', value: new THREE.TextureLoader().load('/static/bernal.jpg') },
+        distortion: { type: 'f', value: 1.0 },
+        time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI }
       },
       fragmentShader: edgeShader
-    });
-    const plane = new THREE.PlaneBufferGeometry(this.width, this.height);
-    this.quad = new THREE.Mesh(plane, this.bufferMaterial);
-    this.scene.add(this.quad);
+    })
+    const plane = new THREE.PlaneBufferGeometry(this.width, this.height)
+    this.quad = new THREE.Mesh(plane, this.bufferMaterial)
+    this.scene.add(this.quad)
   }
 
   componentWillUnmount () {
@@ -100,14 +100,14 @@ gl_FragColor.xyz = col;
   renderScene = () => {
     this.time += 0.02
     this.bufferMaterial.uniforms.time.value = this.time
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.camera)
     this.controls.update()
   }
 
   render () {
     return (
       <div>
-        <div ref={mount => this.mount = mount}/>
+        <div ref={mount => this.mount = mount} />
       </div>
     )
   }

@@ -6,7 +6,7 @@ var initialArc = 0
 var amplitude
 var direction = 0.1
 
-function setup() {
+function setup () {
   setupVisualizer()
 
   createCanvas(windowWidth, windowHeight)
@@ -17,7 +17,7 @@ function setup() {
   background(0, 0, 0)
 }
 
-function draw() {
+function draw () {
   setRandomStroke()
 
   background(0, 0, 0, 10)
@@ -36,24 +36,23 @@ function draw() {
   drawCircle(radiusScale * 7, buckets[1])
   drawCircle(radiusScale * 8, buckets[0])
 
-  if (Math.abs(offset) > 15)
-    direction = -direction
+  if (Math.abs(offset) > 15) { direction = -direction }
 
   //  offset += direction
 
   initialArc += 0.2
 }
 
-function mousePressed() {
+function mousePressed () {
   stroke(255, 204, 0, 25)
   ellipse(mouseX, mouseY, 25)
 }
 
-function randomColor() {
+function randomColor () {
   return _.sample(colors)
 }
 
-function drawCircle(radius, bucket) {
+function drawCircle (radius, bucket) {
   var numPoints = radius / 8
 
   fft.analyze()
@@ -70,11 +69,11 @@ function drawCircle(radius, bucket) {
   }
 }
 
-function preload() {
+function preload () {
   mySound = loadSound('/quantic.mp3')
 }
 
-function setRandomStroke() {
+function setRandomStroke () {
   r = random(127, 255)
   g = random(127, 255)
   b = random(127, 255)
@@ -82,7 +81,7 @@ function setRandomStroke() {
   stroke(r, g, b, 50)
 }
 
-function setupVisualizer() {
+function setupVisualizer () {
   mySound.setVolume(0.1)
   mySound.jump(random(0, mySound.duration()))
 
@@ -92,8 +91,8 @@ function setupVisualizer() {
   amplitude = new p5.Amplitude()
 }
 
-window.onload = function() {
-  document.getElementById('offset').onchange = function(e) {
+window.onload = function () {
+  document.getElementById('offset').onchange = function (e) {
     offset = e.target.value
   }
 }

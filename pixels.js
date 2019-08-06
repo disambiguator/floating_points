@@ -7,22 +7,22 @@ let fanSlice = false
 let slope
 let reflectMode = false
 
-function preload() {
+function preload () {
   img = loadImage(imageLibrary())
 }
 
-function imageLibrary() {
+function imageLibrary () {
   return sample([
     'http://i.imgur.com/Fx6BGlt.jpg',
     'https://i.imgur.com/IwnuBWX.jpg'
   ])
 }
 
-function sample(array) {
+function sample (array) {
   return array[Math.floor(Math.random() * array.length)]
 }
 
-function step(x, y, yMax, reflect) {
+function step (x, y, yMax, reflect) {
   const temp = getPixelArray(x, y)
   let j = y + 1
   while (j <= yMax && hue(getPixelArray(x, j)) > hue(temp)) {
@@ -38,11 +38,11 @@ function step(x, y, yMax, reflect) {
   }
 }
 
-function sliceRand() {
+function sliceRand () {
   slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50))
 }
 
-function setup() {
+function setup () {
   pixelDensity(1)
   createCanvas(width, height)
   frameRate(100)
@@ -50,29 +50,29 @@ function setup() {
   reset()
 }
 
-function enableFanSlice() {
+function enableFanSlice () {
   slope = -5
   slice(slope, height / 2, 5)
   fanSlice = true
 }
 
-function imageSubmit() {
+function imageSubmit () {
   const path = document.getElementById('imageUrl').value
   img = loadImage(path, reset)
 }
 
-function reflectButton(e) {
+function reflectButton (e) {
   reflectMode = e.checked
 }
 
-function slice(m, b, sliceSize) {
+function slice (m, b, sliceSize) {
   for (let x = 0; x < width; x++) {
     const y = int(m * x + b)
     updatePositions(x, y, y + sliceSize)
   }
 }
 
-function toggleAutoSlice() {
+function toggleAutoSlice () {
   if (autoSlice) {
     document.getElementById('autoSlice').innerText = 'Auto-Slice Start'
   } else {
@@ -83,13 +83,13 @@ function toggleAutoSlice() {
   frameRate(100)
 }
 
-function fullySort() {
+function fullySort () {
   for (let x = 0; x < width; x++) {
     updatePositions(x, 0, height)
   }
 }
 
-function mouseDragged() {
+function mouseDragged () {
   const x = Math.floor(mouseX)
   const y = Math.floor(mouseY)
 
@@ -104,7 +104,7 @@ function mouseDragged() {
   }
 }
 
-function updatePositions(x, yMin, yMax) {
+function updatePositions (x, yMin, yMax) {
   positions[x] = {
     minimumY: yMin,
     currentY: yMax,
@@ -114,10 +114,10 @@ function updatePositions(x, yMin, yMax) {
   frameRate(100)
 }
 
-function draw() {
+function draw () {
   loadPixels()
 
-  Object.keys(positions).forEach(function(currentX) {
+  Object.keys(positions).forEach(function (currentX) {
     const p = positions[currentX]
 
     if (p.currentY > p.minimumY) {
@@ -144,7 +144,7 @@ function draw() {
   }
 }
 
-function setPixelArray(x, y, o) {
+function setPixelArray (x, y, o) {
   const idx = 4 * (y * width + x)
   pixels[idx] = o[0]
   pixels[idx + 1] = o[1]
@@ -152,7 +152,7 @@ function setPixelArray(x, y, o) {
   pixels[idx + 3] = o[3]
 }
 
-function getPixelArray(x, y) {
+function getPixelArray (x, y) {
   const off = (y * width + x) * 4
   return [
     pixels[off],
@@ -162,20 +162,20 @@ function getPixelArray(x, y) {
   ]
 }
 
-function reset() {
+function reset () {
   image(img, 0, 0, width, height)
   positions = {}
 }
 
-function randRange(min, max) {
+function randRange (min, max) {
   return int(Math.random() * (max - min) + min)
 }
 
-function randRangeDouble(min, max) {
+function randRangeDouble (min, max) {
   return Math.random() * (max - min) + min
 }
 
-function reflectImage() {
+function reflectImage () {
   loadPixels()
 
   for (let x = 0; x < width; x++) {
