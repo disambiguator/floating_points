@@ -155,14 +155,13 @@ const getInitialPresets = async () => {
 }
 
 class Spiro extends Scene {
+  private camera: THREE.PerspectiveCamera;
+
+  private controls: any;
+
   componentDidMount () {
     const width = window.innerWidth
     const height = window.innerHeight
-
-    this.setState({
-      width: width,
-      height: height
-    })
 
     initPositions()
     getInitialPresets()
@@ -221,10 +220,16 @@ class Spiro extends Scene {
     uniforms.direction.value = raycaster.ray.direction
   }
 
+  mouseMove = (event) => {
+    this.updateRayCaster(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1
+    )
+  }
+
   render () {
     return (
       <div
-        style={{ width: this.width, height: this.height }}
         ref={(mount) => {
           this.mount = mount
         }}
