@@ -134,7 +134,13 @@ const addToPresets = () => (
 
 const initPositions = () => {
   seeds = [randPosition(), randPosition()]
-  positions = [...seeds]
+  setPositions([...seeds])
+}
+
+const setPositions = (p) => {
+  positions = p
+  geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
+  geometry.attributes.position.needsUpdate = true
 }
 
 let seeds = []
@@ -145,7 +151,7 @@ const initFromPreset = () => {
 
   window.fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
     .then((response) => response.json())
-    .then((responses) => { positions = responses })
+    .then((responses) => setPositions(responses))
 }
 
 const getInitialPresets = async () => {
@@ -194,7 +200,6 @@ class Spiro extends Scene {
       displacement[i] = Math.random() * 5
     }
 
-    geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
     geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
 
     const line = new THREE.Line(geometry, material)
