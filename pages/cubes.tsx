@@ -88,7 +88,7 @@ const Cubes = (props) => {
 
 const Page = () => {
   const [dimensions, setDimensions] = useState(null)
-  const myRef = React.createRef()
+  const myRef: React.RefObject<HTMLDivElement> = React.createRef()
 
   useEffect(() => {
     if (dimensions == null) {
