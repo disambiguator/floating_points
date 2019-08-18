@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 const OrbitControls = orbitControlsConstructor(THREE)
@@ -11,57 +11,43 @@ type Props = {
   shapes: Array<THREE.Mesh>
 }
 
-class Scene extends React.Component<Props, {}> {
-  scene: THREE.Scene = new THREE.Scene()
+const Scene = (props: Props) => {
+  const controls = props.orbitControls ? new OrbitControls(props.camera, props.renderer.domElement) : null
+  let frameId : number = null
+  const scene = new THREE.Scene()
+  const ref = useRef(null)
 
-  mount: any;
-
-  frameId: number;
-
-  private controls: any;
-
-  componentDidMount () {
-    this.mount.appendChild(this.props.renderer.domElement)
-
-    if (this.props.orbitControls) {
-      this.controls = new OrbitControls(this.props.camera, this.props.renderer.domElement)
+  const animate = () => {
+    props.renderScene()
+    if (props.orbitControls) {
+      controls.update()
     }
+    props.renderer.render(scene, props.camera)
+    frameId = window.requestAnimationFrame(animate)
+  }
 
-    this.start()
-    this.props.shapes.forEach((shape) => {
-      this.scene.add(shape)
+  const start = () => {
+    if (!frameId) {
+      frameId = window.requestAnimationFrame(animate)
+    }
+  }
+
+  useEffect(() => {
+    ref.current.appendChild(props.renderer.domElement)
+
+    start()
+    props.shapes.forEach((shape) => {
+      scene.add(shape)
     })
+
+    return stop
+  })
+
+  const stop = () => {
+    window.cancelAnimationFrame(frameId)
   }
 
-  componentWillUnmount () {
-    this.stop()
-    this.mount.removeChild(this.props.renderer.domElement)
-  }
-
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = window.requestAnimationFrame(this.animate)
-    }
-  }
-
-  stop = () => {
-    window.cancelAnimationFrame(this.frameId)
-  }
-
-  animate = () => {
-    this.props.renderScene()
-    if (this.props.orbitControls) {
-      this.controls.update()
-    }
-    this.props.renderer.render(this.scene, this.props.camera)
-    this.frameId = window.requestAnimationFrame(this.animate)
-  }
-
-  render = () => (
-    <div
-      ref={mount => { this.mount = mount }}
-    />
-  )
+  return <div ref={ref} />
 }
 
 export default Scene

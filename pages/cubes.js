@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import Scene from '../components/composable_scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
@@ -112,7 +112,7 @@ const Page = () => {
         style={{ width: '400px', height: '400px' }}
         ref={myRef}
       >
-        {dimensions ? <Cubes height={dimensions.height} width={dimensions.width}/> : null}
+        {dimensions ? <Cubes height={dimensions.height} width={dimensions.width} /> : null}
       </div>
     </Container>
   )
