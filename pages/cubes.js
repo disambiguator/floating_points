@@ -1,10 +1,7 @@
-import React from 'react'
-import Scene from '../components/scene'
+import React, {useEffect, useState} from 'react'
+import Scene from '../components/composable_scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
-import orbitControlsConstructor from 'three-orbit-controls'
-
-const OrbitControls = orbitControlsConstructor(THREE)
 
 const generateCube = (length) => {
   const geometry = new THREE.BoxGeometry(length, length, length)
@@ -25,69 +22,83 @@ const Container = styled.div`
   background: lightgray;
 `
 
-class Scatter extends Scene {
-  componentDidMount () {
-    this.timer = 0
-    this.isRotating = false
+const camera = (width, height) => {
+  const perspectiveCamera = new THREE.PerspectiveCamera(
+    75,
+    width / height,
+    0.1,
+    10000
+  )
+  perspectiveCamera.position.z = 300
 
-    const width = this.mount.clientWidth
-    const height = this.mount.clientHeight
+  return perspectiveCamera
+}
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      width / height,
-      0.1,
-      10000
-    )
-    this.camera.position.z = 300
+const renderer = (width, height) => {
+  const webGLRenderer = new THREE.WebGLRenderer()
+  webGLRenderer.setClearColor('#000000')
+  webGLRenderer.setSize(width, height)
 
-    this.renderer = new THREE.WebGLRenderer()
-    this.renderer.setClearColor('#000000')
-    this.renderer.setSize(width, height)
-    this.mount.appendChild(this.renderer.domElement)
-    // Add OrbitControls so that we can pan around with the mouse.
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+  return webGLRenderer
+}
 
-    const greenLength = 100
-    const yellowLength = 500
-    const redLength = 2500
+const Cubes = (props) => {
+  const width = props.width
+  const height = props.height
 
-    this.redCube = generateCube(redLength)
-    this.redCube.position.z = -(2 * greenLength * Math.sin(Math.PI / 4) + 2 * yellowLength * Math.sin(Math.PI / 4) + redLength * Math.sin(Math.PI / 4))
+  let timer = 0
+  let isRotating = false
 
-    this.yellowCube = generateCube(yellowLength)
-    this.yellowCube.position.z = -(2 * greenLength * Math.sin(Math.PI / 4) + yellowLength * Math.sin(Math.PI / 4))
+  const greenLength = 100
+  const yellowLength = 500
+  const redLength = 2500
 
-    this.greenCube = generateCube(greenLength)
-    this.greenCube.position.z = 0
+  const redCube = generateCube(redLength)
+  redCube.position.z = -(2 * greenLength * Math.sin(Math.PI / 4) + 2 * yellowLength * Math.sin(Math.PI / 4) + redLength * Math.sin(Math.PI / 4))
 
-    this.scene.add(this.redCube)
-    this.scene.add(this.yellowCube)
-    this.scene.add(this.greenCube)
-    this.start()
+  const yellowCube = generateCube(yellowLength)
+  yellowCube.position.z = -(2 * greenLength * Math.sin(Math.PI / 4) + yellowLength * Math.sin(Math.PI / 4))
+
+  const greenCube = generateCube(greenLength)
+  greenCube.position.z = 0
+
+  const renderScene = () => {
+    timer++
+
+    if (timer % 32 === 0) {
+      isRotating = !isRotating
+    }
+    if (isRotating) {
+      redCube.rotation.z += Math.PI / 64
+      yellowCube.rotation.y += Math.PI / 64
+      greenCube.rotation.x += Math.PI / 64
+    }
   }
 
-  renderScene = () => {
-    this.timer++
+  return (
+    <Scene
+      camera={camera(width, height)}
+      shapes={[redCube, greenCube, yellowCube]}
+      renderer={renderer(width, height)}
+      renderScene={renderScene}
+      orbitControls
+    />
+  )
+}
 
-    if (this.timer % 32 === 0) {
-      this.isRotating = !this.isRotating
+const Page = () => {
+  const [dimensions, setDimensions] = useState(null)
+  const myRef = React.createRef()
+
+  useEffect(() => {
+    if (dimensions == null) {
+      setDimensions({ width: myRef.current.clientWidth, height: myRef.current.clientHeight })
     }
+  })
 
-    if (this.isRotating) {
-      this.redCube.rotation.z += Math.PI / 64
-      this.yellowCube.rotation.y += Math.PI / 64
-      this.greenCube.rotation.x += Math.PI / 64
-    }
-
-    this.controls.update()
-    this.renderer.render(this.scene, this.camera)
-  }
-
-  render () {
-    return (
-      <Container>
-        <style global jsx>{`
+  return (
+    <Container>
+      <style global jsx>{`
       html,
       body,
       body > div:first-child,
@@ -97,14 +108,14 @@ class Scatter extends Scene {
         height: 100%;
       }
     `}</style>
-
-        <div
-          style={{ width: '400px', height: '400px' }}
-          ref={mount => { this.mount = mount }}
-        />
-      </Container>
-    )
-  }
+      <div
+        style={{ width: '400px', height: '400px' }}
+        ref={myRef}
+      >
+        {dimensions ? <Cubes height={dimensions.height} width={dimensions.width}/> : null}
+      </div>
+    </Container>
+  )
 }
 
-export default Scatter
+export default Page
