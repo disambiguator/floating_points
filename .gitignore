@@ -1,7 +1,6 @@
 *.swp
 .idea/*
 *.mp3
-*.wav
 node_modules/
 dist/
 .next/
