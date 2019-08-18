@@ -21,6 +21,10 @@ const constraints = {
   video: { width: { exact: 640 }, height: { exact: 480 } }
 }
 
+const setStream = async (video) => {
+  video.srcObject = await navigator.mediaDevices.getUserMedia(constraints)
+}
+
 class Feedback extends React.Component {
   constructor (props) {
     super(props)
@@ -97,9 +101,7 @@ class Feedback extends React.Component {
   }
 
   videoTextureSetup () {
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then((stream) => (this.video.srcObject = stream))
-
+    setStream(this.video)
     this.videoTexture = new THREE.VideoTexture(this.video)
     this.videoTexture.minFilter = THREE.LinearFilter
     this.videoTexture.magFilter = THREE.LinearFilter

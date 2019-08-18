@@ -146,12 +146,12 @@ const setPositions = (p) => {
 let seeds = []
 let presets = []
 
-const initFromPreset = () => {
+const initFromPreset = async () => {
   const randomPreset = _.sample(presets)
 
-  window.fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
-    .then((response) => response.json())
-    .then((responses) => setPositions(responses))
+  const response = await window.fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
+  const jsonResponse = await response.json()
+  setPositions(await jsonResponse)
 }
 
 const getInitialPresets = async () => {

@@ -6,15 +6,15 @@ interface PositionResponse {
     id: string
 }
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   if (req.method === 'POST') {
     const positionRequest : Array<PositionResponse> = JSON.parse(req.body).seeds.map((seed) => addToPositions(seed))
-    Promise.all(positionRequest)
-      .then((responses) => (
-        airtablePut('preset', {
-          positions: [responses[0].id, responses[1].id]
-        })
-      ))
-      .then((response) => { res.json(response) })
+
+    const positionResponse = await Promise.all(positionRequest)
+    const presetResponse = await airtablePut('preset', {
+      positions: positionResponse.map((r) => r.id)
+    })
+
+    res.json(presetResponse)
   }
 }

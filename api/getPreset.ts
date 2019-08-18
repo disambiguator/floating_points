@@ -1,11 +1,14 @@
 import { airtableShow } from '../lib/airtable'
 
-module.exports = (req, res) => {
+type AirtableResponse = {
+  fields: Object
+}
+
+module.exports = async (req, res) => {
   const ids = JSON.parse(req.query.ids)
 
-  Promise.all(ids.map((id) => (
-    airtableShow('preset', id)
-      .then((response) => response.fields)
-  )))
-    .then((responses) => res.json(responses))
+  const airtableResponses = await Promise.all(ids.map((id) => airtableShow('preset', id)))
+  const fields = airtableResponses.map((r : AirtableResponse) => r.fields)
+
+  res.json(fields)
 }

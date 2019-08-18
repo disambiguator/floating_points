@@ -11,11 +11,13 @@ const constraints = {
   video: { width: { exact: width }, height: { exact: height } }
 }
 
+const setStream = async (video) => {
+  video.srcObject = await navigator.mediaDevices.getUserMedia(constraints)
+}
+
 class Micromovements extends React.Component {
   componentDidMount () {
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then((stream) => (this.video.srcObject = stream))
-
+    setStream(this.video)
     setInterval(this.captureImage, 50)
   }
 
