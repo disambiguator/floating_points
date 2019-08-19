@@ -158,7 +158,7 @@ class Spiro extends Scene {
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader()
     audioLoader.load(
-      '/static/dreamspace.wav',
+      'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
       (buffer) => {
         this.sound.setBuffer(buffer)
         this.sound.setLoop(true)
