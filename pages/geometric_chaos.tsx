@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 import Scene from '../components/scene'
+import styled from 'styled-components'
 
 const OrbitControls = orbitControlsConstructor(THREE)
 
@@ -218,10 +219,34 @@ class Spiro extends Scene {
   }
 
   render = () => (
-    <div ref={(mount) => {
-      this.mount = mount
-    }}/>
+    <div
+      onMouseMove={this.mouseMove}
+      ref={(mount) => {
+        this.mount = mount
+      }}
+    />
   )
 }
 
-export default Spiro
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: lightgray;
+  width: 500px;
+  height: 500px;
+`
+
+const Page = (props) => {
+  const [started, start] = useState(false)
+
+  return (
+    started ? <Spiro/> :
+      <Container onClick={() => start(true)}>
+        Click to start
+      </Container>
+  )
+}
+
+export default Page
