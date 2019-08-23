@@ -87,14 +87,6 @@ function sum (array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
-function amplitudeSlider (event) {
-  uniforms.amplitude.value = parseFloat(event.target.value)
-}
-
-function enableColor (event) {
-  uniforms.color.value = event.target.checked ? 1.0 : 0.0
-}
-
 class Spiro extends Scene<{}> {
   private camera: THREE.PerspectiveCamera;
 
@@ -228,7 +220,6 @@ class Spiro extends Scene<{}> {
   )
 }
 
-
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -242,8 +233,8 @@ const Page = (props) => {
   const [started, start] = useState(false)
 
   return (
-    started ? <Spiro/> :
-      <Container onClick={() => start(true)}>
+    started ? <Spiro />
+      : <Container onClick={() => start(true)}>
         Click to start
       </Container>
   )
