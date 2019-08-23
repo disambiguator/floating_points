@@ -95,7 +95,7 @@ function enableColor (event) {
   uniforms.color.value = event.target.checked ? 1.0 : 0.0
 }
 
-class Spiro extends Scene {
+class Spiro extends Scene<{}> {
   private camera: THREE.PerspectiveCamera;
 
   private controls: any;

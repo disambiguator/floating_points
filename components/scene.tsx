@@ -1,7 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
 
-class Scene extends React.Component {
+class Scene<T> extends React.Component<T, {}> {
   scene: THREE.Scene;
 
   mount: any;

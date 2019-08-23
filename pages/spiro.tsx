@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import orbitControlsConstructor from 'three-orbit-controls'
 import _ from 'lodash'
@@ -160,14 +160,19 @@ const getInitialPresets = async () => {
   presets = json.presets
 }
 
-class Spiro extends Scene {
+type Props = {
+  height: number,
+  width: number
+}
+
+class Spiro extends Scene<Props> {
   private camera: THREE.PerspectiveCamera;
 
   private controls: any;
 
   componentDidMount () {
-    const width = window.innerWidth
-    const height = window.innerHeight
+    const width = this.props.width
+    const height = this.props.height
 
     initPositions()
     getInitialPresets()
@@ -227,8 +232,8 @@ class Spiro extends Scene {
 
   mouseMove = (event) => {
     this.updateRayCaster(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
+      (event.clientX / this.props.width) * 2 - 1,
+      -(event.clientY / this.props.height) * 2 + 1
     )
   }
 
@@ -253,4 +258,20 @@ class Spiro extends Scene {
   }
 }
 
-export default Spiro
+const Page = () => {
+  const [dimensions, setDimensions] = useState(null)
+
+  useEffect(() => {
+    if (dimensions == null) {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight })
+    }
+  })
+
+  return (
+    <div>
+      {dimensions ? <Spiro height={dimensions.height} width={dimensions.width} /> : null}
+    </div>
+  )
+}
+
+export default Page
