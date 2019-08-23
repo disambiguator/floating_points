@@ -8,7 +8,7 @@ type Props = {
   renderScene: () => void,
   orbitControls: boolean,
   camera: THREE.Camera,
-  shapes: Array<THREE.Mesh>
+  shapes: Array<THREE.Mesh | THREE.Line>
 }
 
 const Scene = (props: Props) => {

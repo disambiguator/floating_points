@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
-import orbitControlsConstructor from 'three-orbit-controls'
 import _ from 'lodash'
-import Scene from '../components/scene'
-
-const OrbitControls = orbitControlsConstructor(THREE)
+import Scene from '../components/composable_scene'
 
 const numPoints = 50000
 const near = 0.1
@@ -160,102 +157,93 @@ const getInitialPresets = async () => {
   presets = json.presets
 }
 
-type Props = {
-  height: number,
-  width: number
+const getCamera = (props) => {
+  const perspectiveCamera = new THREE.PerspectiveCamera(
+    45,
+    props.width / props.height,
+    near,
+    far
+  )
+
+  perspectiveCamera.position.set(0, 0, 300)
+  perspectiveCamera.lookAt(0, 0, 0)
+
+  return perspectiveCamera
 }
 
-class Spiro extends Scene<Props> {
-  private camera: THREE.PerspectiveCamera;
+const renderer = (props) => {
+  const webGLRenderer = new THREE.WebGLRenderer({ antialias: true })
+  webGLRenderer.setSize(props.width, props.height)
 
-  private controls: any;
+  return webGLRenderer
+}
 
-  componentDidMount () {
-    const width = this.props.width
-    const height = this.props.height
+const updateRayCaster = (x, y, camera) => {
+  const mouse = new THREE.Vector2(x, y)
+  const raycaster = new THREE.Raycaster()
+  raycaster.setFromCamera(mouse, camera)
 
-    initPositions()
-    getInitialPresets()
+  uniforms.origin.value = raycaster.ray.origin
+  uniforms.direction.value = raycaster.ray.direction
+}
 
-    this.camera = new THREE.PerspectiveCamera(
-      45,
-      width / height,
-      near,
-      far
-    )
+const Spiro = (props) => {
+  initPositions()
+  getInitialPresets()
 
-    this.camera.position.set(0, 0, 300)
-    this.camera.lookAt(0, 0, 0)
+  const camera = getCamera(props)
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
-    this.renderer.setSize(width, height)
-    this.mount.appendChild(this.renderer.domElement)
+  const material =
+    new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader
+    })
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-
-    const material =
-      new THREE.ShaderMaterial({
-        uniforms: uniforms,
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader
-      })
-
-    const displacement = new Float32Array(renderSpeed)
-    for (let i = 0; i < renderSpeed; i++) {
-      displacement[i] = Math.random() * 5
-    }
-
-    geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
-
-    const line = new THREE.Line(geometry, material)
-    this.scene.add(line)
-    this.updateRayCaster(0, 0)
-    this.start()
+  const displacement = new Float32Array(renderSpeed)
+  for (let i = 0; i < renderSpeed; i++) {
+    displacement[i] = Math.random() * 5
   }
 
-  renderScene = () => {
+  geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
+
+  const line = new THREE.Line(geometry, material)
+
+  updateRayCaster(0, 0, camera)
+
+  const renderScene = () => {
     geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
     geometry.attributes.position.needsUpdate = true
-
-    this.renderer.render(this.scene, this.camera)
-    this.controls.update()
   }
 
-  updateRayCaster (x, y) {
-    const mouse = new THREE.Vector2(x, y)
-    const raycaster = new THREE.Raycaster()
-    raycaster.setFromCamera(mouse, this.camera)
-
-    uniforms.origin.value = raycaster.ray.origin
-    uniforms.direction.value = raycaster.ray.direction
-  }
-
-  mouseMove = (event) => {
-    this.updateRayCaster(
-      (event.clientX / this.props.width) * 2 - 1,
-      -(event.clientY / this.props.height) * 2 + 1
+  const mouseMove = (event) => {
+    updateRayCaster(
+      (event.clientX / props.width) * 2 - 1,
+      -(event.clientY / props.height) * 2 + 1,
+      camera
     )
   }
 
-  render () {
-    return (
-      <div
-        ref={(mount) => {
-          this.mount = mount
-        }}
-        onMouseMove={this.mouseMove}
-      >
-        <label>Amplitude</label>
-        <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider} />
-        <label>Color</label>
-        <input type='checkbox' onInput={enableColor} />
+  return (
+    <div onMouseMove={mouseMove}>
+      <label>Amplitude</label>
+      <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider} />
+      <label>Color</label>
+      <input type='checkbox' onInput={enableColor} />
 
-        <button onClick={addToPresets}>Add to Presets</button>
-        <button onClick={initPositions}>New Positions</button>
-        <button onClick={initFromPreset}>Random Preset</button>
-      </div>
-    )
-  }
+      <button onClick={addToPresets}>Add to Presets</button>
+      <button onClick={initPositions}>New Positions</button>
+      <button onClick={initFromPreset}>Random Preset</button>
+
+      <Scene
+        camera={camera}
+        shapes={[line]}
+        renderer={renderer(props)}
+        renderScene={renderScene}
+        orbitControls
+      />
+    </div>
+  )
 }
 
 const Page = () => {
