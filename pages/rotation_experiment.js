@@ -7,11 +7,13 @@ const sketch = (p5) => {
   let initialArc = 0
   let counter = 0
   let coordinates = 0
+  let buffer
   const points = 30
   const radius = 400
   const arc = 360 / points
   const hypotenuse = radius
   let lineIncrement = 130
+  const zoom = 20
 
   const drawCircle = () => {
     for (let i = 0; i < points; i++) {
@@ -20,7 +22,7 @@ const sketch = (p5) => {
       const xCoordinate = p5.windowWidth / 2 + hypotenuse * Math.cos(angle)
       const yCoordinate = p5.windowHeight / 2 + hypotenuse * Math.sin(angle)
 
-      p5.point(xCoordinate, yCoordinate)
+      buffer.point(xCoordinate, yCoordinate)
     }
   }
 
@@ -34,12 +36,11 @@ const sketch = (p5) => {
 
   p5.setup = () => {
     p5.createCanvas(p5.windowWidth, p5.windowHeight)
-    p5.noFill()
-    p5.strokeWeight(5)
+    buffer = p5.createGraphics(p5.windowWidth, p5.windowHeight)
+    buffer.strokeWeight(5)
+    buffer.background(0, 0, 0)
     p5.frameRate(60)
-    p5.stroke(255, 255, 255, 255)
-    p5.background(0, 0, 0)
-
+    buffer.stroke(255, 255, 255, 255)
     p5.draw()
   }
 
@@ -54,23 +55,24 @@ const sketch = (p5) => {
     const x2 = p5.windowWidth / 2 + hypotenuse * Math.cos(angle2)
     const y2 = p5.windowHeight / 2 + hypotenuse * Math.sin(angle2)
 
-    p5.line(x1, y1, x2, y2)
+    buffer.line(x1, y1, x2, y2)
   }
 
   p5.draw = () => {
-    for (let i = 0; i < 5; i++) {
-      p5.background(0, 0, 0, 10)
-      initialArc = initialArc + 0.01
+    buffer.image(buffer, -zoom, -zoom, p5.windowWidth + 2 * zoom, p5.windowHeight + 2 * zoom)
+    for (let i = 0; i < 10; i++) {
+      buffer.background(0, 0, 0, 5)
+      initialArc += 1
       drawCircle()
       drawLine()
 
-      // if (counter % 4 === 0) {
-      lineIncrement = lineIncrement + 0.5
-      // }
+      lineIncrement -= 0.1
 
-      counter = counter + 1
+      counter += 1
       if (counter > 1000) counter = 0
     }
+
+    p5.image(buffer, zoom, zoom, p5.windowWidth - 2 * zoom, p5.windowHeight - 2 * zoom)
   }
 }
 
