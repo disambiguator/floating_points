@@ -1,9 +1,7 @@
 import React from 'react'
 import Scene from '../components/scene'
 import * as THREE from 'three'
-import orbitControlsConstructor from 'three-orbit-controls'
-
-const OrbitControls = orbitControlsConstructor(THREE)
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 class Edge extends Scene {
   componentDidMount () {
