@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import dynamic from 'next/dynamic'
 
 const P5Wrapper = dynamic(() => import('react-p5-wrapper'))
@@ -76,24 +76,4 @@ const sketch = (p5) => {
   }
 }
 
-const Rings = () => {
-  return <P5Wrapper sketch={sketch}/>
-}
-
-const Page = () => {
-  const [dimensions, setDimensions] = useState(null)
-
-  useEffect(() => {
-    if (dimensions == null) {
-      setDimensions({width: window.innerWidth, height: window.innerHeight})
-    }
-  })
-
-  return (
-    <div>
-      {dimensions ? <Rings height={dimensions.height} width={dimensions.width}/> : null}
-    </div>
-  )
-}
-
-export default Page
+export default () => <P5Wrapper sketch={sketch} />
