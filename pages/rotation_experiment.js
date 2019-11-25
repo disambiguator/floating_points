@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const P5Wrapper = dynamic(() => import('react-p5-wrapper'))
+const P5Wrapper = dynamic(() => import('react-p5-wrapper'), { ssr: false })
 
 const sketch = (p5) => {
   let initialArc = 0
