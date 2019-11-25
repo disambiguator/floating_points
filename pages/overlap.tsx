@@ -28,10 +28,11 @@ const Container = styled.div`
   background: lightgray;
 `
 
-class CubeZoom extends Scene {
-  componentDidMount () {
-    this.timer = 0
+class CubeZoom extends Scene<{}> {
+  camera: THREE.PerspectiveCamera
+  controls: OrbitControls
 
+  componentDidMount () {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
 
@@ -68,7 +69,6 @@ class CubeZoom extends Scene {
   }
 
   renderScene = () => {
-    this.timer++
     // this.camera.translateX(-1)
     this.camera.translateX(-0.5)
     this.camera.translateZ(-0.5)
