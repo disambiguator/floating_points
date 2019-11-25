@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three-orbitcontrols-ts'
 import Scene from '../components/scene'
 import styled from 'styled-components'
 

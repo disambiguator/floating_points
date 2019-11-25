@@ -2,7 +2,7 @@ import React from 'react'
 import Scene from '../components/scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three-orbitcontrols-ts'
 
 const generateCube = (length) => {
   const geometry = new THREE.BoxGeometry(length, length, length)

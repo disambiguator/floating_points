@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three-orbitcontrols-ts'
 
 const fragmentShader = `
 #ifdef GL_ES
