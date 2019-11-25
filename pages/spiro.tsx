@@ -75,7 +75,15 @@ function randInt (min, max) {
   return Math.floor(Math.random() * max) + min
 }
 
-const randPosition = () => ({
+export interface Seed {
+  radius: number,
+  arc: number,
+  phi: number,
+  speed: number,
+  phiSpeed: number
+}
+
+const randPosition = (): Seed => ({
   radius: randInt(50, 300),
   arc: randInt(0, 360),
   phi: randInt(0, 360),

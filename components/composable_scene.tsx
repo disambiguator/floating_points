@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import orbitControlsConstructor from 'three-orbit-controls'
-const OrbitControls = orbitControlsConstructor(THREE)
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 type Props = {
   renderer: any,
@@ -13,13 +12,13 @@ type Props = {
 
 const Scene = (props: Props) => {
   const controls = props.orbitControls ? new OrbitControls(props.camera, props.renderer.domElement) : null
-  let frameId : number = null
+  let frameId: number | null = null
   const scene = new THREE.Scene()
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
 
   const animate = () => {
     props.renderScene()
-    if (props.orbitControls) {
+    if (controls) {
       controls.update()
     }
     props.renderer.render(scene, props.camera)
@@ -33,7 +32,7 @@ const Scene = (props: Props) => {
   }
 
   useEffect(() => {
-    ref.current.appendChild(props.renderer.domElement)
+    ref.current!.appendChild(props.renderer.domElement)
 
     start()
     props.shapes.forEach((shape) => {
@@ -44,7 +43,9 @@ const Scene = (props: Props) => {
   })
 
   const stop = () => {
-    window.cancelAnimationFrame(frameId)
+    if (frameId) {
+      window.cancelAnimationFrame(frameId)
+    }
   }
 
   return <div ref={ref} />

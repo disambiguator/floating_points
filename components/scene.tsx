@@ -1,16 +1,16 @@
 import React from 'react'
 import * as THREE from 'three'
 
-class Scene<T> extends React.Component<T, {}> {
+class Scene<Props> extends React.Component<Props, {}> {
   scene: THREE.Scene;
 
   mount: any;
 
   renderer: any;
 
-  frameId: number;
+  frameId: number | null = null;
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
     this.scene = new THREE.Scene()
   }

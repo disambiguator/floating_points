@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import * as THREE from 'three'
-import orbitControlsConstructor from 'three-orbit-controls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Scene from '../components/scene'
 import styled from 'styled-components'
-
-const OrbitControls = orbitControlsConstructor(THREE)
 
 const near = 0.1
 const far = 10000

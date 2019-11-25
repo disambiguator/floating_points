@@ -28,8 +28,10 @@
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
+    "@now/node": "^1.2.0",
     "@types/node": "^12.6.9",
     "@types/react": "^16.8.24",
+    "@types/three": "^0.103.2",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
     "babel-plugin-styled-components": "^1.10.6",
@@ -46,7 +48,6 @@
     "react-dom": "^16.8.6",
     "react-p5-wrapper": "^2.0.0",
     "styled-components": "^4.3.2",
-    "three": "^0.107.0",
-    "three-orbit-controls": "^82.1.0"
+    "three": "^0.107.0"
   }
 }
