@@ -154,8 +154,7 @@ class Spiro extends Scene<{}> {
         this.sound.setBuffer(buffer)
         this.sound.setLoop(true)
         this.sound.setVolume(0.5)
-        this.sound.startTime = 1000
-        this.sound.play()
+        this.sound.play(1000)
       },
       () => {
       },
