@@ -3,9 +3,9 @@ import Scene from '../components/scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
 
-const generateCube = (length) => {
+const generateCube = (length: number) => {
   const geometry = new THREE.BoxGeometry(length, length, length)
-  for (var i = 0; i < geometry.faces.length; i++) {
+  for (let i = 0; i < geometry.faces.length; i++) {
     geometry.faces[i].color.setHex(Math.random() * 0xffffff)
   }
 
@@ -22,7 +22,7 @@ const Container = styled.div`
   background: lightgray;
 `
 
-const camera = (width, height) => {
+const camera = (width: number, height: number) => {
   const perspectiveCamera = new THREE.PerspectiveCamera(
     75,
     width / height,
@@ -34,7 +34,7 @@ const camera = (width, height) => {
   return perspectiveCamera
 }
 
-const renderer = (width, height) => {
+const renderer = (width: number, height: number) => {
   const webGLRenderer = new THREE.WebGLRenderer()
   webGLRenderer.setClearColor('#000000')
   webGLRenderer.setSize(width, height)
@@ -42,7 +42,11 @@ const renderer = (width, height) => {
   return webGLRenderer
 }
 
-const Cubes = (props) => {
+interface Props {
+  width: number,
+  height: number
+}
+const Cubes = (props: Props) => {
   const width = props.width
   const height = props.height
 
@@ -87,12 +91,13 @@ const Cubes = (props) => {
 }
 
 const Page = () => {
-  const [dimensions, setDimensions] = useState(null)
+  const [dimensions, setDimensions] = useState<{width: number, height: number} | null>(null)
   const myRef: React.RefObject<HTMLDivElement> = React.createRef()
 
   useEffect(() => {
     if (dimensions == null) {
-      setDimensions({ width: myRef.current.clientWidth, height: myRef.current.clientHeight })
+      const mount = myRef.current!
+      setDimensions({ width: mount.clientWidth, height: mount.clientHeight })
     }
   })
 

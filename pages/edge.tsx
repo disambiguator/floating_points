@@ -50,7 +50,11 @@ gl_FragColor.xyz = col;
 }
     `
 
-const Edge = (props) => {
+interface Props {
+  width: number,
+  height: number
+}
+const Edge = (props: Props) => {
   const {width, height} = props
   let time = 0
 

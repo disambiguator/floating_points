@@ -12,12 +12,13 @@ const Container = styled.div`
 `
 
 const Divide = () => {
-  const ref = useRef(null)
-  let mount, ctx
+  const ref = useRef<HTMLCanvasElement>(null)
+  let mount:HTMLCanvasElement
+  let ctx: CanvasRenderingContext2D
 
   useEffect(() => {
-    mount = ref.current
-    ctx = mount.getContext('2d')
+    mount = ref.current!
+    ctx = mount.getContext('2d')!
     ctx.lineWidth = 5
   })
 
