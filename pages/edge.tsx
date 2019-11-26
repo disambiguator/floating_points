@@ -1,42 +1,8 @@
-import React from 'react'
-import Scene from '../components/scene'
+import React, { useEffect, useRef, useState } from 'react'
+import Scene from '../components/composable_scene'
 import * as THREE from 'three'
-import { OrbitControls } from 'three-orbitcontrols-ts'
 
-class Edge extends Scene<{}> {
-  width: number
-  height: number
-  time: number
-  camera: THREE.OrthographicCamera;
-  controls: OrbitControls;
-  bufferMaterial: THREE.ShaderMaterial;
-  private quad: THREE.Mesh;
-  
-  componentDidMount () {
-    this.mount.width = window.innerWidth
-    this.mount.height = window.innerHeight
-
-    this.width = this.mount.width
-    this.height = this.mount.height
-    this.time = 0
-
-    // ADD CAMERA
-    this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 1000)
-    this.camera.position.z = 2
-
-    // ADD RENDERER
-    this.renderer = new THREE.WebGLRenderer()
-    this.renderer.setSize(this.width, this.height)
-    this.mount.appendChild(this.renderer.domElement)
-
-    this.bufferTextureSetup()
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-
-    this.start()
-  }
-
-  bufferTextureSetup () {
-    const edgeShader = `
+const edgeShader = `
       uniform vec2 res;//The width and height of our screen
 uniform sampler2D videoTexture;
   uniform float time;
@@ -84,39 +50,69 @@ gl_FragColor.xyz = col;
 }
     `
 
-    this.bufferMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        res: { type: 'v2', value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        videoTexture: { type: 't', value: new THREE.TextureLoader().load('/static/bernal.jpg') },
-        distortion: { type: 'f', value: 1.0 },
-        time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI }
-      },
-      fragmentShader: edgeShader
-    })
-    const plane = new THREE.PlaneBufferGeometry(this.width, this.height)
-    this.quad = new THREE.Mesh(plane, this.bufferMaterial)
-    this.scene.add(this.quad)
+const Edge = (props) => {
+  const {width, height} = props
+  let time = 0
+
+  const camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000)
+  camera.position.z = 2
+
+  const renderer = new THREE.WebGLRenderer()
+  renderer.setSize(width, height)
+
+  const bufferMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      res: { type: 'v2', value: new THREE.Vector2(width, height) },
+      videoTexture: { type: 't', value: new THREE.TextureLoader().load('/static/bernal.jpg') },
+      distortion: { type: 'f', value: 1.0 },
+      time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI }
+    },
+    fragmentShader: edgeShader
+  })
+  const plane = new THREE.PlaneBufferGeometry(width, height)
+  const quad = new THREE.Mesh(plane, bufferMaterial)
+
+  const renderScene = () => {
+    time += 0.02
+    bufferMaterial.uniforms.time.value = time
   }
 
-  componentWillUnmount () {
-    this.stop()
-    this.mount.removeChild(this.renderer.domElement)
-  }
-
-  renderScene = () => {
-    this.time += 0.02
-    this.bufferMaterial.uniforms.time.value = this.time
-    this.renderer.render(this.scene, this.camera)
-    this.controls.update()
-  }
-
-  render () {
-    return (
-      <div>
-        <div ref={mount => { this.mount = mount }} />
-      </div>
-    )
-  }
+  return <Scene
+    camera={camera}
+    shapes={[quad]}
+    renderer={renderer}
+    renderScene={renderScene}
+    orbitControls
+  />
 }
 
-export default Edge
+const Page = () => {
+  const [dimensions, setDimensions] = useState(null)
+  const myRef: React.RefObject<HTMLDivElement> = React.createRef()
+
+  useEffect(() => {
+    if (dimensions == null) {
+      setDimensions({ width: myRef.current.clientWidth, height: myRef.current.clientHeight })
+    }
+  })
+
+  return (
+    <div>
+      <style global jsx>{`
+      html,
+      body,
+      body > div:first-child,
+      div#__next,
+      div#__next > div,
+      div#__next > div > div {
+        height: 100%;
+      }
+    `}</style>
+      <div ref={myRef}>
+        {dimensions ? <Edge height={dimensions.height} width={dimensions.width} /> : null}
+      </div>
+    </div>
+  )
+}
+
+export default Page

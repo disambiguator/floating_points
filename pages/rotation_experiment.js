@@ -6,7 +6,7 @@ const P5Wrapper = dynamic(() => import('react-p5-wrapper'), { ssr: false })
 const sketch = (p5) => {
   let initialArc = 0
   let counter = 0
-  let coordinates = 0
+  const coordinates = 0
   let buffer
   const points = 30
   const radius = 400
