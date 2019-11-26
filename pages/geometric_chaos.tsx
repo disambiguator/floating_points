@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
-import { OrbitControls } from 'three-orbitcontrols-ts'
-import Scene from '../components/scene'
+import Scene from '../components/composable_scene'
 import styled from 'styled-components'
 
 const near = 0.1
@@ -85,135 +84,124 @@ function sum (array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
-class Spiro extends Scene<{}> {
-  private camera: THREE.PerspectiveCamera;
+const Spiro = () => {
+  const updateRayCaster = (x, y) => {
+    const mouse = new THREE.Vector2(x, y)
+    const raycaster = new THREE.Raycaster()
+    raycaster.setFromCamera(mouse, camera)
 
-  private controls: any;
+    uniforms.origin.value = raycaster.ray.origin
+    uniforms.direction.value = raycaster.ray.direction
+  }
 
-  private analyser: THREE.AudioAnalyser
+  const width = window.innerWidth
+  const height = window.innerHeight
 
-  private sound: THREE.Audio;
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    width / height,
+    near,
+    far
+  )
+  camera.position.set(0, 0, 300)
+  camera.lookAt(0, 0, 0)
 
-  componentDidMount () {
-    const width = window.innerWidth
-    const height = window.innerHeight
+  const renderer = new THREE.WebGLRenderer({ antialias: true })
+  renderer.setSize(width, height)
 
-    this.camera = new THREE.PerspectiveCamera(
-      45,
-      width / height,
-      near,
-      far
-    )
-
-    this.camera.position.set(0, 0, 300)
-    this.camera.lookAt(0, 0, 0)
-
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
-    this.renderer.setSize(width, height)
-    this.mount.appendChild(this.renderer.domElement)
-
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-
-    const material =
+  const material =
       new THREE.ShaderMaterial({
         uniforms: uniforms,
         vertexShader: vertexShader,
         fragmentShader: fragmentShader
       })
 
-    const displacement = new Float32Array(renderSpeed)
-    for (let i = 0; i < renderSpeed; i++) {
-      displacement[i] = Math.random() * 5
-    }
+  const displacement = new Float32Array(renderSpeed)
+  for (let i = 0; i < renderSpeed; i++) {
+    displacement[i] = Math.random() * 5
+  }
 
-    for (let i = 0; i < 500; i++) {
-      const geometry = new THREE.BoxBufferGeometry(15, 15, 15)
-      geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
-      geometry.translate(Math.random() * 300, Math.random() * 300, Math.random() * 300)
-      const line = new THREE.Mesh(geometry, material)
-      line.rotation.x += Math.PI / 64 * Math.random() * 100
-      line.rotation.y += Math.PI / 64 * Math.random() * 100
-      line.rotation.z += Math.PI / 64 * Math.random() * 100
-      this.scene.add(line)
-    }
+  const lines = []
+  for (let i = 0; i < 500; i++) {
+    const geometry = new THREE.BoxBufferGeometry(15, 15, 15)
+    geometry.setAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
+    geometry.translate(Math.random() * 300, Math.random() * 300, Math.random() * 300)
+    const line = new THREE.Mesh(geometry, material)
+    line.rotation.x += Math.PI / 64 * Math.random() * 100
+    line.rotation.y += Math.PI / 64 * Math.random() * 100
+    line.rotation.z += Math.PI / 64 * Math.random() * 100
+    lines.push(line)
+  }
 
-    this.updateRayCaster(0, 0)
+  updateRayCaster(0, 0)
 
-    // create an AudioListener and add it to the camera
-    const listener = new THREE.AudioListener()
-    this.camera.add(listener)
+  // create an AudioListener and add it to the camera
+  const listener = new THREE.AudioListener()
+  camera.add(listener)
 
-    // create an Audio source
-    this.sound = new THREE.Audio(listener)
+  // create an Audio source
+  const sound = new THREE.Audio(listener)
 
+  useEffect(() => {
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader()
     audioLoader.load(
       'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
       (buffer) => {
-        this.sound.setBuffer(buffer)
-        this.sound.setLoop(true)
-        this.sound.setVolume(0.5)
-        this.sound.play(1000)
+        sound.setBuffer(buffer)
+        sound.setLoop(true)
+        sound.setVolume(0.5)
+        sound.play()
       },
       () => {
+        console.log('playing')
       },
       (error) => {
         console.log(error, 'error!')
       }
     )
+    return () => {
+      sound.stop()
+    }
+  })
 
-    // create an AudioAnalyser, passing in the sound and desired fftSize
-    this.analyser = new THREE.AudioAnalyser(this.sound, 32)
+  // create an AudioAnalyser, passing in the sound and desired fftSize
+  const analyser = new THREE.AudioAnalyser(sound, 32)
 
-    // get the average frequency of the sound
-    // const data = analyser.getAverageFrequency()
+  // get the average frequency of the sound
+  // const data = analyser.getAverageFrequency()
 
-    this.start()
-  }
-
-  renderScene = () => {
+  const renderScene = () => {
     // geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
     // geometry.attributes.position.needsUpdate = true
 
-    const freq = this.analyser.getFrequencyData()
+    const freq = analyser.getFrequencyData()
 
     const value = sum(freq, f => f) / 5000.0
     uniforms.amplitude.value = value > 0.005 ? value : 0
-    this.camera.translateX(-0.5)
-
-    this.renderer.render(this.scene, this.camera)
-    this.controls.update()
+    camera.translateX(-0.5)
+    console.log(value)
   }
 
-  updateRayCaster (x, y) {
-    const mouse = new THREE.Vector2(x, y)
-    const raycaster = new THREE.Raycaster()
-    raycaster.setFromCamera(mouse, this.camera)
-
-    uniforms.origin.value = raycaster.ray.origin
-    uniforms.direction.value = raycaster.ray.direction
-  }
-
-  mouseMove = (event) => {
-    this.updateRayCaster(
+  const mouseMove = (event) => {
+    updateRayCaster(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
     )
   }
 
-  componentWillUnmount () {
-    super.componentWillUnmount()
-    this.sound.stop()
-  }
-
-  render = () => (
+  return (
     <div
-      onMouseMove={this.mouseMove}
-      ref={(mount) => {
-        this.mount = mount
-      }}
-    />
+      onMouseMove={mouseMove}
+    >
+      <Scene
+        camera={camera}
+        shapes={lines}
+        renderer={renderer}
+        renderScene={renderScene}
+        orbitControls
+      />
+    </div>
   )
 }
 
@@ -226,7 +214,7 @@ const Container = styled.div`
   height: 500px;
 `
 
-const Page = (props) => {
+const Page = () => {
   const [started, start] = useState(false)
 
   return (
