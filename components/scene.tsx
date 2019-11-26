@@ -1,43 +1,54 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { OrbitControls } from 'three-orbitcontrols-ts'
 
-class Scene<Props> extends React.Component<Props, {}> {
-  scene: THREE.Scene;
+type Props = {
+  renderer: any,
+  renderScene: () => void,
+  orbitControls: boolean,
+  camera: THREE.Camera,
+  shapes: Array<THREE.Mesh | THREE.Line>
+}
 
-  mount: any;
+const Scene = (props: Props) => {
+  const controls = props.orbitControls ? new OrbitControls(props.camera, props.renderer.domElement) : null
+  let frameId: number | null = null
+  const scene = new THREE.Scene()
+  const ref = useRef<HTMLDivElement>(null)
 
-  renderer: any;
-
-  frameId: number | null = null;
-
-  constructor (props: Props) {
-    super(props)
-    this.scene = new THREE.Scene()
+  const animate = () => {
+    props.renderScene()
+    if (controls) {
+      controls.update()
+    }
+    props.renderer.render(scene, props.camera)
+    frameId = window.requestAnimationFrame(animate)
   }
 
-  componentWillUnmount () {
-    this.stop()
-    this.mount.removeChild(this.renderer.domElement)
-  }
-
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = window.requestAnimationFrame(this.animate)
+  const start = () => {
+    if (!frameId) {
+      frameId = window.requestAnimationFrame(animate)
     }
   }
 
-  stop = () => {
-    window.cancelAnimationFrame(this.frameId)
+  useEffect(() => {
+    ref.current!.appendChild(props.renderer.domElement)
+
+    start()
+    props.shapes.forEach((shape) => {
+      scene.add(shape)
+    })
+
+    return stop
+  })
+
+  const stop = () => {
+    if (frameId) {
+      window.cancelAnimationFrame(frameId)
+    }
   }
 
-  animate = () => {
-    this.renderScene()
-    this.frameId = window.requestAnimationFrame(this.animate)
-  }
-
-  renderScene () {
-    throw new Error('Implement renderScene()')
-  }
+  return <div ref={ref} />
 }
 
 export default Scene

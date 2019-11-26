@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Scene from '../components/composable_scene'
+import Scene from '../components/scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
 

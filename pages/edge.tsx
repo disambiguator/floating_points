@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import Scene from '../components/composable_scene'
+import Scene from '../components/scene'
 import * as THREE from 'three'
 
 const edgeShader = `

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import _ from 'lodash'
-import Scene from '../components/composable_scene'
+import Scene from '../components/scene'
 
 const numPoints = 50000
 const near = 0.1
