@@ -3,7 +3,15 @@ import Scene from '../components/scene'
 import * as THREE from 'three'
 import { OrbitControls } from 'three-orbitcontrols-ts'
 
-class Edge extends Scene {
+class Edge extends Scene<{}> {
+  width: number
+  height: number
+  time: number
+  camera: THREE.OrthographicCamera;
+  controls: OrbitControls;
+  bufferMaterial: THREE.ShaderMaterial;
+  private quad: THREE.Mesh;
+  
   componentDidMount () {
     this.mount.width = window.innerWidth
     this.mount.height = window.innerHeight
