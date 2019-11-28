@@ -77,10 +77,10 @@ const uniforms = {
   amplitude: new THREE.Uniform(0.0005),
   origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-  color: new THREE.Uniform(0.0)
+  color: new THREE.Uniform(0.0),
 }
 
-function sum (array, f) {
+function sum(array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
@@ -97,24 +97,18 @@ const Spiro = () => {
   const width = window.innerWidth
   const height = window.innerHeight
 
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    width / height,
-    near,
-    far
-  )
+  const camera = new THREE.PerspectiveCamera(45, width / height, near, far)
   camera.position.set(0, 0, 300)
   camera.lookAt(0, 0, 0)
 
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   renderer.setSize(width, height)
 
-  const material =
-      new THREE.ShaderMaterial({
-        uniforms: uniforms,
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader
-      })
+  const material = new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+  })
 
   const displacement = new Float32Array(renderSpeed)
   for (let i = 0; i < renderSpeed; i++) {
@@ -124,12 +118,19 @@ const Spiro = () => {
   const lines = []
   for (let i = 0; i < 500; i++) {
     const geometry = new THREE.BoxBufferGeometry(15, 15, 15)
-    geometry.setAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
-    geometry.translate(Math.random() * 300, Math.random() * 300, Math.random() * 300)
+    geometry.setAttribute(
+      'displacement',
+      new THREE.BufferAttribute(displacement, 1),
+    )
+    geometry.translate(
+      Math.random() * 300,
+      Math.random() * 300,
+      Math.random() * 300,
+    )
     const line = new THREE.Mesh(geometry, material)
-    line.rotation.x += Math.PI / 64 * Math.random() * 100
-    line.rotation.y += Math.PI / 64 * Math.random() * 100
-    line.rotation.z += Math.PI / 64 * Math.random() * 100
+    line.rotation.x += (Math.PI / 64) * Math.random() * 100
+    line.rotation.y += (Math.PI / 64) * Math.random() * 100
+    line.rotation.z += (Math.PI / 64) * Math.random() * 100
     lines.push(line)
   }
 
@@ -147,7 +148,7 @@ const Spiro = () => {
     const audioLoader = new THREE.AudioLoader()
     audioLoader.load(
       'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
-      (buffer) => {
+      buffer => {
         sound.setBuffer(buffer)
         sound.setLoop(true)
         sound.setVolume(0.5)
@@ -156,9 +157,9 @@ const Spiro = () => {
       () => {
         console.log('playing')
       },
-      (error) => {
+      error => {
         console.log(error, 'error!')
-      }
+      },
     )
     return () => {
       sound.stop()
@@ -183,17 +184,15 @@ const Spiro = () => {
     console.log(value)
   }
 
-  const mouseMove = (event) => {
+  const mouseMove = event => {
     updateRayCaster(
       (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
+      -(event.clientY / window.innerHeight) * 2 + 1,
     )
   }
 
   return (
-    <div
-      onMouseMove={mouseMove}
-    >
+    <div onMouseMove={mouseMove}>
       <Scene
         camera={camera}
         shapes={lines}
@@ -217,11 +216,10 @@ const Container = styled.div`
 const Page = () => {
   const [started, start] = useState(false)
 
-  return (
-    started ? <Spiro />
-      : <Container onClick={() => start(true)}>
-        Click to start
-      </Container>
+  return started ? (
+    <Spiro />
+  ) : (
+    <Container onClick={() => start(true)}>Click to start</Container>
   )
 }
 

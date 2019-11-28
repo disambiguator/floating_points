@@ -3,7 +3,7 @@ import Scene from '../components/scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
 
-const generateCube = (length) => {
+const generateCube = length => {
   const geometry = new THREE.BoxGeometry(length, length, length)
   // for ( var i = 0; i < geometry.faces.length; i ++ ) {
   //   geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
@@ -15,8 +15,8 @@ const generateCube = (length) => {
       color: Math.random() * 0xffffff,
       vertexColors: THREE.FaceColors,
       transparent: true,
-      opacity: 0.1
-    })
+      opacity: 0.1,
+    }),
   )
 }
 
@@ -32,7 +32,7 @@ const camera = (width, height) => {
     75,
     width / height,
     0.1,
-    10000
+    10000,
   )
   perspectiveCamera.position.z = 300
   perspectiveCamera.position.x = 300
@@ -53,12 +53,12 @@ const cubes = () => {
   const increment = 30
   let previousCube = generateCube(increment)
   shapes.push(previousCube)
-  const direction = () => Math.random() > 0.5 ? -1 : -1
+  const direction = () => (Math.random() > 0.5 ? -1 : -1)
   for (let i = increment * 2; i < 500; i = i + increment) {
     const newCube = generateCube(i)
-    newCube.position.x = previousCube.position.x + direction() * increment / 2
-    newCube.position.y = previousCube.position.y + direction() * increment / 2
-    newCube.position.z = previousCube.position.z + direction() * increment / 2
+    newCube.position.x = previousCube.position.x + (direction() * increment) / 2
+    newCube.position.y = previousCube.position.y + (direction() * increment) / 2
+    newCube.position.z = previousCube.position.z + (direction() * increment) / 2
     shapes.push(newCube)
     previousCube = newCube
   }
@@ -66,7 +66,7 @@ const cubes = () => {
   return shapes
 }
 
-const CubeZoom = (props) => {
+const CubeZoom = props => {
   const { width, height } = props
   const sceneCamera = camera(width, height)
   const renderScene = () => {
@@ -92,27 +92,29 @@ const Page = () => {
 
   useEffect(() => {
     if (dimensions == null) {
-      setDimensions({ width: myRef.current.clientWidth, height: myRef.current.clientHeight })
+      setDimensions({
+        width: myRef.current.clientWidth,
+        height: myRef.current.clientHeight,
+      })
     }
   })
 
   return (
     <Container>
       <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-      }
-    `}</style>
-      <div
-        style={{ width: '1200px', height: '1200px' }}
-        ref={myRef}
-      >
-        {dimensions ? <CubeZoom height={dimensions.height} width={dimensions.width} /> : null}
+        html,
+        body,
+        body > div:first-child,
+        div#__next,
+        div#__next > div,
+        div#__next > div > div {
+          height: 100%;
+        }
+      `}</style>
+      <div style={{ width: '1200px', height: '1200px' }} ref={myRef}>
+        {dimensions ? (
+          <CubeZoom height={dimensions.height} width={dimensions.width} />
+        ) : null}
       </div>
     </Container>
   )

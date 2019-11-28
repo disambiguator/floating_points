@@ -11,7 +11,10 @@ const generateCube = (length: number) => {
 
   return new THREE.Mesh(
     geometry,
-    new THREE.MeshBasicMaterial({ color: 0xffffff, vertexColors: THREE.FaceColors })
+    new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      vertexColors: THREE.FaceColors,
+    }),
   )
 }
 
@@ -27,7 +30,7 @@ const camera = (width: number, height: number) => {
     75,
     width / height,
     0.1,
-    10000
+    10000,
   )
   perspectiveCamera.position.z = 300
 
@@ -43,7 +46,7 @@ const renderer = (width: number, height: number) => {
 }
 
 interface Props {
-  width: number,
+  width: number;
   height: number
 }
 const Cubes = (props: Props) => {
@@ -58,10 +61,17 @@ const Cubes = (props: Props) => {
   const redLength = 2500
 
   const redCube = generateCube(redLength)
-  redCube.position.z = -(2 * greenLength * Math.sin(Math.PI / 4) + 2 * yellowLength * Math.sin(Math.PI / 4) + redLength * Math.sin(Math.PI / 4))
+  redCube.position.z = -(
+    2 * greenLength * Math.sin(Math.PI / 4) +
+    2 * yellowLength * Math.sin(Math.PI / 4) +
+    redLength * Math.sin(Math.PI / 4)
+  )
 
   const yellowCube = generateCube(yellowLength)
-  yellowCube.position.z = -(2 * greenLength * Math.sin(Math.PI / 4) + yellowLength * Math.sin(Math.PI / 4))
+  yellowCube.position.z = -(
+    2 * greenLength * Math.sin(Math.PI / 4) +
+    yellowLength * Math.sin(Math.PI / 4)
+  )
 
   const greenCube = generateCube(greenLength)
   greenCube.position.z = 0
@@ -91,7 +101,10 @@ const Cubes = (props: Props) => {
 }
 
 const Page = () => {
-  const [dimensions, setDimensions] = useState<{width: number, height: number} | null>(null)
+  const [dimensions, setDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null)
   const myRef: React.RefObject<HTMLDivElement> = React.createRef()
 
   useEffect(() => {
@@ -104,20 +117,19 @@ const Page = () => {
   return (
     <Container>
       <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-      }
-    `}</style>
-      <div
-        style={{ width: '400px', height: '400px' }}
-        ref={myRef}
-      >
-        {dimensions ? <Cubes height={dimensions.height} width={dimensions.width} /> : null}
+        html,
+        body,
+        body > div:first-child,
+        div#__next,
+        div#__next > div,
+        div#__next > div > div {
+          height: 100%;
+        }
+      `}</style>
+      <div style={{ width: '400px', height: '400px' }} ref={myRef}>
+        {dimensions ? (
+          <Cubes height={dimensions.height} width={dimensions.width} />
+        ) : null}
       </div>
     </Container>
   )

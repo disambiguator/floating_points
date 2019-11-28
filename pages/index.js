@@ -9,7 +9,7 @@ const pages = [
   { name: 'Scatter', path: '/scatter' },
   { name: 'Divide', path: '/divide' },
   { name: 'Cubes', path: '/cubes' },
-  { name: 'Overlap', path: '/overlap' }
+  { name: 'Overlap', path: '/overlap' },
 ]
 
 const translateDistance = 1
@@ -25,9 +25,12 @@ const Contents = styled.h1`
   justify-content: center;
   align-items: center;
   font-family: Arial;
-  background-color: rgba(255,255,255,0.2);
-  
-  a, a:visited, a:hover, a:active {
+  background-color: rgba(255, 255, 255, 0.2);
+
+  a,
+  a:visited,
+  a:hover,
+  a:active {
     color: inherit;
   }
 `
@@ -42,18 +45,21 @@ const endPoints = ({ width, height, slope }) => {
     { x: -b / m, y: 0 },
     { x: 0, y: b },
     { x: (height - b) / m, y: height },
-    { x: width, y: m * width + b }
-  ].filter((point) => (point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height))
+    { x: width, y: m * width + b },
+  ].filter(
+    point =>
+      point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height,
+  )
 }
 
 class Scatter extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.setNewFragmentWidth()
     this.timer = 0
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.ctx = this.mount.getContext('2d')
 
     this.updateDimensions()
@@ -71,7 +77,12 @@ class Scatter extends React.Component {
   }
 
   updateDimensions = () => {
-    const temp = this.ctx.getImageData(0, 0, this.mount.width, this.mount.height)
+    const temp = this.ctx.getImageData(
+      0,
+      0,
+      this.mount.width,
+      this.mount.height,
+    )
 
     this.mount.width = window.innerWidth
     this.mount.height = window.innerHeight
@@ -79,7 +90,7 @@ class Scatter extends React.Component {
     this.ctx.putImageData(temp, 0, 0)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     clearInterval(this.interval)
     window.removeEventListener('resize', this.updateDimensions)
   }
@@ -150,31 +161,35 @@ class Scatter extends React.Component {
     this.timer++
   }
 
-  render () {
+  render() {
     return (
       <div>
         <Contents>
           <h2>disambiguator</h2>
-          {pages.map((p) => (
-            <Link href={p.path}><a>{p.name}</a></Link>
+          {pages.map(p => (
+            <Link href={p.path}>
+              <a>{p.name}</a>
+            </Link>
           ))}
         </Contents>
         <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-        background: black;
-      }
-    `}</style>
+          html,
+          body,
+          body > div:first-child,
+          div#__next,
+          div#__next > div,
+          div#__next > div > div {
+            height: 100%;
+            background: black;
+          }
+        `}</style>
         <canvas
           style={{ position: 'fixed', top: 0, left: 0 }}
           width={1}
           height={1}
-          ref={mount => { this.mount = mount }}
+          ref={mount => {
+            this.mount = mount
+          }}
         />
       </div>
     )

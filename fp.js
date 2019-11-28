@@ -1,12 +1,12 @@
 const colors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e']
 
-var radiusScale = 40
-var offset = 1
-var initialArc = 0
-var amplitude
-var direction = 0.1
+const radiusScale = 40
+let offset = 1
+let initialArc = 0
+let amplitude
+let direction = 0.1
 
-function setup () {
+function setup() {
   setupVisualizer()
 
   createCanvas(windowWidth, windowHeight)
@@ -17,14 +17,14 @@ function setup () {
   background(0, 0, 0)
 }
 
-function draw () {
+function draw() {
   setRandomStroke()
 
   background(0, 0, 0, 10)
 
   // var numRings = 5
 
-  var buckets = ['bass', 'lowMid', 'mid', 'highMid', 'treble']
+  const buckets = ['bass', 'lowMid', 'mid', 'highMid', 'treble']
 
   drawCircle(radiusScale * 0, buckets[0])
   drawCircle(radiusScale * 1, buckets[1])
@@ -36,44 +36,48 @@ function draw () {
   drawCircle(radiusScale * 7, buckets[1])
   drawCircle(radiusScale * 8, buckets[0])
 
-  if (Math.abs(offset) > 15) { direction = -direction }
+  if (Math.abs(offset) > 15) {
+    direction = -direction
+  }
 
   //  offset += direction
 
   initialArc += 0.2
 }
 
-function mousePressed () {
+function mousePressed() {
   stroke(255, 204, 0, 25)
   ellipse(mouseX, mouseY, 25)
 }
 
-function randomColor () {
+function randomColor() {
   return _.sample(colors)
 }
 
-function drawCircle (radius, bucket) {
-  var numPoints = radius / 8
+function drawCircle(radius, bucket) {
+  const numPoints = radius / 8
 
   fft.analyze()
 
-  var arc = 360 / numPoints
+  const arc = 360 / numPoints
 
-  for (var i = 0; i < numPoints; i++) {
-    var angle = (arc * i + initialArc) * Math.PI / 180
+  for (let i = 0; i < numPoints; i++) {
+    const angle = ((arc * i + initialArc) * Math.PI) / 180
 
-    var xCoordinate = windowWidth / 2 + (radius + offset * radius) * Math.cos(angle)
-    var yCoordinate = windowHeight / 2 + (radius + offset * radius) * Math.sin(angle)
+    const xCoordinate =
+      windowWidth / 2 + (radius + offset * radius) * Math.cos(angle)
+    const yCoordinate =
+      windowHeight / 2 + (radius + offset * radius) * Math.sin(angle)
 
     ellipse(xCoordinate, yCoordinate, Math.pow(fft.getEnergy(bucket), 2) / 100)
   }
 }
 
-function preload () {
+function preload() {
   mySound = loadSound('/quantic.mp3')
 }
 
-function setRandomStroke () {
+function setRandomStroke() {
   r = random(127, 255)
   g = random(127, 255)
   b = random(127, 255)
@@ -81,7 +85,7 @@ function setRandomStroke () {
   stroke(r, g, b, 50)
 }
 
-function setupVisualizer () {
+function setupVisualizer() {
   mySound.setVolume(0.1)
   mySound.jump(random(0, mySound.duration()))
 
@@ -91,8 +95,8 @@ function setupVisualizer () {
   amplitude = new p5.Amplitude()
 }
 
-window.onload = function () {
-  document.getElementById('offset').onchange = function (e) {
+window.onload = function() {
+  document.getElementById('offset').onchange = function(e) {
     offset = e.target.value
   }
 }

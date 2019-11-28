@@ -12,7 +12,8 @@ const Container = styled.div`
   align-items: center;
 `
 
-const inRange = (point) => (point.x >= 0 && point.x <= 800 && point.y >= 0 && point.y <= 800)
+const inRange = point =>
+  point.x >= 0 && point.x <= 800 && point.y >= 0 && point.y <= 800
 
 const endPoints = () => {
   const slopeX = Math.random() * 10 - 5
@@ -26,19 +27,19 @@ const endPoints = () => {
     { x: -b / m, y: 0 },
     { x: 0, y: b },
     { x: (height - b) / m, y: height },
-    { x: width, y: m * width + b }
+    { x: width, y: m * width + b },
   ].filter(inRange)
 }
 
 class Scatter extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
     this.ctx = this.mount.getContext('2d')
     this.ctx.lineWidth = 5
 
     setInterval(this.animate, 20)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.stop()
     this.mount.removeChild(this.renderer.domElement)
   }
@@ -59,7 +60,7 @@ class Scatter extends React.Component {
     }
 
     this.ctx.beginPath()
-    this.ctx.strokeStyle = '#' + ((1 << 24) * Math.random() | 0).toString(16)
+    this.ctx.strokeStyle = '#' + (((1 << 24) * Math.random()) | 0).toString(16)
     this.ctx.moveTo(this.points[0].x, this.points[0].y)
     this.ctx.lineTo(this.points[1].x, this.points[1].y)
     this.ctx.stroke()
@@ -96,24 +97,26 @@ class Scatter extends React.Component {
     this.renderer.render(this.scene, this.camera)
   }
 
-  render () {
+  render() {
     return (
       <Container>
         <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-      }
-    `}</style>
+          html,
+          body,
+          body > div:first-child,
+          div#__next,
+          div#__next > div,
+          div#__next > div > div {
+            height: 100%;
+          }
+        `}</style>
 
         <canvas
           width={width}
           height={height}
-          ref={mount => { this.mount = mount }}
+          ref={mount => {
+            this.mount = mount
+          }}
         />
       </Container>
     )

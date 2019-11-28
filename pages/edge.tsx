@@ -51,14 +51,21 @@ gl_FragColor.xyz = col;
     `
 
 interface Props {
-  width: number,
+  width: number;
   height: number
 }
 const Edge = (props: Props) => {
-  const {width, height} = props
+  const { width, height } = props
   let time = 0
 
-  const camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000)
+  const camera = new THREE.OrthographicCamera(
+    width / -2,
+    width / 2,
+    height / 2,
+    height / -2,
+    1,
+    1000,
+  )
   camera.position.z = 2
 
   const renderer = new THREE.WebGLRenderer()
@@ -67,11 +74,14 @@ const Edge = (props: Props) => {
   const bufferMaterial = new THREE.ShaderMaterial({
     uniforms: {
       res: { type: 'v2', value: new THREE.Vector2(width, height) },
-      videoTexture: { type: 't', value: new THREE.TextureLoader().load('/static/bernal.jpg') },
+      videoTexture: {
+        type: 't',
+        value: new THREE.TextureLoader().load('/static/bernal.jpg'),
+      },
       distortion: { type: 'f', value: 1.0 },
-      time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI }
+      time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI },
     },
-    fragmentShader: edgeShader
+    fragmentShader: edgeShader,
   })
   const plane = new THREE.PlaneBufferGeometry(width, height)
   const quad = new THREE.Mesh(plane, bufferMaterial)
@@ -81,13 +91,15 @@ const Edge = (props: Props) => {
     bufferMaterial.uniforms.time.value = time
   }
 
-  return <Scene
-    camera={camera}
-    shapes={[quad]}
-    renderer={renderer}
-    renderScene={renderScene}
-    orbitControls
-  />
+  return (
+    <Scene
+      camera={camera}
+      shapes={[quad]}
+      renderer={renderer}
+      renderScene={renderScene}
+      orbitControls
+    />
+  )
 }
 
 const Page = () => {
@@ -96,24 +108,29 @@ const Page = () => {
 
   useEffect(() => {
     if (dimensions == null) {
-      setDimensions({ width: myRef.current.clientWidth, height: myRef.current.clientHeight })
+      setDimensions({
+        width: myRef.current.clientWidth,
+        height: myRef.current.clientHeight,
+      })
     }
   })
 
   return (
     <div>
       <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-      }
-    `}</style>
+        html,
+        body,
+        body > div:first-child,
+        div#__next,
+        div#__next > div,
+        div#__next > div > div {
+          height: 100%;
+        }
+      `}</style>
       <div ref={myRef}>
-        {dimensions ? <Edge height={dimensions.height} width={dimensions.width} /> : null}
+        {dimensions ? (
+          <Edge height={dimensions.height} width={dimensions.width} />
+        ) : null}
       </div>
     </div>
   )

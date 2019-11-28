@@ -53,7 +53,7 @@ const generateDistortion = () => {
 }
 
 class Scatter extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
 
@@ -61,12 +61,7 @@ class Scatter extends React.Component {
     this.scene = new THREE.Scene()
 
     // ADD CAMERA
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      width / height,
-      0.1,
-      1000
-    )
+    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
     this.camera.position.z = 100
 
     // ADD RENDERER
@@ -80,21 +75,21 @@ class Scatter extends React.Component {
 
     this.uniforms = {
       resolution: { value: new THREE.Vector2(800, 800), type: 'v2' },
-      distortion: new THREE.Uniform(generateDistortion())
+      distortion: new THREE.Uniform(generateDistortion()),
     }
     this.redCube = new THREE.Mesh(
       new THREE.PlaneGeometry(300, 300, 32),
       new THREE.ShaderMaterial({
         uniforms: this.uniforms,
         // vertexShader: vertexShader,
-        fragmentShader: fragmentShader
-      })
+        fragmentShader: fragmentShader,
+      }),
     )
     this.scene.add(this.redCube)
     this.start()
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.stop()
     this.mount.removeChild(this.renderer.domElement)
   }
@@ -120,23 +115,25 @@ class Scatter extends React.Component {
     this.renderer.render(this.scene, this.camera)
   }
 
-  render () {
+  render() {
     return (
       <Container>
         <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-      }
-    `}</style>
+          html,
+          body,
+          body > div:first-child,
+          div#__next,
+          div#__next > div,
+          div#__next > div > div {
+            height: 100%;
+          }
+        `}</style>
 
         <div
           style={{ width: '800px', height: '800px' }}
-          ref={mount => { this.mount = mount }}
+          ref={mount => {
+            this.mount = mount
+          }}
         />
       </Container>
     )

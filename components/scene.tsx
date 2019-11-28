@@ -3,15 +3,17 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three-orbitcontrols-ts'
 
 type Props = {
-  renderer: any,
-  renderScene: () => void,
-  orbitControls: boolean,
-  camera: THREE.Camera,
+  renderer: any;
+  renderScene: () => void;
+  orbitControls: boolean;
+  camera: THREE.Camera;
   shapes: Array<THREE.Mesh | THREE.Line>
 }
 
 const Scene = (props: Props) => {
-  const controls = props.orbitControls ? new OrbitControls(props.camera, props.renderer.domElement) : null
+  const controls = props.orbitControls
+    ? new OrbitControls(props.camera, props.renderer.domElement)
+    : null
   let frameId: number | null = null
   const scene = new THREE.Scene()
   const ref = useRef<HTMLDivElement>(null)
@@ -35,7 +37,7 @@ const Scene = (props: Props) => {
     ref.current!.appendChild(props.renderer.domElement)
 
     start()
-    props.shapes.forEach((shape) => {
+    props.shapes.forEach(shape => {
       scene.add(shape)
     })
 

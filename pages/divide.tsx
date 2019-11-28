@@ -13,7 +13,7 @@ const Container = styled.div`
 
 const Divide = () => {
   const ref = useRef<HTMLCanvasElement>(null)
-  let mount:HTMLCanvasElement
+  let mount: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const Divide = () => {
       bottomX = Math.random() * 800
 
       ctx.beginPath()
-      ctx.strokeStyle = '#' + ((1 << 24) * Math.random() | 0).toString(16)
+      ctx.strokeStyle = '#' + (((1 << 24) * Math.random()) | 0).toString(16)
       ctx.moveTo(topX, 0)
       ctx.lineTo(bottomX, 800)
       ctx.stroke()
@@ -77,21 +77,17 @@ const Divide = () => {
   return (
     <Container>
       <style global jsx>{`
-      html,
-      body,
-      body > div:first-child,
-      div#__next,
-      div#__next > div,
-      div#__next > div > div {
-        height: 100%;
-      }
-    `}</style>
+        html,
+        body,
+        body > div:first-child,
+        div#__next,
+        div#__next > div,
+        div#__next > div > div {
+          height: 100%;
+        }
+      `}</style>
 
-      <canvas
-        width={width}
-        height={height}
-        ref={ref}
-      />
+      <canvas width={width} height={height} ref={ref} />
     </Container>
   )
 }

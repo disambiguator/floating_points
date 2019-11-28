@@ -68,18 +68,18 @@ const uniforms = {
   amplitude: new THREE.Uniform(0.0005),
   origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-  color: new THREE.Uniform(0.0)
+  color: new THREE.Uniform(0.0),
 }
 
-function randInt (min, max) {
+function randInt(min, max) {
   return Math.floor(Math.random() * max) + min
 }
 
 export interface Seed {
-  radius: number,
-  arc: number,
-  phi: number,
-  speed: number,
+  radius: number;
+  arc: number;
+  phi: number;
+  speed: number;
   phiSpeed: number
 }
 
@@ -87,27 +87,27 @@ const randPosition = (): Seed => ({
   radius: randInt(50, 300),
   arc: randInt(0, 360),
   phi: randInt(0, 360),
-  speed: randInt(1, 10) * 360 / (randInt(10, 100) + numPoints),
-  phiSpeed: 0
+  speed: (randInt(1, 10) * 360) / (randInt(10, 100) + numPoints),
+  phiSpeed: 0,
 })
 
-function getPoint (radius, theta, phi) {
+function getPoint(radius, theta, phi) {
   const xCoordinate = radius * Math.sin(theta) * Math.cos(phi)
   const yCoordinate = radius * Math.cos(theta) * Math.sin(phi)
   const zCoordinate = radius * Math.cos(theta)
   return { x: xCoordinate, y: yCoordinate, z: zCoordinate }
 }
 
-function sum (array, f) {
+function sum(array, f) {
   return array.reduce((accum, p) => accum + f(p), 0)
 }
 
-function generateVertices () {
+function generateVertices() {
   const vertices = []
   for (let i = 0; i < renderSpeed; i++) {
     const points = positions.map(p => getPoint(p.radius, p.arc, p.phi))
 
-    positions.forEach(function (p) {
+    positions.forEach(function(p) {
       p.arc += p.speed
       p.phi += p.phiSpeed
     })
@@ -122,29 +122,31 @@ function generateVertices () {
   return vertices
 }
 
-function amplitudeSlider (event) {
+function amplitudeSlider(event) {
   uniforms.amplitude.value = parseFloat(event.target.value)
 }
 
-function enableColor (event) {
+function enableColor(event) {
   uniforms.color.value = event.target.checked ? 1.0 : 0.0
 }
 
-const addToPresets = () => (
+const addToPresets = () =>
   window.fetch('/api/addPreset', {
     method: 'POST',
-    body: JSON.stringify({ seeds: seeds })
+    body: JSON.stringify({ seeds: seeds }),
   })
-)
 
 const initPositions = () => {
   seeds = [randPosition(), randPosition()]
   setPositions([...seeds])
 }
 
-const setPositions = (p) => {
+const setPositions = p => {
   positions = p
-  geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
+  geometry.attributes.position = new THREE.Float32BufferAttribute(
+    generateVertices(),
+    3,
+  )
   geometry.attributes.position.needsUpdate = true
 }
 
@@ -154,7 +156,9 @@ let presets = []
 const initFromPreset = async () => {
   const randomPreset = _.sample(presets)
 
-  const response = await window.fetch(`/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`)
+  const response = await window.fetch(
+    `/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`,
+  )
   const jsonResponse = await response.json()
   setPositions(await jsonResponse)
 }
@@ -165,12 +169,12 @@ const getInitialPresets = async () => {
   presets = json.presets
 }
 
-const getCamera = (props) => {
+const getCamera = props => {
   const perspectiveCamera = new THREE.PerspectiveCamera(
     45,
     props.width / props.height,
     near,
-    far
+    far,
   )
 
   perspectiveCamera.position.set(0, 0, 300)
@@ -179,7 +183,7 @@ const getCamera = (props) => {
   return perspectiveCamera
 }
 
-const renderer = (props) => {
+const renderer = props => {
   const webGLRenderer = new THREE.WebGLRenderer({ antialias: true })
   webGLRenderer.setSize(props.width, props.height)
 
@@ -195,49 +199,60 @@ const updateRayCaster = (x, y, camera) => {
   uniforms.direction.value = raycaster.ray.direction
 }
 
-const Spiro = (props) => {
+const Spiro = props => {
   initPositions()
   getInitialPresets()
 
   const camera = getCamera(props)
 
-  const material =
-    new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader
-    })
+  const material = new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+  })
 
   const displacement = new Float32Array(renderSpeed)
   for (let i = 0; i < renderSpeed; i++) {
     displacement[i] = Math.random() * 5
   }
 
-  geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 1))
+  geometry.addAttribute(
+    'displacement',
+    new THREE.BufferAttribute(displacement, 1),
+  )
 
   const line = new THREE.Line(geometry, material)
 
   updateRayCaster(0, 0, camera)
 
   const renderScene = () => {
-    geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
+    geometry.attributes.position = new THREE.Float32BufferAttribute(
+      generateVertices(),
+      3,
+    )
     geometry.attributes.position.needsUpdate = true
   }
 
-  const mouseMove = (event) => {
+  const mouseMove = event => {
     updateRayCaster(
       (event.clientX / props.width) * 2 - 1,
       -(event.clientY / props.height) * 2 + 1,
-      camera
+      camera,
     )
   }
 
   return (
     <div onMouseMove={mouseMove}>
       <label>Amplitude</label>
-      <input type='range' min='0' max='.005' step='.00001' onInput={amplitudeSlider} />
+      <input
+        type="range"
+        min="0"
+        max=".005"
+        step=".00001"
+        onInput={amplitudeSlider}
+      />
       <label>Color</label>
-      <input type='checkbox' onInput={enableColor} />
+      <input type="checkbox" onInput={enableColor} />
 
       <button onClick={addToPresets}>Add to Presets</button>
       <button onClick={initPositions}>New Positions</button>
@@ -265,7 +280,9 @@ const Page = () => {
 
   return (
     <div>
-      {dimensions ? <Spiro height={dimensions.height} width={dimensions.width} /> : null}
+      {dimensions ? (
+        <Spiro height={dimensions.height} width={dimensions.width} />
+      ) : null}
     </div>
   )
 }

@@ -18,15 +18,15 @@ const fragmentShader = `
   }
 `
 const constraints = {
-  video: { width: { exact: 640 }, height: { exact: 480 } }
+  video: { width: { exact: 640 }, height: { exact: 480 } },
 }
 
-const setStream = async (video) => {
+const setStream = async video => {
   video.srcObject = await navigator.mediaDevices.getUserMedia(constraints)
 }
 
 class Feedback extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.scene = null
@@ -41,7 +41,7 @@ class Feedback extends React.Component {
     this.videoTexture = null
   }
 
-  componentDidMount () {
+  componentDidMount() {
     // console.log(window.innerWidth, window.innerWidth)
     this.mount.width = window.innerWidth
     this.mount.height = window.innerHeight
@@ -53,7 +53,14 @@ class Feedback extends React.Component {
     this.scene = new THREE.Scene()
 
     // ADD CAMERA
-    this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 1000)
+    this.camera = new THREE.OrthographicCamera(
+      this.width / -2,
+      this.width / 2,
+      this.height / 2,
+      this.height / -2,
+      1,
+      1000,
+    )
     this.camera.position.z = 2
 
     // ADD RENDERER
@@ -67,18 +74,18 @@ class Feedback extends React.Component {
     this.start()
   }
 
-  bufferTextureSetup () {
+  bufferTextureSetup() {
     console.log(this.width, this.height)
     // Create buffer scene
     this.bufferScene = new THREE.Scene()
     // Create 2 buffer textures
     this.textureA = new THREE.WebGLRenderTarget(this.width, this.height, {
       minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter
+      magFilter: THREE.LinearFilter,
     })
     this.textureB = new THREE.WebGLRenderTarget(this.width, this.height, {
       minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter
+      magFilter: THREE.LinearFilter,
     })
     // Pass textureA to shader
     this.bufferMaterial = new THREE.ShaderMaterial({
@@ -87,9 +94,9 @@ class Feedback extends React.Component {
         res: { type: 'v2', value: new THREE.Vector2(this.width, this.height) },
         // Keeps the resolution
         videoTexture: { type: 't', value: this.videoTexture },
-        time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI }
+        time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI },
       },
-      fragmentShader: fragmentShader
+      fragmentShader: fragmentShader,
     })
     const plane = new THREE.PlaneBufferGeometry(this.width, this.height)
     const bufferObject = new THREE.Mesh(plane, this.bufferMaterial)
@@ -100,7 +107,7 @@ class Feedback extends React.Component {
     this.scene.add(this.quad)
   }
 
-  videoTextureSetup () {
+  videoTextureSetup() {
     setStream(this.video)
     this.videoTexture = new THREE.VideoTexture(this.video)
     this.videoTexture.minFilter = THREE.LinearFilter
@@ -108,7 +115,7 @@ class Feedback extends React.Component {
     this.videoTexture.format = THREE.RGBFormat
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.stop()
     this.mount.removeChild(this.renderer.domElement)
   }
@@ -145,11 +152,21 @@ class Feedback extends React.Component {
     this.renderer.render(this.scene, this.camera)
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <video id='video' autoPlay ref={video => { this.video = video }} />
-        <div ref={mount => { this.mount = mount }} />
+        <video
+          id="video"
+          autoPlay
+          ref={video => {
+            this.video = video
+          }}
+        />
+        <div
+          ref={mount => {
+            this.mount = mount
+          }}
+        />
       </div>
     )
   }

@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 
 const P5Wrapper = dynamic(() => import('react-p5-wrapper'), { ssr: false })
 
-const sketch = (p5) => {
+const sketch = p5 => {
   let initialArc = 0
   let counter = 0
   const coordinates = 0
@@ -17,7 +17,7 @@ const sketch = (p5) => {
 
   const drawCircle = () => {
     for (let i = 0; i < points; i++) {
-      const angle = initialArc + (arc * i) * Math.PI / 180
+      const angle = initialArc + (arc * i * Math.PI) / 180
 
       const xCoordinate = p5.windowWidth / 2 + hypotenuse * Math.cos(angle)
       const yCoordinate = p5.windowHeight / 2 + hypotenuse * Math.sin(angle)
@@ -45,12 +45,13 @@ const sketch = (p5) => {
   }
 
   const drawLine = () => {
-    const angle1 = initialArc + (arc * coordinates) * Math.PI / 180
+    const angle1 = initialArc + (arc * coordinates * Math.PI) / 180
 
     const x1 = p5.windowWidth / 2 + hypotenuse * Math.cos(angle1)
     const y1 = p5.windowHeight / 2 + hypotenuse * Math.sin(angle1)
 
-    const angle2 = initialArc + (arc * coordinates + lineIncrement) * Math.PI / 180
+    const angle2 =
+      initialArc + ((arc * coordinates + lineIncrement) * Math.PI) / 180
 
     const x2 = p5.windowWidth / 2 + hypotenuse * Math.cos(angle2)
     const y2 = p5.windowHeight / 2 + hypotenuse * Math.sin(angle2)
@@ -59,7 +60,13 @@ const sketch = (p5) => {
   }
 
   p5.draw = () => {
-    buffer.image(buffer, -zoom, -zoom, p5.windowWidth + 2 * zoom, p5.windowHeight + 2 * zoom)
+    buffer.image(
+      buffer,
+      -zoom,
+      -zoom,
+      p5.windowWidth + 2 * zoom,
+      p5.windowHeight + 2 * zoom,
+    )
     for (let i = 0; i < 10; i++) {
       buffer.background(0, 0, 0, 5)
       initialArc += 1
@@ -72,7 +79,13 @@ const sketch = (p5) => {
       if (counter > 1000) counter = 0
     }
 
-    p5.image(buffer, zoom, zoom, p5.windowWidth - 2 * zoom, p5.windowHeight - 2 * zoom)
+    p5.image(
+      buffer,
+      zoom,
+      zoom,
+      p5.windowWidth - 2 * zoom,
+      p5.windowHeight - 2 * zoom,
+    )
   }
 }
 

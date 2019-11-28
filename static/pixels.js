@@ -7,26 +7,30 @@ let fanSlice = false
 let slope
 let reflectMode = false
 
-function imageLibrary () {
+function imageLibrary() {
   return sample([
     'http://i.imgur.com/Fx6BGlt.jpg',
-    'https://i.imgur.com/IwnuBWX.jpg'
+    'https://i.imgur.com/IwnuBWX.jpg',
   ])
 }
 
-function sample (array) {
+function sample(array) {
   return array[Math.floor(Math.random() * array.length)]
 }
 
-const randRangeDouble = (min, max) => Math.random() * (max - min) + min;
+const randRangeDouble = (min, max) => Math.random() * (max - min) + min
 
-let reflectButton;
-let reflectImage;
+let reflectButton
+let reflectImage
 
-const s = (sketch) => {
+const s = sketch => {
   const sliceRand = () => {
-    slice(randRangeDouble(-height / width, height / width), randRange(0, height), randRange(3, 50))
-  };
+    slice(
+      randRangeDouble(-height / width, height / width),
+      randRange(0, height),
+      randRange(3, 50),
+    )
+  }
 
   const enableFanSlice = () => {
     slope = -5
@@ -34,7 +38,7 @@ const s = (sketch) => {
     fanSlice = true
   }
 
-  reflectButton = (e) => {
+  reflectButton = e => {
     reflectMode = e.checked
   }
 
@@ -52,12 +56,12 @@ const s = (sketch) => {
     if (reflect) {
       setPixelArray(x, height - j - 1, temp)
     }
-  };
+  }
 
   const reset = () => {
     sketch.image(img, 0, 0, width, height)
     positions = {}
-  };
+  }
 
   sketch.preload = () => {
     img = sketch.loadImage(imageLibrary())
@@ -80,20 +84,20 @@ const s = (sketch) => {
     positions[x] = {
       minimumY: yMin,
       currentY: yMax,
-      maximumY: yMax
+      maximumY: yMax,
     }
 
     sketch.frameRate(100)
-  };
+  }
 
   const slice = (m, b, sliceSize) => {
     for (let x = 0; x < width; x++) {
       const y = Math.floor(m * x + b)
       updatePositions(x, y, y + sliceSize)
     }
-  };
+  }
 
-  function toggleAutoSlice () {
+  function toggleAutoSlice() {
     if (autoSlice) {
       document.getElementById('autoSlice').innerText = 'Auto-Slice Start'
     } else {
@@ -117,18 +121,18 @@ const s = (sketch) => {
     } else {
       updatePositions(x, y, height)
     }
-  };
+  }
 
   const fullySort = () => {
     for (let x = 0; x < width; x++) {
       updatePositions(x, 0, height)
     }
-  };
+  }
 
   sketch.draw = () => {
     sketch.loadPixels()
 
-    Object.keys(positions).forEach(function (currentX) {
+    Object.keys(positions).forEach(function(currentX) {
       const p = positions[currentX]
 
       if (p.currentY > p.minimumY) {
@@ -153,7 +157,7 @@ const s = (sketch) => {
         }
       }
     }
-  };
+  }
 
   const setPixelArray = (x, y, o) => {
     const idx = 4 * (y * width + x)
@@ -161,7 +165,7 @@ const s = (sketch) => {
     sketch.pixels[idx + 1] = o[1]
     sketch.pixels[idx + 2] = o[2]
     sketch.pixels[idx + 3] = o[3]
-  };
+  }
 
   const getPixelArray = (x, y) => {
     const off = (y * width + x) * 4
@@ -169,12 +173,11 @@ const s = (sketch) => {
       sketch.pixels[off],
       sketch.pixels[off + 1],
       sketch.pixels[off + 2],
-      sketch.pixels[off + 3]
+      sketch.pixels[off + 3],
     ]
-  };
+  }
 
-  const randRange = (min, max) => sketch.int(Math.random() * (max - min) + min);
-
+  const randRange = (min, max) => sketch.int(Math.random() * (max - min) + min)
 
   reflectImage = () => {
     sketch.loadPixels()
@@ -186,7 +189,7 @@ const s = (sketch) => {
     }
 
     sketch.updatePixels()
-  };
-};
+  }
+}
 
-let myp5 = new p5(s);
+const myp5 = new p5(s)

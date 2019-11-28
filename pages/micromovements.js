@@ -8,15 +8,15 @@ const rowCount = Math.ceil(width / size)
 const heightCount = Math.ceil(height / size)
 
 const constraints = {
-  video: { width: { exact: width }, height: { exact: height } }
+  video: { width: { exact: width }, height: { exact: height } },
 }
 
-const setStream = async (video) => {
+const setStream = async video => {
   video.srcObject = await navigator.mediaDevices.getUserMedia(constraints)
 }
 
 class Micromovements extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
     setStream(this.video)
     setInterval(this.captureImage, 50)
   }
@@ -25,15 +25,11 @@ class Micromovements extends React.Component {
     const x = (section % rowCount) * size
     const y = Math.floor(section / rowCount) * size
 
-    this.context.drawImage(
-      this.video,
-      x, y, size, size,
-      x, y, size, size
-    )
+    this.context.drawImage(this.video, x, y, size, size, x, y, size, size)
 
     section++
 
-    if (section > (heightCount * rowCount)) {
+    if (section > heightCount * rowCount) {
       section = 0
     }
   }
@@ -42,7 +38,7 @@ class Micromovements extends React.Component {
     <div>
       <video
         autoPlay
-        ref={(v) => {
+        ref={v => {
           console.log(v)
           this.video = v
         }}
@@ -50,7 +46,9 @@ class Micromovements extends React.Component {
       <canvas
         width={width}
         height={height}
-        ref={(c) => { this.context = c.getContext('2d') }}
+        ref={c => {
+          this.context = c.getContext('2d')
+        }}
       />
     </div>
   )
