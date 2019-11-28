@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Scene from '../components/scene'
 import * as THREE from 'three'
+import Page from '../components/page'
 
 const edgeShader = `
       uniform vec2 res;//The width and height of our screen
@@ -102,38 +103,14 @@ const Edge = (props: Props) => {
   )
 }
 
-const Page = () => {
-  const [dimensions, setDimensions] = useState(null)
-  const myRef: React.RefObject<HTMLDivElement> = React.createRef()
-
-  useEffect(() => {
-    if (dimensions == null) {
-      setDimensions({
-        width: myRef.current.clientWidth,
-        height: myRef.current.clientHeight,
-      })
-    }
-  })
-
+export default () => {
   return (
-    <div>
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div,
-        div#__next > div > div {
-          height: 100%;
-        }
-      `}</style>
-      <div ref={myRef}>
-        {dimensions ? (
+    <Page>
+      {dimensions =>
+        dimensions ? (
           <Edge height={dimensions.height} width={dimensions.width} />
-        ) : null}
-      </div>
-    </div>
+        ) : null
+      }
+    </Page>
   )
 }
-
-export default Page

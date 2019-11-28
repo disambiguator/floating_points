@@ -1,15 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import styled from 'styled-components'
+import Page from '../components/page'
 
 const translateDistance = 1
 const width = 800
 const height = 800
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
 
 const Divide = () => {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -74,22 +68,9 @@ const Divide = () => {
     timer++
   }
 
-  return (
-    <Container>
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div,
-        div#__next > div > div {
-          height: 100%;
-        }
-      `}</style>
-
-      <canvas width={width} height={height} ref={ref} />
-    </Container>
-  )
+  return <canvas width={width} height={height} ref={ref} />
 }
 
-export default Divide
+export default () => (
+  <Page>{dimensions => (dimensions ? <Divide /> : null)}</Page>
+)

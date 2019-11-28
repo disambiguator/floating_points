@@ -7,7 +7,7 @@
     "npm": "6.2.0"
   },
   "scripts": {
-    "test": "standard",
+    "test": "eslint . --ext=js,jsx,ts,tsx --fix",
     "build": "next build",
     "start": "next start"
   },

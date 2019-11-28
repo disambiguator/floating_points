@@ -50,7 +50,7 @@ const Scene = (props: Props) => {
     }
   }
 
-  return <div ref={ref} />
+  return <div id="scene" ref={ref} />
 }
 
 export default Scene

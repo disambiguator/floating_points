@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Scene from '../components/scene'
 import styled from 'styled-components'
+import Page from '../components/page'
 import * as THREE from 'three'
 
 const generateCube = (length: number) => {
@@ -17,13 +18,6 @@ const generateCube = (length: number) => {
     }),
   )
 }
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: lightgray;
-`
 
 const camera = (width: number, height: number) => {
   const perspectiveCamera = new THREE.PerspectiveCamera(
@@ -100,39 +94,10 @@ const Cubes = (props: Props) => {
   )
 }
 
-const Page = () => {
-  const [dimensions, setDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null)
-  const myRef: React.RefObject<HTMLDivElement> = React.createRef()
-
-  useEffect(() => {
-    if (dimensions == null) {
-      const mount = myRef.current!
-      setDimensions({ width: mount.clientWidth, height: mount.clientHeight })
-    }
-  })
-
+export default () => {
   return (
-    <Container>
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div,
-        div#__next > div > div {
-          height: 100%;
-        }
-      `}</style>
-      <div style={{ width: '400px', height: '400px' }} ref={myRef}>
-        {dimensions ? (
-          <Cubes height={dimensions.height} width={dimensions.width} />
-        ) : null}
-      </div>
-    </Container>
+    <Page>
+      {dimensions => (dimensions ? <Cubes height={400} width={400} /> : null)}
+    </Page>
   )
 }
-
-export default Page
