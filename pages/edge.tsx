@@ -77,7 +77,7 @@ const Edge = (props: Props) => {
       res: { type: 'v2', value: new THREE.Vector2(width, height) },
       videoTexture: {
         type: 't',
-        value: new THREE.TextureLoader().load('/static/bernal.jpg'),
+        value: new THREE.TextureLoader().load('/bernal.jpg'),
       },
       distortion: { type: 'f', value: 1.0 },
       time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI },
