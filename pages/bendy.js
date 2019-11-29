@@ -26,6 +26,13 @@ const sketch = p5 => {
     }
   }
 
+  const mouseDistanceFromCenter = () => {
+    return {
+      x: p5.mouseX - p5.windowWidth / 2,
+      y: p5.mouseY - p5.windowHeight / 2,
+    }
+  }
+
   const setRandomStroke = () => {
     const r = p5.random(127, 255)
     const g = p5.random(127, 255)
@@ -60,12 +67,13 @@ const sketch = p5 => {
   }
 
   p5.draw = () => {
+    const { x: zoomX, y: zoomY } = mouseDistanceFromCenter()
     buffer.image(
       buffer,
-      -zoom,
-      -zoom,
-      p5.windowWidth + 2 * zoom,
-      p5.windowHeight + 2 * zoom,
+      -zoomX,
+      -zoomY,
+      p5.windowWidth + 2 * zoomX,
+      p5.windowHeight + 2 * zoomY,
     )
     for (let i = 0; i < 10; i++) {
       buffer.background(0, 0, 0, 5)
