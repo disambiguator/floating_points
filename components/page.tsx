@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { Dimensions } from '../lib/types'
 
 const Container = styled.div`
   display: flex;
@@ -9,12 +10,13 @@ const Container = styled.div`
   background: lightgray;
 `
 
-export default props => {
+interface Props {
+  children: (dimensions: Dimensions) => ReactNode;
+}
+
+export default (props: Props) => {
   const { children } = props
-  const [dimensions, setDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null)
+  const [dimensions, setDimensions] = useState<Dimensions | null>(null)
 
   useEffect(() => {
     if (dimensions == null) {
@@ -22,5 +24,16 @@ export default props => {
     }
   })
 
-  return <Container id="container">{children(dimensions)}</Container>
+  return (
+    <>
+      <style global jsx>{`
+        body {
+          margin: 0;
+        }
+      `}</style>
+      <Container id="container">
+        {dimensions ? children(dimensions) : null}
+      </Container>
+    </>
+  )
 }

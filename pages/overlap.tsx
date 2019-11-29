@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import Scene from '../components/scene'
 import styled from 'styled-components'
 import * as THREE from 'three'
+import { Dimensions } from '../lib/types'
+import Page from '../components/page'
 
-const generateCube = length => {
+const generateCube = (length: number) => {
   const geometry = new THREE.BoxGeometry(length, length, length)
   // for ( var i = 0; i < geometry.faces.length; i ++ ) {
   //   geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
@@ -20,14 +22,7 @@ const generateCube = length => {
   )
 }
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: lightgray;
-`
-
-const camera = (width, height) => {
+const camera = (width: number, height: number) => {
   const perspectiveCamera = new THREE.PerspectiveCamera(
     75,
     width / height,
@@ -41,7 +36,7 @@ const camera = (width, height) => {
   return perspectiveCamera
 }
 
-const renderer = (width, height) => {
+const renderer = (width: number, height: number) => {
   const webGLRenderer = new THREE.WebGLRenderer()
   webGLRenderer.setSize(width, height)
 
@@ -66,7 +61,7 @@ const cubes = () => {
   return shapes
 }
 
-const CubeZoom = props => {
+const CubeZoom = (props: Dimensions) => {
   const { width, height } = props
   const sceneCamera = camera(width, height)
   const renderScene = () => {
@@ -86,38 +81,6 @@ const CubeZoom = props => {
   )
 }
 
-const Page = () => {
-  const [dimensions, setDimensions] = useState(null)
-  const myRef: React.RefObject<HTMLDivElement> = React.createRef()
-
-  useEffect(() => {
-    if (dimensions == null) {
-      setDimensions({
-        width: myRef.current.clientWidth,
-        height: myRef.current.clientHeight,
-      })
-    }
-  })
-
-  return (
-    <Container>
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div,
-        div#__next > div > div {
-          height: 100%;
-        }
-      `}</style>
-      <div style={{ width: '1200px', height: '1200px' }} ref={myRef}>
-        {dimensions ? (
-          <CubeZoom height={dimensions.height} width={dimensions.width} />
-        ) : null}
-      </div>
-    </Container>
-  )
-}
-
-export default Page
+export default () => (
+  <Page>{_dimensions => <CubeZoom height={1200} width={1200} />}</Page>
+)

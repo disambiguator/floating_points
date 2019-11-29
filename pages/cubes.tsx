@@ -95,9 +95,5 @@ const Cubes = (props: Props) => {
 }
 
 export default () => {
-  return (
-    <Page>
-      {dimensions => (dimensions ? <Cubes height={400} width={400} /> : null)}
-    </Page>
-  )
+  return <Page>{_dimensions => <Cubes height={400} width={400} />}</Page>
 }

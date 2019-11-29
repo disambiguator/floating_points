@@ -71,6 +71,4 @@ const Divide = () => {
   return <canvas width={width} height={height} ref={ref} />
 }
 
-export default () => (
-  <Page>{dimensions => (dimensions ? <Divide /> : null)}</Page>
-)
+export default () => <Page>{_dimensions => <Divide />}</Page>

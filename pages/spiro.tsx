@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
-import _ from 'lodash'
+import _, { sumBy } from 'lodash'
+import Page from '../components/page'
 import Scene from '../components/scene'
+import { ChangeEvent, FormEvent } from 'react'
+import { Dimensions } from '../lib/types'
 
 const numPoints = 50000
 const near = 0.1
 const far = 10000
 const geometry = new THREE.BufferGeometry()
 const renderSpeed = 1000
-let positions = []
+let positions: Array<Seed> = []
 
 const vertexShader = `
     #ifdef GL_ES
@@ -71,7 +73,7 @@ const uniforms = {
   color: new THREE.Uniform(0.0),
 }
 
-function randInt(min, max) {
+function randInt(min: number, max: number) {
   return Math.floor(Math.random() * max) + min
 }
 
@@ -91,15 +93,11 @@ const randPosition = (): Seed => ({
   phiSpeed: 0,
 })
 
-function getPoint(radius, theta, phi) {
+const getPoint = (radius: number, theta: number, phi: number) => {
   const xCoordinate = radius * Math.sin(theta) * Math.cos(phi)
   const yCoordinate = radius * Math.cos(theta) * Math.sin(phi)
   const zCoordinate = radius * Math.cos(theta)
   return { x: xCoordinate, y: yCoordinate, z: zCoordinate }
-}
-
-function sum(array, f) {
-  return array.reduce((accum, p) => accum + f(p), 0)
 }
 
 function generateVertices() {
@@ -112,9 +110,9 @@ function generateVertices() {
       p.phi += p.phiSpeed
     })
 
-    const x = sum(points, p => p.x) / points.length
-    const y = sum(points, p => p.y) / points.length
-    const z = sum(points, p => p.z) / points.length
+    const x = sumBy(points, 'x') / points.length
+    const y = sumBy(points, 'y') / points.length
+    const z = sumBy(points, 'z') / points.length
 
     vertices.push(x, y, z)
   }
@@ -122,11 +120,11 @@ function generateVertices() {
   return vertices
 }
 
-function amplitudeSlider(event) {
+function amplitudeSlider(event: ChangeEvent<HTMLInputElement>) {
   uniforms.amplitude.value = parseFloat(event.target.value)
 }
 
-function enableColor(event) {
+function enableColor(event: ChangeEvent<HTMLInputElement>) {
   uniforms.color.value = event.target.checked ? 1.0 : 0.0
 }
 
@@ -141,7 +139,7 @@ const initPositions = () => {
   setPositions([...seeds])
 }
 
-const setPositions = p => {
+const setPositions = (p: Array<Seed>) => {
   positions = p
   geometry.attributes.position = new THREE.Float32BufferAttribute(
     generateVertices(),
@@ -150,11 +148,14 @@ const setPositions = p => {
   geometry.attributes.position.needsUpdate = true
 }
 
-let seeds = []
-let presets = []
+let seeds: Array<Seed> = []
+let presets: Array<{ positions: Array<string> }> = []
 
 const initFromPreset = async () => {
   const randomPreset = _.sample(presets)
+  if (randomPreset == undefined) {
+    throw new Error()
+  }
 
   const response = await window.fetch(
     `/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`,
@@ -169,7 +170,7 @@ const getInitialPresets = async () => {
   presets = json.presets
 }
 
-const getCamera = props => {
+const getCamera = (props: Dimensions) => {
   const perspectiveCamera = new THREE.PerspectiveCamera(
     45,
     props.width / props.height,
@@ -183,14 +184,14 @@ const getCamera = props => {
   return perspectiveCamera
 }
 
-const renderer = props => {
+const renderer = (props: Dimensions) => {
   const webGLRenderer = new THREE.WebGLRenderer({ antialias: true })
   webGLRenderer.setSize(props.width, props.height)
 
   return webGLRenderer
 }
 
-const updateRayCaster = (x, y, camera) => {
+const updateRayCaster = (x: number, y: number, camera: THREE.Camera) => {
   const mouse = new THREE.Vector2(x, y)
   const raycaster = new THREE.Raycaster()
   raycaster.setFromCamera(mouse, camera)
@@ -199,7 +200,7 @@ const updateRayCaster = (x, y, camera) => {
   uniforms.direction.value = raycaster.ray.direction
 }
 
-const Spiro = props => {
+const Spiro = (props: Dimensions) => {
   initPositions()
   getInitialPresets()
 
@@ -233,7 +234,7 @@ const Spiro = props => {
     geometry.attributes.position.needsUpdate = true
   }
 
-  const mouseMove = event => {
+  const mouseMove = (event: React.MouseEvent) => {
     updateRayCaster(
       (event.clientX / props.width) * 2 - 1,
       -(event.clientY / props.height) * 2 + 1,
@@ -269,22 +270,12 @@ const Spiro = props => {
   )
 }
 
-const Page = () => {
-  const [dimensions, setDimensions] = useState(null)
-
-  useEffect(() => {
-    if (dimensions == null) {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight })
-    }
-  })
-
+export default () => {
   return (
-    <div>
-      {dimensions ? (
+    <Page>
+      {dimensions => (
         <Spiro height={dimensions.height} width={dimensions.width} />
-      ) : null}
-    </div>
+      )}
+    </Page>
   )
 }
-
-export default Page

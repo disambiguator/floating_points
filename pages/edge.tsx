@@ -106,11 +106,9 @@ const Edge = (props: Props) => {
 export default () => {
   return (
     <Page>
-      {dimensions =>
-        dimensions ? (
-          <Edge height={dimensions.height} width={dimensions.width} />
-        ) : null
-      }
+      {dimensions => (
+        <Edge height={dimensions.height} width={dimensions.width} />
+      )}
     </Page>
   )
 }

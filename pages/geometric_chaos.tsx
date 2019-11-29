@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import Scene from '../components/scene'
 import styled from 'styled-components'
+import sumBy from 'lodash/sumBy'
+import sum from 'lodash/sum'
 
 const near = 0.1
 const far = 10000
@@ -80,12 +82,8 @@ const uniforms = {
   color: new THREE.Uniform(0.0),
 }
 
-function sum(array, f) {
-  return array.reduce((accum, p) => accum + f(p), 0)
-}
-
 const Spiro = () => {
-  const updateRayCaster = (x, y) => {
+  const updateRayCaster = (x: number, y: number) => {
     const mouse = new THREE.Vector2(x, y)
     const raycaster = new THREE.Raycaster()
     raycaster.setFromCamera(mouse, camera)
@@ -148,7 +146,7 @@ const Spiro = () => {
     const audioLoader = new THREE.AudioLoader()
     audioLoader.load(
       'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
-      buffer => {
+      (buffer: THREE.AudioBuffer) => {
         sound.setBuffer(buffer)
         sound.setLoop(true)
         sound.setVolume(0.5)
@@ -157,7 +155,7 @@ const Spiro = () => {
       () => {
         console.log('playing')
       },
-      error => {
+      (error: string) => {
         console.log(error, 'error!')
       },
     )
@@ -178,13 +176,13 @@ const Spiro = () => {
 
     const freq = analyser.getFrequencyData()
 
-    const value = sum(freq, f => f) / 5000.0
+    const value = sum(freq) / 5000.0
     uniforms.amplitude.value = value > 0.005 ? value : 0
     camera.translateX(-0.5)
     console.log(value)
   }
 
-  const mouseMove = event => {
+  const mouseMove = (event: React.MouseEvent) => {
     updateRayCaster(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1,
