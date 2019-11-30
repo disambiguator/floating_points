@@ -11,7 +11,7 @@ const Bendy = ({ height, width }) => {
     const coordinates = 0
     let buffer
     const points = 30
-    const radius = 400
+    const radius = width / 2
     const arc = 360 / points
     const hypotenuse = radius
     let lineIncrement = 130
@@ -63,6 +63,12 @@ const Bendy = ({ height, width }) => {
     }
 
     p5.mouseMoved = () => {
+      const distance = mouseDistanceFromCenter()
+      zoomX = distance.x
+      zoomY = distance.y
+    }
+
+    p5.touchMoved = () => {
       const distance = mouseDistanceFromCenter()
       zoomX = distance.x
       zoomY = distance.y
