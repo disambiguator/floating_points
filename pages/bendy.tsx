@@ -1,15 +1,20 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Page from '../components/page'
+import { Dimensions, P5WrapperComponent } from '../lib/types'
+import * as p5 from 'p5'
 
-const P5Wrapper = dynamic(() => import('react-p5-wrapper'), { ssr: false })
+const P5Wrapper: P5WrapperComponent = dynamic(
+  () => import('react-p5-wrapper'),
+  { ssr: false },
+)
 
-const Bendy = ({ height, width }) => {
-  const sketch = p5 => {
+const Bendy = ({ height, width }: Dimensions) => {
+  const sketch = (p: p5) => {
     let initialArc = 0
     let counter = 0
     const coordinates = 0
-    let buffer
+    let buffer: p5.Graphics
     const points = 30
     const radius = width / 2
     const arc = 360 / points
@@ -32,19 +37,19 @@ const Bendy = ({ height, width }) => {
 
     const mouseDistanceFromCenter = () => {
       return {
-        x: p5.mouseX - width / 2,
-        y: p5.mouseY - height / 2,
+        x: p.mouseX - width / 2,
+        y: p.mouseY - height / 2,
       }
     }
 
-    p5.setup = () => {
-      p5.createCanvas(width, height)
-      buffer = p5.createGraphics(width, height)
+    p.setup = () => {
+      p.createCanvas(width, height)
+      buffer = p.createGraphics(width, height)
       buffer.strokeWeight(5)
       buffer.background(0, 0, 0)
-      p5.frameRate(60)
+      p.frameRate(60)
       buffer.stroke(255, 255, 255, 255)
-      p5.draw()
+      p.draw()
     }
 
     const drawLine = () => {
@@ -62,19 +67,19 @@ const Bendy = ({ height, width }) => {
       buffer.line(x1, y1, x2, y2)
     }
 
-    p5.mouseMoved = () => {
+    p.mouseMoved = () => {
       const distance = mouseDistanceFromCenter()
       zoomX = distance.x
       zoomY = distance.y
     }
 
-    p5.touchMoved = () => {
+    p.touchMoved = () => {
       const distance = mouseDistanceFromCenter()
       zoomX = distance.x
       zoomY = distance.y
     }
 
-    p5.draw = () => {
+    p.draw = () => {
       buffer.image(
         buffer,
         -zoomX,
@@ -94,7 +99,7 @@ const Bendy = ({ height, width }) => {
         if (counter > 1000) counter = 0
       }
 
-      p5.image(buffer, zoom, zoom, width - 2 * zoom, height - 2 * zoom)
+      p.image(buffer, zoom, zoom, width - 2 * zoom, height - 2 * zoom)
     }
   }
 
