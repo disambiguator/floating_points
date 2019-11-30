@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Scene from '../components/scene'
-import styled from 'styled-components'
 import * as THREE from 'three'
 import { Dimensions } from '../lib/types'
 import Page from '../components/page'

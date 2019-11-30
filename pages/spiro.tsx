@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import _, { sumBy } from 'lodash'
+import { sample, sumBy } from 'lodash'
 import Page from '../components/page'
 import Scene from '../components/scene'
-import { ChangeEvent, FormEvent } from 'react'
+import { ChangeEvent } from 'react'
 import { Dimensions } from '../lib/types'
 
 const numPoints = 50000
@@ -152,7 +152,7 @@ let seeds: Array<Seed> = []
 let presets: Array<{ positions: Array<string> }> = []
 
 const initFromPreset = async () => {
-  const randomPreset = _.sample(presets)
+  const randomPreset = sample(presets)
   if (randomPreset == undefined) {
     throw new Error()
   }

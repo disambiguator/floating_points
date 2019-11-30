@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import Scene from '../components/scene'
 import styled from 'styled-components'
-import sumBy from 'lodash/sumBy'
 import sum from 'lodash/sum'
 
 const near = 0.1

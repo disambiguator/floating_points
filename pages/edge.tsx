@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import Scene from '../components/scene'
 import * as THREE from 'three'
 import Page from '../components/page'
