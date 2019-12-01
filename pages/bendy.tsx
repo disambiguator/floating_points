@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Page from '../components/page'
-import { Dimensions, P5WrapperComponent } from '../lib/types'
+import { P5WrapperComponent } from '../lib/types'
 import * as p5 from 'p5'
 
 const P5Wrapper: P5WrapperComponent = dynamic(
@@ -9,14 +9,16 @@ const P5Wrapper: P5WrapperComponent = dynamic(
   { ssr: false },
 )
 
-const Bendy = ({ height, width }: Dimensions) => {
+const Bendy = () => {
   const sketch = (p: p5) => {
     let initialArc = 0
     let counter = 0
     const coordinates = 0
     let buffer: p5.Graphics
     const points = 30
-    const radius = width / 2
+    let width = p.windowWidth
+    let height = p.windowHeight
+    let radius = p.windowWidth / 2
     const arc = 360 / points
     const hypotenuse = radius
     let lineIncrement = 130
@@ -101,6 +103,23 @@ const Bendy = ({ height, width }: Dimensions) => {
 
       p.image(buffer, zoom, zoom, width - 2 * zoom, height - 2 * zoom)
     }
+
+    p.windowResized = () => {
+      radius = p.windowWidth / 2
+      width = p.windowWidth
+      height = p.windowHeight
+
+      p.resizeCanvas(width, height)
+
+      const newBuffer = p.createGraphics(width, height)
+      newBuffer.strokeWeight(5)
+      newBuffer.background(0, 0, 0)
+      newBuffer.stroke(255, 255, 255, 255)
+      newBuffer.image(buffer, 0, 0, width, height)
+
+      buffer.remove()
+      buffer = newBuffer
+    }
   }
 
   return <P5Wrapper sketch={sketch} />
@@ -108,8 +127,6 @@ const Bendy = ({ height, width }: Dimensions) => {
 
 export default () => (
   <>
-    <Page>
-      {({ height, width }) => <Bendy height={height} width={width} />}
-    </Page>
+    <Page>{_ => <Bendy />}</Page>
   </>
 )
