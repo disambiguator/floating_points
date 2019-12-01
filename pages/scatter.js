@@ -1,8 +1,25 @@
 import React from 'react'
 import * as THREE from 'three'
-import { OrbitControls } from 'three-orbitcontrols-ts'
 import Scene from '../components/scene'
 import Page from '../components/page'
+
+const vertexShader = `
+    #ifdef GL_ES
+    precision highp float;
+    #endif
+
+    varying vec3 vPosition;
+    varying float vColor;
+
+    void main() {
+
+    vPosition = position;
+
+    gl_Position = projectionMatrix *
+      modelViewMatrix *
+      vec4(position,1.0);
+    }
+`
 
 const fragmentShader = `
 #ifdef GL_ES
@@ -11,6 +28,7 @@ precision highp float;
 
 uniform vec2 resolution;
 uniform float distortion[300];
+varying vec3 vPosition;
 
 float lookup(int index) {
   for(int i = 0; i < 300; i++) {
@@ -31,9 +49,13 @@ void main() {
     
     vec2 center = vec2(0.5);
 
-    vec3 color = vec3(step(0.3, distance(distorted,center))) * vec3(step(distance(distorted,center),0.305));
-
-    gl_FragColor = vec4( color, 1.0 );
+    float color = step(0.3, distance(distorted,center)) * step(distance(distorted,center),0.305);
+    gl_FragColor = vec4(
+      st.x * color + (1. - color) * (1.-st.x),
+      st.y * color + (1. - color) * (1.-st.y),
+      st.x * color + (1. - color) * (1.-st.x),
+      1.0
+    );
 }
 `
 
@@ -62,7 +84,7 @@ const Scatter = ({ width, height }) => {
     new THREE.PlaneGeometry(300, 300, 32),
     new THREE.ShaderMaterial({
       uniforms: uniforms,
-      // vertexShader: vertexShader,
+      vertexShader: vertexShader,
       fragmentShader: fragmentShader,
     }),
   )
