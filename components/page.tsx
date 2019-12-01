@@ -7,7 +7,7 @@ const Container = styled.div`
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background: lightgray;
+  background: black;
 `
 
 interface Props {
