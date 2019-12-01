@@ -1,35 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-
-const width = 800
-const height = 800
+import Page from '../components/page'
 
 let timer = 0
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
 const inRange = point =>
   point.x >= 0 && point.x <= 800 && point.y >= 0 && point.y <= 800
-
-const endPoints = () => {
-  const slopeX = Math.random() * 10 - 5
-  const slopeY = Math.random() * 10 - 5
-  const interceptX = Math.random() * 800
-  const interceptY = Math.random() * 800
-  const m = slopeY / slopeX
-  const b = interceptY - m * interceptX
-
-  return [
-    { x: -b / m, y: 0 },
-    { x: 0, y: b },
-    { x: (height - b) / m, y: height },
-    { x: width, y: m * width + b },
-  ].filter(inRange)
-}
 
 class Scatter extends React.Component {
   componentDidMount() {
@@ -41,22 +17,29 @@ class Scatter extends React.Component {
 
   componentWillUnmount() {
     this.stop()
-    this.mount.removeChild(this.renderer.domElement)
   }
 
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = window.requestAnimationFrame(this.animate)
-    }
-  }
+  endPoints = () => {
+    const {width, height} = this.props
 
-  stop = () => {
-    window.cancelAnimationFrame(this.frameId)
+    const slopeX = Math.random() * 10 - 5
+    const slopeY = Math.random() * 10 - 5
+    const interceptX = Math.random() * 800
+    const interceptY = Math.random() * 800
+    const m = slopeY / slopeX
+    const b = interceptY - m * interceptX
+
+    return [
+      { x: -b / m, y: 0 },
+      { x: 0, y: b },
+      { x: (height - b) / m, y: height },
+      { x: width, y: m * width + b },
+    ].filter(inRange)
   }
 
   animate = () => {
     if (timer % 50 === 0) {
-      this.points = endPoints()
+      this.points = this.endPoints()
     }
 
     this.ctx.beginPath()
@@ -67,25 +50,6 @@ class Scatter extends React.Component {
 
     this.ctx.save()
 
-    // const rightRegion = new Path2D()
-    // rightRegion.moveTo(this.points[0].x, this.points[0].y);
-    // rightRegion.lineTo(this.points[1].x, this.points[1].y);
-    // rightRegion.lineTo(width, height)
-    // rightRegion.lineTo(width, 0)
-    // rightRegion.lineTo(this.points[0].x, 0)
-    // this.ctx.clip(rightRegion);
-    // this.ctx.translate(translateDistance, 0);
-    // this.ctx.drawImage(this.mount, translateDistance, 0);
-    // this.ctx.restore();
-    //
-    // this.ctx.save();
-    // const leftRegion = new Path2D()
-    // leftRegion.moveTo(this.topX, 0)
-    // leftRegion.lineTo(this.bottomX, 800)
-    // leftRegion.lineTo(0, 800)
-    // leftRegion.lineTo(0, 0)
-    // leftRegion.lineTo(this.topX, 0)
-    // this.ctx.clip(leftRegion);
     this.ctx.scale(1.01, 1.01)
     this.ctx.drawImage(this.mount, 0, 0)
     this.ctx.restore()
@@ -93,24 +57,9 @@ class Scatter extends React.Component {
     timer++
   }
 
-  renderScene = () => {
-    this.renderer.render(this.scene, this.camera)
-  }
-
   render() {
+    const {width, height} = this.props
     return (
-      <Container>
-        <style global jsx>{`
-          html,
-          body,
-          body > div:first-child,
-          div#__next,
-          div#__next > div,
-          div#__next > div > div {
-            height: 100%;
-          }
-        `}</style>
-
         <canvas
           width={width}
           height={height}
@@ -118,9 +67,10 @@ class Scatter extends React.Component {
             this.mount = mount
           }}
         />
-      </Container>
     )
   }
 }
 
-export default Scatter
+export default () => <Page>
+  {({width, height}) => <Scatter width={800} height={800} />}
+</Page>
