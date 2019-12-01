@@ -5,7 +5,7 @@ import { OrbitControls } from 'three-orbitcontrols-ts'
 type Props = {
   renderer: any;
   renderScene: () => void;
-  orbitControls: boolean;
+  orbitControls?: boolean;
   camera: THREE.Camera;
   shapes: Array<THREE.Mesh | THREE.Line>
 }

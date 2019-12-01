@@ -2,6 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import Scene from '../components/scene'
 import Page from '../components/page'
+import { Dimensions } from '../lib/types'
 
 const vertexShader = `
     #ifdef GL_ES
@@ -68,7 +69,7 @@ const generateDistortion = () => {
   return d
 }
 
-const Scatter = ({ width, height }) => {
+const Scatter = ({ width, height }: Dimensions) => {
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
   camera.position.z = 100
 
