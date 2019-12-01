@@ -210,7 +210,7 @@ const Container = styled.div`
   height: 500px;
 `
 
-const Page = () => {
+export default () => {
   const [started, start] = useState(false)
 
   return started ? (
@@ -219,5 +219,3 @@ const Page = () => {
     <Container onClick={() => start(true)}>Click to start</Container>
   )
 }
-
-export default Page

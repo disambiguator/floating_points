@@ -1,7 +1,8 @@
 import React from 'react'
-import styled from 'styled-components'
 import * as THREE from 'three'
 import { OrbitControls } from 'three-orbitcontrols-ts'
+import Scene from '../components/scene'
+import Page from '../components/page'
 
 const fragmentShader = `
 #ifdef GL_ES
@@ -36,13 +37,6 @@ void main() {
 }
 `
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: black;
-`
-
 const generateDistortion = () => {
   const d = new Array(300)
   d[0] = 0
@@ -52,92 +46,38 @@ const generateDistortion = () => {
   return d
 }
 
-class Scatter extends React.Component {
-  componentDidMount() {
-    const width = this.mount.clientWidth
-    const height = this.mount.clientHeight
+const Scatter = ({ width, height }) => {
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  camera.position.z = 100
 
-    // ADD SCENE
-    this.scene = new THREE.Scene()
+  const renderer = new THREE.WebGLRenderer({ antialias: true })
+  renderer.setClearColor('#000000')
+  renderer.setSize(width, height)
 
-    // ADD CAMERA
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-    this.camera.position.z = 100
-
-    // ADD RENDERER
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
-    this.renderer.setClearColor('#000000')
-    this.renderer.setSize(width, height)
-    this.mount.appendChild(this.renderer.domElement)
-
-    // Add OrbitControls so that we can pan around with the mouse.
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-
-    this.uniforms = {
-      resolution: { value: new THREE.Vector2(800, 800), type: 'v2' },
-      distortion: new THREE.Uniform(generateDistortion()),
-    }
-    this.redCube = new THREE.Mesh(
-      new THREE.PlaneGeometry(300, 300, 32),
-      new THREE.ShaderMaterial({
-        uniforms: this.uniforms,
-        // vertexShader: vertexShader,
-        fragmentShader: fragmentShader,
-      }),
-    )
-    this.scene.add(this.redCube)
-    this.start()
+  const uniforms = {
+    resolution: { value: new THREE.Vector2(800, 800), type: 'v2' },
+    distortion: new THREE.Uniform(generateDistortion()),
   }
+  const redCube = new THREE.Mesh(
+    new THREE.PlaneGeometry(300, 300, 32),
+    new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      // vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+    }),
+  )
 
-  componentWillUnmount() {
-    this.stop()
-    this.mount.removeChild(this.renderer.domElement)
+  const renderScene = () => {
+    uniforms.distortion = new THREE.Uniform(generateDistortion())
   }
-
-  start = () => {
-    if (!this.frameId) {
-      this.frameId = window.requestAnimationFrame(this.animate)
-    }
-  }
-
-  stop = () => {
-    window.cancelAnimationFrame(this.frameId)
-  }
-
-  animate = () => {
-    this.renderScene()
-    this.controls.update()
-    this.uniforms.distortion = new THREE.Uniform(generateDistortion())
-    this.frameId = window.requestAnimationFrame(this.animate)
-  }
-
-  renderScene = () => {
-    this.renderer.render(this.scene, this.camera)
-  }
-
-  render() {
-    return (
-      <Container>
-        <style global jsx>{`
-          html,
-          body,
-          body > div:first-child,
-          div#__next,
-          div#__next > div,
-          div#__next > div > div {
-            height: 100%;
-          }
-        `}</style>
-
-        <div
-          style={{ width: '800px', height: '800px' }}
-          ref={mount => {
-            this.mount = mount
-          }}
-        />
-      </Container>
-    )
-  }
+  return (
+    <Scene
+      camera={camera}
+      renderer={renderer}
+      shapes={[redCube]}
+      renderScene={renderScene}
+    />
+  )
 }
 
-export default Scatter
+export default () => <Page>{_ => <Scatter width={800} height={800} />}</Page>
