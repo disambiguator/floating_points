@@ -9,15 +9,14 @@ interface Point {
   y: number;
 }
 
-const inRange = (point: Point) =>
-  point.x >= 0 && point.x <= 800 && point.y >= 0 && point.y <= 800
-
 const Scatter = ({width, height}: Dimensions) => {
   const ref = useRef<HTMLCanvasElement>(null);
   let points: Array<Point>
   let mount: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D
 
+  const inRange = (point: Point) =>
+    point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height
 
   useEffect(() => {
     mount = ref.current!
@@ -34,8 +33,8 @@ const Scatter = ({width, height}: Dimensions) => {
   const endPoints = () => {
     const slopeX = Math.random() * 10 - 5
     const slopeY = Math.random() * 10 - 5
-    const interceptX = Math.random() * 800
-    const interceptY = Math.random() * 800
+    const interceptX = Math.random() * width
+    const interceptY = Math.random() * height
     const m = slopeY / slopeX
     const b = interceptY - m * interceptX
 
@@ -77,5 +76,5 @@ const Scatter = ({width, height}: Dimensions) => {
 }
 
 export default () => <Page>
-  {(_) => <Scatter width={800} height={800} />}
+  {({width, height}) => <Scatter width={width} height={height} />}
 </Page>
