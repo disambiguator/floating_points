@@ -4,6 +4,7 @@ import Page from '../components/page'
 import Scene from '../components/scene'
 import { ChangeEvent } from 'react'
 import { Dimensions } from '../lib/types'
+import styled from 'styled-components'
 
 const numPoints = 50000
 const near = 0.1
@@ -11,6 +12,14 @@ const far = 10000
 const geometry = new THREE.BufferGeometry()
 const renderSpeed = 1000
 let positions: Array<Seed> = []
+
+const Controls = styled.div`
+  position: absolute;
+  color: white;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+`
 
 const vertexShader = `
     #ifdef GL_ES
@@ -244,20 +253,22 @@ const Spiro = (props: Dimensions) => {
 
   return (
     <div onMouseMove={mouseMove}>
-      <label>Amplitude</label>
-      <input
-        type="range"
-        min="0"
-        max=".005"
-        step=".00001"
-        onInput={amplitudeSlider}
-      />
-      <label>Color</label>
-      <input type="checkbox" onInput={enableColor} />
+      <Controls>
+        <label>Amplitude</label>
+        <input
+          type="range"
+          min="0"
+          max=".005"
+          step=".00001"
+          onInput={amplitudeSlider}
+        />
+        <label>Color</label>
+        <input type="checkbox" onInput={enableColor} />
 
-      <button onClick={addToPresets}>Add to Presets</button>
-      <button onClick={initPositions}>New Positions</button>
-      <button onClick={initFromPreset}>Random Preset</button>
+        <button onClick={addToPresets}>Add to Presets</button>
+        <button onClick={initPositions}>New Positions</button>
+        <button onClick={initFromPreset}>Random Preset</button>
+      </Controls>
 
       <Scene
         camera={camera}
