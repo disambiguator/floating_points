@@ -30,6 +30,9 @@ export default (props: Props) => {
         body {
           margin: 0;
         }
+        canvas {
+          display: block;
+        }
       `}</style>
       <Container id="container">
         {dimensions ? children(dimensions) : null}
