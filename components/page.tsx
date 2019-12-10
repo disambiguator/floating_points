@@ -8,6 +8,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background: black;
+  color: white;
 `
 
 interface Props {

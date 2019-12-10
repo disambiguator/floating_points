@@ -15,7 +15,6 @@ let positions: Array<Seed> = []
 
 const Controls = styled.div`
   position: absolute;
-  color: white;
   margin: 10px;
   display: flex;
   align-items: center;

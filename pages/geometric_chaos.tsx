@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import Scene from '../components/scene'
-import styled from 'styled-components'
 import sum from 'lodash/sum'
-
+import { Dimensions } from '../lib/types'
+import Page from '../components/page'
 const near = 0.1
 const far = 10000
 const renderSpeed = 1000
@@ -81,7 +81,7 @@ const uniforms = {
   color: new THREE.Uniform(0.0),
 }
 
-const Spiro = () => {
+const Spiro = ({ width, height }: Dimensions) => {
   const updateRayCaster = (x: number, y: number) => {
     const mouse = new THREE.Vector2(x, y)
     const raycaster = new THREE.Raycaster()
@@ -90,9 +90,6 @@ const Spiro = () => {
     uniforms.origin.value = raycaster.ray.origin
     uniforms.direction.value = raycaster.ray.direction
   }
-
-  const width = window.innerWidth
-  const height = window.innerHeight
 
   const camera = new THREE.PerspectiveCamera(45, width / height, near, far)
   camera.position.set(0, 0, 300)
@@ -201,21 +198,18 @@ const Spiro = () => {
   )
 }
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: lightgray;
-  width: 500px;
-  height: 500px;
-`
-
 export default () => {
   const [started, start] = useState(false)
 
-  return started ? (
-    <Spiro />
-  ) : (
-    <Container onClick={() => start(true)}>Click to start</Container>
+  return (
+    <Page>
+      {({ width, height }: Dimensions) =>
+        started ? (
+          <Spiro width={width} height={height} />
+        ) : (
+          <div onClick={() => start(true)}>Click to start</div>
+        )
+      }
+    </Page>
   )
 }
