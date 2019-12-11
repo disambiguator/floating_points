@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three-orbitcontrols-ts'
 
 type Props = {
-  renderer: any;
+  renderer: THREE.WebGLRenderer;
   renderScene: () => void;
   orbitControls?: boolean;
   camera: THREE.Camera;

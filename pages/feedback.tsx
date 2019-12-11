@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import Page from '../components/page'
 import { Dimensions } from '../lib/types'
 import { MeshBasicMaterial } from 'three'
+import Scene from '../components/scene'
 
 const fragmentShader = `
   uniform vec2 res;//The width and height of our screen
@@ -31,10 +32,7 @@ const setStream = async (video: HTMLVideoElement) => {
 const Feedback = (props: Dimensions) => {
   const { width, height } = props
 
-  const ref = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-
-  const scene = new THREE.Scene()
 
   const camera = new THREE.OrthographicCamera(
     width / -2,
@@ -47,16 +45,7 @@ const Feedback = (props: Dimensions) => {
   camera.position.z = 2
 
   const renderer = new THREE.WebGLRenderer()
-
-  useEffect(() => {
-    const mount = ref.current!
-    renderer.setSize(width, height)
-    mount.appendChild(renderer.domElement)
-
-    return () => {
-      mount.removeChild(renderer.domElement)
-    }
-  })
+  renderer.setSize(width, height)
 
   const plane = new THREE.PlaneBufferGeometry(width, height)
 
@@ -102,7 +91,6 @@ const Feedback = (props: Dimensions) => {
   // Draw textureB to screen
   const finalMaterial = new THREE.MeshBasicMaterial({ map: textureB.texture })
   const quad = new THREE.Mesh(plane, finalMaterial)
-  scene.add(quad)
 
   const renderScene = () => {
     renderer.setRenderTarget(textureB)
@@ -115,32 +103,19 @@ const Feedback = (props: Dimensions) => {
     const material = quad.material as MeshBasicMaterial
     material.map = textureB.texture
     bufferMaterial.uniforms.bufferTexture.value = textureA.texture
-    // Update time
     bufferMaterial.uniforms.time.value += 0.01
-    // Finally, draw to the screen
     renderer.setRenderTarget(null)
-    renderer.render(scene, camera)
   }
-
-  const animate = () => {
-    renderScene()
-    frameId = window.requestAnimationFrame(animate)
-  }
-
-  let frameId: number
-  useEffect(() => {
-    if (!frameId) {
-      frameId = window.requestAnimationFrame(animate)
-    }
-    return () => {
-      window.cancelAnimationFrame(frameId)
-    }
-  })
 
   return (
     <div>
       <video id="video" autoPlay ref={videoRef} />
-      <div ref={ref} />
+      <Scene
+        shapes={[quad]}
+        camera={camera}
+        renderer={renderer}
+        renderScene={renderScene}
+      />
     </div>
   )
 }
