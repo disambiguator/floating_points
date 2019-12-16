@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
-  "engines": {
-    "npm": "6.2.0"
-  },
   "scripts": {
     "test": "eslint . --ext=js,jsx,ts,tsx --fix",
     "build": "next build",
@@ -19,12 +16,6 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/disambiguator/floating_points/issues"
-  },
-  "standard": {
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint/eslint-plugin"
-    ]
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
