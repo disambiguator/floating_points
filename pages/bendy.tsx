@@ -3,11 +3,18 @@ import dynamic from 'next/dynamic'
 import Page from '../components/page'
 import { P5WrapperComponent } from '../lib/types'
 import * as p5 from 'p5'
+import styled from 'styled-components'
 
 const P5Wrapper: P5WrapperComponent = dynamic(
   () => import('react-p5-wrapper'),
   { ssr: false },
 )
+
+const FixedSketch = styled(P5Wrapper)`
+  canvas {
+    position: fixed;
+  }
+`
 
 const Bendy = () => {
   const sketch = (p: p5) => {
@@ -122,7 +129,7 @@ const Bendy = () => {
     }
   }
 
-  return <P5Wrapper sketch={sketch} />
+  return <FixedSketch sketch={sketch} />
 }
 
 export default () => (
