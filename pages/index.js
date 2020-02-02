@@ -15,7 +15,7 @@ const pages = [
 
 const translateDistance = 1
 
-const Contents = styled.h1`
+const Contents = styled.span`
   color: white;
   z-index: 1;
   position: fixed;
@@ -33,6 +33,10 @@ const Contents = styled.h1`
   a:hover,
   a:active {
     color: inherit;
+  }
+
+  a {
+    font-size: 20px;
   }
 `
 
@@ -166,9 +170,9 @@ class Scatter extends React.Component {
     return (
       <div>
         <Contents>
-          <h2>disambiguator</h2>
+          <h1>disambiguator</h1>
           {pages.map(p => (
-            <Link href={p.path}>
+            <Link key={p.name} href={p.path}>
               <a>{p.name}</a>
             </Link>
           ))}
