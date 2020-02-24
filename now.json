@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "nextjs",
   "env": {
     "AIRTABLE_API_KEY": "@airtable-api-key",
     "AIRTABLE_ENDPOINT": "@airtable-endpoint"
