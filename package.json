@@ -19,9 +19,9 @@
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
-    "@now/node": "^1.2.0",
+    "@now/node": "^1.4.0",
     "@types/lodash": "^4.14.149",
-    "@types/node": "^12.6.9",
+    "@types/node": "^13.7.0",
     "@types/node-fetch": "^2.5.4",
     "@types/p5": "^0.9.0",
     "@types/react": "^16.8.24",
@@ -38,13 +38,14 @@
   },
   "dependencies": {
     "lodash": "^4.17.15",
-    "next": "^9.1.4",
+    "next": "^9.2.0",
     "node-fetch": "^2.6.0",
     "p5": "^0.10",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-p5-wrapper": "^2.0.0",
     "styled-components": "^4.3.2",
-    "three": "^0.110.0"
+    "three": "^0.110.0",
+    "three-orbitcontrols-ts": "^0.1.2"
   }
 }
