@@ -1,7 +1,7 @@
-import { airtableList } from '../lib/airtable'
-import { NowRequest, NowResponse } from '@now/node'
+import { airtableList } from '../lib/airtable';
+import { NowRequest, NowResponse } from '@now/node';
 
 module.exports = async (_req: NowRequest, res: NowResponse) => {
-  const data = await airtableList('preset')
-  res.json({ presets: data.records.map(r => r.fields) })
-}
+  const data = await airtableList('preset');
+  res.json({ presets: data.records.map(r => r.fields) });
+};

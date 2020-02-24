@@ -1,80 +1,76 @@
-import React, { useRef, useEffect } from 'react'
-import Page from '../components/page'
+import React, { useRef, useEffect } from 'react';
+import Page from '../components/page';
 import { Dimensions } from '../lib/types';
 
-let timer = 0
+let timer = 0;
 
 interface Point {
   x: number;
   y: number;
 }
 
-const Scatter = ({width, height}: Dimensions) => {
+const Scatter = ({ width, height }: Dimensions) => {
   const ref = useRef<HTMLCanvasElement>(null);
-  let points: Array<Point>
-  let mount: HTMLCanvasElement
-  let ctx: CanvasRenderingContext2D
+  let points: Array<Point>;
+  let mount: HTMLCanvasElement;
+  let ctx: CanvasRenderingContext2D;
 
   const inRange = (point: Point) =>
-    point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height
+    point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height;
 
   useEffect(() => {
-    mount = ref.current!
-    ctx = mount.getContext('2d')!
-    ctx.lineWidth = 5
+    mount = ref.current!;
+    ctx = mount.getContext('2d')!;
+    ctx.lineWidth = 5;
 
-    const interval = setInterval(animate, 20)
+    const interval = setInterval(animate, 20);
 
     return () => {
-      clearInterval(interval)
-    }
-  })
+      clearInterval(interval);
+    };
+  });
 
   const endPoints = () => {
-    const slopeX = Math.random() * 10 - 5
-    const slopeY = Math.random() * 10 - 5
-    const interceptX = Math.random() * width
-    const interceptY = Math.random() * height
-    const m = slopeY / slopeX
-    const b = interceptY - m * interceptX
+    const slopeX = Math.random() * 10 - 5;
+    const slopeY = Math.random() * 10 - 5;
+    const interceptX = Math.random() * width;
+    const interceptY = Math.random() * height;
+    const m = slopeY / slopeX;
+    const b = interceptY - m * interceptX;
 
     return [
       { x: -b / m, y: 0 },
       { x: 0, y: b },
       { x: (height - b) / m, y: height },
       { x: width, y: m * width + b },
-    ].filter(inRange)
-  }
+    ].filter(inRange);
+  };
 
   const animate = () => {
     if (timer % 50 === 0) {
-      points = endPoints()
+      points = endPoints();
     }
 
-    ctx.beginPath()
-    ctx.strokeStyle = '#' + (((1 << 24) * Math.random()) | 0).toString(16)
-    ctx.moveTo(points[0].x, points[0].y)
-    ctx.lineTo(points[1].x, points[1].y)
-    ctx.stroke()
+    ctx.beginPath();
+    ctx.strokeStyle = '#' + (((1 << 24) * Math.random()) | 0).toString(16);
+    ctx.moveTo(points[0].x, points[0].y);
+    ctx.lineTo(points[1].x, points[1].y);
+    ctx.stroke();
 
-    ctx.save()
+    ctx.save();
 
-    ctx.scale(1.01, 1.01)
-    ctx.drawImage(mount, 0, 0)
-    ctx.restore()
+    ctx.scale(1.01, 1.01);
+    ctx.drawImage(mount, 0, 0);
+    ctx.restore();
 
-    timer++
-  }
+    timer++;
+  };
 
-    return (
-        <canvas
-          width={width}
-          height={height}
-          ref={ref}
-        />
-    )
-}
+  return <canvas width={width} height={height} ref={ref} />;
+};
 
-export default () => <Page>
-  {({width, height}) => <Scatter width={width} height={height} />}
-</Page>
+export default () => (
+  <Page>
+    {({ width, height }) => <Scatter width={width} height={height} />}
+  </Page>
+);

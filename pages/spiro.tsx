@@ -1,24 +1,24 @@
-import * as THREE from 'three'
-import { sample, sumBy } from 'lodash'
-import Page from '../components/page'
-import Scene from '../components/scene'
-import { ChangeEvent } from 'react'
-import { Dimensions } from '../lib/types'
-import styled from 'styled-components'
+import * as THREE from 'three';
+import { sample, sumBy } from 'lodash';
+import Page from '../components/page';
+import Scene from '../components/scene';
+import { ChangeEvent } from 'react';
+import { Dimensions } from '../lib/types';
+import styled from 'styled-components';
 
-const numPoints = 50000
-const near = 0.1
-const far = 10000
-const geometry = new THREE.BufferGeometry()
-const renderSpeed = 1000
-let positions: Array<Seed> = []
+const numPoints = 50000;
+const near = 0.1;
+const far = 10000;
+const geometry = new THREE.BufferGeometry();
+const renderSpeed = 1000;
+let positions: Array<Seed> = [];
 
 const Controls = styled.div`
   position: absolute;
   margin: 10px;
   display: flex;
   align-items: center;
-`
+`;
 
 const vertexShader = `
     #ifdef GL_ES
@@ -53,7 +53,7 @@ const vertexShader = `
       modelViewMatrix *
       vec4(newPosition,1.0);
     }
-`
+`;
 
 const fragmentShader = `
     #ifdef GL_ES
@@ -72,17 +72,17 @@ const fragmentShader = `
     gl_FragColor = vec4(color, 1.0);
 
     }
-`
+`;
 
 const uniforms = {
   amplitude: new THREE.Uniform(0.0005),
   origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   color: new THREE.Uniform(0.0),
-}
+};
 
 function randInt(min: number, max: number) {
-  return Math.floor(Math.random() * max) + min
+  return Math.floor(Math.random() * max) + min;
 }
 
 export interface Seed {
@@ -90,7 +90,7 @@ export interface Seed {
   arc: number;
   phi: number;
   speed: number;
-  phiSpeed: number
+  phiSpeed: number;
 }
 
 const randPosition = (): Seed => ({
@@ -99,84 +99,84 @@ const randPosition = (): Seed => ({
   phi: randInt(0, 360),
   speed: (randInt(1, 10) * 360) / (randInt(10, 100) + numPoints),
   phiSpeed: 0,
-})
+});
 
 const getPoint = (radius: number, theta: number, phi: number) => {
-  const xCoordinate = radius * Math.sin(theta) * Math.cos(phi)
-  const yCoordinate = radius * Math.cos(theta) * Math.sin(phi)
-  const zCoordinate = radius * Math.cos(theta)
-  return { x: xCoordinate, y: yCoordinate, z: zCoordinate }
-}
+  const xCoordinate = radius * Math.sin(theta) * Math.cos(phi);
+  const yCoordinate = radius * Math.cos(theta) * Math.sin(phi);
+  const zCoordinate = radius * Math.cos(theta);
+  return { x: xCoordinate, y: yCoordinate, z: zCoordinate };
+};
 
 function generateVertices() {
-  const vertices = []
+  const vertices = [];
   for (let i = 0; i < renderSpeed; i++) {
-    const points = positions.map(p => getPoint(p.radius, p.arc, p.phi))
+    const points = positions.map(p => getPoint(p.radius, p.arc, p.phi));
 
     positions.forEach(function(p) {
-      p.arc += p.speed
-      p.phi += p.phiSpeed
-    })
+      p.arc += p.speed;
+      p.phi += p.phiSpeed;
+    });
 
-    const x = sumBy(points, 'x') / points.length
-    const y = sumBy(points, 'y') / points.length
-    const z = sumBy(points, 'z') / points.length
+    const x = sumBy(points, 'x') / points.length;
+    const y = sumBy(points, 'y') / points.length;
+    const z = sumBy(points, 'z') / points.length;
 
-    vertices.push(x, y, z)
+    vertices.push(x, y, z);
   }
 
-  return vertices
+  return vertices;
 }
 
 function amplitudeSlider(event: ChangeEvent<HTMLInputElement>) {
-  uniforms.amplitude.value = parseFloat(event.target.value)
+  uniforms.amplitude.value = parseFloat(event.target.value);
 }
 
 function enableColor(event: ChangeEvent<HTMLInputElement>) {
-  uniforms.color.value = event.target.checked ? 1.0 : 0.0
+  uniforms.color.value = event.target.checked ? 1.0 : 0.0;
 }
 
 const addToPresets = () =>
   window.fetch('/api/addPreset', {
     method: 'POST',
     body: JSON.stringify({ seeds: seeds }),
-  })
+  });
 
 const initPositions = () => {
-  seeds = [randPosition(), randPosition()]
-  setPositions([...seeds])
-}
+  seeds = [randPosition(), randPosition()];
+  setPositions([...seeds]);
+};
 
 const setPositions = (p: Array<Seed>) => {
-  positions = p
+  positions = p;
   geometry.attributes.position = new THREE.Float32BufferAttribute(
     generateVertices(),
     3,
-  )
-  geometry.attributes.position.needsUpdate = true
-}
+  );
+  geometry.attributes.position.needsUpdate = true;
+};
 
-let seeds: Array<Seed> = []
-let presets: Array<{ positions: Array<string> }> = []
+let seeds: Array<Seed> = [];
+let presets: Array<{ positions: Array<string> }> = [];
 
 const initFromPreset = async () => {
-  const randomPreset = sample(presets)
+  const randomPreset = sample(presets);
   if (randomPreset == undefined) {
-    throw new Error()
+    throw new Error();
   }
 
   const response = await window.fetch(
     `/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`,
-  )
-  const jsonResponse = await response.json()
-  setPositions(await jsonResponse)
-}
+  );
+  const jsonResponse = await response.json();
+  setPositions(await jsonResponse);
+};
 
 const getInitialPresets = async () => {
-  const response = await window.fetch('/api/getPresets')
-  const json = await response.json()
-  presets = json.presets
-}
+  const response = await window.fetch('/api/getPresets');
+  const json = await response.json();
+  presets = json.presets;
+};
 
 const getCamera = (props: Dimensions) => {
   const perspectiveCamera = new THREE.PerspectiveCamera(
@@ -184,71 +184,71 @@ const getCamera = (props: Dimensions) => {
     props.width / props.height,
     near,
     far,
-  )
+  );
 
-  perspectiveCamera.position.set(0, 0, 300)
-  perspectiveCamera.lookAt(0, 0, 0)
+  perspectiveCamera.position.set(0, 0, 300);
+  perspectiveCamera.lookAt(0, 0, 0);
 
-  return perspectiveCamera
-}
+  return perspectiveCamera;
+};
 
 const renderer = (props: Dimensions) => {
-  const webGLRenderer = new THREE.WebGLRenderer({ antialias: true })
-  webGLRenderer.setSize(props.width, props.height)
+  const webGLRenderer = new THREE.WebGLRenderer({ antialias: true });
+  webGLRenderer.setSize(props.width, props.height);
 
-  return webGLRenderer
-}
+  return webGLRenderer;
+};
 
 const updateRayCaster = (x: number, y: number, camera: THREE.Camera) => {
-  const mouse = new THREE.Vector2(x, y)
-  const raycaster = new THREE.Raycaster()
-  raycaster.setFromCamera(mouse, camera)
+  const mouse = new THREE.Vector2(x, y);
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(mouse, camera);
 
-  uniforms.origin.value = raycaster.ray.origin
-  uniforms.direction.value = raycaster.ray.direction
-}
+  uniforms.origin.value = raycaster.ray.origin;
+  uniforms.direction.value = raycaster.ray.direction;
+};
 
 const Spiro = (props: Dimensions) => {
-  initPositions()
-  getInitialPresets()
+  initPositions();
+  getInitialPresets();
 
-  const camera = getCamera(props)
+  const camera = getCamera(props);
 
   const material = new THREE.ShaderMaterial({
     uniforms: uniforms,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-  })
+  });
 
-  const displacement = new Float32Array(renderSpeed)
+  const displacement = new Float32Array(renderSpeed);
   for (let i = 0; i < renderSpeed; i++) {
-    displacement[i] = Math.random() * 5
+    displacement[i] = Math.random() * 5;
   }
 
   geometry.addAttribute(
     'displacement',
     new THREE.BufferAttribute(displacement, 1),
-  )
+  );
 
-  const line = new THREE.Line(geometry, material)
+  const line = new THREE.Line(geometry, material);
 
-  updateRayCaster(0, 0, camera)
+  updateRayCaster(0, 0, camera);
 
   const renderScene = () => {
     geometry.attributes.position = new THREE.Float32BufferAttribute(
       generateVertices(),
       3,
-    )
-    geometry.attributes.position.needsUpdate = true
-  }
+    );
+    geometry.attributes.position.needsUpdate = true;
+  };
 
   const mouseMove = (event: React.MouseEvent) => {
     updateRayCaster(
       (event.clientX / props.width) * 2 - 1,
       -(event.clientY / props.height) * 2 + 1,
       camera,
-    )
-  }
+    );
+  };
 
   return (
     <div onMouseMove={mouseMove}>
@@ -277,8 +277,8 @@ const Spiro = (props: Dimensions) => {
         orbitControls
       />
     </div>
-  )
-}
+  );
+};
 
 export default () => {
   return (
@@ -287,5 +287,5 @@ export default () => {
         <Spiro height={dimensions.height} width={dimensions.width} />
       )}
     </Page>
-  )
-}
+  );
+};

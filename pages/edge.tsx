@@ -1,7 +1,7 @@
-import React from 'react'
-import Scene from '../components/scene'
-import * as THREE from 'three'
-import Page from '../components/page'
+import React from 'react';
+import Scene from '../components/scene';
+import * as THREE from 'three';
+import Page from '../components/page';
 
 const edgeShader = `
       uniform vec2 res;//The width and height of our screen
@@ -49,15 +49,15 @@ uniform sampler2D videoTexture;
     
 gl_FragColor.xyz = col;
 }
-    `
+    `;
 
 interface Props {
   width: number;
-  height: number
+  height: number;
 }
 const Edge = (props: Props) => {
-  const { width, height } = props
-  let time = 0
+  const { width, height } = props;
+  let time = 0;
 
   const camera = new THREE.OrthographicCamera(
     width / -2,
@@ -66,11 +66,11 @@ const Edge = (props: Props) => {
     height / -2,
     1,
     1000,
-  )
-  camera.position.z = 2
+  );
+  camera.position.z = 2;
 
-  const renderer = new THREE.WebGLRenderer()
-  renderer.setSize(width, height)
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(width, height);
 
   const bufferMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -83,14 +83,14 @@ const Edge = (props: Props) => {
       time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI },
     },
     fragmentShader: edgeShader,
-  })
-  const plane = new THREE.PlaneBufferGeometry(width, height)
-  const quad = new THREE.Mesh(plane, bufferMaterial)
+  });
+  const plane = new THREE.PlaneBufferGeometry(width, height);
+  const quad = new THREE.Mesh(plane, bufferMaterial);
 
   const renderScene = () => {
-    time += 0.02
-    bufferMaterial.uniforms.time.value = time
-  }
+    time += 0.02;
+    bufferMaterial.uniforms.time.value = time;
+  };
 
   return (
     <Scene
@@ -100,8 +100,8 @@ const Edge = (props: Props) => {
       renderScene={renderScene}
       orbitControls
     />
-  )
-}
+  );
+};
 
 export default () => {
   return (
@@ -110,5 +110,5 @@ export default () => {
         <Edge height={dimensions.height} width={dimensions.width} />
       )}
     </Page>
-  )
-}
+  );
+};

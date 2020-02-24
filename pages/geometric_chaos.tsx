@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import * as THREE from 'three'
-import Scene from '../components/scene'
-import sum from 'lodash/sum'
-import { Dimensions } from '../lib/types'
-import Page from '../components/page'
-const near = 0.1
-const far = 10000
-const renderSpeed = 1000
+import React, { useEffect, useState } from 'react';
+import * as THREE from 'three';
+import Scene from '../components/scene';
+import sum from 'lodash/sum';
+import { Dimensions } from '../lib/types';
+import Page from '../components/page';
+const near = 0.1;
+const far = 10000;
+const renderSpeed = 1000;
 
 const vertexShader = `
     #ifdef GL_ES
@@ -41,7 +41,7 @@ const vertexShader = `
       modelViewMatrix *
       vec4(newPosition,1.0);
     }
-`
+`;
 
 const fragmentShader = `
     #ifdef GL_ES
@@ -60,7 +60,7 @@ const fragmentShader = `
     gl_FragColor = vec4(color, 1.0);
 
     }
-`
+`;
 
 // const generateCube = (length) => {
 //   const geometry = new THREE.BoxGeometry(length, length, length)
@@ -79,89 +79,89 @@ const uniforms = {
   origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
   color: new THREE.Uniform(0.0),
-}
+};
 
 const Spiro = ({ width, height }: Dimensions) => {
   const updateRayCaster = (x: number, y: number) => {
-    const mouse = new THREE.Vector2(x, y)
-    const raycaster = new THREE.Raycaster()
-    raycaster.setFromCamera(mouse, camera)
+    const mouse = new THREE.Vector2(x, y);
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
 
-    uniforms.origin.value = raycaster.ray.origin
-    uniforms.direction.value = raycaster.ray.direction
-  }
+    uniforms.origin.value = raycaster.ray.origin;
+    uniforms.direction.value = raycaster.ray.direction;
+  };
 
-  const camera = new THREE.PerspectiveCamera(45, width / height, near, far)
-  camera.position.set(0, 0, 300)
-  camera.lookAt(0, 0, 0)
+  const camera = new THREE.PerspectiveCamera(45, width / height, near, far);
+  camera.position.set(0, 0, 300);
+  camera.lookAt(0, 0, 0);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.setSize(width, height)
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(width, height);
 
   const material = new THREE.ShaderMaterial({
     uniforms: uniforms,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-  })
+  });
 
-  const displacement = new Float32Array(renderSpeed)
+  const displacement = new Float32Array(renderSpeed);
   for (let i = 0; i < renderSpeed; i++) {
-    displacement[i] = Math.random() * 5
+    displacement[i] = Math.random() * 5;
   }
 
-  const lines = []
+  const lines = [];
   for (let i = 0; i < 500; i++) {
-    const geometry = new THREE.BoxBufferGeometry(15, 15, 15)
+    const geometry = new THREE.BoxBufferGeometry(15, 15, 15);
     geometry.setAttribute(
       'displacement',
       new THREE.BufferAttribute(displacement, 1),
-    )
+    );
     geometry.translate(
       Math.random() * 300,
       Math.random() * 300,
       Math.random() * 300,
-    )
-    const line = new THREE.Mesh(geometry, material)
-    line.rotation.x += (Math.PI / 64) * Math.random() * 100
-    line.rotation.y += (Math.PI / 64) * Math.random() * 100
-    line.rotation.z += (Math.PI / 64) * Math.random() * 100
-    lines.push(line)
+    );
+    const line = new THREE.Mesh(geometry, material);
+    line.rotation.x += (Math.PI / 64) * Math.random() * 100;
+    line.rotation.y += (Math.PI / 64) * Math.random() * 100;
+    line.rotation.z += (Math.PI / 64) * Math.random() * 100;
+    lines.push(line);
   }
 
-  updateRayCaster(0, 0)
+  updateRayCaster(0, 0);
 
   // create an AudioListener and add it to the camera
-  const listener = new THREE.AudioListener()
-  camera.add(listener)
+  const listener = new THREE.AudioListener();
+  camera.add(listener);
 
   // create an Audio source
-  const sound = new THREE.Audio(listener)
+  const sound = new THREE.Audio(listener);
 
   useEffect(() => {
     // load a sound and set it as the Audio object's buffer
-    const audioLoader = new THREE.AudioLoader()
+    const audioLoader = new THREE.AudioLoader();
     audioLoader.load(
       'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
       (buffer: THREE.AudioBuffer) => {
-        sound.setBuffer(buffer)
-        sound.setLoop(true)
-        sound.setVolume(0.5)
-        sound.play()
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.5);
+        sound.play();
       },
       () => {
-        console.log('playing')
+        console.log('playing');
       },
       (error: string) => {
-        console.log(error, 'error!')
+        console.log(error, 'error!');
       },
-    )
+    );
     return () => {
-      sound.stop()
-    }
-  })
+      sound.stop();
+    };
+  });
 
   // create an AudioAnalyser, passing in the sound and desired fftSize
-  const analyser = new THREE.AudioAnalyser(sound, 32)
+  const analyser = new THREE.AudioAnalyser(sound, 32);
 
   // get the average frequency of the sound
   // const data = analyser.getAverageFrequency()
@@ -170,20 +170,20 @@ const Spiro = ({ width, height }: Dimensions) => {
     // geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
     // geometry.attributes.position.needsUpdate = true
 
-    const freq = analyser.getFrequencyData()
+    const freq = analyser.getFrequencyData();
 
-    const value = sum(freq) / 5000.0
-    uniforms.amplitude.value = value > 0.005 ? value : 0
-    camera.translateX(-0.5)
-    console.log(value)
-  }
+    const value = sum(freq) / 5000.0;
+    uniforms.amplitude.value = value > 0.005 ? value : 0;
+    camera.translateX(-0.5);
+    console.log(value);
+  };
 
   const mouseMove = (event: React.MouseEvent) => {
     updateRayCaster(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1,
-    )
-  }
+    );
+  };
 
   return (
     <div onMouseMove={mouseMove}>
@@ -195,11 +195,11 @@ const Spiro = ({ width, height }: Dimensions) => {
         orbitControls
       />
     </div>
-  )
-}
+  );
+};
 
 export default () => {
-  const [started, start] = useState(false)
+  const [started, start] = useState(false);
 
   return (
     <Page>
@@ -211,5 +211,5 @@ export default () => {
         )
       }
     </Page>
-  )
-}
+  );
+};
