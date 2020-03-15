@@ -1,5 +1,5 @@
 import { airtablePut } from '../lib/airtable';
-import { Seed } from '../pages/spiro';
+import { Seed } from '../components/spiro';
 import { NowRequest, NowResponse } from '@now/node';
 
 const addToPositions = (seed: Seed): Promise<PositionResponse> =>

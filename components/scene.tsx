@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three-orbitcontrols-ts';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
 
 type Props = {
   renderer: THREE.WebGLRenderer;
@@ -8,6 +11,7 @@ type Props = {
   orbitControls?: boolean;
   camera: THREE.Camera;
   shapes: Array<THREE.Mesh | THREE.Line>;
+  effects?: Array<any>;
 };
 
 const Scene = (props: Props) => {
@@ -18,18 +22,43 @@ const Scene = (props: Props) => {
   const scene = new THREE.Scene();
   const ref = useRef<HTMLDivElement>(null);
 
+  const render = (() => {
+    if (props.effects) {
+      const composer = new EffectComposer(props.renderer);
+      composer.addPass(new RenderPass(scene, props.camera));
+
+      props.effects.forEach(effect => {
+        composer.addPass(effect);
+      });
+
+      return () => {
+        composer.render();
+      };
+    } else {
+      return () => {
+        props.renderer.render(scene, props.camera);
+      };
+    }
+  })();
+
   const animate = () => {
     props.renderScene();
     if (controls) {
       controls.update();
     }
-    props.renderer.render(scene, props.camera);
+    render();
     frameId = window.requestAnimationFrame(animate);
   };
 
   const start = () => {
     if (!frameId) {
       frameId = window.requestAnimationFrame(animate);
+    }
+  };
+
+  const stop = () => {
+    if (frameId) {
+      window.cancelAnimationFrame(frameId);
     }
   };
 
@@ -43,12 +72,6 @@ const Scene = (props: Props) => {
 
     return stop;
   });
-
-  const stop = () => {
-    if (frameId) {
-      window.cancelAnimationFrame(frameId);
-    }
-  };
 
   return <div id="scene" ref={ref} />;
 };

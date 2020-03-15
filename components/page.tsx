@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Dimensions } from '../lib/types';
 
@@ -15,15 +15,8 @@ interface Props {
   children: (dimensions: Dimensions) => ReactNode;
 }
 
-export default (props: Props) => {
-  const { children } = props;
-  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
-
-  useEffect(() => {
-    if (dimensions == null) {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
-    }
-  });
+export default ({ children }: Props) => {
+  const dimensions = { width: window.innerWidth, height: window.innerHeight };
 
   return (
     <>
@@ -35,9 +28,7 @@ export default (props: Props) => {
           display: block;
         }
       `}</style>
-      <Container id="container">
-        {dimensions ? children(dimensions) : null}
-      </Container>
+      <Container id="container">{children(dimensions)}</Container>
     </>
   );
 };
