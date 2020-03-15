@@ -45,7 +45,6 @@
     "react-dom": "^16.13.0",
     "react-p5-wrapper": "^2.0.0",
     "styled-components": "^5.0.0",
-    "three": "^0.110.0",
-    "three-orbitcontrols-ts": "^0.1.2"
+    "three": "^0.110.0"
   }
 }
