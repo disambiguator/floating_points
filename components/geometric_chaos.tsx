@@ -99,9 +99,9 @@ const Spiro = ({ width, height }: Dimensions) => {
   renderer.setSize(width, height);
 
   const material = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
+    uniforms,
+    vertexShader,
+    fragmentShader,
   });
 
   const displacement = new Float32Array(renderSpeed);

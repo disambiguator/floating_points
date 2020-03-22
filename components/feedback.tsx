@@ -82,7 +82,7 @@ const Feedback = (props: Dimensions) => {
         videoTexture: { type: 't', value: videoTexture },
         time: { type: 'f', value: Math.random() * Math.PI * 2 + Math.PI },
       },
-      fragmentShader: fragmentShader,
+      fragmentShader,
     });
     const bufferObject = new THREE.Mesh(plane, bufferMaterial);
     bufferScene.add(bufferObject);

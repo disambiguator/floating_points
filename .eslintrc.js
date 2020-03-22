@@ -23,6 +23,7 @@ module.exports =  {
         varsIgnorePattern: '^_',
       },
     ],
+    "object-shorthand": ["error", "always"],
     "react/display-name": "off"
   },
   settings:  {
