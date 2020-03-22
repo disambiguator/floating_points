@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { Pass } from 'three/examples/jsm/postprocessing/Pass';
 
 type Props = {
   renderer: THREE.WebGLRenderer;
@@ -10,7 +11,7 @@ type Props = {
   orbitControls?: boolean;
   camera: THREE.Camera;
   shapes: Array<THREE.Mesh | THREE.Line>;
-  effects?: Array<any>;
+  effects?: Array<Pass>;
 };
 
 const Scene = (props: Props) => {

@@ -237,7 +237,11 @@ const Spiro = (props: Dimensions) => {
   const line = new THREE.Line(geometry, material);
 
   const afterimagePass = new AfterimagePass();
-  const postProcessUniforms: any = afterimagePass.uniforms;
+
+  interface AfterImageUniforms {
+    damp: { value: number };
+  }
+  const postProcessUniforms = afterimagePass.uniforms as AfterImageUniforms;
   postProcessUniforms.damp.value = 0.9;
 
   updateRayCaster(0, 0, camera);

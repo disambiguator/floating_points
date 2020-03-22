@@ -2,7 +2,7 @@ import { airtableShow } from '../lib/airtable';
 import { NowRequest, NowResponse } from '@now/node';
 
 type AirtableResponse = {
-  fields: Record<string, any>;
+  fields: Record<string, {}>;
 };
 
 interface GetPresetRequest extends NowRequest {
@@ -14,10 +14,10 @@ interface GetPresetRequest extends NowRequest {
 module.exports = async (req: GetPresetRequest, res: NowResponse) => {
   const ids: Array<string> = JSON.parse(req.query.ids);
 
-  const airtableResponses = await Promise.all(
+  const airtableResponses: AirtableResponse[] = await Promise.all(
     ids.map(id => airtableShow('preset', id)),
   );
-  const fields = airtableResponses.map((r: AirtableResponse) => r.fields);
+  const fields = airtableResponses.map(r => r.fields);
 
   res.json(fields);
 };

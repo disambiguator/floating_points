@@ -13,9 +13,7 @@ interface AirtableRecordSet {
   records: Array<AirtableRecord>;
 }
 
-const fetchJson: (url: string, options?: {}) => Promise<any> = async (
-  ...fetchArgs
-) => {
+const fetchJson = async (...fetchArgs: Parameters<typeof fetch>) => {
   const response = await fetch(...fetchArgs);
   return response.json();
 };

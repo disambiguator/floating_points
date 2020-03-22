@@ -1,3 +1,4 @@
+/* eslint-disable */
 let img;
 const width = 700;
 const height = 400;

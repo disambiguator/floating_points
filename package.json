@@ -4,7 +4,7 @@
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
   "scripts": {
-    "test": "eslint . --ext=js,jsx,ts,tsx --fix",
+    "test": "eslint_d . --ext=js,jsx,ts,tsx --fix",
     "build": "next build",
     "start": "next start"
   },

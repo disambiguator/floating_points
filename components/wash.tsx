@@ -18,18 +18,6 @@ const Scatter = ({ width, height }: Dimensions) => {
   const inRange = (point: Point) =>
     point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height;
 
-  useEffect(() => {
-    mount = ref.current!;
-    ctx = mount.getContext('2d')!;
-    ctx.lineWidth = 5;
-
-    const interval = setInterval(animate, 20);
-
-    return () => {
-      clearInterval(interval);
-    };
-  });
-
   const endPoints = () => {
     const slopeX = Math.random() * 10 - 5;
     const slopeY = Math.random() * 10 - 5;
@@ -65,6 +53,18 @@ const Scatter = ({ width, height }: Dimensions) => {
 
     timer++;
   };
+
+  useEffect(() => {
+    mount = ref.current!;
+    ctx = mount.getContext('2d')!;
+    ctx.lineWidth = 5;
+
+    const interval = setInterval(animate, 20);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   return <canvas width={width} height={height} ref={ref} />;
 };

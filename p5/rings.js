@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const radiusScale = 80;
 const offset = 1;
 const initialArc = 0;

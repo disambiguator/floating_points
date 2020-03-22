@@ -82,6 +82,10 @@ const uniforms = {
 };
 
 const Spiro = ({ width, height }: Dimensions) => {
+  const camera = new THREE.PerspectiveCamera(45, width / height, near, far);
+  camera.position.set(0, 0, 300);
+  camera.lookAt(0, 0, 0);
+
   const updateRayCaster = (x: number, y: number) => {
     const mouse = new THREE.Vector2(x, y);
     const raycaster = new THREE.Raycaster();
@@ -90,10 +94,6 @@ const Spiro = ({ width, height }: Dimensions) => {
     uniforms.origin.value = raycaster.ray.origin;
     uniforms.direction.value = raycaster.ray.direction;
   };
-
-  const camera = new THREE.PerspectiveCamera(45, width / height, near, far);
-  camera.position.set(0, 0, 300);
-  camera.lookAt(0, 0, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(width, height);
