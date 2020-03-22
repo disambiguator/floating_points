@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import { sample, sumBy } from 'lodash';
 import Page from './page';
 import Scene from './scene';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 import { Dimensions } from '../lib/types';
 import styled from 'styled-components';
 import React from 'react';
+import * as dat from 'dat.gui';
 
 import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
 
@@ -77,6 +78,17 @@ const fragmentShader = `
     }
 `;
 
+interface SpiroUniforms {
+  amplitude: THREE.Uniform;
+  origin: THREE.Uniform;
+  direction: THREE.Uniform;
+  color: THREE.Uniform;
+}
+
+interface AfterImageUniforms {
+  damp: THREE.Uniform;
+}
+
 const uniforms = {
   amplitude: new THREE.Uniform(0.0),
   origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
@@ -129,14 +141,6 @@ function generateVertices() {
   }
 
   return vertices;
-}
-
-function amplitudeSlider(event: ChangeEvent<HTMLInputElement>) {
-  uniforms.amplitude.value = parseFloat(event.target.value);
-}
-
-function enableColor(event: ChangeEvent<HTMLInputElement>) {
-  uniforms.color.value = event.target.checked ? 1.0 : 0.0;
 }
 
 let seeds: Array<Seed> = [];
@@ -212,6 +216,28 @@ const updateRayCaster = (x: number, y: number, camera: THREE.Camera) => {
   uniforms.direction.value = raycaster.ray.direction;
 };
 
+const setUpGUI = (
+  uniforms: SpiroUniforms,
+  postProcessUniforms: AfterImageUniforms,
+) => {
+  const params = {
+    color: false,
+  };
+
+  const datGui = new dat.GUI({ autoPlace: true });
+  datGui.open();
+  datGui.add(uniforms.amplitude, 'value', 0, 0.005, 0.00001).name('Amplitude');
+  datGui.add(postProcessUniforms.damp, 'value', 0.7, 1, 0.0001).name('Trails');
+  datGui
+    .add(params, 'color')
+    .name('Color')
+    .onChange(() => {
+      uniforms.color.value = params.color ? 1.0 : 0.0;
+    });
+
+  return datGui;
+};
+
 const Spiro = (props: Dimensions) => {
   initPositions();
   getInitialPresets();
@@ -222,6 +248,19 @@ const Spiro = (props: Dimensions) => {
     uniforms,
     vertexShader,
     fragmentShader,
+  });
+
+  const afterimagePass = new AfterimagePass();
+
+  const postProcessUniforms = afterimagePass.uniforms as AfterImageUniforms;
+  postProcessUniforms.damp.value = 0.9;
+
+  useEffect(() => {
+    const gui = setUpGUI(uniforms, postProcessUniforms);
+
+    return () => {
+      gui.destroy();
+    };
   });
 
   const displacement = new Float32Array(renderSpeed);
@@ -235,14 +274,6 @@ const Spiro = (props: Dimensions) => {
   );
 
   const line = new THREE.Line(geometry, material);
-
-  const afterimagePass = new AfterimagePass();
-
-  interface AfterImageUniforms {
-    damp: { value: number };
-  }
-  const postProcessUniforms = afterimagePass.uniforms as AfterImageUniforms;
-  postProcessUniforms.damp.value = 0.9;
 
   updateRayCaster(0, 0, camera);
 
@@ -265,27 +296,6 @@ const Spiro = (props: Dimensions) => {
   return (
     <div onMouseMove={mouseMove}>
       <Controls>
-        <label>Amplitude</label>
-        <input
-          type="range"
-          min="0"
-          max=".005"
-          step=".00001"
-          onInput={amplitudeSlider}
-        />
-        <label>Trails</label>
-        <input
-          type="range"
-          min="0.5"
-          max="1"
-          step=".0001"
-          onInput={(event: ChangeEvent<HTMLInputElement>) => {
-            postProcessUniforms.damp.value = parseFloat(event.target.value);
-          }}
-        />
-        <label>Color</label>
-        <input type="checkbox" onInput={enableColor} />
-
         <button onClick={addToPresets}>Add to Presets</button>
         <button onClick={initPositions}>New Positions</button>
         <button onClick={initFromPreset}>Random Preset</button>
