@@ -69,10 +69,8 @@ class Spiral extends React.Component {
   };
 
   animate = () => {
-    const width = this.mount.width;
-    const height = this.mount.height;
-    const timer = this.timer;
-    const sides = this.sides;
+    const { timer, sides, mount } = this;
+    const { width, height } = mount;
     this.ctx.fillRect(0, 0, width, height);
     const theta = (2 * Math.PI) / sides;
     const x0 = width / 2;

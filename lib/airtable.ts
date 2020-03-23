@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 
-const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
-const AIRTABLE_ENDPOINT = process.env.AIRTABLE_ENDPOINT;
+const { AIRTABLE_API_KEY, AIRTABLE_ENDPOINT } = process.env;
 
 interface AirtableRecord {
   fields: {

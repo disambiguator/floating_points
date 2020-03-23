@@ -2,6 +2,7 @@ import React from 'react';
 import Scene from '../components/scene';
 import Page from '../components/page';
 import * as THREE from 'three';
+import { Dimensions } from '../lib/types';
 
 const generateCube = (length: number) => {
   const geometry = new THREE.BoxGeometry(length, length, length);
@@ -38,14 +39,7 @@ const renderer = (width: number, height: number) => {
   return webGLRenderer;
 };
 
-interface Props {
-  width: number;
-  height: number;
-}
-const Cubes = (props: Props) => {
-  const width = props.width;
-  const height = props.height;
-
+const Cubes = ({ width, height }: Dimensions) => {
   let timer = 0;
   let isRotating = false;
 

@@ -9,9 +9,13 @@ interface PositionResponse {
   id: string;
 }
 
+interface RequestBody {
+  seeds: Seed[];
+}
+
 module.exports = async (req: NowRequest, res: NowResponse) => {
   if (req.method === 'POST') {
-    const seeds: Array<Seed> = JSON.parse(req.body).seeds;
+    const { seeds } = JSON.parse(req.body) as RequestBody;
     const positionRequest: Array<Promise<PositionResponse>> = seeds.map(seed =>
       addToPositions(seed),
     );

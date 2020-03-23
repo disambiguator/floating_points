@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { sample, sumBy } from 'lodash';
 import Page from './page';
 import Scene from './scene';
-import { ChangeEvent, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Dimensions } from '../lib/types';
 import styled from 'styled-components';
 import React from 'react';
@@ -183,7 +183,7 @@ const initFromPreset = async () => {
 const getInitialPresets = async () => {
   const response = await window.fetch('/api/getPresets');
   const json = await response.json();
-  presets = json.presets;
+  ({ presets } = json);
 };
 
 const getCamera = (props: Dimensions) => {

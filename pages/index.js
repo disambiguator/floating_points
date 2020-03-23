@@ -6,7 +6,6 @@ const pages = [
   // { name: 'Pixelsorting', path: '/pixel_sort' },
   { name: 'Warp', path: '/bendy' },
   { name: 'Spirographs', path: '/spiro' },
-  // { name: 'Visualizer', path: '/visualizer' },
   // { name: 'Scatter', path: '/scatter' },
   { name: 'Divide', path: '/divide' },
   { name: 'Cubes', path: '/cubes' },
@@ -68,8 +67,7 @@ class Scatter extends React.Component {
     this.ctx = this.mount.getContext('2d');
 
     this.updateDimensions();
-    const width = this.mount.width;
-    const height = this.mount.height;
+    const { width, height } = this.mount;
 
     this.interval = setInterval(this.animate, 10);
     window.addEventListener('resize', this.updateDimensions);
@@ -105,15 +103,14 @@ class Scatter extends React.Component {
   };
 
   animate = () => {
-    const width = this.mount.width;
-    const height = this.mount.height;
+    const { width, height } = this.mount;
 
     if (this.timer % this.fragmentWidth === 0) {
       this.slopeX = Math.random() * 10 - 5;
       this.slopeY = Math.random() * 10 - 5;
       const slope = this.slopeY / this.slopeX;
 
-      this.points = endPoints({ width: width, height: height, slope: slope });
+      this.points = endPoints({ width, height, slope });
 
       this.ctx.beginPath();
       // this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
