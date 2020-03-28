@@ -19,16 +19,18 @@ export default ({ children }: Props) => {
   const dimensions = { width: window.innerWidth, height: window.innerHeight };
 
   return (
-    <>
-      <style global jsx>{`
-        body {
-          margin: 0;
-        }
-        canvas {
-          display: block;
-        }
-      `}</style>
-      <Container id="container">{children(dimensions)}</Container>
-    </>
+    <React.StrictMode>
+      <>
+        <style global jsx>{`
+          body {
+            margin: 0;
+          }
+          canvas {
+            display: block;
+          }
+        `}</style>
+        <Container id="container">{children(dimensions)}</Container>
+      </>
+    </React.StrictMode>
   );
 };
