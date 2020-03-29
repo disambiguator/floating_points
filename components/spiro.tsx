@@ -24,7 +24,7 @@ const Controls = styled.div`
   align-items: center;
 `;
 
-const vertexShader = `
+const vertexShader = /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -59,7 +59,7 @@ const vertexShader = `
     }
 `;
 
-const fragmentShader = `
+const fragmentShader = /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -268,7 +268,7 @@ const Spiro = (props: Dimensions) => {
     displacement[i] = Math.random() * 5;
   }
 
-  geometry.addAttribute(
+  geometry.setAttribute(
     'displacement',
     new THREE.BufferAttribute(displacement, 1),
   );
