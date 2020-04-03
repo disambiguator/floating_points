@@ -1,14 +1,16 @@
 import * as THREE from 'three';
-import { sample, sumBy } from 'lodash';
+import { sample, sumBy, sum } from 'lodash';
 import Page from './page';
 import Scene from './scene';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions } from '../lib/types';
 import styled from 'styled-components';
 import React from 'react';
 import * as dat from 'dat.gui';
 
-import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
+import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import ZoomShader from '../lib/shaders/zoom';
 
 const numPoints = 50000;
 const near = 0.1;
@@ -216,24 +218,42 @@ const updateRayCaster = (x: number, y: number, camera: THREE.Camera) => {
   uniforms.direction.value = raycaster.ray.direction;
 };
 
-const setUpGUI = (
-  uniforms: SpiroUniforms,
-  postProcessUniforms: AfterImageUniforms,
-) => {
-  const params = {
-    color: false,
-  };
+const setUpAnalyser = () => {};
 
+interface Params {
+  color: boolean;
+  balance: number;
+  pulse: boolean;
+  audio: boolean;
+}
+const setUpGUI = ({
+  uniforms,
+  afterimageUniforms,
+  zoomUniforms,
+  params,
+}: {
+  uniforms: SpiroUniforms;
+  afterimageUniforms: AfterImageUniforms;
+  zoomUniforms: typeof ZoomShader.uniforms;
+  params: Params;
+}) => {
   const datGui = new dat.GUI({ autoPlace: true });
   datGui.open();
   datGui.add(uniforms.amplitude, 'value', 0, 0.005, 0.00001).name('Amplitude');
-  datGui.add(postProcessUniforms.damp, 'value', 0.7, 1, 0.0001).name('Trails');
+  datGui.add(afterimageUniforms.damp, 'value', 0.9, 1, 0.0001).name('Trails');
+  datGui.add(zoomUniforms.zoom, 'value', 0.0, 2, 0.001).name('Zoom');
+  datGui.add(params, 'balance', 0.0, 10000, 0.1).name('Balance');
+  datGui.add(params, 'audio').name('Microphone Audio');
   datGui
     .add(params, 'color')
     .name('Color')
     .onChange(() => {
       uniforms.color.value = params.color ? 1.0 : 0.0;
     });
+  datGui
+    .add(params, 'pulse')
+    .name('Pulse')
+    .onChange(setUpAnalyser);
 
   return datGui;
 };
@@ -250,17 +270,49 @@ const Spiro = (props: Dimensions) => {
     fragmentShader,
   });
 
-  const afterimagePass = new AfterimagePass();
+  const params = {
+    color: false,
+    balance: 5000.0,
+    pulse: false,
+    audio: false,
+  };
 
-  const postProcessUniforms = afterimagePass.uniforms as AfterImageUniforms;
-  postProcessUniforms.damp.value = 0.9;
+  const afterimagePass = new AfterimagePass();
+  const afterimageUniforms = afterimagePass.uniforms as AfterImageUniforms;
+  afterimageUniforms.damp.value = 0.95;
+
+  const zoomPass = new ShaderPass(ZoomShader);
+  const zoomUniforms = zoomPass.uniforms as typeof ZoomShader.uniforms;
 
   useEffect(() => {
-    const gui = setUpGUI(uniforms, postProcessUniforms);
+    const gui = setUpGUI({
+      uniforms,
+      zoomUniforms,
+      afterimageUniforms,
+      params,
+    });
 
     return () => {
       gui.destroy();
     };
+  });
+
+  let analyser: THREE.AudioAnalyser | null;
+  useEffect(() => {
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: false })
+      .then((stream: MediaStream) => {
+        const audio = new THREE.Audio(listener);
+
+        const { context } = listener;
+        const source = context.createMediaStreamSource(stream);
+        // @ts-ignore
+        audio.setNodeSource(source);
+        analyser = new THREE.AudioAnalyser(audio, 32);
+      });
   });
 
   const displacement = new Float32Array(renderSpeed);
@@ -283,6 +335,16 @@ const Spiro = (props: Dimensions) => {
       3,
     );
     geometry.attributes.position.needsUpdate = true;
+
+    if (!analyser) return;
+    const freq = analyser.getFrequencyData();
+    if (params.pulse) {
+      if (sum(freq) > params.balance) zoomUniforms.zoom.value = 0;
+      zoomUniforms.zoom.value = (zoomUniforms.zoom.value + 0.1) % 5.0;
+    } else {
+      const value = sum(freq) / params.balance;
+      zoomUniforms.zoom.value = value;
+    }
   };
 
   const mouseMove = (event: React.MouseEvent) => {
@@ -304,7 +366,7 @@ const Spiro = (props: Dimensions) => {
       <Scene
         camera={camera}
         shapes={[line]}
-        effects={[afterimagePass]}
+        effects={[zoomPass, afterimagePass]}
         renderer={sceneRenderer}
         renderScene={renderScene}
         orbitControls
