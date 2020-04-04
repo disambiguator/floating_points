@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { sample, sumBy, sum } from 'lodash';
 import Page from './page';
 import Scene from './scene';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Dimensions } from '../lib/types';
 import styled from 'styled-components';
 import React from 'react';
@@ -218,8 +218,6 @@ const updateRayCaster = (x: number, y: number, camera: THREE.Camera) => {
   uniforms.direction.value = raycaster.ray.direction;
 };
 
-const setUpAnalyser = () => {};
-
 interface Params {
   color: boolean;
   balance: number;
@@ -250,10 +248,7 @@ const setUpGUI = ({
     .onChange(() => {
       uniforms.color.value = params.color ? 1.0 : 0.0;
     });
-  datGui
-    .add(params, 'pulse')
-    .name('Pulse')
-    .onChange(setUpAnalyser);
+  datGui.add(params, 'pulse').name('Pulse');
 
   return datGui;
 };

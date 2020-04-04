@@ -15,6 +15,7 @@ module.exports =  {
   rules:  {
    "@typescript-eslint/explicit-function-return-type": "off",
    "@typescript-eslint/no-non-null-assertion": "off",
+   "@typescript-eslint/ban-ts-ignore": "off",
    "prefer-destructuring": 2,
      '@typescript-eslint/no-unused-vars': [
       // Allow unused args/vars to be marked with an underscore
