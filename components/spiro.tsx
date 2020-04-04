@@ -15,7 +15,6 @@ import ZoomShader from '../lib/shaders/zoom';
 const numPoints = 50000;
 const near = 0.1;
 const far = 10000;
-const geometry = new THREE.BufferGeometry();
 const renderSpeed = 1000;
 let positions: Array<Seed> = [];
 
@@ -153,7 +152,7 @@ const addToPresets = () =>
     body: JSON.stringify({ seeds }),
   });
 
-const setPositions = (p: Array<Seed>) => {
+const setPositions = (geometry: THREE.BufferGeometry, p: Array<Seed>) => {
   positions = p;
   geometry.attributes.position = new THREE.Float32BufferAttribute(
     generateVertices(),
@@ -162,14 +161,14 @@ const setPositions = (p: Array<Seed>) => {
   geometry.attributes.position.needsUpdate = true;
 };
 
-const initPositions = () => {
+const initPositions = (geometry: THREE.BufferGeometry) => {
   seeds = [randPosition(), randPosition()];
-  setPositions([...seeds]);
+  setPositions(geometry, [...seeds]);
 };
 
 let presets: Array<{ positions: Array<string> }> = [];
 
-const initFromPreset = async () => {
+const initFromPreset = async (geometry: THREE.BufferGeometry) => {
   const randomPreset = sample(presets);
   if (randomPreset == undefined) {
     throw new Error();
@@ -179,7 +178,7 @@ const initFromPreset = async () => {
     `/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`,
   );
   const jsonResponse = await response.json();
-  setPositions(await jsonResponse);
+  setPositions(geometry, await jsonResponse);
 };
 
 const getInitialPresets = async () => {
@@ -254,7 +253,9 @@ const setUpGUI = ({
 };
 
 const Spiro = (props: Dimensions) => {
-  initPositions();
+  const geometry = new THREE.BufferGeometry();
+
+  initPositions(geometry);
   getInitialPresets();
 
   const camera = getCamera(props);
@@ -354,8 +355,20 @@ const Spiro = (props: Dimensions) => {
     <div onMouseMove={mouseMove}>
       <Controls>
         <button onClick={addToPresets}>Add to Presets</button>
-        <button onClick={initPositions}>New Positions</button>
-        <button onClick={initFromPreset}>Random Preset</button>
+        <button
+          onClick={() => {
+            initPositions(geometry);
+          }}
+        >
+          New Positions
+        </button>
+        <button
+          onClick={() => {
+            initFromPreset(geometry);
+          }}
+        >
+          Random Preset
+        </button>
       </Controls>
 
       <Scene
