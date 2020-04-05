@@ -16,7 +16,6 @@ const numPoints = 50000;
 const near = 0.1;
 const far = 10000;
 const renderSpeed = 1000;
-let positions: Array<Seed> = [];
 
 const Controls = styled.div`
   position: absolute;
@@ -124,15 +123,12 @@ const getPoint = (radius: number, theta: number, phi: number) => {
   return { x: xCoordinate, y: yCoordinate, z: zCoordinate };
 };
 
-function generateVertices() {
+function generateVertices(positions: Seed[]) {
   const vertices = [];
   for (let i = 0; i < renderSpeed; i++) {
-    const points = positions.map(p => getPoint(p.radius, p.arc, p.phi));
-
-    positions.forEach(function(p) {
-      p.arc += p.speed;
-      p.phi += p.phiSpeed;
-    });
+    const points = positions.map(p =>
+      getPoint(p.radius, p.arc + i * p.speed, p.phi + i * p.phiSpeed),
+    );
 
     const x = sumBy(points, 'x') / points.length;
     const y = sumBy(points, 'y') / points.length;
@@ -144,26 +140,25 @@ function generateVertices() {
   return vertices;
 }
 
-let seeds: Array<Seed> = [];
-
-const addToPresets = () =>
+const addToPresets = (seeds: Seed[]) =>
   window.fetch('/api/addPreset', {
     method: 'POST',
     body: JSON.stringify({ seeds }),
   });
 
-const setPositions = (geometry: THREE.BufferGeometry, p: Array<Seed>) => {
-  positions = p;
+const setGeometry = (geometry: THREE.BufferGeometry, p: Array<Seed>) => {
   geometry.attributes.position = new THREE.Float32BufferAttribute(
-    generateVertices(),
+    generateVertices(p),
     3,
   );
   geometry.attributes.position.needsUpdate = true;
 };
 
 const initPositions = (geometry: THREE.BufferGeometry) => {
-  seeds = [randPosition(), randPosition()];
-  setPositions(geometry, [...seeds]);
+  const newPositions = [randPosition(), randPosition()];
+  setGeometry(geometry, newPositions);
+
+  return newPositions;
 };
 
 let presets: Array<{ positions: Array<string> }> = [];
@@ -178,7 +173,9 @@ const initFromPreset = async (geometry: THREE.BufferGeometry) => {
     `/api/getPreset?ids=${JSON.stringify(randomPreset.positions)}`,
   );
   const jsonResponse = await response.json();
-  setPositions(geometry, await jsonResponse);
+  const newPositions: Seed[] = await jsonResponse;
+  setGeometry(geometry, newPositions);
+  return newPositions;
 };
 
 const getInitialPresets = async () => {
@@ -254,8 +251,9 @@ const setUpGUI = ({
 
 const Spiro = (props: Dimensions) => {
   const geometry = new THREE.BufferGeometry();
+  let positions: Array<Seed> = initPositions(geometry);
+  let seeds: Array<Seed> = [...positions];
 
-  initPositions(geometry);
   getInitialPresets();
 
   const camera = getCamera(props);
@@ -326,8 +324,12 @@ const Spiro = (props: Dimensions) => {
   updateRayCaster(0, 0, camera);
 
   const renderScene = () => {
+    positions.forEach(function(p) {
+      p.arc += p.speed * renderSpeed;
+      p.phi += p.phiSpeed * renderSpeed;
+    });
     geometry.attributes.position = new THREE.Float32BufferAttribute(
-      generateVertices(),
+      generateVertices(positions),
       3,
     );
     geometry.attributes.position.needsUpdate = true;
@@ -354,17 +356,19 @@ const Spiro = (props: Dimensions) => {
   return (
     <div onMouseMove={mouseMove}>
       <Controls>
-        <button onClick={addToPresets}>Add to Presets</button>
+        <button onClick={() => addToPresets(seeds)}>Add to Presets</button>
         <button
-          onClick={() => {
-            initPositions(geometry);
+          onClick={async () => {
+            positions = await initPositions(geometry);
+            seeds = [...positions];
           }}
         >
           New Positions
         </button>
         <button
-          onClick={() => {
-            initFromPreset(geometry);
+          onClick={async () => {
+            positions = await initFromPreset(geometry);
+            seeds = [...positions];
           }}
         >
           Random Preset
