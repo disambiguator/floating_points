@@ -48,6 +48,6 @@
     "react-p5-wrapper": "^2.0.0",
     "react-three-fiber": "^4.0.25",
     "styled-components": "^5.0.0",
-    "three": "^0.110.0"
+    "three": "^0.115.0"
   }
 }
