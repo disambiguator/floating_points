@@ -1,20 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useThree, useFrame, extend } from 'react-three-fiber';
+import { useFrame } from 'react-three-fiber';
 import Page from '../components/page';
 import * as THREE from 'three';
-import { Dimensions } from '../lib/types';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
-// Make OrbitControls known as <orbitControls />
-extend({ OrbitControls });
-
-function Controls() {
-  const ref = useRef<OrbitControls>();
-  const { camera, gl } = useThree();
-  useFrame(() => ref.current!.update());
-  // @ts-ignore
-  return <orbitControls ref={ref} args={[camera, gl.domElement]} />;
-}
+import { FiberScene } from './scene';
 
 const Cube = ({
   sideLength,
@@ -106,22 +94,21 @@ const Cubes = () => {
   );
 };
 
-const Scene = ({ width, height }: Dimensions) => {
-  return (
-    <div style={{ width, height }}>
-      <Canvas
-        camera={{
-          far: 10000,
-          position: [0, 0, 300],
-        }}
-      >
-        <Controls />
-        <Cubes />
-      </Canvas>
-    </div>
-  );
-};
-
 export default () => {
-  return <Page>{_dimensions => <Scene height={400} width={400} />}</Page>;
+  return (
+    <Page>
+      {_dimensions => (
+        <div style={{ height: 400, width: 400 }}>
+          <FiberScene
+            camera={{
+              far: 10000,
+              position: [0, 0, 300],
+            }}
+          >
+            <Cubes />
+          </FiberScene>
+        </div>
+      )}
+    </Page>
+  );
 };

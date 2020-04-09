@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { Pass } from 'three/examples/jsm/postprocessing/Pass';
+import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 
 type Props = {
   renderer: THREE.WebGLRenderer;
@@ -74,6 +75,32 @@ const Scene = (props: Props) => {
   });
 
   return <div id="scene" ref={ref} />;
+};
+
+// Make OrbitControls known as <orbitControls />
+extend({ OrbitControls });
+
+function Controls() {
+  const ref = useRef<OrbitControls>();
+  const { camera, gl } = useThree();
+  useFrame(() => ref.current!.update());
+  // @ts-ignore
+  return <orbitControls ref={ref} args={[camera, gl.domElement]} />;
+}
+
+export const FiberScene = ({
+  camera = {},
+  children,
+}: {
+  camera?: React.ComponentProps<typeof Canvas>['camera'];
+  children: React.ReactNode;
+}) => {
+  return (
+    <Canvas camera={camera}>
+      <Controls />
+      {children}
+    </Canvas>
+  );
 };
 
 export default Scene;
