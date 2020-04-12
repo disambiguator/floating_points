@@ -89,7 +89,7 @@ const getPoint = (radius: number, theta: number, phi: number) => {
 function generateVertices(positions: Seed[]) {
   const vertices = new Float32Array(renderSpeed * 3);
   for (let i = 0; i < renderSpeed; i++) {
-    const points = positions.map(p =>
+    const points = positions.map((p) =>
       getPoint(p.radius, p.arc + i * p.speed, p.phi + i * p.phiSpeed),
     );
 
@@ -233,7 +233,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
     } else {
       if (audio) {
         camera.remove(audio.listener);
-        audio.stream.getTracks().forEach(function(track) {
+        audio.stream.getTracks().forEach(function (track) {
           track.stop();
         });
       }
@@ -260,7 +260,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
 
   useFrame(() => {
     setPositions(
-      positions.map(p => ({
+      positions.map((p) => ({
         ...p,
         arc: p.arc + p.speed * renderSpeed,
         phi: p.phi + p.phiSpeed * renderSpeed,
@@ -282,7 +282,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
             attachObject={['attributes', 'position']}
             count={renderSpeed}
             array={generateVertices(positions)}
-            onUpdate={self => {
+            onUpdate={(self) => {
               self.needsUpdate = true;
             }}
             itemSize={3}
@@ -336,5 +336,5 @@ const Spiro = () => {
 };
 
 export default () => {
-  return <Page>{_dimensions => <Spiro />}</Page>;
+  return <Page>{(_dimensions) => <Spiro />}</Page>;
 };

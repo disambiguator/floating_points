@@ -43,7 +43,7 @@ class Spiral extends React.Component {
     this.mount.height = window.innerHeight;
   };
 
-  onInput = event => {
+  onInput = (event) => {
     this.timer = (event.currentTarget.value * Math.PI) / 180;
   };
 
@@ -76,7 +76,7 @@ class Spiral extends React.Component {
     const x0 = width / 2;
     const y0 = height / 2;
 
-    let coords = [...Array(sides).keys()].map(n => [
+    let coords = [...Array(sides).keys()].map((n) => [
       x0 + l * Math.cos(n * theta + timer),
       y0 + l * Math.sin(n * theta + timer),
     ]);
@@ -91,7 +91,7 @@ class Spiral extends React.Component {
     }
 
     for (let x = 0; x < 1000; x++) {
-      coords = [...Array(sides).keys()].map(y => {
+      coords = [...Array(sides).keys()].map((y) => {
         this.ctx.strokeStyle = colors[(y - 1 + sides) % sides];
         return this.drawLine(coords[(y - 1 + sides) % sides], coords[y]);
       });
@@ -106,7 +106,7 @@ class Spiral extends React.Component {
         <canvas
           width={1}
           height={1}
-          ref={mount => {
+          ref={(mount) => {
             this.mount = mount;
           }}
         />

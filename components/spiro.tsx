@@ -68,7 +68,7 @@ const getPoint = (radius: number, theta: number, phi: number) => {
 function generateVertices(positions: Seed[]) {
   const vertices = [];
   for (let i = 0; i < renderSpeed; i++) {
-    const points = positions.map(p =>
+    const points = positions.map((p) =>
       getPoint(p.radius, p.arc + i * p.speed, p.phi + i * p.phiSpeed),
     );
 
@@ -262,7 +262,7 @@ const Spiro = (props: Dimensions) => {
   updateRayCaster(0, 0, camera);
 
   const renderScene = () => {
-    positions.forEach(function(p) {
+    positions.forEach(function (p) {
       p.arc += p.speed * renderSpeed;
       p.phi += p.phiSpeed * renderSpeed;
     });
@@ -328,7 +328,7 @@ const Spiro = (props: Dimensions) => {
 export default () => {
   return (
     <Page>
-      {dimensions => (
+      {(dimensions) => (
         <Spiro height={dimensions.height} width={dimensions.width} />
       )}
     </Page>

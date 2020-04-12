@@ -84,5 +84,5 @@ const CubeZoom = (props: Dimensions) => {
 };
 
 export default () => (
-  <Page>{_dimensions => <CubeZoom height={1200} width={1200} />}</Page>
+  <Page>{(_dimensions) => <CubeZoom height={1200} width={1200} />}</Page>
 );

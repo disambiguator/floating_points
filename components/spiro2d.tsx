@@ -78,16 +78,16 @@ const Spiro = ({ width, height }: Dimensions) => {
     p.draw = () => {
       p.background(0, 0, 0, 5);
       for (let i = 0; i < renderSpeed; i++) {
-        const points = positions.map(p => getPoint(p.radius, p.arc));
+        const points = positions.map((p) => getPoint(p.radius, p.arc));
 
-        positions.forEach(function(p) {
+        positions.forEach(function (p) {
           p.arc += p.speed;
         });
 
-        const points2 = positions.map(p => getPoint(p.radius, p.arc));
+        const points2 = positions.map((p) => getPoint(p.radius, p.arc));
 
-        const x1 = sum(points, p => p.x) / points.length;
-        const y1 = sum(points, p => p.y) / points.length;
+        const x1 = sum(points, (p) => p.x) / points.length;
+        const y1 = sum(points, (p) => p.y) / points.length;
 
         if (colorEnabled) {
           strokeColor(x1, y1);
@@ -96,8 +96,8 @@ const Spiro = ({ width, height }: Dimensions) => {
         p.line(
           x1,
           y1,
-          sum(points2, p => p.x) / points.length,
-          sum(points2, p => p.y) / points.length,
+          sum(points2, (p) => p.x) / points.length,
+          sum(points2, (p) => p.y) / points.length,
         );
       }
 
@@ -120,4 +120,4 @@ const Spiro = ({ width, height }: Dimensions) => {
   return <P5Wrapper sketch={sketch} />;
 };
 
-export default () => <Page>{dimensions => <Spiro {...dimensions} />}</Page>;
+export default () => <Page>{(dimensions) => <Spiro {...dimensions} />}</Page>;

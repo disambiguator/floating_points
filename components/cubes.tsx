@@ -97,7 +97,7 @@ const Cubes = () => {
 export default () => {
   return (
     <Page>
-      {_dimensions => (
+      {(_dimensions) => (
         <div style={{ height: 400, width: 400 }}>
           <FiberScene
             camera={{

@@ -15,9 +15,9 @@ module.exports = async (req: GetPresetRequest, res: NowResponse) => {
   const ids: Array<string> = JSON.parse(req.query.ids);
 
   const airtableResponses: AirtableResponse[] = await Promise.all(
-    ids.map(id => airtableShow('preset', id)),
+    ids.map((id) => airtableShow('preset', id)),
   );
-  const fields = airtableResponses.map(r => r.fields);
+  const fields = airtableResponses.map((r) => r.fields);
 
   res.json(fields);
 };

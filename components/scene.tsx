@@ -29,7 +29,7 @@ const Scene = (props: Props) => {
       const composer = new EffectComposer(props.renderer);
       composer.addPass(new RenderPass(scene, props.camera));
 
-      props.effects.forEach(effect => {
+      props.effects.forEach((effect) => {
         composer.addPass(effect);
       });
 
@@ -68,7 +68,7 @@ const Scene = (props: Props) => {
     ref.current!.appendChild(props.renderer.domElement);
 
     start();
-    props.shapes.forEach(shape => {
+    props.shapes.forEach((shape) => {
       scene.add(shape);
     });
 

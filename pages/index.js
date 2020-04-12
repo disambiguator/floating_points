@@ -51,7 +51,7 @@ const endPoints = ({ width, height, slope }) => {
     { x: (height - b) / m, y: height },
     { x: width, y: m * width + b },
   ].filter(
-    point =>
+    (point) =>
       point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height,
   );
 };
@@ -168,7 +168,7 @@ class Scatter extends React.Component {
       <div>
         <Contents>
           <h1>disambiguator</h1>
-          {pages.map(p => (
+          {pages.map((p) => (
             <Link key={p.name} href={p.path}>
               <a>{p.name}</a>
             </Link>
@@ -189,7 +189,7 @@ class Scatter extends React.Component {
           style={{ position: 'fixed', top: 0, left: 0 }}
           width={1}
           height={1}
-          ref={mount => {
+          ref={(mount) => {
             this.mount = mount;
           }}
         />
