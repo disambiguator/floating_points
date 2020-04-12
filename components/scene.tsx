@@ -5,6 +5,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { Pass } from 'three/examples/jsm/postprocessing/Pass';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
+import { ContainerProps } from 'react-three-fiber/targets/shared/web/ResizeContainer';
 
 type Props = {
   renderer: THREE.WebGLRenderer;
@@ -87,18 +88,11 @@ function Controls() {
   // @ts-ignore
   return <orbitControls ref={ref} args={[camera, gl.domElement]} />;
 }
-
-export const FiberScene = ({
-  camera = {},
-  children,
-}: {
-  camera?: React.ComponentProps<typeof Canvas>['camera'];
-  children: React.ReactNode;
-}) => {
+export const FiberScene = (props: ContainerProps) => {
   return (
-    <Canvas camera={camera}>
+    <Canvas {...props}>
       <Controls />
-      {children}
+      {props.children}
     </Canvas>
   );
 };
