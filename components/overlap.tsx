@@ -14,7 +14,7 @@ const generateCube = (length: number) => {
     geometry,
     new THREE.MeshBasicMaterial({
       color: Math.random() * 0xffffff,
-      vertexColors: THREE.FaceColors,
+      vertexColors: true,
       transparent: true,
       opacity: 0.1,
     }),

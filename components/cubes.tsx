@@ -28,11 +28,7 @@ const Cube = ({
         attach="geometry"
         args={[sideLength, sideLength, sideLength]}
       />
-      <meshBasicMaterial
-        attach="material"
-        color={0xffffff}
-        vertexColors={THREE.FaceColors}
-      />
+      <meshBasicMaterial attach="material" color={0xffffff} vertexColors />
     </mesh>
   );
 };

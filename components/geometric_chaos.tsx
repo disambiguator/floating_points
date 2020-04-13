@@ -142,7 +142,7 @@ const Spiro = ({ width, height }: Dimensions) => {
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(
       'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
-      (buffer: THREE.AudioBuffer) => {
+      (buffer) => {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(0.5);
@@ -151,7 +151,7 @@ const Spiro = ({ width, height }: Dimensions) => {
       () => {
         console.log('playing');
       },
-      (error: string) => {
+      (error) => {
         console.log(error, 'error!');
       },
     );
