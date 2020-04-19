@@ -5,6 +5,8 @@ import sum from 'lodash/sum';
 import { Dimensions } from '../lib/types';
 import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
+import { Effects } from './effects';
+import styled from 'styled-components';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -172,6 +174,16 @@ const Scene = () => {
     />
   );
 
+  const config = {
+    color: false,
+    zoomThreshold: 0.0,
+    pulseEnabled: false,
+    audioEnabled: false,
+    noiseAmplitude: 0.0,
+    trails: 0.0,
+    kaleidoscope: 5,
+  };
+
   return (
     <>
       {Array(500)
@@ -179,6 +191,7 @@ const Scene = () => {
         .map((_value, i) => (
           <Box key={i} displacement={displacement} material={material} />
         ))}
+      <Effects config={config} />
     </>
   );
 };
@@ -194,6 +207,12 @@ const Spiro = () => {
   );
 };
 
+const FullscreenDiv = styled.div`
+  height: 100%;
+  width: 100%;
+  text-align: center;
+`;
+
 export default () => {
   const [started, start] = useState(false);
 
@@ -203,7 +222,9 @@ export default () => {
         started ? (
           <Spiro />
         ) : (
-          <div onClick={() => start(true)}>Click to start</div>
+          <FullscreenDiv onClick={() => start(true)}>
+            Click to start
+          </FullscreenDiv>
         )
       }
     </Page>
