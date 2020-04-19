@@ -20,6 +20,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import DatGui, { DatNumber, DatBoolean } from 'react-dat-gui';
+import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -147,6 +148,9 @@ const Effects = ({ config, audio }: EffectsProps) => {
         args={[ZoomShader]}
         uniforms-zoom-value={zoom}
       />
+      {config.flipEnabled ? (
+        <shaderPass attachArray="passes" args={[KaleidoscopeShader]} />
+      ) : null}
     </effectComposer>
   );
 };
@@ -158,6 +162,7 @@ interface Config {
   audioEnabled: boolean;
   noiseAmplitude: number;
   trails: number;
+  flipEnabled: boolean;
 }
 const ControlPanel = ({
   config,
@@ -190,6 +195,7 @@ const ControlPanel = ({
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
       <DatBoolean path="color" label="Color" />
       <DatBoolean path="pulseEnabled" label="Pulse" />
+      <DatBoolean path="flipEnabled" label="Flip" />
     </DatGui>
   );
 };
@@ -307,10 +313,11 @@ const Spiro = () => {
   const [config, setConfig] = useState({
     trails: 0.93,
     noiseAmplitude: 0.0,
-    zoomThreshold: 0.93,
+    zoomThreshold: 0.0,
     color: false,
     pulseEnabled: false,
     audioEnabled: false,
+    flipEnabled: false,
   });
 
   return (
