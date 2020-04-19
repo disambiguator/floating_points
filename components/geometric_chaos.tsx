@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import Scene from './scene';
+import { FiberScene } from './scene';
 import sum from 'lodash/sum';
 import { Dimensions } from '../lib/types';
 import Page from './page';
-const near = 0.1;
-const far = 10000;
+import { useFrame, useThree } from 'react-three-fiber';
 const renderSpeed = 1000;
 
-const vertexShader = `
+const Shader = {
+  vertexShader: `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -16,11 +16,9 @@ const vertexShader = `
     uniform float amplitude;
     uniform vec3 origin;
     uniform vec3 direction;
-    uniform float color;
     attribute float displacement;
 
     varying vec3 vPosition;
-    varying float vColor;
 
     float computeDistance(vec3 mouseOrigin, vec3 mouseDirection, vec3 vertexPosition) {
       vec3 d = normalize(mouseDirection);
@@ -33,7 +31,6 @@ const vertexShader = `
     void main() {
 
     vPosition = position;
-    vColor = color;
 
     vec3 newPosition = position + amplitude * displacement * 100.0 * direction;
 
@@ -41,9 +38,9 @@ const vertexShader = `
       modelViewMatrix *
       vec4(newPosition,1.0);
     }
-`;
+`,
 
-const fragmentShader = `
+  fragmentShader: `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -60,86 +57,86 @@ const fragmentShader = `
     gl_FragColor = vec4(color, 1.0);
 
     }
-`;
+`,
 
-// const generateCube = (length) => {
-//   const geometry = new THREE.BoxGeometry(length, length, length)
-//   for (var i = 0; i < geometry.faces.length; i++) {
-//     geometry.faces[i].color.setHex(Math.random() * 0xffffff)
-//   }
-//
-//   return new THREE.Mesh(
-//     geometry,
-//     new THREE.MeshBasicMaterial({ color: 0xffffff, vertexColors: THREE.FaceColors })
-//   )
-// }
-
-const uniforms = {
-  amplitude: new THREE.Uniform(0.0005),
-  origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-  direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-  color: new THREE.Uniform(0.0),
+  uniforms: {
+    amplitude: new THREE.Uniform(0.0005),
+    origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
+    direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
+  },
 };
 
-const Spiro = ({ width, height }: Dimensions) => {
-  const camera = new THREE.PerspectiveCamera(45, width / height, near, far);
-  camera.position.set(0, 0, 300);
-  camera.lookAt(0, 0, 0);
+const Box = ({
+  displacement,
+  material,
+}: {
+  displacement: Float32Array;
+  material: JSX.Element;
+}) => {
+  const meshRef = useRef<THREE.Mesh>();
+  const geometryRef = useRef<THREE.Geometry>();
 
-  const updateRayCaster = (x: number, y: number) => {
-    const mouse = new THREE.Vector2(x, y);
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, camera);
+  useEffect(() => {
+    const m = meshRef.current!;
+    m.rotation.x += (Math.PI / 64) * Math.random() * 100;
+    m.rotation.y += (Math.PI / 64) * Math.random() * 100;
+    m.rotation.z += (Math.PI / 64) * Math.random() * 100;
 
-    uniforms.origin.value = raycaster.ray.origin;
-    uniforms.direction.value = raycaster.ray.direction;
-  };
-
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(width, height);
-
-  const material = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader,
-    fragmentShader,
-  });
-
-  const displacement = new Float32Array(renderSpeed);
-  for (let i = 0; i < renderSpeed; i++) {
-    displacement[i] = Math.random() * 5;
-  }
-
-  const lines = [];
-  for (let i = 0; i < 500; i++) {
-    const geometry = new THREE.BoxBufferGeometry(15, 15, 15);
-    geometry.setAttribute(
-      'displacement',
-      new THREE.BufferAttribute(displacement, 1),
-    );
+    const geometry = geometryRef.current!;
     geometry.translate(
       Math.random() * 300,
       Math.random() * 300,
       Math.random() * 300,
     );
-    const line = new THREE.Mesh(geometry, material);
-    line.rotation.x += (Math.PI / 64) * Math.random() * 100;
-    line.rotation.y += (Math.PI / 64) * Math.random() * 100;
-    line.rotation.z += (Math.PI / 64) * Math.random() * 100;
-    lines.push(line);
-  }
+  }, []);
 
-  updateRayCaster(0, 0);
+  return (
+    <mesh ref={meshRef}>
+      <boxBufferGeometry
+        attach="geometry"
+        args={[15, 15, 15]}
+        ref={geometryRef}
+      >
+        <bufferAttribute
+          attachObject={['attributes', 'displacement']}
+          count={renderSpeed}
+          array={displacement}
+          itemSize={1}
+        />
+      </boxBufferGeometry>
+      {material}
+    </mesh>
+  );
+};
 
-  // create an AudioListener and add it to the camera
-  const listener = new THREE.AudioListener();
-  camera.add(listener);
+const Scene = () => {
+  const { camera, mouse } = useThree();
+  const [analyser, setAnalyser] = useState<THREE.AudioAnalyser>();
+  const [amplitude, setAmplitude] = useState(0);
 
-  // create an Audio source
-  const sound = new THREE.Audio(listener);
+  useFrame(() => {
+    if (analyser == null) return;
+
+    const freq = analyser.getFrequencyData();
+
+    const value = sum(freq) / 5000.0;
+    setAmplitude(value);
+
+    camera.translateX(-0.5);
+  });
+
+  const ray = (() => {
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
+    return raycaster.ray;
+  })();
 
   useEffect(() => {
-    // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+    const sound = new THREE.Audio(listener);
+
     audioLoader.load(
       'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
       (buffer) => {
@@ -147,54 +144,53 @@ const Spiro = ({ width, height }: Dimensions) => {
         sound.setLoop(true);
         sound.setVolume(0.5);
         sound.play();
-      },
-      () => {
-        console.log('playing');
-      },
-      (error) => {
-        console.log(error, 'error!');
+
+        const analyser = new THREE.AudioAnalyser(sound, 32);
+        setAnalyser(analyser);
       },
     );
     return () => {
       sound.stop();
     };
-  });
+  }, []);
 
-  // create an AudioAnalyser, passing in the sound and desired fftSize
-  const analyser = new THREE.AudioAnalyser(sound, 32);
+  const displacement = useMemo(() => {
+    const d = new Float32Array(renderSpeed);
+    for (let i = 0; i < renderSpeed; i++) {
+      d[i] = Math.random() * 5;
+    }
+    return d;
+  }, undefined);
 
-  // get the average frequency of the sound
-  // const data = analyser.getAverageFrequency()
-
-  const renderScene = () => {
-    // geometry.attributes.position = new THREE.Float32BufferAttribute(generateVertices(), 3)
-    // geometry.attributes.position.needsUpdate = true
-
-    const freq = analyser.getFrequencyData();
-
-    const value = sum(freq) / 5000.0;
-    uniforms.amplitude.value = value > 0.005 ? value : 0;
-    camera.translateX(-0.5);
-    console.log(value);
-  };
-
-  const mouseMove = (event: React.MouseEvent) => {
-    updateRayCaster(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1,
-    );
-  };
+  const material = (
+    <shaderMaterial
+      args={[Shader]}
+      attach="material"
+      uniforms-amplitude-value={amplitude}
+      uniforms-origin-value={ray.origin}
+      uniforms-direction-value={ray.direction}
+    />
+  );
 
   return (
-    <div onMouseMove={mouseMove}>
-      <Scene
-        camera={camera}
-        shapes={lines}
-        renderer={renderer}
-        renderScene={renderScene}
-        orbitControls
-      />
-    </div>
+    <>
+      {Array(500)
+        .fill(undefined)
+        .map((_value, i) => (
+          <Box key={i} displacement={displacement} material={material} />
+        ))}
+    </>
+  );
+};
+
+const Spiro = () => {
+  return (
+    <FiberScene
+      camera={{ far: 10000, position: [0, 0, 300] }}
+      gl={{ antialias: true }}
+    >
+      <Scene />
+    </FiberScene>
   );
 };
 
@@ -203,9 +199,9 @@ export default () => {
 
   return (
     <Page>
-      {({ width, height }: Dimensions) =>
+      {(_: Dimensions) =>
         started ? (
-          <Spiro width={width} height={height} />
+          <Spiro />
         ) : (
           <div onClick={() => start(true)}>Click to start</div>
         )
