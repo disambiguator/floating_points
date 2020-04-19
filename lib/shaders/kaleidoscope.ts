@@ -1,8 +1,7 @@
 export const KaleidoscopeShader = {
   uniforms: {
-    // zoom: new THREE.Uniform(0.1),
-    // damp: new THREE.Uniform(0.96),
-    // tDiffuse: { value: null },
+    tDiffuse: { value: null },
+    numSides: { value: 12.0 },
   },
 
   vertexShader: /* glsl */ `
@@ -17,18 +16,35 @@ export const KaleidoscopeShader = {
     precision highp float;
     #endif
 
-    uniform float zoom;
-    uniform float damp;
-
     uniform sampler2D tDiffuse;
 
     varying vec2 vUv;
 
-    void main() {
-      vec2 newUv = vec2(min(vUv.x, 1. - vUv.x), min(vUv.y, 1. - vUv.y));
-      vec4 texelOld = texture2D(tDiffuse, newUv);
+    uniform float numSides;
 
-      gl_FragColor = texelOld;
+    const float PI = 3.14159265359;
+
+    const float time = 0.0;
+
+    float KA = PI / numSides;
+
+    vec2 smallKoleidoscope(vec2 uv) {
+        // get the angle in radians of the current coords relative to origin (i.e. center of screen)
+        float angle = atan (uv.y, uv.x);
+        // repeat image over evenly divided rotations around the center
+        angle = mod (angle, 2.0 * KA);
+        // reflect the image within each subdivision to create a tilelable appearance
+        angle = abs (angle - KA);
+        // rotate image over time
+        // angle += 0.1*time;
+        // get the distance of the coords from the uv origin (i.e. center of the screen)
+        float d = length(uv); 
+        // map the calculated angle to the uv coordinate system at the given distance
+        return d * vec2(cos(angle), sin(angle));
+    }
+
+    void main() {
+      gl_FragColor = texture2D(tDiffuse, 1.0 - smallKoleidoscope(vUv - 0.5));
     }
   `,
 };

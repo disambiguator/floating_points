@@ -129,7 +129,7 @@ const Effects = ({ config, audio }: EffectsProps) => {
 
   useFrame(() => {
     if (config.pulseEnabled) {
-      setZoom((zoom + 0.1) % config.zoomThreshold);
+      setZoom((zoom + 0.05) % config.zoomThreshold);
     } else if (config.audioEnabled && audio) {
       const { analyser } = audio;
       const freq = analyser.getFrequencyData();
@@ -148,8 +148,12 @@ const Effects = ({ config, audio }: EffectsProps) => {
         args={[ZoomShader]}
         uniforms-zoom-value={zoom}
       />
-      {config.flipEnabled ? (
-        <shaderPass attachArray="passes" args={[KaleidoscopeShader]} />
+      {config.kaleidoscope !== 0 ? (
+        <shaderPass
+          attachArray="passes"
+          args={[KaleidoscopeShader]}
+          uniforms-numSides-value={config.kaleidoscope}
+        />
       ) : null}
     </effectComposer>
   );
@@ -162,7 +166,7 @@ interface Config {
   audioEnabled: boolean;
   noiseAmplitude: number;
   trails: number;
-  flipEnabled: boolean;
+  kaleidoscope: number;
 }
 const ControlPanel = ({
   config,
@@ -195,7 +199,13 @@ const ControlPanel = ({
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
       <DatBoolean path="color" label="Color" />
       <DatBoolean path="pulseEnabled" label="Pulse" />
-      <DatBoolean path="flipEnabled" label="Flip" />
+      <DatNumber
+        path="kaleidoscope"
+        label="Kaleidoscope"
+        min={0}
+        max={50}
+        step={1}
+      />
     </DatGui>
   );
 };
@@ -296,7 +306,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
         </bufferGeometry>
         <shaderMaterial
           args={[SpiroShader]}
-          uniforms-color-value={config.color ? 1.0 : 0.0}
+          uniforms-color-value={config.color}
           uniforms-origin-value={ray.origin}
           uniforms-direction-value={ray.direction}
           uniforms-amplitude-value={config.noiseAmplitude}
@@ -317,7 +327,7 @@ const Spiro = () => {
     color: false,
     pulseEnabled: false,
     audioEnabled: false,
-    flipEnabled: false,
+    kaleidoscope: 0,
   });
 
   return (
