@@ -9,6 +9,7 @@ import { useThree, useFrame } from 'react-three-fiber';
 import { FiberScene } from './scene';
 import DatGui, { DatNumber, DatBoolean } from 'react-dat-gui';
 import { Config, Audio, Effects } from './effects';
+import { useRouter } from 'next/router';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -220,7 +221,11 @@ const Scene = ({ seeds, config }: SceneProps) => {
 };
 
 const Spiro = () => {
-  const [seeds, setSeeds] = useState(initPositions());
+  const router = useRouter();
+  const urlSeeds = router.query.seeds as string | undefined;
+  const [seeds, setSeeds] = useState(
+    urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
+  );
   const [config, setConfig] = useState({
     trails: 0.93,
     noiseAmplitude: 0.0,
@@ -236,7 +241,10 @@ const Spiro = () => {
       <Controls>
         <button
           onClick={() => {
-            setSeeds(initPositions());
+            const newSeeds = initPositions();
+            setSeeds(newSeeds);
+            const url = `/spiro?seeds=${JSON.stringify(newSeeds)}`;
+            window.history.pushState('', '', url);
           }}
         >
           New Positions
