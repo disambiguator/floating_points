@@ -7,7 +7,7 @@ import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
 import { FiberScene } from './scene';
-import DatGui, { DatNumber, DatBoolean } from 'react-dat-gui';
+import DatGui, { DatNumber, DatBoolean, DatButton } from 'react-dat-gui';
 import { Config, Audio, Effects } from './effects';
 import { useRouter } from 'next/router';
 
@@ -44,7 +44,7 @@ const randPosition = (): Seed => ({
   radius: randInt(50, 300),
   arc: randInt(0, 360),
   phi: randInt(0, 360),
-  speed: (randInt(1, 10) * 360) / (randInt(10, 100) + numPoints),
+  speed: (randInt(1, 3) * 360) / (randInt(10, 100) + numPoints),
   phiSpeed: 0,
 });
 
@@ -82,11 +82,12 @@ const ControlPanel = ({
   config: Config;
   setConfig: (arg0: Config) => void;
 }) => {
+  const [isOpen, setOpen] = useState(true);
   const onUpdate = (newData: Partial<Config>) => {
     setConfig({ ...config, ...newData });
   };
 
-  return (
+  return isOpen ? (
     <DatGui data={config} onUpdate={onUpdate} style={{ zIndex: 1 }}>
       <DatNumber
         path="noiseAmplitude"
@@ -100,8 +101,8 @@ const ControlPanel = ({
         path="zoomThreshold"
         label="Zoom"
         min={0}
-        max={10}
-        step={0.001}
+        max={0.5}
+        step={0.0001}
       />
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
       <DatBoolean path="color" label="Color" />
@@ -112,6 +113,21 @@ const ControlPanel = ({
         min={0}
         max={50}
         step={1}
+      />
+      <DatButton
+        onClick={() => {
+          setOpen(false);
+        }}
+        label="Close"
+      />
+    </DatGui>
+  ) : (
+    <DatGui data={config} onUpdate={onUpdate} style={{ zIndex: 1 }}>
+      <DatButton
+        onClick={() => {
+          setOpen(true);
+        }}
+        label="Open"
       />
     </DatGui>
   );
@@ -126,6 +142,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
   const { camera, mouse } = useThree();
   const [positions, setPositions] = useState(seeds);
   const [audio, setAudio] = useState<Audio>();
+  const [time, setTime] = useState(0.0);
 
   useEffect(() => {
     if (config.audioEnabled) {
@@ -184,6 +201,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
         phi: p.phi + p.phiSpeed * renderSpeed,
       })),
     );
+    setTime(time + 0.01);
   });
 
   return (
@@ -212,6 +230,7 @@ const Scene = ({ seeds, config }: SceneProps) => {
           uniforms-origin-value={ray.origin}
           uniforms-direction-value={ray.direction}
           uniforms-amplitude-value={config.noiseAmplitude}
+          uniforms-time-value={time}
           attach="material"
         />
       </line>

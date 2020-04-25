@@ -8,10 +8,9 @@ import {
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass';
+import { AfterimagePass } from './AfterimagePass';
 import React, { useRef, useState, useEffect } from 'react';
 import { sum } from 'lodash';
-import ZoomShader from '../lib/shaders/zoom';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
@@ -88,10 +87,9 @@ export const Effects = ({
   return (
     <effectComposer ref={composer} args={[gl]}>
       <renderPass attachArray="passes" scene={scene} camera={camera} />
-      <afterimagePass attachArray="passes" uniforms-damp-value={trails} />
-      <shaderPass
+      <afterimagePass
         attachArray="passes"
-        args={[ZoomShader]}
+        uniforms-damp-value={trails}
         uniforms-zoom-value={zoom}
       />
       {config.kaleidoscope !== 0 ? (

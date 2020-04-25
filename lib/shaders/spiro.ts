@@ -6,6 +6,7 @@ export default {
     origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
     direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
     color: new THREE.Uniform(0.0),
+    time: new THREE.Uniform(0),
   },
 
   vertexShader: /* glsl */ `
@@ -47,10 +48,11 @@ precision highp float;
 // same name and type as VS
 varying vec4 vPosition;
 uniform bool color;
+uniform float time;
 
 void main() {
   if(color) {
-    gl_FragColor = vec4(vPosition.x, vPosition.y, 0.3, 1.0);
+    gl_FragColor = vec4(vec3(vPosition.x, vPosition.y, 0.3 * abs(sin(time * 3.14159 / 4.))), 1.0);
   } else {
     gl_FragColor = vec4(1.0);
   }
