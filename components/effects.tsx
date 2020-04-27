@@ -57,7 +57,7 @@ export const Effects = ({
   config: Config;
   audio?: Audio | undefined;
 }) => {
-  const { gl, scene, camera, size } = useThree();
+  const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
   const [zoom, setZoom] = useState(config.zoomThreshold);
   const { trails } = config;
@@ -74,11 +74,11 @@ export const Effects = ({
 
   useFrame(() => {
     if (config.pulseEnabled) {
-      setZoom((zoom + 0.05) % config.zoomThreshold);
+      setZoom((zoom + 0.001) % config.zoomThreshold);
     } else if (config.audioEnabled && audio) {
       const { analyser } = audio;
       const freq = analyser.getFrequencyData();
-      setZoom(sum(freq) / config.zoomThreshold / 1000);
+      setZoom((sum(freq) * config.zoomThreshold) / 4000);
     }
 
     composer.current!.render();
@@ -96,6 +96,7 @@ export const Effects = ({
         <shaderPass
           attachArray="passes"
           args={[KaleidoscopeShader]}
+          uniforms-aspect-value={aspect}
           uniforms-numSides-value={config.kaleidoscope}
         />
       ) : null}

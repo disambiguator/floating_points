@@ -2,6 +2,7 @@ export const KaleidoscopeShader = {
   uniforms: {
     tDiffuse: { value: null },
     numSides: { value: 12.0 },
+    aspect: { value: 0.0 },
   },
 
   vertexShader: /* glsl */ `
@@ -21,6 +22,8 @@ export const KaleidoscopeShader = {
     varying vec2 vUv;
 
     uniform float numSides;
+
+    uniform float aspect;
 
     const float PI = 3.14159265359;
 
@@ -43,8 +46,16 @@ export const KaleidoscopeShader = {
         return d * vec2(cos(angle), sin(angle));
     }
 
+    vec2 reflect(vec2 i) {
+      return mod(i,1.)*-(step(1.,i)*2.-1.) + step(1.0,i);
+    }
+
     void main() {
-      gl_FragColor = texture2D(tDiffuse, 1.0 - smallKoleidoscope(vUv - 0.5));
+      vec2 position = vUv * 2. - 1.;
+      position.x *= aspect;
+
+      position = reflect(smallKoleidoscope(position));
+      gl_FragColor = texture2D(tDiffuse, position);
     }
   `,
 };
