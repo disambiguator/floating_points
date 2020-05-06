@@ -48,6 +48,7 @@ export interface Config {
   noiseAmplitude: number;
   trails: number;
   kaleidoscope: number;
+  contents: 'spiro' | 'chaos';
 }
 
 export const Effects = ({

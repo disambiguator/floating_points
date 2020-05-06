@@ -133,6 +133,69 @@ const ControlPanel = ({
   );
 };
 
+interface SpirographProps {
+  seeds?: Seed[];
+  config: Config;
+  ray: THREE.Ray;
+}
+export const SpiroContents = ({ seeds, config, ray }: SpirographProps) => {
+  const { clock } = useThree();
+  const displacement = useMemo(() => {
+    const d = new Float32Array(renderSpeed);
+    for (let i = 0; i < renderSpeed; i++) {
+      d[i] = Math.random() * 5;
+    }
+    return d;
+  }, []);
+
+  const [positions, setPositions] = useState(seeds ?? initPositions());
+
+  useEffect(() => {
+    if (seeds) setPositions(seeds);
+  }, [seeds]);
+
+  useFrame(() => {
+    setPositions(
+      positions.map((p) => ({
+        ...p,
+        arc: p.arc + p.speed * renderSpeed,
+        phi: p.phi + p.phiSpeed * renderSpeed,
+      })),
+    );
+  });
+
+  return (
+    <line>
+      <bufferGeometry attach="geometry">
+        <bufferAttribute
+          attachObject={['attributes', 'displacement']}
+          count={renderSpeed}
+          array={displacement}
+          itemSize={1}
+        />
+        <bufferAttribute
+          attachObject={['attributes', 'position']}
+          count={renderSpeed}
+          array={generateVertices(positions)}
+          onUpdate={(self) => {
+            self.needsUpdate = true;
+          }}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <shaderMaterial
+        args={[SpiroShader]}
+        uniforms-color-value={config.color}
+        uniforms-origin-value={ray.origin}
+        uniforms-direction-value={ray.direction}
+        uniforms-amplitude-value={config.noiseAmplitude}
+        uniforms-time-value={clock.elapsedTime}
+        attach="material"
+      />
+    </line>
+  );
+};
+
 interface SceneProps {
   seeds: Seed[];
   config: Config;
@@ -140,9 +203,7 @@ interface SceneProps {
 
 const Scene = ({ seeds, config }: SceneProps) => {
   const { camera, mouse } = useThree();
-  const [positions, setPositions] = useState(seeds);
   const [audio, setAudio] = useState<Audio>();
-  const [time, setTime] = useState(0.0);
 
   useEffect(() => {
     if (config.audioEnabled) {
@@ -175,65 +236,15 @@ const Scene = ({ seeds, config }: SceneProps) => {
     }
   }, [config.audioEnabled]);
 
-  useEffect(() => {
-    setPositions(seeds);
-  }, [seeds]);
-
   const ray = (() => {
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
     return raycaster.ray;
   })();
 
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
-  }, undefined);
-
-  useFrame(() => {
-    setPositions(
-      positions.map((p) => ({
-        ...p,
-        arc: p.arc + p.speed * renderSpeed,
-        phi: p.phi + p.phiSpeed * renderSpeed,
-      })),
-    );
-    setTime(time + 0.01);
-  });
-
   return (
     <>
-      <line>
-        <bufferGeometry attach="geometry">
-          <bufferAttribute
-            attachObject={['attributes', 'displacement']}
-            count={renderSpeed}
-            array={displacement}
-            itemSize={1}
-          />
-          <bufferAttribute
-            attachObject={['attributes', 'position']}
-            count={renderSpeed}
-            array={generateVertices(positions)}
-            onUpdate={(self) => {
-              self.needsUpdate = true;
-            }}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <shaderMaterial
-          args={[SpiroShader]}
-          uniforms-color-value={config.color}
-          uniforms-origin-value={ray.origin}
-          uniforms-direction-value={ray.direction}
-          uniforms-amplitude-value={config.noiseAmplitude}
-          uniforms-time-value={time}
-          attach="material"
-        />
-      </line>
+      <SpiroContents seeds={seeds} config={config} ray={ray} />
       <Effects config={config} audio={audio} />
     </>
   );
@@ -245,7 +256,7 @@ const Spiro = () => {
   const [seeds, setSeeds] = useState(
     urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
   );
-  const [config, setConfig] = useState({
+  const [config, setConfig] = useState<Config>({
     trails: 0.93,
     noiseAmplitude: 0.0,
     zoomThreshold: 0.0,
@@ -253,6 +264,7 @@ const Spiro = () => {
     pulseEnabled: false,
     audioEnabled: false,
     kaleidoscope: 0,
+    contents: 'spiro',
   });
 
   return (

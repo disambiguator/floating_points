@@ -111,6 +111,48 @@ const Box = ({
   );
 };
 
+export const Shapes = ({
+  ray,
+  amplitude,
+}: {
+  ray: THREE.Ray;
+  amplitude: number;
+}) => {
+  const { camera } = useThree();
+  const displacement = useMemo(() => {
+    const d = new Float32Array(renderSpeed);
+    for (let i = 0; i < renderSpeed; i++) {
+      d[i] = Math.random() * 5;
+    }
+    return d;
+  }, []);
+
+  const material = (
+    <shaderMaterial
+      args={[Shader]}
+      attach="material"
+      uniforms-amplitude-value={amplitude}
+      uniforms-origin-value={ray.origin}
+      uniforms-direction-value={ray.direction}
+      onUpdate={(ref) => {
+        ref.uniforms.amplitude.value = amplitude;
+      }}
+    />
+  );
+
+  useFrame(() => {
+    camera.translateX(-0.5);
+  });
+
+  const cubes = Array(500)
+    .fill(undefined)
+    .map((_value, i) => (
+      <Box key={i} displacement={displacement} material={material} />
+    ));
+
+  return <>{cubes}</>;
+};
+
 const Scene = () => {
   const { camera, mouse } = useThree();
   const [analyser, setAnalyser] = useState<THREE.AudioAnalyser>();
@@ -123,8 +165,6 @@ const Scene = () => {
 
     const value = sum(freq) / 5000.0;
     setAmplitude(value);
-
-    camera.translateX(-0.5);
   });
 
   const ray = (() => {
@@ -156,24 +196,6 @@ const Scene = () => {
     };
   }, []);
 
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
-  }, undefined);
-
-  const material = (
-    <shaderMaterial
-      args={[Shader]}
-      attach="material"
-      uniforms-amplitude-value={amplitude}
-      uniforms-origin-value={ray.origin}
-      uniforms-direction-value={ray.direction}
-    />
-  );
-
   const config = {
     color: false,
     zoomThreshold: 0.0,
@@ -182,15 +204,12 @@ const Scene = () => {
     noiseAmplitude: 0.0,
     trails: 0.0,
     kaleidoscope: 5,
+    contents: 'chaos',
   };
 
   return (
     <>
-      {Array(500)
-        .fill(undefined)
-        .map((_value, i) => (
-          <Box key={i} displacement={displacement} material={material} />
-        ))}
+      <Shapes ray={ray} amplitude={amplitude} />
       <Effects config={config} />
     </>
   );
