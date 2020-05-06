@@ -5,9 +5,13 @@ import sum from 'lodash/sum';
 import { Dimensions } from '../lib/types';
 import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
-import { Effects } from './effects';
+import { Effects, BaseConfig } from './effects';
 import styled from 'styled-components';
 const renderSpeed = 1000;
+
+export interface ChaosConfig extends BaseConfig {
+  contents: 'chaos';
+}
 
 const Shader = {
   vertexShader: `
@@ -205,7 +209,7 @@ const Scene = () => {
     trails: 0.0,
     kaleidoscope: 5,
     contents: 'chaos',
-  };
+  } as const;
 
   return (
     <>

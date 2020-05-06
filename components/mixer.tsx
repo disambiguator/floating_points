@@ -12,14 +12,28 @@ import DatGui, {
 } from 'react-dat-gui';
 import { Config, Audio, Effects } from './effects';
 import { Shapes } from './geometric_chaos';
-import { SpiroContents } from './spiro';
+import { SpiroContents, SpiroControls, initPositions } from './spiro';
 
-const ControlPanel = ({
+const SceneControls = ({
+  config,
+  onUpdate,
+}: {
+  config: Config;
+  onUpdate: (newData: Partial<Config>) => void;
+}) => {
+  if (config.contents === 'spiro') {
+    return <SpiroControls onUpdate={onUpdate} />;
+  } else {
+    return null;
+  }
+};
+
+export const ControlPanel = <T extends Config>({
   config,
   setConfig,
 }: {
-  config: Config;
-  setConfig: (arg0: Config) => void;
+  config: T;
+  setConfig: (arg0: T) => void;
 }) => {
   const [isOpen, setOpen] = useState(true);
   const onUpdate = (newData: Partial<Config>) => {
@@ -54,6 +68,7 @@ const ControlPanel = ({
         step={1}
       />
       <DatSelect path="contents" options={['spiro', 'chaos']} />
+      <SceneControls config={config} onUpdate={onUpdate} />
       <DatButton
         onClick={() => {
           setOpen(false);
@@ -140,6 +155,7 @@ const Mixer = () => {
     audioEnabled: false,
     kaleidoscope: 0,
     contents: 'spiro',
+    seeds: initPositions(),
   });
 
   return (

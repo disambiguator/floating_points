@@ -12,6 +12,8 @@ import { AfterimagePass } from './AfterimagePass';
 import React, { useRef, useState, useEffect } from 'react';
 import { sum } from 'lodash';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
+import { SpiroConfig } from './spiro';
+import { ChaosConfig } from './geometric_chaos';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -40,7 +42,7 @@ export interface Audio {
   stream: MediaStream;
 }
 
-export interface Config {
+export interface BaseConfig {
   color: boolean;
   zoomThreshold: number;
   pulseEnabled: boolean;
@@ -48,8 +50,9 @@ export interface Config {
   noiseAmplitude: number;
   trails: number;
   kaleidoscope: number;
-  contents: 'spiro' | 'chaos';
 }
+
+export type Config = SpiroConfig | ChaosConfig;
 
 export const Effects = ({
   config,
