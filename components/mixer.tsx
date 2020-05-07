@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Page from './page';
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { useThree } from 'react-three-fiber';
+import { useThree, useFrame } from 'react-three-fiber';
 import { FiberScene } from './scene';
 import DatGui, {
   DatNumber,
@@ -47,14 +47,14 @@ export const ControlPanel = <T extends Config>({
         label="Amplitude"
         min={0}
         step={0.000001}
-        max={0.00025}
+        max={0.0005}
       />
       <DatNumber path="trails" label="Trails" min={0.9} max={1} step={0.0001} />
       <DatNumber
         path="zoomThreshold"
         label="Zoom"
         min={0}
-        max={0.5}
+        max={0.3}
         step={0.0001}
       />
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
@@ -64,10 +64,14 @@ export const ControlPanel = <T extends Config>({
         path="kaleidoscope"
         label="Kaleidoscope"
         min={0}
-        max={50}
+        max={40}
         step={1}
       />
-      <DatSelect path="contents" options={['spiro', 'chaos']} />
+      <DatSelect
+        path="contents"
+        label="Contents"
+        options={['spiro', 'chaos']}
+      />
       <SceneControls config={config} onUpdate={onUpdate} />
       <DatButton
         onClick={() => {
@@ -100,6 +104,11 @@ const Scene = ({ config }: { config: Config }) => {
   const { camera, mouse } = useThree();
   const [audio, setAudio] = useState<Audio>();
 
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
+
+  const [ray, setRay] = useState(raycaster.ray);
+
   useEffect(() => {
     if (config.audioEnabled) {
       const listener = new THREE.AudioListener();
@@ -131,11 +140,10 @@ const Scene = ({ config }: { config: Config }) => {
     }
   }, [config.audioEnabled]);
 
-  const ray = (() => {
-    const raycaster = new THREE.Raycaster();
+  useFrame(() => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    return raycaster.ray;
-  })();
+    setRay(raycaster.ray);
+  });
 
   return (
     <>
