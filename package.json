@@ -42,7 +42,7 @@
     "node-fetch": "^2.6.0",
     "p5": "^1.0.0",
     "react": "^16.13.1",
-    "react-dat-gui": "^4.0.3",
+    "react-dat-gui": "github:disambiguator/react-dat-gui",
     "react-dom": "^16.13.1",
     "react-p5-wrapper": "^2.0.0",
     "react-three-fiber": "^4.1.1",
