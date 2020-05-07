@@ -21,13 +21,13 @@
   "devDependencies": {
     "@now/node": "^1.5.1",
     "@types/lodash": "^4.14.150",
-    "@types/node": "^13.13.4",
+    "@types/node": "^13.13.5",
     "@types/node-fetch": "^2.5.7",
     "@types/p5": "^0.9.0",
     "@types/react": "^16.9.34",
     "@types/styled-components": "^5.1.0",
-    "@typescript-eslint/eslint-plugin": "^2.30.0",
-    "@typescript-eslint/parser": "^2.30.0",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
     "babel-plugin-styled-components": "^1.10.7",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
@@ -38,14 +38,14 @@
   },
   "dependencies": {
     "lodash": "^4.17.15",
-    "next": "^9.3.5",
+    "next": "^9.3.6",
     "node-fetch": "^2.6.0",
     "p5": "^1.0.0",
     "react": "^16.13.1",
     "react-dat-gui": "github:disambiguator/react-dat-gui",
     "react-dom": "^16.13.1",
     "react-p5-wrapper": "^2.0.0",
-    "react-three-fiber": "^4.1.1",
+    "react-three-fiber": "^4.1.4",
     "styled-components": "^5.1.0",
     "three": "^0.115.0"
   }
