@@ -26,6 +26,9 @@ const AfterimageShader = {
   ].join('\n'),
 
   fragmentShader: /* glsl */ `
+    #ifdef GL_ES
+    precision highp float;
+    #endif
     uniform float damp;
     uniform float zoom;
 

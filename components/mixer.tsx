@@ -13,6 +13,7 @@ import DatGui, {
 import { Config, Audio, Effects } from './effects';
 import { Shapes } from './geometric_chaos';
 import { SpiroContents, SpiroControls, initPositions } from './spiro';
+import { Dusen } from './dusen';
 
 const SceneControls = ({
   config,
@@ -70,7 +71,7 @@ export const ControlPanel = <T extends Config>({
       <DatSelect
         path="contents"
         label="Contents"
-        options={['spiro', 'chaos']}
+        options={['spiro', 'chaos', 'dusen']}
       />
       <SceneControls config={config} onUpdate={onUpdate} />
       <DatButton
@@ -95,6 +96,8 @@ export const ControlPanel = <T extends Config>({
 const SceneContents = ({ config, ray }: { config: Config; ray: THREE.Ray }) => {
   if (config.contents === 'spiro') {
     return <SpiroContents config={config} ray={ray} />;
+  } else if (config.contents === 'dusen') {
+    return <Dusen />;
   } else {
     return <Shapes amplitude={config.noiseAmplitude * 1000} ray={ray} />;
   }

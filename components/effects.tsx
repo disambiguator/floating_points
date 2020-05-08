@@ -14,6 +14,7 @@ import { sum } from 'lodash';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import { SpiroConfig } from './spiro';
 import { ChaosConfig } from './geometric_chaos';
+import { DusenConfig } from './dusen';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -52,7 +53,7 @@ export interface BaseConfig {
   kaleidoscope: number;
 }
 
-export type Config = SpiroConfig | ChaosConfig;
+export type Config = SpiroConfig | ChaosConfig | DusenConfig;
 
 export const Effects = ({
   config,
