@@ -14,6 +14,8 @@ import { Config, Audio, Effects } from './effects';
 import { Shapes } from './geometric_chaos';
 import { SpiroContents, SpiroControls, initPositions } from './spiro';
 import { Dusen } from './dusen';
+import WebMidi from 'webmidi';
+import NewWindow from 'react-new-window';
 
 const SceneControls = ({
   config,
@@ -29,12 +31,76 @@ const SceneControls = ({
   }
 };
 
-export const ControlPanel = <T extends Config>({
+export const Controls = <T extends Config>({
   config,
   setConfig,
 }: {
   config: T;
   setConfig: (arg0: T) => void;
+}) => {
+  const [poppedOut, setPoppedOut] = useState(false);
+
+  useEffect(() => {
+    const update = (v) => {
+      setConfig((oldConfig) => ({ ...oldConfig, ...v }));
+    };
+
+    WebMidi.enable(() => {
+      const input = WebMidi.getInputByName('Nocturn Keyboard');
+      if (!input) return;
+
+      input.addListener('controlchange', 'all', function (e) {
+        switch (e.controller.number) {
+          case 7:
+            const noiseAmplitude = e.value / 100000;
+            update({ noiseAmplitude });
+            break;
+          case 10:
+            const trails = e.value / 127;
+            update({ trails });
+            break;
+          case 74:
+            const zoomThreshold = e.value / 426;
+            update({ zoomThreshold });
+            break;
+          case 71:
+            update({ kaleidoscope: e.value });
+            break;
+          default:
+            console.log(e);
+        }
+      });
+    });
+
+    return () => {
+      const input = WebMidi.getInputByName('Nocturn Keyboard');
+      if (input) input.removeListener('controlchange');
+      WebMidi.disable();
+    };
+  }, []);
+
+  const controlPanel = (
+    <ControlPanel
+      config={config}
+      setConfig={setConfig}
+      poppedOut={poppedOut}
+      setPoppedOut={setPoppedOut}
+    />
+  );
+
+  return poppedOut ? <NewWindow>{controlPanel}</NewWindow> : controlPanel;
+};
+
+const ControlPanel = <T extends Config>({
+  config,
+  setConfig,
+  poppedOut,
+  setPoppedOut,
+}: {
+  config: T;
+  setConfig: (arg0: T) => void;
+  poppedOut: boolean;
+  setPoppedOut: (arg0: boolean) => void;
 }) => {
   const [isOpen, setOpen] = useState(true);
   const onUpdate = (newData: Partial<Config>) => {
@@ -50,7 +116,7 @@ export const ControlPanel = <T extends Config>({
         step={0.000001}
         max={0.0005}
       />
-      <DatNumber path="trails" label="Trails" min={0.9} max={1} step={0.0001} />
+      <DatNumber path="trails" label="Trails" min={0} max={1} step={0.0001} />
       <DatNumber
         path="zoomThreshold"
         label="Zoom"
@@ -58,22 +124,28 @@ export const ControlPanel = <T extends Config>({
         max={0.3}
         step={0.0001}
       />
-      <DatBoolean path="audioEnabled" label="Microphone Audio" />
-      <DatBoolean path="color" label="Color" />
-      <DatBoolean path="pulseEnabled" label="Pulse" />
       <DatNumber
         path="kaleidoscope"
         label="Kaleidoscope"
         min={0}
-        max={40}
+        max={127}
         step={1}
       />
+      <DatBoolean path="audioEnabled" label="Microphone Audio" />
+      <DatBoolean path="color" label="Color" />
+      <DatBoolean path="pulseEnabled" label="Pulse" />
       <DatSelect
         path="contents"
         label="Contents"
         options={['spiro', 'chaos', 'dusen']}
       />
       <SceneControls config={config} onUpdate={onUpdate} />
+      <DatButton
+        onClick={() => {
+          setPoppedOut(!poppedOut);
+        }}
+        label={poppedOut ? 'Pop In' : 'Pop Out'}
+      />
       <DatButton
         onClick={() => {
           setOpen(false);
@@ -171,7 +243,7 @@ const Mixer = () => {
 
   return (
     <>
-      <ControlPanel config={config} setConfig={setConfig} />
+      <Controls config={config} setConfig={setConfig} />
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
         gl={{ antialias: true }}

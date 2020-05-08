@@ -9,7 +9,7 @@ import { FiberScene } from './scene';
 import { DatButton } from 'react-dat-gui';
 import { Audio, Effects, BaseConfig } from './effects';
 import { useRouter } from 'next/router';
-import { ControlPanel } from './mixer';
+import { Controls } from './mixer';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -223,7 +223,7 @@ const Spiro = () => {
 
   return (
     <>
-      <ControlPanel config={config} setConfig={setConfig} />
+      <Controls config={config} setConfig={setConfig} />
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
         gl={{ antialias: true }}

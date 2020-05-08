@@ -1,5 +1,5 @@
 import React from 'react';
-import { useThree, useFrame } from 'react-three-fiber';
+import { useThree } from 'react-three-fiber';
 import { BaseConfig } from './effects';
 
 export interface DusenConfig extends BaseConfig {
