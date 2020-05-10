@@ -1,7 +1,7 @@
-import React from 'react';
-import { useThree } from 'react-three-fiber';
+import React, { useState } from 'react';
+import { useThree, useFrame } from 'react-three-fiber';
 import { BaseConfig } from './effects';
-import { scaleMidi } from './mixer';
+import Mixer, { scaleMidi } from './mixer';
 
 export interface DusenConfig extends BaseConfig {
   contents: 'dusen';
@@ -102,17 +102,36 @@ void main()
 
 export const Dusen = ({ config }: { config: DusenConfig }) => {
   const { aspect, size, clock } = useThree();
+  const [time, setTime] = useState(0);
+
+  useFrame(() => {
+    setTime(clock.elapsedTime);
+  });
 
   return (
-    <mesh position={[0, 0, -300]}>
+    <mesh position={[0, 0, -215]}>
       <planeGeometry args={[size.width, size.height]} attach="geometry" />
       <shaderMaterial
         args={[Shader]}
         attach="material"
-        uniforms-time-value={clock.elapsedTime}
+        uniforms-time-value={time}
         uniforms-aspect-value={aspect}
         uniforms-radius-value={scaleMidi(config.noiseAmplitude, 0, 1)}
       />
     </mesh>
   );
+};
+
+export default () => {
+  const config: DusenConfig = {
+    trails: 0,
+    noiseAmplitude: 30,
+    zoomThreshold: 0.0,
+    color: false,
+    pulseEnabled: false,
+    audioEnabled: false,
+    kaleidoscope: 0,
+    contents: 'dusen',
+  };
+  return <Mixer config={config} />;
 };

@@ -4,8 +4,9 @@ import Link from 'next/link';
 
 const pages = [
   // { name: 'Pixelsorting', path: '/pixel_sort' },
-  { name: 'Warp', path: '/bendy' },
   { name: 'Spirographs', path: '/spiro' },
+  { name: 'Dusen', path: '/dusen' },
+  { name: 'Warp', path: '/bendy' },
   // { name: 'Scatter', path: '/scatter' },
   { name: 'Divide', path: '/divide' },
   { name: 'Cubes', path: '/cubes' },
