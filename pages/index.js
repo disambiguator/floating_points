@@ -62,6 +62,7 @@ class Scatter extends React.Component {
     super(props);
     this.setNewFragmentWidth();
     this.timer = 0;
+    this.state = { interval: null };
   }
 
   componentDidMount() {
@@ -70,14 +71,13 @@ class Scatter extends React.Component {
     this.updateDimensions();
     const { width, height } = this.mount;
 
-    this.interval = setInterval(this.animate, 10);
+    this.interval = setInterval(this.animate, 50);
     window.addEventListener('resize', this.updateDimensions);
     this.ctx.lineWidth = 5;
     this.ctx.fillRect(0, 0, width, height);
     this.ctx.fillStyle = '#ffffff';
     this.ctx.textAlign = 'center';
-    this.ctx.font = '50px Courier New';
-    this.ctx.fillText('disambiguator', width / 2, height / 2);
+    this.ctx.font = '80px Courier New';
   }
 
   updateDimensions = () => {
@@ -96,6 +96,7 @@ class Scatter extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    if (this.state.interval) clearInterval(this.state.interval);
     window.removeEventListener('resize', this.updateDimensions);
   }
 
@@ -170,9 +171,34 @@ class Scatter extends React.Component {
         <Contents>
           <h1>disambiguator</h1>
           {pages.map((p) => (
-            <Link key={p.name} href={p.path}>
-              <a>{p.name}</a>
-            </Link>
+            <div
+              key={p.name}
+              onMouseEnter={() => {
+                if (this.state.interval) clearInterval(this.state.interval);
+                const { width, height } = this.mount;
+                this.ctx.fillText(
+                  p.name,
+                  width * Math.random() * 0.9,
+                  height * Math.random() * 0.9,
+                );
+                const interval = setInterval(() => {
+                  this.ctx.fillText(
+                    p.name,
+                    width * Math.random() * 0.9,
+                    height * Math.random() * 0.9,
+                  );
+                }, 750);
+                this.setState({ interval });
+              }}
+              onMouseLeave={() => {
+                clearInterval(this.state.interval);
+                this.setState({ interval: null });
+              }}
+            >
+              <Link href={p.path}>
+                <a>{p.name}</a>
+              </Link>
+            </div>
           ))}
         </Contents>
         <style global jsx>{`
