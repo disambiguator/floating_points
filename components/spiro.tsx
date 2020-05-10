@@ -1,22 +1,16 @@
 import * as THREE from 'three';
 import { sumBy } from 'lodash';
-import Page from './page';
 import { useState, useMemo, useEffect } from 'react';
 import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
-import { FiberScene } from './scene';
 import { DatButton } from 'react-dat-gui';
-import { Audio, Effects, BaseConfig } from './effects';
+import { BaseConfig } from './effects';
+import Mixer, { scaleMidi } from './mixer';
 import { useRouter } from 'next/router';
-import { Controls, scaleMidi } from './mixer';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
-
-interface AfterImageUniforms {
-  damp: THREE.Uniform;
-}
 
 function randInt(min: number, max: number) {
   return Math.floor(Math.random() * max) + min;
@@ -134,55 +128,6 @@ interface SceneProps {
   config: SpiroConfig;
 }
 
-const Scene = ({ config }: SceneProps) => {
-  const { camera, mouse } = useThree();
-  const [audio, setAudio] = useState<Audio>();
-
-  useEffect(() => {
-    if (config.audioEnabled) {
-      const listener = new THREE.AudioListener();
-      camera.add(listener);
-
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: false })
-        .then((stream: MediaStream) => {
-          const audio = new THREE.Audio(listener);
-
-          const { context } = listener;
-          const source = context.createMediaStreamSource(stream);
-
-          // @ts-ignore
-          audio.setNodeSource(source);
-          setAudio({
-            analyser: new THREE.AudioAnalyser(audio, 32),
-            listener,
-            stream,
-          });
-        });
-    } else {
-      if (audio) {
-        camera.remove(audio.listener);
-        audio.stream.getTracks().forEach(function (track) {
-          track.stop();
-        });
-      }
-    }
-  }, [config.audioEnabled]);
-
-  const ray = (() => {
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    return raycaster.ray;
-  })();
-
-  return (
-    <>
-      <SpiroContents config={config} ray={ray} />
-      <Effects config={config} audio={audio} />
-    </>
-  );
-};
-
 export interface SpiroConfig extends BaseConfig {
   contents: 'spiro';
   seeds: Seed[];
@@ -206,10 +151,11 @@ export const SpiroControls = ({
   );
 };
 
-const Spiro = () => {
+export default () => {
   const router = useRouter();
   const urlSeeds = router.query.seeds as string | undefined;
-  const [config, setConfig] = useState<SpiroConfig>({
+
+  const config = {
     trails: 0.93,
     noiseAmplitude: 0.0,
     zoomThreshold: 0.0,
@@ -219,21 +165,6 @@ const Spiro = () => {
     kaleidoscope: 0,
     contents: 'spiro',
     seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
-  });
-
-  return (
-    <>
-      <Controls config={config} setConfig={setConfig} />
-      <FiberScene
-        camera={{ far: 10000, position: [0, 0, 300] }}
-        gl={{ antialias: true }}
-      >
-        <Scene config={config} />
-      </FiberScene>
-    </>
-  );
-};
-
-export default () => {
-  return <Page>{(_dimensions) => <Spiro />}</Page>;
+  } as const;
+  return <Mixer config={config} />;
 };

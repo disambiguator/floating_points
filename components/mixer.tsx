@@ -13,7 +13,7 @@ import DatGui, {
 } from 'react-dat-gui';
 import { Config, Audio, Effects } from './effects';
 import { Shapes } from './geometric_chaos';
-import { SpiroContents, SpiroControls, initPositions } from './spiro';
+import { SpiroContents, SpiroControls } from './spiro';
 import { Dusen } from './dusen';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
@@ -230,18 +230,8 @@ const Scene = ({ config }: { config: Config }) => {
   );
 };
 
-const Mixer = () => {
-  const [config, setConfig] = useState<Config>({
-    trails: 0.93,
-    noiseAmplitude: 0.0,
-    zoomThreshold: 0.0,
-    color: false,
-    pulseEnabled: false,
-    audioEnabled: false,
-    kaleidoscope: 0,
-    contents: 'spiro',
-    seeds: initPositions(),
-  });
+const Mixer = <T extends Config>(props: { config: T }) => {
+  const [config, setConfig] = useState<T>(props.config);
 
   return (
     <>
@@ -256,6 +246,6 @@ const Mixer = () => {
   );
 };
 
-export default () => {
-  return <Page>{(_dimensions) => <Mixer />}</Page>;
+export default ({ config }: { config: Config }) => {
+  return <Page>{(_dimensions) => <Mixer config={config} />}</Page>;
 };
