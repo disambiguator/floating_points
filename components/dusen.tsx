@@ -1,6 +1,7 @@
 import React from 'react';
 import { useThree } from 'react-three-fiber';
 import { BaseConfig } from './effects';
+import { scaleMidi } from './mixer';
 
 export interface DusenConfig extends BaseConfig {
   contents: 'dusen';
@@ -26,6 +27,7 @@ precision highp float;
 
 uniform float aspect;
 uniform float time;
+uniform float radius;
 
 varying vec2 vUv;
 
@@ -64,8 +66,6 @@ vec3 blendColors(vec3 c1, vec3 c2) {
 }
 
 vec3 shapes(vec2 position, vec3 color) {
-    float radius = 0.3;
-    
     position = mod(position, distanceBetween);
     float inCircle = circ(position, radius);
     
@@ -96,10 +96,11 @@ void main()
   uniforms: {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
+    radius: { value: 0.0 },
   },
 };
 
-export const Dusen = () => {
+export const Dusen = ({ config }: { config: DusenConfig }) => {
   const { aspect, size, clock } = useThree();
 
   return (
@@ -110,6 +111,7 @@ export const Dusen = () => {
         attach="material"
         uniforms-time-value={clock.elapsedTime}
         uniforms-aspect-value={aspect}
+        uniforms-radius-value={scaleMidi(config.noiseAmplitude, 0, 1)}
       />
     </mesh>
   );

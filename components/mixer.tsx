@@ -9,6 +9,7 @@ import DatGui, {
   DatBoolean,
   DatButton,
   DatSelect,
+  DatNumberProps,
 } from 'react-dat-gui';
 import { Config, Audio, Effects } from './effects';
 import { Shapes } from './geometric_chaos';
@@ -36,12 +37,12 @@ export const Controls = <T extends Config>({
   setConfig,
 }: {
   config: T;
-  setConfig: (arg0: T) => void;
+  setConfig: React.Dispatch<React.SetStateAction<T>>;
 }) => {
   const [poppedOut, setPoppedOut] = useState(false);
 
   useEffect(() => {
-    const update = (v) => {
+    const update = (v: Partial<T>) => {
       setConfig((oldConfig) => ({ ...oldConfig, ...v }));
     };
 
@@ -52,8 +53,7 @@ export const Controls = <T extends Config>({
       input.addListener('controlchange', 'all', function (e) {
         switch (e.controller.number) {
           case 7:
-            const noiseAmplitude = e.value / 100000;
-            update({ noiseAmplitude });
+            update({ noiseAmplitude: e.value });
             break;
           case 10:
             const trails = e.value / 127;
@@ -91,6 +91,14 @@ export const Controls = <T extends Config>({
   return poppedOut ? <NewWindow>{controlPanel}</NewWindow> : controlPanel;
 };
 
+const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
+  <DatNumber {...props} min={0} step={1} max={127} />
+);
+
+export const scaleMidi = (midi: number, min: number, max: number) => {
+  return min + (midi * (max - min)) / 127;
+};
+
 const ControlPanel = <T extends Config>({
   config,
   setConfig,
@@ -109,13 +117,7 @@ const ControlPanel = <T extends Config>({
 
   return isOpen ? (
     <DatGui data={config} onUpdate={onUpdate} style={{ zIndex: 1 }}>
-      <DatNumber
-        path="noiseAmplitude"
-        label="Amplitude"
-        min={0}
-        step={0.000001}
-        max={0.0005}
-      />
+      <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatNumber path="trails" label="Trails" min={0} max={1} step={0.0001} />
       <DatNumber
         path="zoomThreshold"
@@ -169,7 +171,7 @@ const SceneContents = ({ config, ray }: { config: Config; ray: THREE.Ray }) => {
   if (config.contents === 'spiro') {
     return <SpiroContents config={config} ray={ray} />;
   } else if (config.contents === 'dusen') {
-    return <Dusen />;
+    return <Dusen config={config} />;
   } else {
     return <Shapes amplitude={config.noiseAmplitude * 1000} ray={ray} />;
   }

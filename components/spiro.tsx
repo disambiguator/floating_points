@@ -9,7 +9,7 @@ import { FiberScene } from './scene';
 import { DatButton } from 'react-dat-gui';
 import { Audio, Effects, BaseConfig } from './effects';
 import { useRouter } from 'next/router';
-import { Controls } from './mixer';
+import { Controls, scaleMidi } from './mixer';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -122,7 +122,7 @@ export const SpiroContents = ({ config, ray }: SpirographProps) => {
         uniforms-color-value={color}
         uniforms-origin-value={ray.origin}
         uniforms-direction-value={ray.direction}
-        uniforms-amplitude-value={noiseAmplitude}
+        uniforms-amplitude-value={scaleMidi(noiseAmplitude, 0, 0.0005)}
         uniforms-time-value={clock.elapsedTime}
         attach="material"
       />
