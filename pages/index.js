@@ -7,8 +7,8 @@ const pages = [
   { name: 'Spirographs', path: '/spiro' },
   { name: 'Dusen', path: '/dusen' },
   { name: 'Warp', path: '/bendy' },
-  // { name: 'Scatter', path: '/scatter' },
   { name: 'Divide', path: '/divide' },
+  { name: 'Kaleidoscope', path: '/kaleidoscope' },
   { name: 'Cubes', path: '/cubes' },
   { name: 'Overlap', path: '/overlap' },
 ];

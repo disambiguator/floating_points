@@ -168,7 +168,7 @@ const Scene = () => {
     const freq = analyser.getFrequencyData();
 
     const value = sum(freq) / 5000.0;
-    setAmplitude(value);
+    setAmplitude((oldAmp) => oldAmp + (value - oldAmp) * 0.8);
   });
 
   const ray = (() => {
