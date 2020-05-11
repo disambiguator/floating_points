@@ -9,11 +9,22 @@ const pages = [
     path: '/spiro',
     description: (
       <p>
-        Generative shapes loosely based off a model of planetary motion, with
-        customization and post-processing effects built for experimentation and
-        play. This is a work in progress toward a VJing platform to use in
-        performance. Imagery can be controlled via MIDI inputs and sliders, and
-        can also transition to other scenes I've built. ThreeJS and GLSL.
+        Loosely based off a model of planetary motion, generative shapes and
+        shaders built for experimentation and play. This is a work in progress
+        toward a VJing platform to use in live performance. Imagery can be
+        controlled via in-page sliders and MIDI inputs and can also transition
+        to other scenes. ThreeJS and GLSL.
+      </p>
+    ),
+  },
+  {
+    name: 'Kaleidoscope',
+    path: '/kaleidoscope',
+    description: (
+      <p>
+        Live music visualization using randomly generated shapes and shaders.
+        Written in ThreeJS and GLSL, music by{' '}
+        <a href="https://soundcloud.com/bjornfree">Bjorn</a>.
       </p>
     ),
   },
@@ -22,9 +33,9 @@ const pages = [
     path: '/dusen',
     description: (
       <p>
-        Seeing how texture and vibrancy I can add with simple shapes and colors.
-        Written with a fragment shader and using signed distance functions and
-        blending cosine color gradients.
+        Seeing how much texture and vibrancy I can add with simple shapes and
+        colors. Written with a fragment shader using signed distance functions
+        and blending cosine color gradients.
       </p>
     ),
   },
@@ -44,17 +55,15 @@ const pages = [
     description: <p>A soothing color tunnel, written in pure HTML canvas.</p>,
   },
   {
-    name: 'Kaleidoscope',
-    path: '/kaleidoscope',
+    name: 'Cubes',
+    path: '/cubes',
     description: (
       <p>
-        Music visualization using randomly generated shapes, shaders, and live
-        music reactivity. Written in ThreeJS and GLSL, music by{' '}
-        <a href="https://soundcloud.com/bjornfree">Bjorn</a>.
+        A quick experiment to explore perspective cameras. Click and drag to
+        move the angle of the camera.
       </p>
     ),
   },
-  // { name: 'Cubes', path: '/cubes' },
   // { name: 'Overlap', path: '/overlap' },
 ];
 
@@ -224,7 +233,6 @@ class Scatter extends React.Component {
     return (
       <div>
         <Contents>
-          <h2>Paras Sanghavi</h2>
           <SubHeading>A series of visual experiments.</SubHeading>
           {pages.map((p) => (
             <Section
@@ -260,7 +268,8 @@ class Scatter extends React.Component {
             </Section>
           ))}
           <p>
-            <a href="github.com/disambiguator/floating_points">GitHub</a>
+            by Paras Sanghavi{' | '}
+            <a href="github.com/disambiguator/floating_points">github</a>
             {' | '}
             <a href="mailto:paras@disambiguo.us">email</a>
           </p>
