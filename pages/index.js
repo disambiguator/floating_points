@@ -4,29 +4,95 @@ import Link from 'next/link';
 
 const pages = [
   // { name: 'Pixelsorting', path: '/pixel_sort' },
-  { name: 'Spirographs', path: '/spiro' },
-  { name: 'Dusen', path: '/dusen' },
-  { name: 'Warp', path: '/bendy' },
-  { name: 'Divide', path: '/divide' },
-  { name: 'Kaleidoscope', path: '/kaleidoscope' },
-  { name: 'Cubes', path: '/cubes' },
-  { name: 'Overlap', path: '/overlap' },
+  {
+    name: 'Spirographs',
+    path: '/spiro',
+    description: (
+      <p>
+        Generative shapes loosely based off a model of planetary motion, with
+        customization and post-processing effects built for experimentation and
+        play. This is a work in progress toward a VJing platform to use in
+        performance. Imagery can be controlled via MIDI inputs and sliders, and
+        can also transition to other scenes I've built. ThreeJS and GLSL.
+      </p>
+    ),
+  },
+  {
+    name: 'Dusen',
+    path: '/dusen',
+    description: (
+      <p>
+        Seeing how texture and vibrancy I can add with simple shapes and colors.
+        Written with a fragment shader and using signed distance functions and
+        blending cosine color gradients.
+      </p>
+    ),
+  },
+  {
+    name: 'Warp',
+    path: '/bendy',
+    description: (
+      <p>
+        A wormhole feedback effect with interactive mouse movements and canvas
+        manipulation. Written in p5.js.
+      </p>
+    ),
+  },
+  {
+    name: 'Divide',
+    path: '/divide',
+    description: <p>A soothing color tunnel, written in pure HTML canvas.</p>,
+  },
+  {
+    name: 'Kaleidoscope',
+    path: '/kaleidoscope',
+    description: (
+      <p>
+        Music visualization using randomly generated shapes, shaders, and live
+        music reactivity. Written in ThreeJS and GLSL, music by{' '}
+        <a href="https://soundcloud.com/bjornfree">Bjorn</a>.
+      </p>
+    ),
+  },
+  // { name: 'Cubes', path: '/cubes' },
+  // { name: 'Overlap', path: '/overlap' },
 ];
 
 const translateDistance = 1;
 
-const Contents = styled.span`
+const PageTitle = styled.div`
+  font-weight: bold;
+  font-size: 20px;
+  padding-top: 20px;
+`;
+
+const Section = styled.div``;
+
+const Contents = styled.div`
+  @font-face {
+    font-family: 'Inconsolata';
+    src: url('Inconsolata-Medium.ttf');
+  }
+
   color: white;
   z-index: 1;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
+  width: 400px;
   display: flex;
+  padding: 20px;
+  margin: 10px;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  font-family: Arial;
-  background-color: rgba(255, 255, 255, 0.2);
+  font-family: 'Inconsolata', monospace;
+  font-size: 17px;
+  line-height: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+
+  @media only screen and (max-width: 400px) {
+    width: auto;
+  }
 
   a,
   a:visited,
@@ -34,10 +100,10 @@ const Contents = styled.span`
   a:active {
     color: inherit;
   }
+`;
 
-  a {
-    font-size: 20px;
-  }
+const SubHeading = styled.div`
+  padding-bottom: 10px;
 `;
 
 const endPoints = ({ width, height, slope }) => {
@@ -75,7 +141,7 @@ class Scatter extends React.Component {
     window.addEventListener('resize', this.updateDimensions);
     this.ctx.lineWidth = 5;
     this.ctx.fillRect(0, 0, width, height);
-    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fillStyle = '#646464';
     this.ctx.textAlign = 'center';
     this.ctx.font = '80px Courier New';
   }
@@ -115,22 +181,11 @@ class Scatter extends React.Component {
       this.points = endPoints({ width, height, slope });
 
       this.ctx.beginPath();
-      // this.ctx.strokeStyle = "#"+((1<<24)*Math.random()|0).toString(16);
 
-      const r = Math.random() * 100 + 30;
+      const r = Math.random() * 100;
 
       this.ctx.strokeStyle = `rgb(${r},${r},${r})`;
       this.ctx.moveTo(this.points[0].x, this.points[0].y);
-
-      // const a = this.points[0].x < this.points[1].x ? this.points[0].x : this.points[1].x
-      // const b = this.points[0].x < this.points[1].x ? this.points[1].x : this.points[0].x
-      //
-      // for(let i=a; i<b; i++) {
-      //   const y = this.points[0].y + slope*(i-this.points[0].x) + Math.random() * 10 - 2
-      //
-      //   this.ctx.lineTo(i, y);
-      // }
-
       this.ctx.lineTo(this.points[1].x, this.points[1].y);
       this.ctx.stroke();
 
@@ -169,9 +224,10 @@ class Scatter extends React.Component {
     return (
       <div>
         <Contents>
-          <h1>disambiguator</h1>
+          <h2>Paras Sanghavi</h2>
+          <SubHeading>A series of visual experiments.</SubHeading>
           {pages.map((p) => (
-            <div
+            <Section
               key={p.name}
               onMouseEnter={() => {
                 if (this.state.interval) clearInterval(this.state.interval);
@@ -195,23 +251,20 @@ class Scatter extends React.Component {
                 this.setState({ interval: null });
               }}
             >
-              <Link href={p.path}>
-                <a>{p.name}</a>
-              </Link>
-            </div>
+              <PageTitle>
+                <Link href={p.path}>
+                  <a>{p.name}</a>
+                </Link>
+              </PageTitle>
+              {p.description}
+            </Section>
           ))}
+          <p>
+            <a href="github.com/disambiguator/floating_points">GitHub</a>
+            {' | '}
+            <a href="mailto:paras@disambiguo.us">email</a>
+          </p>
         </Contents>
-        <style global jsx>{`
-          html,
-          body,
-          body > div:first-child,
-          div#__next,
-          div#__next > div,
-          div#__next > div > div {
-            height: 100%;
-            background: black;
-          }
-        `}</style>
         <canvas
           style={{ position: 'fixed', top: 0, left: 0 }}
           width={1}

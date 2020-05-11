@@ -110,7 +110,7 @@ const ControlPanel = <T extends Config>({
   poppedOut: boolean;
   setPoppedOut: (arg0: boolean) => void;
 }) => {
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setOpen] = useState(true);
   const onUpdate = (newData: Partial<Config>) => {
     setConfig({ ...config, ...newData });
   };
