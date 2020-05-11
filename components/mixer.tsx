@@ -42,7 +42,8 @@ export const Controls = <T extends Config>({
   const [poppedOut, setPoppedOut] = useState(false);
 
   useEffect(() => {
-    const update = (v: Partial<T>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const update = (v: any) => {
       setConfig((oldConfig) => ({ ...oldConfig, ...v }));
     };
 
@@ -75,7 +76,7 @@ export const Controls = <T extends Config>({
     return () => {
       const input = WebMidi.getInputByName('Nocturn Keyboard');
       if (input) input.removeListener('controlchange');
-      WebMidi.disable();
+      if (WebMidi.enabled) WebMidi.disable();
     };
   }, []);
 
