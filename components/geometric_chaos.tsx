@@ -7,6 +7,7 @@ import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Effects, BaseConfig } from './effects';
 import styled from 'styled-components';
+import { scaleMidi } from './mixer';
 const renderSpeed = 1000;
 
 export interface ChaosConfig extends BaseConfig {
@@ -135,12 +136,9 @@ export const Shapes = ({
     <shaderMaterial
       args={[Shader]}
       attach="material"
-      uniforms-amplitude-value={amplitude}
+      uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
       uniforms-origin-value={ray.origin}
       uniforms-direction-value={ray.direction}
-      onUpdate={(ref) => {
-        ref.uniforms.amplitude.value = amplitude;
-      }}
     />
   );
 
