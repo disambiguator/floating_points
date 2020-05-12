@@ -158,7 +158,7 @@ export default () => {
   const config = {
     trails: 119,
     noiseAmplitude: 0.0,
-    zoomThreshold: 0.0,
+    zoomThreshold: 0,
     color: false,
     pulseEnabled: false,
     audioEnabled: false,

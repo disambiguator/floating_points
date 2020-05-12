@@ -61,7 +61,7 @@ export const Controls = <T extends Config>({
             update({ trails });
             break;
           case 74:
-            const zoomThreshold = e.value / 426;
+            const zoomThreshold = e.value;
             update({ zoomThreshold });
             break;
           case 71:
@@ -120,13 +120,7 @@ const ControlPanel = <T extends Config>({
     <DatGui data={config} onUpdate={onUpdate} style={{ zIndex: 1 }}>
       <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
-      <DatNumber
-        path="zoomThreshold"
-        label="Zoom"
-        min={0}
-        max={0.3}
-        step={0.0001}
-      />
+      <DatMidi path="zoomThreshold" label="Zoom" />
       <DatNumber
         path="kaleidoscope"
         label="Kaleidoscope"

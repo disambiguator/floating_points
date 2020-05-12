@@ -65,7 +65,7 @@ export const Effects = ({
 }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const [zoom, setZoom] = useState(config.zoomThreshold);
+  const [zoom, setZoom] = useState(scaleMidi(config.zoomThreshold, 0, 0.3));
   const { trails } = config;
 
   useEffect(() => {
@@ -74,17 +74,17 @@ export const Effects = ({
 
   useEffect(() => {
     if (!config.pulseEnabled && !config.audioEnabled) {
-      setZoom(config.zoomThreshold);
+      setZoom(scaleMidi(config.zoomThreshold, 0, 0.3));
     }
   }, [config.zoomThreshold]);
 
   useFrame(() => {
     if (config.pulseEnabled) {
-      setZoom((zoom + 0.001) % config.zoomThreshold);
+      setZoom((zoom + 0.003) % config.zoomThreshold);
     } else if (config.audioEnabled && audio) {
       const { analyser } = audio;
       const freq = analyser.getFrequencyData();
-      setZoom((sum(freq) * config.zoomThreshold) / 4000);
+      setZoom((sum(freq) * scaleMidi(config.zoomThreshold, 0, 0.3)) / 4000);
     }
 
     composer.current!.render();

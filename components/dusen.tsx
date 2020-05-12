@@ -126,7 +126,7 @@ export default () => {
   const config: DusenConfig = {
     trails: 0,
     noiseAmplitude: 30,
-    zoomThreshold: 0.0,
+    zoomThreshold: 0,
     color: false,
     pulseEnabled: false,
     audioEnabled: false,

@@ -200,10 +200,10 @@ const Scene = () => {
 
   const config = {
     color: false,
-    zoomThreshold: 0.0,
+    zoomThreshold: 0,
     pulseEnabled: false,
     audioEnabled: false,
-    noiseAmplitude: 0.0,
+    noiseAmplitude: 0,
     trails: 0,
     kaleidoscope: 5,
     contents: 'chaos',
