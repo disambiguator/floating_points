@@ -57,7 +57,7 @@ export const Controls = <T extends Config>({
             update({ noiseAmplitude: e.value });
             break;
           case 10:
-            const trails = e.value / 127;
+            const trails = e.value;
             update({ trails });
             break;
           case 74:
@@ -119,7 +119,7 @@ const ControlPanel = <T extends Config>({
   return isOpen ? (
     <DatGui data={config} onUpdate={onUpdate} style={{ zIndex: 1 }}>
       <DatMidi path="noiseAmplitude" label="Amplitude" />
-      <DatNumber path="trails" label="Trails" min={0} max={1} step={0.0001} />
+      <DatMidi path="trails" label="Trails" />
       <DatNumber
         path="zoomThreshold"
         label="Zoom"

@@ -15,6 +15,7 @@ import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import { SpiroConfig } from './spiro';
 import { ChaosConfig } from './geometric_chaos';
 import { DusenConfig } from './dusen';
+import { scaleMidi } from './mixer';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -94,7 +95,7 @@ export const Effects = ({
       <renderPass attachArray="passes" scene={scene} camera={camera} />
       <afterimagePass
         attachArray="passes"
-        uniforms-damp-value={trails}
+        uniforms-damp-value={scaleMidi(trails, 0, 1)}
         uniforms-zoom-value={zoom}
       />
       {config.kaleidoscope !== 0 ? (

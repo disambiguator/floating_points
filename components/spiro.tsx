@@ -156,7 +156,7 @@ export default () => {
   const urlSeeds = router.query.seeds as string | undefined;
 
   const config = {
-    trails: 0.93,
+    trails: 119,
     noiseAmplitude: 0.0,
     zoomThreshold: 0.0,
     color: false,

@@ -204,7 +204,7 @@ const Scene = () => {
     pulseEnabled: false,
     audioEnabled: false,
     noiseAmplitude: 0.0,
-    trails: 0.0,
+    trails: 0,
     kaleidoscope: 5,
     contents: 'chaos',
   } as const;
