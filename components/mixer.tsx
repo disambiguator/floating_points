@@ -18,6 +18,24 @@ import { Dusen } from './dusen';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
 
+const MAPPINGS: Record<
+  string,
+  Record<number, 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope'>
+> = {
+  'Nocturn Keyboard': {
+    7: 'noiseAmplitude',
+    10: 'trails',
+    74: 'zoomThreshold',
+    71: 'kaleidoscope',
+  },
+  'Akai Pro AFX': {
+    1: 'noiseAmplitude',
+    2: 'trails',
+    3: 'zoomThreshold',
+    4: 'kaleidoscope',
+  },
+};
+
 const SceneControls = ({
   config,
   onUpdate,
@@ -42,40 +60,28 @@ export const Controls = <T extends Config>({
   const [poppedOut, setPoppedOut] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const update = (v: any) => {
-      setConfig((oldConfig) => ({ ...oldConfig, ...v }));
-    };
-
     WebMidi.enable(() => {
-      const input = WebMidi.getInputByName('Nocturn Keyboard');
-      if (!input) return;
+      WebMidi.inputs.forEach((input) => {
+        const mapping = MAPPINGS[input.name];
+        if (!mapping) return;
 
-      input.addListener('controlchange', 'all', function (e) {
-        switch (e.controller.number) {
-          case 7:
-            update({ noiseAmplitude: e.value });
-            break;
-          case 10:
-            const trails = e.value;
-            update({ trails });
-            break;
-          case 74:
-            const zoomThreshold = e.value;
-            update({ zoomThreshold });
-            break;
-          case 71:
-            update({ kaleidoscope: e.value });
-            break;
-          default:
+        input.addListener('controlchange', 'all', (e) => {
+          const param = mapping[e.controller.number];
+          if (param) {
+            const newValue: Partial<T> = {};
+            newValue[param] = e.value;
+            setConfig((oldConfig) => ({ ...oldConfig, ...newValue }));
+          } else {
             console.log(e);
-        }
+          }
+        });
       });
     });
 
     return () => {
-      const input = WebMidi.getInputByName('Nocturn Keyboard');
-      if (input) input.removeListener('controlchange');
+      WebMidi.inputs.forEach((input) => {
+        input.removeListener();
+      });
       if (WebMidi.enabled) WebMidi.disable();
     };
   }, []);
