@@ -10,12 +10,8 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { AfterimagePass } from './AfterimagePass';
 import React, { useRef, useState, useEffect } from 'react';
-import { sum } from 'lodash';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
-import { SpiroConfig } from './spiro';
-import { ChaosConfig } from './geometric_chaos';
-import { DusenConfig } from './dusen';
-import { scaleMidi } from './mixer';
+import { scaleMidi, Config } from './mixer';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -38,31 +34,7 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-export interface Audio {
-  analyser: THREE.AudioAnalyser;
-  listener: THREE.AudioListener;
-  stream: MediaStream;
-}
-
-export interface BaseConfig {
-  color: boolean;
-  zoomThreshold: number;
-  pulseEnabled: boolean;
-  audioEnabled: boolean;
-  noiseAmplitude: number;
-  trails: number;
-  kaleidoscope: number;
-}
-
-export type Config = SpiroConfig | ChaosConfig | DusenConfig;
-
-export const Effects = ({
-  config,
-  audio,
-}: {
-  config: Config;
-  audio?: Audio | undefined;
-}) => {
+export const Effects = ({ config }: { config: Config }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
   const [zoom, setZoom] = useState(scaleMidi(config.zoomThreshold, 0, 0.3));
@@ -81,10 +53,8 @@ export const Effects = ({
   useFrame(() => {
     if (config.pulseEnabled) {
       setZoom((zoom + 0.003) % config.zoomThreshold);
-    } else if (config.audioEnabled && audio) {
-      const { analyser } = audio;
-      const freq = analyser.getFrequencyData();
-      setZoom((sum(freq) * scaleMidi(config.zoomThreshold, 0, 0.3)) / 4000);
+    } else if (config.audioEnabled) {
+      setZoom((config.volume * scaleMidi(config.zoomThreshold, 0, 0.3)) / 4000);
     }
 
     composer.current!.render();

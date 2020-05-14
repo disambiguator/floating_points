@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useThree, useFrame } from 'react-three-fiber';
-import { BaseConfig } from './effects';
-import Mixer, { scaleMidi } from './mixer';
+import Mixer, { scaleMidi, BaseConfig } from './mixer';
 
 export interface DusenConfig extends BaseConfig {
   contents: 'dusen';
@@ -130,6 +129,7 @@ export default () => {
     color: false,
     pulseEnabled: false,
     audioEnabled: false,
+    volume: 0,
     kaleidoscope: 0,
     contents: 'dusen',
   };

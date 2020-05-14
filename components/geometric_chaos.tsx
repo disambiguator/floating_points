@@ -5,9 +5,9 @@ import sum from 'lodash/sum';
 import { Dimensions } from '../lib/types';
 import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
-import { Effects, BaseConfig } from './effects';
+import { Effects } from './effects';
 import styled from 'styled-components';
-import { scaleMidi } from './mixer';
+import { scaleMidi, BaseConfig } from './mixer';
 const renderSpeed = 1000;
 
 export interface ChaosConfig extends BaseConfig {
@@ -206,6 +206,7 @@ const Scene = () => {
     noiseAmplitude: 0,
     trails: 0,
     kaleidoscope: 5,
+    volume: 0,
     contents: 'chaos',
   } as const;
 

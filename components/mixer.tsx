@@ -11,17 +11,37 @@ import DatGui, {
   DatSelect,
   DatNumberProps,
 } from 'react-dat-gui';
-import { Config, Audio, Effects } from './effects';
-import { Shapes } from './geometric_chaos';
-import { SpiroContents, SpiroControls } from './spiro';
-import { Dusen } from './dusen';
+import { Effects } from './effects';
+import { Shapes, ChaosConfig } from './geometric_chaos';
+import { SpiroContents, SpiroControls, SpiroConfig } from './spiro';
+import { Dusen, DusenConfig } from './dusen';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
+import sum from 'lodash/sum';
 
-const MAPPINGS: Record<
-  string,
-  Record<number, 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope'>
-> = {
+type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
+
+interface Audio {
+  analyser: THREE.AudioAnalyser;
+  listener: THREE.AudioListener;
+  stream: MediaStream;
+}
+
+export interface BaseConfig {
+  color: boolean;
+  zoomThreshold: number;
+  pulseEnabled: boolean;
+  audioEnabled: boolean;
+  noiseAmplitude: number;
+  trails: number;
+  kaleidoscope: number;
+  volume: number;
+  volumeControl?: MidiParam;
+}
+
+export type Config = SpiroConfig | ChaosConfig | DusenConfig;
+
+const MAPPINGS: Record<string, Record<number, MidiParam>> = {
   'Nocturn Keyboard': {
     7: 'noiseAmplitude',
     10: 'trails',
@@ -135,6 +155,18 @@ const ControlPanel = <T extends Config>({
         step={1}
       />
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
+      <DatNumber label="Volume" path="volume" min={0} max={4000} step={1} />
+      <DatSelect
+        path="volumeControl"
+        label="Volume Control"
+        options={[
+          undefined,
+          'noiseAmplitude',
+          'trails',
+          'zoomThreshold',
+          'kaleidoscope',
+        ]}
+      />
       <DatBoolean path="color" label="Color" />
       <DatBoolean path="pulseEnabled" label="Pulse" />
       <DatSelect
@@ -178,7 +210,13 @@ const SceneContents = ({ config, ray }: { config: Config; ray: THREE.Ray }) => {
   }
 };
 
-const Scene = ({ config }: { config: Config }) => {
+const Scene = <T extends Config>({
+  config,
+  setConfig,
+}: {
+  config: T;
+  setConfig: React.Dispatch<React.SetStateAction<T>>;
+}) => {
   const { camera, mouse } = useThree();
   const [audio, setAudio] = useState<Audio>();
 
@@ -221,12 +259,25 @@ const Scene = ({ config }: { config: Config }) => {
   useFrame(() => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
     setRay(raycaster.ray);
+
+    if (audio) {
+      const { analyser } = audio;
+      const freq = analyser.getFrequencyData();
+      const volume = sum(freq);
+
+      const volumeControlledValue = {} as Record<MidiParam, number>;
+      if (config.volumeControl) {
+        volumeControlledValue[config.volumeControl] = (volume * 128) / 4000;
+      }
+
+      setConfig({ ...config, volume, ...volumeControlledValue });
+    }
   });
 
   return (
     <>
       <SceneContents config={config} ray={ray} />
-      <Effects config={config} audio={audio} />
+      <Effects config={config} />
     </>
   );
 };
@@ -241,7 +292,7 @@ const Mixer = <T extends Config>(props: { config: T }) => {
         camera={{ far: 10000, position: [0, 0, 300] }}
         gl={{ antialias: true }}
       >
-        <Scene config={config} />
+        <Scene config={config} setConfig={setConfig} />
       </FiberScene>
     </>
   );

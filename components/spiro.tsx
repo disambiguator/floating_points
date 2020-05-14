@@ -5,8 +5,7 @@ import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
 import { DatButton } from 'react-dat-gui';
-import { BaseConfig } from './effects';
-import Mixer, { scaleMidi } from './mixer';
+import Mixer, { scaleMidi, BaseConfig } from './mixer';
 import { useRouter } from 'next/router';
 
 const numPoints = 50000;
@@ -163,6 +162,7 @@ export default () => {
     pulseEnabled: false,
     audioEnabled: false,
     kaleidoscope: 0,
+    volume: 0,
     contents: 'spiro',
     seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
   } as const;
