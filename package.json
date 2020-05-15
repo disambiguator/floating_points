@@ -4,7 +4,7 @@
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
   "scripts": {
-    "test": "eslint_d . --ext=js,jsx,ts,tsx --fix",
+    "test": "tsc && eslint_d . --ext=js,jsx,ts,tsx --fix",
     "build": "next build",
     "start": "next start"
   },
@@ -22,7 +22,6 @@
     "@now/node": "^1.5.1",
     "@types/lodash": "^4.14.150",
     "@types/node": "^13.13.5",
-    "@types/node-fetch": "^2.5.7",
     "@types/p5": "^0.9.0",
     "@types/react": "^16.9.34",
     "@types/styled-components": "^5.1.0",
@@ -40,8 +39,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.15",
-    "next": "^9.3.6",
-    "node-fetch": "^2.6.0",
+    "next": "^9.4.0",
     "p5": "^1.0.0",
     "react": "^16.13.1",
     "react-dat-gui": "github:disambiguator/react-dat-gui",
