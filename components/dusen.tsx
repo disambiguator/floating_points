@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { useThree, useFrame } from 'react-three-fiber';
 import Mixer, { scaleMidi, BaseConfig } from './mixer';
+import { ShaderMaterial } from 'three';
 
 export interface DusenConfig extends BaseConfig {
   contents: 'dusen';
@@ -99,27 +100,29 @@ void main()
   },
 };
 
-export const Dusen = ({ config }: { config: DusenConfig }) => {
-  const { aspect, size, clock } = useThree();
-  const [time, setTime] = useState(0);
+export const Dusen = React.memo(
+  ({ noiseAmplitude }: Pick<DusenConfig, 'noiseAmplitude'>) => {
+    const { aspect, size, clock } = useThree();
+    const ref = useRef<ShaderMaterial>();
 
-  useFrame(() => {
-    setTime(clock.elapsedTime);
-  });
+    useFrame(() => {
+      ref.current!.uniforms.time.value = clock.elapsedTime;
+    });
 
-  return (
-    <mesh position={[0, 0, -215]}>
-      <planeGeometry args={[size.width, size.height]} attach="geometry" />
-      <shaderMaterial
-        args={[Shader]}
-        attach="material"
-        uniforms-time-value={time}
-        uniforms-aspect-value={aspect}
-        uniforms-radius-value={scaleMidi(config.noiseAmplitude, 0, 1)}
-      />
-    </mesh>
-  );
-};
+    return (
+      <mesh position={[0, 0, -215]}>
+        <planeGeometry args={[size.width, size.height]} attach="geometry" />
+        <shaderMaterial
+          ref={ref}
+          args={[Shader]}
+          attach="material"
+          uniforms-aspect-value={aspect}
+          uniforms-radius-value={scaleMidi(noiseAmplitude, 0, 1)}
+        />
+      </mesh>
+    );
+  },
+);
 
 export default () => {
   const config: DusenConfig = {

@@ -204,7 +204,7 @@ const SceneContents = ({ config, ray }: { config: Config; ray: THREE.Ray }) => {
   if (config.contents === 'spiro') {
     return <SpiroContents config={config} ray={ray} />;
   } else if (config.contents === 'dusen') {
-    return <Dusen config={config} />;
+    return <Dusen noiseAmplitude={config.noiseAmplitude} />;
   } else {
     return <Shapes amplitude={config.noiseAmplitude * 1000} ray={ray} />;
   }
