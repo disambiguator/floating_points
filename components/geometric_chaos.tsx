@@ -8,6 +8,7 @@ import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
 import styled from 'styled-components';
 import { scaleMidi, BaseConfig } from './mixer';
+import { ShaderMaterial } from 'three';
 const renderSpeed = 1000;
 
 export interface ChaosConfig extends BaseConfig {
@@ -116,44 +117,54 @@ const Box = ({
   );
 };
 
-export const Shapes = ({
-  ray,
-  amplitude,
-}: {
-  ray: THREE.Ray;
-  amplitude: number;
-}) => {
-  const { camera } = useThree();
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
-  }, []);
+export const Shapes = React.memo(
+  ({ ray, amplitude }: { ray: THREE.Ray; amplitude: number }) => {
+    const { camera } = useThree();
+    const materialRef = useRef<ShaderMaterial>();
+    const displacement = useMemo(() => {
+      const d = new Float32Array(renderSpeed);
+      for (let i = 0; i < renderSpeed; i++) {
+        d[i] = Math.random() * 5;
+      }
+      return d;
+    }, []);
 
-  const material = (
-    <shaderMaterial
-      args={[Shader]}
-      attach="material"
-      uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
-      uniforms-origin-value={ray.origin}
-      uniforms-direction-value={ray.direction}
-    />
-  );
+    const material = useMemo(
+      () => (
+        <shaderMaterial
+          args={[Shader]}
+          ref={materialRef}
+          attach="material"
+          uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
+        />
+      ),
+      [],
+    );
 
-  useFrame(() => {
-    camera.translateX(-0.5);
-  });
+    useFrame(() => {
+      camera.translateX(-0.5);
+      materialRef.current!.uniforms.origin.value = ray.origin;
+      materialRef.current!.uniforms.direction.value = ray.direction;
+      materialRef.current!.uniforms.amplitude.value = scaleMidi(
+        amplitude,
+        0,
+        0.0005,
+      );
+    });
 
-  const cubes = Array(500)
-    .fill(undefined)
-    .map((_value, i) => (
-      <Box key={i} displacement={displacement} material={material} />
-    ));
+    const cubes = useMemo(
+      () =>
+        Array(500)
+          .fill(undefined)
+          .map((_value, i) => (
+            <Box key={i} displacement={displacement} material={material} />
+          )),
+      [],
+    );
 
-  return <>{cubes}</>;
-};
+    return <>{cubes}</>;
+  },
+);
 
 const Scene = () => {
   const { camera, mouse } = useThree();
