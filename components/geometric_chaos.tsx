@@ -7,7 +7,7 @@ import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
 import styled from 'styled-components';
-import { scaleMidi, BaseConfig } from './mixer';
+import { scaleMidi, BaseConfig, defaultConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 const renderSpeed = 1000;
 
@@ -210,14 +210,8 @@ const Scene = () => {
   }, []);
 
   const config = {
-    color: false,
-    zoomThreshold: 0,
-    pulseEnabled: false,
-    audioEnabled: false,
-    noiseAmplitude: 0,
-    trails: 0,
+    ...defaultConfig,
     kaleidoscope: 5,
-    volume: 0,
     contents: 'chaos',
   } as const;
 

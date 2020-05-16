@@ -17,7 +17,8 @@ import { SpiroContents, SpiroControls, SpiroConfig } from './spiro';
 import { Dusen, DusenConfig } from './dusen';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
-import sum from 'lodash/sum';
+import { mean } from 'lodash';
+import { BarsConfig, Bars } from './bars';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -27,18 +28,43 @@ interface Audio {
   stream: MediaStream;
 }
 
-export interface BaseConfig {
+interface Spectrum {
+  subBass: number;
+  volume: number;
+  bass: number;
+  midrange: number;
+  treble: number;
+  frequencyData: number[];
+}
+
+export interface BaseConfig extends Spectrum {
   color: boolean;
   zoomThreshold: number;
   audioEnabled: boolean;
   noiseAmplitude: number;
   trails: number;
   kaleidoscope: number;
-  volume: number;
   volumeControl?: MidiParam;
 }
 
-export type Config = SpiroConfig | ChaosConfig | DusenConfig;
+export type Config = SpiroConfig | ChaosConfig | DusenConfig | BarsConfig;
+
+export const defaultConfig = {
+  trails: 119,
+  noiseAmplitude: 0.0,
+  zoomThreshold: 0,
+  color: false,
+  pulseEnabled: false,
+  audioEnabled: false,
+  kaleidoscope: 0,
+  volume: 0,
+  contents: 'spiro',
+  subBass: 0,
+  bass: 0,
+  midrange: 0,
+  treble: 0,
+  frequencyData: [],
+};
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
   'Nocturn Keyboard': {
@@ -53,6 +79,52 @@ const MAPPINGS: Record<string, Record<number, MidiParam>> = {
     3: 'zoomThreshold',
     4: 'kaleidoscope',
   },
+};
+
+const analyseSpectrum = (audio: Audio): Spectrum => {
+  const { analyser } = audio;
+  const subBass: number[] = [];
+  const bass: number[] = [];
+  const midrange: number[] = [];
+  const treble: number[] = [];
+  let volume = 0;
+  const frequencyData: number[] = [];
+  analyser.getFrequencyData().forEach((value, i) => {
+    const frequency =
+      ((i + 1) * audio.listener.context.sampleRate) /
+      2 /
+      analyser.analyser.frequencyBinCount;
+
+    if (frequency < 20) {
+    } else if (frequency <= 60) {
+      subBass.push(value);
+    } else if (frequency <= 250) {
+      bass.push(value);
+    } else if (frequency <= 4000) {
+      midrange.push(value);
+    } else {
+      treble.push(value);
+    }
+
+    frequencyData.push(value);
+    volume += value;
+  });
+  // subBass 20 - 60 hz
+  // bass 60 - 250 hz
+  // low midrange 250 - 500 hz
+  // midrange 500 hz - 2 kHz
+  // upper midrange 2 - 4 khz
+  // presence 4 khz - 6 khz
+  // brilliance 6 khz - 20 khz
+
+  return {
+    frequencyData,
+    volume: volume / 2 / analyser.analyser.frequencyBinCount,
+    bass: mean(bass) / 2,
+    subBass: mean(subBass) / 2,
+    midrange: mean(midrange) / 2,
+    treble: mean(treble) / 2,
+  };
 };
 
 const SceneControls = ({
@@ -154,7 +226,11 @@ const ControlPanel = <T extends Config>({
         step={1}
       />
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
-      <DatNumber label="Volume" path="volume" min={0} max={4000} step={1} />
+      <DatMidi label="Volume" path="volume" />
+      <DatMidi label="Sub Bass" path="subBass" />
+      <DatMidi label="Bass" path="bass" />
+      <DatMidi label="Midrange" path="midrange" />
+      <DatMidi label="Treble" path="treble" />
       <DatSelect
         path="volumeControl"
         label="Volume Control"
@@ -203,6 +279,8 @@ const SceneContents = ({ config, ray }: { config: Config; ray: THREE.Ray }) => {
     return <SpiroContents config={config} ray={ray} />;
   } else if (config.contents === 'dusen') {
     return <Dusen noiseAmplitude={config.noiseAmplitude} />;
+  } else if (config.contents === 'bars') {
+    return <Bars config={config} />;
   } else {
     return <Shapes amplitude={config.noiseAmplitude * 1000} ray={ray} />;
   }
@@ -235,14 +313,11 @@ const Scene = <T extends Config>({
 
           const { context } = listener;
           const source = context.createMediaStreamSource(stream);
-
           // @ts-ignore
           audio.setNodeSource(source);
-          setAudio({
-            analyser: new THREE.AudioAnalyser(audio, 32),
-            listener,
-            stream,
-          });
+
+          const analyser = new THREE.AudioAnalyser(audio, 2048);
+          setAudio({ analyser, listener, stream });
         });
     } else {
       if (audio) {
@@ -259,16 +334,15 @@ const Scene = <T extends Config>({
     setRay(raycaster.ray);
 
     if (audio) {
-      const { analyser } = audio;
-      const freq = analyser.getFrequencyData();
-      const volume = sum(freq);
+      const spectrum = analyseSpectrum(audio);
+      const { volume } = spectrum;
 
       const volumeControlledValue = {} as Record<MidiParam, number>;
       if (config.volumeControl) {
         volumeControlledValue[config.volumeControl] = (volume * 128) / 4000;
       }
 
-      setConfig({ ...config, volume, ...volumeControlledValue });
+      setConfig({ ...config, ...spectrum, ...volumeControlledValue });
     }
   });
 

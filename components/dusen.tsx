@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useThree, useFrame } from 'react-three-fiber';
-import Mixer, { scaleMidi, BaseConfig } from './mixer';
+import Mixer, { scaleMidi, BaseConfig, defaultConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 
 export interface DusenConfig extends BaseConfig {
@@ -126,13 +126,7 @@ export const Dusen = React.memo(
 
 export default () => {
   const config: DusenConfig = {
-    trails: 0,
-    noiseAmplitude: 30,
-    zoomThreshold: 0,
-    color: false,
-    audioEnabled: false,
-    volume: 0,
-    kaleidoscope: 0,
+    ...defaultConfig,
     contents: 'dusen',
   };
   return <Mixer config={config} />;

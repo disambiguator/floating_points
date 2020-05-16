@@ -5,7 +5,7 @@ import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
 import { DatButton } from 'react-dat-gui';
-import Mixer, { scaleMidi, BaseConfig } from './mixer';
+import Mixer, { scaleMidi, BaseConfig, defaultConfig } from './mixer';
 import { useRouter } from 'next/router';
 
 const numPoints = 50000;
@@ -155,14 +155,7 @@ export default () => {
   const urlSeeds = router.query.seeds as string | undefined;
 
   const config = {
-    trails: 119,
-    noiseAmplitude: 0.0,
-    zoomThreshold: 0,
-    color: false,
-    pulseEnabled: false,
-    audioEnabled: false,
-    kaleidoscope: 0,
-    volume: 0,
+    ...defaultConfig,
     contents: 'spiro',
     seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
   } as const;
