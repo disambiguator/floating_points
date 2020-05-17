@@ -37,26 +37,13 @@ declare global {
 export const Effects = ({ config }: { config: Config }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const [zoom, setZoom] = useState(scaleMidi(config.zoomThreshold, 0, 0.3));
   const { trails } = config;
 
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
   }, [size]);
 
-  useEffect(() => {
-    if (!config.pulseEnabled && !config.audioEnabled) {
-      setZoom(scaleMidi(config.zoomThreshold, 0, 0.3));
-    }
-  }, [config.zoomThreshold]);
-
   useFrame(() => {
-    if (config.pulseEnabled) {
-      setZoom((zoom + 0.003) % config.zoomThreshold);
-    } else if (config.audioEnabled) {
-      setZoom((config.volume * scaleMidi(config.zoomThreshold, 0, 0.3)) / 4000);
-    }
-
     composer.current!.render();
   }, 1);
 
@@ -66,7 +53,7 @@ export const Effects = ({ config }: { config: Config }) => {
       <afterimagePass
         attachArray="passes"
         uniforms-damp-value={scaleMidi(trails, 0, 1)}
-        uniforms-zoom-value={zoom}
+        uniforms-zoom-value={scaleMidi(config.zoomThreshold, 0, 0.3)}
       />
       {config.kaleidoscope !== 0 ? (
         <shaderPass

@@ -30,7 +30,6 @@ interface Audio {
 export interface BaseConfig {
   color: boolean;
   zoomThreshold: number;
-  pulseEnabled: boolean;
   audioEnabled: boolean;
   noiseAmplitude: number;
   trails: number;
@@ -168,7 +167,6 @@ const ControlPanel = <T extends Config>({
         ]}
       />
       <DatBoolean path="color" label="Color" />
-      <DatBoolean path="pulseEnabled" label="Pulse" />
       <DatSelect
         path="contents"
         label="Contents"

@@ -130,7 +130,6 @@ export default () => {
     noiseAmplitude: 30,
     zoomThreshold: 0,
     color: false,
-    pulseEnabled: false,
     audioEnabled: false,
     volume: 0,
     kaleidoscope: 0,
