@@ -45,6 +45,7 @@ export interface BaseConfig extends Spectrum {
   trails: number;
   kaleidoscope: number;
   volumeControl?: MidiParam;
+  volumeScaler: number;
 }
 
 export type Config = SpiroConfig | ChaosConfig | DusenConfig | BarsConfig;
@@ -58,6 +59,7 @@ export const defaultConfig = {
   audioEnabled: false,
   kaleidoscope: 0,
   volume: 0,
+  volumeScaler: 1,
   contents: 'spiro',
   subBass: 0,
   bass: 0,
@@ -227,6 +229,13 @@ const ControlPanel = <T extends Config>({
       />
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
       <DatMidi label="Volume" path="volume" />
+      <DatNumber
+        label="Scale"
+        path="volumeScaler"
+        min={0}
+        max={2}
+        step={0.0001}
+      />
       <DatMidi label="Sub Bass" path="subBass" />
       <DatMidi label="Bass" path="bass" />
       <DatMidi label="Midrange" path="midrange" />
@@ -339,7 +348,8 @@ const Scene = <T extends Config>({
 
       const volumeControlledValue = {} as Record<MidiParam, number>;
       if (config.volumeControl) {
-        volumeControlledValue[config.volumeControl] = (volume * 128) / 4000;
+        volumeControlledValue[config.volumeControl] =
+          volume * config.volumeScaler;
       }
 
       setConfig({ ...config, ...spectrum, ...volumeControlledValue });
