@@ -91,11 +91,16 @@ const analyseSpectrum = (audio: Audio): Spectrum => {
   const treble: number[] = [];
   let volume = 0;
   const frequencyData: number[] = [];
-  analyser.getFrequencyData().forEach((value, i) => {
+  const analyserData = analyser.getFrequencyData();
+
+  for (let i = 0; i < analyserData.length; i++) {
     const frequency =
       ((i + 1) * audio.listener.context.sampleRate) /
       2 /
       analyser.analyser.frequencyBinCount;
+    if (frequency > 15000) break;
+
+    const value = analyserData[i];
 
     if (frequency < 20) {
     } else if (frequency <= 60) {
@@ -110,7 +115,7 @@ const analyseSpectrum = (audio: Audio): Spectrum => {
 
     frequencyData.push(value);
     volume += value;
-  });
+  }
   // subBass 20 - 60 hz
   // bass 60 - 250 hz
   // low midrange 250 - 500 hz
@@ -255,7 +260,7 @@ const ControlPanel = <T extends Config>({
       <DatSelect
         path="contents"
         label="Contents"
-        options={['spiro', 'chaos', 'dusen']}
+        options={['spiro', 'chaos', 'dusen', 'bars']}
       />
       <SceneControls config={config} onUpdate={onUpdate} />
       <DatButton
@@ -325,7 +330,7 @@ const Scene = <T extends Config>({
           // @ts-ignore
           audio.setNodeSource(source);
 
-          const analyser = new THREE.AudioAnalyser(audio, 2048);
+          const analyser = new THREE.AudioAnalyser(audio, 1024);
           setAudio({ analyser, listener, stream });
         });
     } else {

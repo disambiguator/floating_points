@@ -9,9 +9,11 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { AfterimagePass } from './AfterimagePass';
+import ZoomShader from '../lib/shaders/zoom';
 import React, { useRef, useEffect } from 'react';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import { scaleMidi, Config } from './mixer';
+import { BarsShader } from './bars';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -52,6 +54,7 @@ export const Effects = ({ config }: { config: Config }) => {
       <renderPass attachArray="passes" scene={scene} camera={camera} />
       <afterimagePass
         attachArray="passes"
+        args={[config.contents === 'bars' ? BarsShader : ZoomShader]}
         uniforms-damp-value={scaleMidi(trails, 0, 1)}
         uniforms-zoom-value={scaleMidi(config.zoomThreshold, 0, 0.3)}
       />

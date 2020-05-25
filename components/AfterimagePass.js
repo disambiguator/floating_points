@@ -12,16 +12,13 @@ import {
   WebGLRenderTarget,
 } from 'three';
 import { Pass } from 'three/examples/jsm/postprocessing/Pass.js';
-import { AfterimageShader } from './AfterimageShader.js';
 
-const AfterimagePass = function (damp) {
+const AfterimagePass = function (shader) {
   Pass.call(this);
 
-  this.shader = AfterimageShader;
+  this.shader = shader;
 
   this.uniforms = UniformsUtils.clone(this.shader.uniforms);
-
-  this.uniforms['damp'].value = damp !== undefined ? damp : 0.96;
 
   this.textureComp = new WebGLRenderTarget(
     window.innerWidth,

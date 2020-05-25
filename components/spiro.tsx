@@ -78,7 +78,7 @@ export const SpiroContents = ({ config, ray }: SpirographProps) => {
   const [positions, setPositions] = useState(seeds ?? initPositions());
 
   useEffect(() => {
-    setPositions(seeds);
+    if (seeds) setPositions(seeds);
   }, [seeds]);
 
   useFrame(() => {

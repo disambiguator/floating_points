@@ -1,36 +1,55 @@
-import * as THREE from 'three';
-
 export default {
   uniforms: {
-    zoom: new THREE.Uniform(0.1),
-    damp: new THREE.Uniform(0.96),
-    tDiffuse: { value: null },
+    damp: { value: 0.96 },
+    zoom: { value: 0.01 },
+    tOld: { value: null },
+    tNew: { value: null },
   },
 
-  vertexShader: /* glsl */ `
-    varying vec2 vUv;
+  vertexShader: [
+    'varying vec2 vUv;',
 
-    void main() {
-    	vUv = uv;
-    	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }`,
+    'void main() {',
+
+    '	vUv = uv;',
+    '	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+
+    '}',
+  ].join('\n'),
+
   fragmentShader: /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
-
-    uniform float zoom;
     uniform float damp;
+    uniform float zoom;
 
-    uniform sampler2D tDiffuse;
+    uniform sampler2D tOld;
+    uniform sampler2D tNew;
 
     varying vec2 vUv;
 
     void main() {
-      vec4 texelOld = texture2D(tDiffuse, vUv);
-    	vec4 shrunkTexel = texture2D(tDiffuse, vUv + (vUv - 0.5) * zoom);
+    	vec4 texelNew = texture2D( tNew, vUv);
 
-    	gl_FragColor = max(texelOld, shrunkTexel);
+      vec2 coord = vUv;
+
+      if(vUv.x > 0.5) {
+        coord.x = coord.x-zoom;
+      }
+      if(vUv.x < 0.5) {
+        coord.x = coord.x+zoom;
+      }
+      if(vUv.y > 0.5) {
+        coord.y = coord.y-zoom;
+      }
+      if(vUv.y < 0.5) {
+        coord.y = coord.y+zoom;
+      }
+
+    	vec4 texelOld = texture2D( tOld, coord ) * damp;
+
+    	gl_FragColor = max(texelNew, texelOld);
     }
   `,
 };
