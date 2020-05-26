@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { sumBy } from 'lodash';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
@@ -66,6 +66,7 @@ interface SpirographProps {
 export const SpiroContents = ({ config }: SpirographProps) => {
   const { clock } = useThree();
   const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
+  const positionAttributeRef = useRef<THREE.BufferAttribute>();
   const displacement = useMemo(() => {
     const d = new Float32Array(renderSpeed);
     for (let i = 0; i < renderSpeed; i++) {
@@ -76,26 +77,29 @@ export const SpiroContents = ({ config }: SpirographProps) => {
 
   const { seeds, color, noiseAmplitude } = config;
 
-  const [positions, setPositions] = useState(seeds ?? initPositions());
+  const positions = useRef(seeds ?? initPositions());
 
   useEffect(() => {
-    if (seeds) setPositions(seeds);
+    if (seeds) positions.current = seeds;
   }, [seeds]);
 
   useFrame(() => {
-    setPositions(
-      positions.map((p) => ({
-        ...p,
-        arc: p.arc + p.speed * renderSpeed,
-        phi: p.phi + p.phiSpeed * renderSpeed,
-      })),
-    );
+    positions.current = positions.current.map((p) => ({
+      ...p,
+      arc: p.arc + p.speed * renderSpeed,
+      phi: p.phi + p.phiSpeed * renderSpeed,
+    }));
 
     const { ray } = api.getState();
 
     const shaderMaterial = shaderMaterialRef.current!;
     shaderMaterial.uniforms.origin.value = ray.origin;
     shaderMaterial.uniforms.direction.value = ray.direction;
+    shaderMaterial.uniforms.time.value = clock.elapsedTime;
+
+    const positionAttribute = positionAttributeRef.current!;
+    positionAttribute.array = generateVertices(positions.current);
+    positionAttribute.needsUpdate = true;
   });
 
   return (
@@ -108,12 +112,9 @@ export const SpiroContents = ({ config }: SpirographProps) => {
           itemSize={1}
         />
         <bufferAttribute
+          ref={positionAttributeRef}
           attachObject={['attributes', 'position']}
           count={renderSpeed}
-          array={generateVertices(positions)}
-          onUpdate={(self) => {
-            self.needsUpdate = true;
-          }}
           itemSize={3}
         />
       </bufferGeometry>
