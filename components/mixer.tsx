@@ -19,6 +19,7 @@ import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
 import { mean } from 'lodash';
 import { BarsConfig, Bars } from './bars';
+import { api } from '../lib/store';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -288,15 +289,15 @@ const ControlPanel = <T extends Config>({
   );
 };
 
-const SceneContents = ({ config, ray }: { config: Config; ray: THREE.Ray }) => {
+const SceneContents = ({ config }: { config: Config }) => {
   if (config.contents === 'spiro') {
-    return <SpiroContents config={config} ray={ray} />;
+    return <SpiroContents config={config} />;
   } else if (config.contents === 'dusen') {
     return <Dusen noiseAmplitude={config.noiseAmplitude} />;
   } else if (config.contents === 'bars') {
     return <Bars config={config} />;
   } else {
-    return <Shapes amplitude={config.noiseAmplitude * 1000} ray={ray} />;
+    return <Shapes amplitude={config.noiseAmplitude * 1000} />;
   }
 };
 
@@ -311,9 +312,6 @@ const Scene = <T extends Config>({
   const [audio, setAudio] = useState<Audio>();
 
   const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-
-  const [ray, setRay] = useState(raycaster.ray);
 
   useEffect(() => {
     if (config.audioEnabled) {
@@ -345,7 +343,7 @@ const Scene = <T extends Config>({
 
   useFrame(() => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    setRay(raycaster.ray);
+    api.setState({ ray: raycaster.ray });
 
     if (audio) {
       const spectrum = analyseSpectrum(audio);
@@ -363,7 +361,7 @@ const Scene = <T extends Config>({
 
   return (
     <>
-      <SceneContents config={config} ray={ray} />
+      <SceneContents config={config} />
       <Effects config={config} />
     </>
   );

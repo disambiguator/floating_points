@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { sumBy } from 'lodash';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
 import { DatButton } from 'react-dat-gui';
 import Mixer, { scaleMidi, BaseConfig, defaultConfig } from './mixer';
 import { useRouter } from 'next/router';
+import { api } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -61,10 +62,10 @@ export const initPositions = () => [randPosition(), randPosition()];
 interface SpirographProps {
   seeds?: Seed[];
   config: SpiroConfig;
-  ray: THREE.Ray;
 }
-export const SpiroContents = ({ config, ray }: SpirographProps) => {
+export const SpiroContents = ({ config }: SpirographProps) => {
   const { clock } = useThree();
+  const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
   const displacement = useMemo(() => {
     const d = new Float32Array(renderSpeed);
     for (let i = 0; i < renderSpeed; i++) {
@@ -89,6 +90,12 @@ export const SpiroContents = ({ config, ray }: SpirographProps) => {
         phi: p.phi + p.phiSpeed * renderSpeed,
       })),
     );
+
+    const { ray } = api.getState();
+
+    const shaderMaterial = shaderMaterialRef.current!;
+    shaderMaterial.uniforms.origin.value = ray.origin;
+    shaderMaterial.uniforms.direction.value = ray.direction;
   });
 
   return (
@@ -111,10 +118,9 @@ export const SpiroContents = ({ config, ray }: SpirographProps) => {
         />
       </bufferGeometry>
       <shaderMaterial
+        ref={shaderMaterialRef}
         args={[SpiroShader]}
         uniforms-color-value={color}
-        uniforms-origin-value={ray.origin}
-        uniforms-direction-value={ray.direction}
         uniforms-amplitude-value={scaleMidi(noiseAmplitude, 0, 0.0005)}
         uniforms-time-value={clock.elapsedTime}
         attach="material"

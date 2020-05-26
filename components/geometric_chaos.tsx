@@ -9,6 +9,7 @@ import { Effects } from './effects';
 import styled from 'styled-components';
 import { scaleMidi, BaseConfig, defaultConfig } from './mixer';
 import { ShaderMaterial } from 'three';
+import { api } from '../lib/store';
 const renderSpeed = 1000;
 
 export interface ChaosConfig extends BaseConfig {
@@ -117,59 +118,58 @@ const Box = ({
   );
 };
 
-export const Shapes = React.memo(
-  ({ ray, amplitude }: { ray: THREE.Ray; amplitude: number }) => {
-    const { camera } = useThree();
-    const materialRef = useRef<ShaderMaterial>();
-    const displacement = useMemo(() => {
-      const d = new Float32Array(renderSpeed);
-      for (let i = 0; i < renderSpeed; i++) {
-        d[i] = Math.random() * 5;
-      }
-      return d;
-    }, []);
+export const Shapes = React.memo(({ amplitude }: { amplitude: number }) => {
+  const { camera } = useThree();
+  const materialRef = useRef<ShaderMaterial>();
+  const displacement = useMemo(() => {
+    const d = new Float32Array(renderSpeed);
+    for (let i = 0; i < renderSpeed; i++) {
+      d[i] = Math.random() * 5;
+    }
+    return d;
+  }, []);
 
-    const material = useMemo(
-      () => (
-        <shaderMaterial
-          args={[Shader]}
-          ref={materialRef}
-          attach="material"
-          uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
-        />
-      ),
-      [],
-    );
+  const material = useMemo(
+    () => (
+      <shaderMaterial
+        args={[Shader]}
+        ref={materialRef}
+        attach="material"
+        uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
+      />
+    ),
+    [],
+  );
 
-    useFrame(() => {
-      camera.translateX(-0.5);
-      materialRef.current!.uniforms.origin.value = ray.origin;
-      materialRef.current!.uniforms.direction.value = ray.direction;
-      materialRef.current!.uniforms.amplitude.value = scaleMidi(
-        amplitude,
-        0,
-        0.0005,
-      );
-    });
+  useFrame(() => {
+    camera.translateX(-0.5);
+    const { ray } = api.getState();
 
-    const cubes = useMemo(
-      () =>
-        Array(500)
-          .fill(undefined)
-          .map((_value, i) => (
-            <Box key={i} displacement={displacement} material={material} />
-          )),
-      [],
-    );
+    const material = materialRef.current!;
+    material.uniforms.origin.value = ray.origin;
+    material.uniforms.direction.value = ray.direction;
+    material.uniforms.amplitude.value = scaleMidi(amplitude, 0, 0.0005);
+  });
 
-    return <>{cubes}</>;
-  },
-);
+  const cubes = useMemo(
+    () =>
+      Array(500)
+        .fill(undefined)
+        .map((_value, i) => (
+          <Box key={i} displacement={displacement} material={material} />
+        )),
+    [],
+  );
+
+  return <>{cubes}</>;
+});
 
 const Scene = () => {
   const { camera, mouse } = useThree();
   const [analyser, setAnalyser] = useState<THREE.AudioAnalyser>();
   const [amplitude, setAmplitude] = useState(0);
+
+  const raycaster = new THREE.Raycaster();
 
   useFrame(() => {
     if (analyser == null) return;
@@ -178,13 +178,10 @@ const Scene = () => {
 
     const value = sum(freq) / 5000.0;
     setAmplitude((oldAmp) => oldAmp + (value - oldAmp) * 0.8);
-  });
 
-  const ray = (() => {
-    const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    return raycaster.ray;
-  })();
+    api.setState({ ray: raycaster.ray });
+  });
 
   useEffect(() => {
     const audioLoader = new THREE.AudioLoader();
@@ -217,7 +214,7 @@ const Scene = () => {
 
   return (
     <>
-      <Shapes ray={ray} amplitude={amplitude} />
+      <Shapes amplitude={amplitude} />
       <Effects config={config} />
     </>
   );
