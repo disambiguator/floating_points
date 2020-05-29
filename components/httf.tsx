@@ -34,26 +34,35 @@ const Box = ({
   canvas.width = width;
   canvas.height = height;
 
-  useFrame(() => {
-    if (
-      index === happy ||
-      index === birthday ||
-      index === previousHappy ||
-      index === previousBirthday
-    ) {
-      const text =
-        happy === index ? 'Happy' : birthday === index ? 'birthday' : data.text;
-      ctx.fillStyle = data.background;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = data.textColor;
-      ctx.textAlign = 'center';
-      const size = 300 / text.length + 40;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (
+        index === happy ||
+        index === birthday ||
+        index === previousHappy ||
+        index === previousBirthday
+      ) {
+        const text =
+          happy === index
+            ? 'Happy'
+            : birthday === index
+            ? 'birthday'
+            : data.text;
+        ctx.fillStyle = data.background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = data.textColor;
+        ctx.textAlign = 'center';
+        const size = 300 / text.length + 40;
 
-      ctx.font = `${size}px Courier New`;
-      ctx.fillText(text, width / 2, height / 2);
-      canvasTextureRef.current!.needsUpdate = true;
-    }
-  });
+        ctx.font = `${size}px Courier New`;
+        ctx.fillText(text, width / 2, height / 2);
+        canvasTextureRef.current!.needsUpdate = true;
+      }
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   ctx.fillStyle = data.background;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -67,12 +76,7 @@ const Box = ({
     <mesh position={position}>
       <boxGeometry args={[width, height, height]} attach="geometry" />
       <meshBasicMaterial attach="material">
-        <canvasTexture
-          ref={canvasTextureRef}
-          attach="map"
-          args={[canvas]}
-          minFilter={THREE.LinearFilter}
-        />
+        <canvasTexture ref={canvasTextureRef} attach="map" args={[canvas]} />
       </meshBasicMaterial>
     </mesh>
   );
@@ -212,16 +216,18 @@ const HTTF = () => {
   }, []);
 
   const boxes: JSX.Element[] = [];
+  let index = 0;
   htttData.forEach((column, i) => {
     column.forEach((boxData, stack) => {
       boxes.push(
         <Box
-          key={i * column.length + stack}
-          index={i * column.length + stack}
+          key={index}
+          index={index}
           data={boxData}
           position={[-300 + width * i, -1200 + height * stack, 0]}
         />,
       );
+      index++;
     });
   });
 
@@ -244,6 +250,7 @@ export default () => (
   <Page>
     {(_dimensions) => (
       <FiberScene
+        gl2
         gl={{ antialias: true }}
         camera={{ position: [0, 500, 1000], far: 10000 }}
       >
