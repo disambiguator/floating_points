@@ -15,6 +15,8 @@ type Data = {
 
 let happy: number;
 let birthday: number;
+let previousHappy: number;
+let previousBirthday: number;
 
 const Box = ({
   position,
@@ -25,7 +27,6 @@ const Box = ({
   data: Data;
   index: number;
 }) => {
-  const { clock } = useThree();
   const canvasTextureRef = useRef<THREE.CanvasTexture>();
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d')!;
@@ -33,26 +34,32 @@ const Box = ({
   canvas.width = width;
   canvas.height = height;
 
-  const size = 300 / data.text.length + 40;
-
   useFrame(() => {
-    ctx.fillStyle = data.background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = data.textColor;
-    ctx.textAlign = 'center';
-    ctx.font = `${size}px Courier New`;
-    ctx.fillText(
-      happy === index ? 'Happy' : birthday === index ? 'birthday' : data.text,
-      width / 2,
-      height / 2,
-    );
-    canvasTextureRef.current!.needsUpdate = true;
+    if (
+      index === happy ||
+      index === birthday ||
+      index === previousHappy ||
+      index === previousBirthday
+    ) {
+      const text =
+        happy === index ? 'Happy' : birthday === index ? 'birthday' : data.text;
+      ctx.fillStyle = data.background;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = data.textColor;
+      ctx.textAlign = 'center';
+      const size = 300 / text.length + 40;
+
+      ctx.font = `${size}px Courier New`;
+      ctx.fillText(text, width / 2, height / 2);
+      canvasTextureRef.current!.needsUpdate = true;
+    }
   });
 
   ctx.fillStyle = data.background;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = data.textColor;
   ctx.textAlign = 'center';
+  const size = 300 / data.text.length + 40;
   ctx.font = `${size}px Courier New`;
   ctx.fillText(data.text, width / 2, height / 2);
 
@@ -220,6 +227,8 @@ const HTTF = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      previousHappy = happy;
+      previousBirthday = birthday;
       happy = Math.floor(Math.random() * boxes.length);
       birthday = Math.floor(Math.random() * boxes.length);
     }, 1000);
