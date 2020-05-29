@@ -38,18 +38,30 @@ const Box = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (
-        index === happy ||
-        index === birthday ||
-        index === previousHappy ||
-        index === previousBirthday
-      ) {
-        const text =
-          happy === index
-            ? 'Happy'
-            : birthday === index
-            ? 'birthday'
-            : data.text;
+      if (index === happy || index === birthday) {
+        const text = happy === index ? 'Happy' : 'birthday';
+        ctx.fillStyle = data.background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = data.textColor;
+        ctx.textAlign = 'center';
+        const size = 300 / text.length + 40;
+
+        ctx.font = `${size}px Courier New`;
+        ctx.fillText(text, width / 2, height / 2);
+
+        const gradient = ctx.createLinearGradient(0, 0, 170, 0);
+        gradient.addColorStop(0, 'magenta');
+        gradient.addColorStop(0.5, 'blue');
+        gradient.addColorStop(1.0, 'red');
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 20;
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        canvasTextureRef.current!.needsUpdate = true;
+      } else if (index === previousHappy || index === previousBirthday) {
+        const { text } = data;
+
         ctx.fillStyle = data.background;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = data.textColor;
