@@ -100,12 +100,10 @@ const VDC = () => {
 
 export default () => (
   <Page>
-    {(_dimensions) => (
-      <div style={{ height: 1000, width: 1000 }}>
-        <FiberScene camera={{ far: 10000, position: [0, 0, 30], fov: 150 }}>
-          <VDC />
-        </FiberScene>
-      </div>
-    )}
+    <div style={{ height: 1000, width: 1000 }}>
+      <FiberScene camera={{ far: 10000, position: [0, 0, 30], fov: 150 }}>
+        <VDC />
+      </FiberScene>
+    </div>
   </Page>
 );

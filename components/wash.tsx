@@ -71,6 +71,6 @@ const Scatter = ({ width, height }: Dimensions) => {
 
 export default () => (
   <Page>
-    {({ width, height }) => <Scatter width={width} height={height} />}
+    <Scatter width={window.innerWidth} height={window.innerHeight} />
   </Page>
 );

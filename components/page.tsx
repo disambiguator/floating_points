@@ -1,6 +1,5 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Dimensions } from '../lib/types';
 
 const Container = styled.div`
   display: flex;
@@ -11,19 +10,10 @@ const Container = styled.div`
   color: white;
 `;
 
-interface Props {
-  children: (dimensions: Dimensions) => ReactNode;
-}
-
-export const FullscreenDiv = styled.div`
-  height: 100%;
-  width: 100%;
-  text-align: center;
-`;
-
-export default ({ children }: Props) => {
-  const dimensions = { width: window.innerWidth, height: window.innerHeight };
-
+export default (props: {
+  children?: React.ReactNode;
+  onClick?: () => void;
+}) => {
   return (
     <React.StrictMode>
       <>
@@ -35,7 +25,7 @@ export default ({ children }: Props) => {
             display: block;
           }
         `}</style>
-        <Container id="container">{children(dimensions)}</Container>
+        <Container {...props} id="container" />
       </>
     </React.StrictMode>
   );

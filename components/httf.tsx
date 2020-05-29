@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import Page, { FullscreenDiv } from './page';
+import Page from './page';
 import { FiberScene } from './scene';
 import { useThree, useFrame } from 'react-three-fiber';
 
@@ -99,13 +99,13 @@ const Box = ({
 const TOP = 1000;
 
 const newPosition = () => ({
-  velocity: new THREE.Vector3(0, rand(-100, -30), 0),
-  position: new THREE.Vector3(rand(-1000, 1000), TOP, rand(-10000, 10000)),
-  acceleration: new THREE.Vector3(0, -0.1, 0),
+  velocity: new THREE.Vector3(0, rand(-60, 0), 0),
+  position: new THREE.Vector3(rand(-5000, 5000), TOP, rand(-5000, 5000)),
+  acceleration: new THREE.Vector3(0, rand(-1, -0.1), 0),
 });
 
 const Rain = () => {
-  const MAX = 1000;
+  const MAX = 5000;
   const particles: {
     position: THREE.Vector3;
     velocity: THREE.Vector3;
@@ -343,22 +343,18 @@ export default () => {
   const [started, start] = useState(false);
 
   return (
-    <Page>
-      {(_) =>
-        started ? (
-          <FiberScene
-            gl2
-            gl={{ antialias: true }}
-            camera={{ position: [0, 0, 3000], far: 10000 }}
-          >
-            <HTTF />
-          </FiberScene>
-        ) : (
-          <FullscreenDiv onClick={() => start(true)}>
-            Click to start
-          </FullscreenDiv>
-        )
-      }
+    <Page onClick={() => start(true)}>
+      {started ? (
+        <FiberScene
+          gl2
+          gl={{ antialias: true }}
+          camera={{ position: [0, 0, 3000], far: 10000 }}
+        >
+          <HTTF />
+        </FiberScene>
+      ) : (
+        <div>Hello Matthew. Turn on your sound and click to start!</div>
+      )}
     </Page>
   );
 };

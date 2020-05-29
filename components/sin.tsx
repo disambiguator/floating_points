@@ -43,6 +43,8 @@ const Bendy = () => {
 
 export default () => (
   <>
-    <Page>{(_) => <Bendy />}</Page>
+    <Page>
+      <Bendy />
+    </Page>
   </>
 );

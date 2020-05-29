@@ -7,7 +7,6 @@ import { extend } from 'react-three-fiber';
 // @ts-ignore
 import { MeshLine, MeshLineMaterial } from 'threejs-meshline';
 import Page from './page';
-import { Dimensions } from '../lib/types';
 
 extend({ MeshLine, MeshLineMaterial });
 
@@ -109,8 +108,8 @@ export default () => {
   return started ? (
     <Mixer config={config} />
   ) : (
-    <Page>
-      {(_: Dimensions) => <div onClick={() => start(true)}>Click to start</div>}
+    <Page onClick={() => start(true)}>
+      <div>Click to start</div>
     </Page>
   );
 };

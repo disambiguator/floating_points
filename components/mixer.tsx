@@ -384,5 +384,9 @@ const Mixer = <T extends Config>(props: { config: T }) => {
 };
 
 export default ({ config }: { config: Config }) => {
-  return <Page>{(_dimensions) => <Mixer config={config} />}</Page>;
+  return (
+    <Page>
+      <Mixer config={config} />
+    </Page>
+  );
 };

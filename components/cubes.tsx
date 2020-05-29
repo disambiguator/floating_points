@@ -93,18 +93,16 @@ const Cubes = () => {
 export default () => {
   return (
     <Page>
-      {(_dimensions) => (
-        <div style={{ height: 400, width: 400 }}>
-          <FiberScene
-            camera={{
-              far: 10000,
-              position: [0, 0, 300],
-            }}
-          >
-            <Cubes />
-          </FiberScene>
-        </div>
-      )}
+      <div style={{ height: 400, width: 400 }}>
+        <FiberScene
+          camera={{
+            far: 10000,
+            position: [0, 0, 300],
+          }}
+        >
+          <Cubes />
+        </FiberScene>
+      </div>
     </Page>
   );
 };

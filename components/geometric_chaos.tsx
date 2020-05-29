@@ -2,8 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { FiberScene } from './scene';
 import sum from 'lodash/sum';
-import { Dimensions } from '../lib/types';
-import Page, { FullscreenDiv } from './page';
+import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
 import { scaleMidi, BaseConfig, defaultConfig } from './mixer';
@@ -234,16 +233,8 @@ export default () => {
   const [started, start] = useState(false);
 
   return (
-    <Page>
-      {(_: Dimensions) =>
-        started ? (
-          <Spiro />
-        ) : (
-          <FullscreenDiv onClick={() => start(true)}>
-            Click to start
-          </FullscreenDiv>
-        )
-      }
+    <Page onClick={() => start(true)}>
+      {started ? <Spiro /> : <div>Click to start</div>}
     </Page>
   );
 };
