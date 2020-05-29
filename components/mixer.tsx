@@ -103,8 +103,7 @@ const analyseSpectrum = (audio: Audio): Spectrum => {
 
     const value = analyserData[i];
 
-    if (frequency < 20) {
-    } else if (frequency <= 60) {
+    if (frequency >= 20 && frequency <= 60) {
       subBass.push(value);
     } else if (frequency <= 250) {
       bass.push(value);

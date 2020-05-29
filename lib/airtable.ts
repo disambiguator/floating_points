@@ -15,7 +15,7 @@ const fetchJson = async (...fetchArgs: Parameters<typeof fetch>) => {
   return response.json();
 };
 
-export const airtablePut = async (table: string, body: {}) =>
+export const airtablePut = async (table: string, body: unknown) =>
   fetchJson(`${AIRTABLE_ENDPOINT}/${table}`, {
     method: 'POST',
     headers: {

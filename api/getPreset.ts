@@ -2,7 +2,7 @@ import { airtableShow } from '../lib/airtable';
 import { NowRequest, NowResponse } from '@now/node';
 
 type AirtableResponse = {
-  fields: Record<string, {}>;
+  fields: Record<string, unknown>;
 };
 
 interface GetPresetRequest extends NowRequest {
