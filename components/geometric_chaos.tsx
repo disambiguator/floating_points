@@ -3,10 +3,9 @@ import * as THREE from 'three';
 import { FiberScene } from './scene';
 import sum from 'lodash/sum';
 import { Dimensions } from '../lib/types';
-import Page from './page';
+import Page, { FullscreenDiv } from './page';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
-import styled from 'styled-components';
 import { scaleMidi, BaseConfig, defaultConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 import { api } from '../lib/store';
@@ -230,12 +229,6 @@ const Spiro = () => {
     </FiberScene>
   );
 };
-
-const FullscreenDiv = styled.div`
-  height: 100%;
-  width: 100%;
-  text-align: center;
-`;
 
 export default () => {
   const [started, start] = useState(false);

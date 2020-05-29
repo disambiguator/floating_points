@@ -15,6 +15,12 @@ interface Props {
   children: (dimensions: Dimensions) => ReactNode;
 }
 
+export const FullscreenDiv = styled.div`
+  height: 100%;
+  width: 100%;
+  text-align: center;
+`;
+
 export default ({ children }: Props) => {
   const dimensions = { width: window.innerWidth, height: window.innerHeight };
 
