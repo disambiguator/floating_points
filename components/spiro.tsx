@@ -1,16 +1,14 @@
 import * as THREE from 'three';
 import { sumBy } from 'lodash';
-import { useMemo, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import React from 'react';
-import SpiroShader from '../lib/shaders/spiro';
-import { useThree, useFrame } from 'react-three-fiber';
+import { useFrame, useThree } from 'react-three-fiber';
 import { DatButton } from 'react-dat-gui';
-import Mixer, { scaleMidi, BaseConfig, defaultConfig } from './mixer';
+import Mixer, { BaseConfig, defaultConfig } from './mixer';
 import { useRouter } from 'next/router';
-import { api } from '../lib/store';
 
 const numPoints = 50000;
-const renderSpeed = 1000;
+// const renderSpeed = 1000;
 
 function randInt(min: number, max: number) {
   return Math.floor(Math.random() * max) + min;
@@ -40,7 +38,10 @@ const getPoint = (radius: number, theta: number, phi: number) => {
 };
 
 function generateVertices(positions: Seed[]) {
-  const vertices = new Float32Array(renderSpeed * 3);
+  const vertices = [];
+  // const renderSpeed = positions.map((p) => p.speed).reduce((a, b) => a * b);
+  const renderSpeed = 50000;
+  console.log(renderSpeed);
   for (let i = 0; i < renderSpeed; i++) {
     const points = positions.map((p) =>
       getPoint(p.radius, p.arc + i * p.speed, p.phi + i * p.phiSpeed),
@@ -50,9 +51,7 @@ function generateVertices(positions: Seed[]) {
     const y = sumBy(points, 'y') / points.length;
     const z = sumBy(points, 'z') / points.length;
 
-    vertices[i * 3] = x;
-    vertices[i * 3 + 1] = y;
-    vertices[i * 3 + 2] = z;
+    vertices[i] = new THREE.Vector3(x, y, z);
   }
   return vertices;
 }
@@ -63,70 +62,64 @@ interface SpirographProps {
   seeds?: Seed[];
   config: SpiroConfig;
 }
+
 export const SpiroContents = ({ config }: SpirographProps) => {
-  const { clock } = useThree();
-  const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
-  const positionAttributeRef = useRef<THREE.BufferAttribute>();
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
-  }, []);
-
-  const { seeds, color, noiseAmplitude } = config;
-
+  const { seeds } = config;
+  const lightRef = useRef<THREE.PointLight>();
+  // const { camera } = useThree();
   const positions = useRef(seeds ?? initPositions());
+
+  const vertices = generateVertices(positions.current);
+  const geometry = new THREE.TubeBufferGeometry(
+    new THREE.CatmullRomCurve3(vertices),
+    vertices.length,
+    2,
+    8,
+    false,
+  );
+  const material = new THREE.MeshLambertMaterial({ color: 0x00ffff });
 
   useEffect(() => {
     if (seeds) positions.current = seeds;
   }, [seeds]);
 
+  useEffect(() => {
+    // camera.add(lightRef.current!);
+  }, []);
+
+  // const { clock } = useThree();
+
   useFrame(() => {
-    positions.current = positions.current.map((p) => ({
-      ...p,
-      arc: p.arc + p.speed * renderSpeed,
-      phi: p.phi + p.phiSpeed * renderSpeed,
-    }));
-
-    const { ray } = api.getState();
-
-    const shaderMaterial = shaderMaterialRef.current!;
-    shaderMaterial.uniforms.origin.value = ray.origin;
-    shaderMaterial.uniforms.direction.value = ray.direction;
-    shaderMaterial.uniforms.time.value = clock.elapsedTime;
-
-    const positionAttribute = positionAttributeRef.current!;
-    positionAttribute.array = generateVertices(positions.current);
-    positionAttribute.needsUpdate = true;
+    // positions.current = positions.current.map((p) => ({
+    //   ...p,
+    //   arc: p.arc + p.speed * renderSpeed,
+    //   phi: p.phi + p.phiSpeed * renderSpeed,
+    // }));
+    lightRef.current!.rotation.y += 0.1;
+    // lightRef.current!.position.z = Math.sin(clock.elapsedTime * Math.PI) * 2000;
+    // console.log(lightRef.current!.position);
+    // geometry.copy(
+    //   new THREE.TubeBufferGeometry(
+    //     new THREE.CatmullRomCurve3(generateVertices(positions.current)),
+    //     renderSpeed,
+    //     2,
+    //     8,
+    //     false,
+    //   ),
+    // );
+    // geometry.setFromPoints(
+    //   new THREE.CatmullRomCurve3(generateVertices(positions.current)).getPoints(
+    //     renderSpeed,
+    //   ),
+    // );
+    // geometry.attributes.positions.needsUpdate = true;
   });
 
   return (
-    <line>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attachObject={['attributes', 'displacement']}
-          count={renderSpeed}
-          array={displacement}
-          itemSize={1}
-        />
-        <bufferAttribute
-          ref={positionAttributeRef}
-          attachObject={['attributes', 'position']}
-          count={renderSpeed}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <shaderMaterial
-        ref={shaderMaterialRef}
-        args={[SpiroShader]}
-        uniforms-color-value={color}
-        uniforms-amplitude-value={scaleMidi(noiseAmplitude, 0, 0.0005)}
-        uniforms-time-value={clock.elapsedTime}
-        attach="material"
-      />
-    </line>
+    <>
+      <pointLight ref={lightRef} position={[0, 200, 200]} />
+      <mesh {...{ geometry, material }} />
+    </>
   );
 };
 
@@ -163,6 +156,7 @@ export default () => {
 
   const config = {
     ...defaultConfig,
+    trails: 0,
     contents: 'spiro',
     seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
   } as const;
