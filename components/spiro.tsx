@@ -107,7 +107,6 @@ export const SpiroContents = ({ config }: SpirographProps) => {
         false,
       ),
     );
-    // geometry.attributes.positions.needsUpdate = true;
   });
 
   return (
