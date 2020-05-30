@@ -45,6 +45,7 @@
     "react": "^16.13.1",
     "react-dat-gui": "github:disambiguator/react-dat-gui",
     "react-dom": "^16.13.1",
+    "react-ga": "^2.7.0",
     "react-p5-wrapper": "^2.0.0",
     "react-three-fiber": "^4.2.8",
     "styled-components": "^5.1.1",
