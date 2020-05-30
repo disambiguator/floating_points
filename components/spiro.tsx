@@ -7,7 +7,6 @@ import { DatButton } from 'react-dat-gui';
 import Mixer, { BaseConfig, defaultConfig } from './mixer';
 import { useRouter } from 'next/router';
 
-const numPoints = 50000;
 // const renderSpeed = 1000;
 
 function randInt(min: number, max: number) {
@@ -21,12 +20,13 @@ export interface Seed {
   speed: number;
   phiSpeed: number;
 }
+const renderSpeed = 10000;
 
 const randPosition = (): Seed => ({
   radius: randInt(50, 300),
   arc: randInt(0, 360),
   phi: randInt(0, 360),
-  speed: (randInt(1, 10) * 360) / (randInt(10, 100) + numPoints),
+  speed: (randInt(1, 10) * 360) / randInt(10, 100),
   phiSpeed: 0,
 });
 
@@ -40,7 +40,6 @@ const getPoint = (radius: number, theta: number, phi: number) => {
 function generateVertices(positions: Seed[]) {
   const vertices = [];
   // const renderSpeed = positions.map((p) => p.speed).reduce((a, b) => a * b);
-  const renderSpeed = 50000;
   console.log(renderSpeed);
   for (let i = 0; i < renderSpeed; i++) {
     const points = positions.map((p) =>
@@ -90,28 +89,24 @@ export const SpiroContents = ({ config }: SpirographProps) => {
   // const { clock } = useThree();
 
   useFrame(() => {
-    // positions.current = positions.current.map((p) => ({
-    //   ...p,
-    //   arc: p.arc + p.speed * renderSpeed,
-    //   phi: p.phi + p.phiSpeed * renderSpeed,
-    // }));
+    positions.current = positions.current.map((p) => ({
+      ...p,
+      arc: p.arc + p.speed * renderSpeed,
+      phi: p.phi + p.phiSpeed * renderSpeed,
+    }));
     lightRef.current!.rotation.y += 0.1;
     // lightRef.current!.position.z = Math.sin(clock.elapsedTime * Math.PI) * 2000;
     // console.log(lightRef.current!.position);
-    // geometry.copy(
-    //   new THREE.TubeBufferGeometry(
-    //     new THREE.CatmullRomCurve3(generateVertices(positions.current)),
-    //     renderSpeed,
-    //     2,
-    //     8,
-    //     false,
-    //   ),
-    // );
-    // geometry.setFromPoints(
-    //   new THREE.CatmullRomCurve3(generateVertices(positions.current)).getPoints(
-    //     renderSpeed,
-    //   ),
-    // );
+    const vertices = generateVertices(positions.current);
+    geometry.copy(
+      new THREE.TubeBufferGeometry(
+        new THREE.CatmullRomCurve3(vertices),
+        vertices.length,
+        2,
+        8,
+        false,
+      ),
+    );
     // geometry.attributes.positions.needsUpdate = true;
   });
 
