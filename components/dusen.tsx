@@ -1,11 +1,7 @@
 import React, { useRef } from 'react';
 import { useThree, useFrame } from 'react-three-fiber';
-import Mixer, { scaleMidi, BaseConfig, defaultConfig } from './mixer';
+import Mixer, { scaleMidi, defaultConfig, Config } from './mixer';
 import { ShaderMaterial } from 'three';
-
-export interface DusenConfig extends BaseConfig {
-  contents: 'dusen';
-}
 
 const Shader = {
   vertexShader: /* glsl */ `
@@ -101,7 +97,7 @@ void main()
 };
 
 export const Dusen = React.memo(
-  ({ noiseAmplitude }: Pick<DusenConfig, 'noiseAmplitude'>) => {
+  ({ noiseAmplitude }: Pick<Config, 'noiseAmplitude'>) => {
     const { aspect, size, clock } = useThree();
     const ref = useRef<ShaderMaterial>();
 
@@ -125,7 +121,7 @@ export const Dusen = React.memo(
 );
 
 export default () => {
-  const config: DusenConfig = {
+  const config: Config = {
     ...defaultConfig,
     contents: 'dusen',
   };

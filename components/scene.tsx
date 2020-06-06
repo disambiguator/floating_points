@@ -24,10 +24,11 @@ function Controls() {
   // @ts-ignore
   return <orbitControls ref={ref} args={[camera, gl.domElement]} />;
 }
-export const FiberScene = (props: ContainerProps) => {
+export const FiberScene = (props: ContainerProps & { controls?: boolean }) => {
+  const { controls, ...rest } = props;
   return (
-    <Canvas {...props}>
-      <Controls />
+    <Canvas {...rest}>
+      {controls && <Controls />}
       {props.children}
     </Canvas>
   );

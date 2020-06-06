@@ -5,14 +5,10 @@ import sum from 'lodash/sum';
 import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
-import { scaleMidi, BaseConfig, defaultConfig } from './mixer';
+import { scaleMidi, defaultConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 import { api } from '../lib/store';
 const renderSpeed = 1000;
-
-export interface ChaosConfig extends BaseConfig {
-  contents: 'chaos';
-}
 
 const Shader = {
   vertexShader: `

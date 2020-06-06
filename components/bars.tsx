@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import Mixer, { BaseConfig, Config, defaultConfig } from './mixer';
+import Mixer, { Config, defaultConfig } from './mixer';
 import * as THREE from 'three';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ReactThreeFiber, useFrame } from 'react-three-fiber';
@@ -69,10 +69,6 @@ export const BarsShader = {
   `,
 };
 
-export interface BarsConfig extends BaseConfig {
-  contents: 'bars';
-}
-
 const color = 'cyan';
 export const Bars = React.memo(({ config }: { config: Config }) => {
   const meshRef = useRef<MeshLine>();
@@ -98,7 +94,7 @@ export const Bars = React.memo(({ config }: { config: Config }) => {
 export default () => {
   const [started, start] = useState(false);
 
-  const config: BarsConfig = {
+  const config: Config = {
     ...defaultConfig,
     audioEnabled: true,
     zoomThreshold: 2,

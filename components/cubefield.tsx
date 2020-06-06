@@ -35,7 +35,7 @@ const newBox = (
   creationTime,
 });
 
-const CubeDraw = () => {
+export const CubeField = () => {
   const [boxes, setBoxes] = useState<JSX.Element[]>([]);
   const { clock, camera } = useThree();
 
@@ -71,7 +71,7 @@ export default () => {
         gl={{ antialias: true }}
         camera={{ position: [0, 0, 300], far: 10000 }}
       >
-        <CubeDraw />
+        <CubeField />
       </Canvas>
     </Page>
   );

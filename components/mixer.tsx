@@ -12,14 +12,15 @@ import DatGui, {
   DatNumberProps,
 } from 'react-dat-gui';
 import { Effects } from './effects';
-import { Shapes, ChaosConfig } from './geometric_chaos';
+import { Shapes } from './geometric_chaos';
 import { SpiroContents, SpiroControls, SpiroConfig } from './spiro';
-import { Dusen, DusenConfig } from './dusen';
+import { Dusen } from './dusen';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
 import { mean } from 'lodash';
-import { BarsConfig, Bars } from './bars';
+import { Bars } from './bars';
 import { api } from '../lib/store';
+import { CubeField } from './cubefield';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -49,7 +50,15 @@ export interface BaseConfig extends Spectrum {
   volumeScaler: number;
 }
 
-export type Config = SpiroConfig | ChaosConfig | DusenConfig | BarsConfig;
+const scenes = ['spiro', 'chaos', 'dusen', 'bars', 'cubefield'];
+
+export type Config = BaseConfig &
+  (
+    | SpiroConfig
+    | {
+        contents: 'bars' | 'chaos' | 'dusen' | 'cubefield';
+      }
+  );
 
 export const defaultConfig = {
   trails: 119,
@@ -257,11 +266,7 @@ const ControlPanel = <T extends Config>({
         ]}
       />
       <DatBoolean path="color" label="Color" />
-      <DatSelect
-        path="contents"
-        label="Contents"
-        options={['spiro', 'chaos', 'dusen', 'bars']}
-      />
+      <DatSelect path="contents" label="Contents" options={scenes} />
       <SceneControls config={config} onUpdate={onUpdate} />
       <DatButton
         onClick={() => {
@@ -295,8 +300,12 @@ const SceneContents = ({ config }: { config: Config }) => {
     return <Dusen noiseAmplitude={config.noiseAmplitude} />;
   } else if (config.contents === 'bars') {
     return <Bars config={config} />;
-  } else {
+  } else if (config.contents === 'cubefield') {
+    return <CubeField />;
+  } else if (config.contents === 'chaos') {
     return <Shapes amplitude={config.noiseAmplitude * 1000} />;
+  } else {
+    throw new Error();
   }
 };
 
@@ -375,6 +384,7 @@ const Mixer = <T extends Config>(props: { config: T }) => {
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
         gl={{ antialias: true }}
+        controls={config.contents !== 'cubefield'}
       >
         <Scene config={config} setConfig={setConfig} />
       </FiberScene>
