@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     'prefer-destructuring': 2,
+    'react/prop-types': 'off',
     '@typescript-eslint/no-unused-vars': [
       // Allow unused args/vars to be marked with an underscore
       'error',
