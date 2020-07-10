@@ -21,20 +21,6 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   );
 };
 
-const newBox = (
-  intersection: [number, number, number],
-  creationTime: number,
-): BoxData => ({
-  position: intersection,
-  color: Math.random() * 0xffffff,
-  rotation: [
-    Math.random() * Math.PI * 2,
-    Math.random() * Math.PI * 2,
-    Math.random() * Math.PI * 2,
-  ],
-  creationTime,
-});
-
 export const CubeField = () => {
   const [boxes, setBoxes] = useState<JSX.Element[]>([]);
   const { clock, camera } = useThree();
@@ -48,7 +34,14 @@ export const CubeField = () => {
     newBoxes[i] = (
       <Box
         key={i}
-        {...newBox([x, y, camera.position.z - 1000], -clock.elapsedTime)}
+        position={[x, y, camera.position.z - 1000]}
+        color={Math.random() * 0xffffff}
+        rotation={[
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2,
+        ]}
+        creationTime={-clock.elapsedTime}
       />
     );
 
