@@ -1,11 +1,16 @@
 import React, { useRef } from 'react';
-import Page from './page';
-import { useFrame, Canvas } from 'react-three-fiber';
-import { ShaderMaterial } from 'three';
+import { useFrame } from 'react-three-fiber';
+import { Vector3, ShaderMaterial } from 'three';
+import Mixer, { defaultConfig, Config, scaleMidi, BaseConfig } from './mixer';
 
-const Sketch = () => {
-  const arrayLength = 1000;
+export interface SortConfig extends BaseConfig {
+  contents: 'sort';
+  sortMode: 'sort' | 'random';
+}
 
+export const Sort = ({ config }: { config: SortConfig }) => {
+  const { color, noiseAmplitude, sortMode } = config;
+  const arrayLength = Math.floor(scaleMidi(noiseAmplitude, 1, 500));
   const shaderRef = useRef<ShaderMaterial>();
 
   const randData = () =>
@@ -34,21 +39,22 @@ const Sketch = () => {
   uniform int arrayLength;
   uniform float time;
   uniform float stripes[${arrayLength}];
+  uniform vec3 colors[${arrayLength}];
 
   varying vec2 vUv;
 
   void main()
   {
-      float color;
+      vec3 color;
       int i = int(vUv.x*float(arrayLength));
 
       for (int k = 0; k < arrayLength; ++k) {
         if (i == k)
-           color = vUv.y/stripes[k] * step(vUv.y, stripes[k]);
+           color = vUv.y/stripes[k] * colors[k] * step(vUv.y, stripes[k]);
       }
 
 
-      gl_FragColor = vec4(vec3(color), 1.0);
+      gl_FragColor = vec4(color, 1.0);
   }
       `,
 
@@ -56,30 +62,50 @@ const Sketch = () => {
       time: { value: 0.0 },
       stripes: { value: randData() },
       arrayLength: { value: arrayLength },
+      colors: {
+        value: Array(arrayLength)
+          .fill(undefined)
+          .map(() =>
+            color
+              ? // ? new Vector3(Math.random(), Math.random(), Math.random())
+                Math.random() > 0.5
+                ? new Vector3(1, 0, 0)
+                : new Vector3(0, 0, 1)
+              : new Vector3(1, 1, 1),
+          ),
+      },
     },
   };
 
   let index = 0;
-
   useFrame(() => {
-    if (index >= arrayLength) {
-      shaderRef.current!.uniforms.stripes.value = randData();
-      index = 0;
-    }
     const currentStripes = shaderRef.current!.uniforms.stripes.value;
-    const oldValue = currentStripes[index];
-    const subset = currentStripes.slice(index);
-    const minValue = Math.min(...subset);
-    const minIndex = currentStripes.indexOf(minValue);
-    currentStripes[index] = minValue;
-    currentStripes[minIndex] = oldValue;
-    index++;
+
+    if (sortMode === 'sort') {
+      if (index >= arrayLength) {
+        shaderRef.current!.uniforms.stripes.value = randData();
+        index = 0;
+      }
+      const oldValue = currentStripes[index];
+      const subset = currentStripes.slice(index);
+      const minValue = Math.min(...subset);
+      const minIndex = currentStripes.indexOf(minValue);
+      currentStripes[index] = minValue;
+      currentStripes[minIndex] = oldValue;
+      index++;
+    } else if (sortMode === 'random') {
+      const indexOne = Math.floor(Math.random() * arrayLength);
+      const indexTwo = Math.floor(Math.random() * arrayLength);
+      const valueOne = currentStripes[indexOne];
+      const valueTwo = currentStripes[indexTwo];
+      currentStripes[indexOne] = valueTwo;
+      currentStripes[indexTwo] = valueOne;
+    }
   });
 
-  console.log('rendering');
   return (
     <>
-      <mesh position={[0, 0, 0]}>
+      <mesh position={[0, 0, -600]}>
         <planeGeometry args={[1000, 1000]} attach="geometry" />
         <shaderMaterial ref={shaderRef} args={[Shader]} attach="material" />
       </mesh>
@@ -88,15 +114,14 @@ const Sketch = () => {
 };
 
 export default () => {
-  return (
-    <Page>
-      <Canvas
-        gl2
-        gl={{ antialias: true }}
-        camera={{ position: [0, 0, 1000], far: 10000 }}
-      >
-        <Sketch />
-      </Canvas>
-    </Page>
-  );
+  const config = {
+    ...defaultConfig,
+    contents: 'sort',
+    noiseAmplitude: 50,
+    zoomThreshold: 1,
+    trails: 115,
+    color: true,
+    sortMode: 'sort',
+  } as const;
+  return <Mixer config={config} />;
 };

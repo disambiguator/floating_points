@@ -21,6 +21,7 @@ import { mean } from 'lodash';
 import { Bars } from './bars';
 import { api } from '../lib/store';
 import { CubeField } from './cubefield';
+import { Sort, SortConfig } from './sort';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -50,18 +51,19 @@ export interface BaseConfig extends Spectrum {
   volumeScaler: number;
 }
 
-const scenes = ['spiro', 'chaos', 'dusen', 'bars', 'cubefield'];
+const scenes = ['spiro', 'chaos', 'dusen', 'bars', 'cubefield', 'sort'];
 
 export type Config = BaseConfig &
   (
     | SpiroConfig
+    | SortConfig
     | {
         contents: 'bars' | 'chaos' | 'dusen' | 'cubefield';
       }
   );
 
 export const defaultConfig = {
-  trails: 119,
+  trails: 0,
   noiseAmplitude: 0.0,
   zoomThreshold: 0,
   color: false,
@@ -302,6 +304,8 @@ const SceneContents = ({ config }: { config: Config }) => {
     return <Bars config={config} />;
   } else if (config.contents === 'cubefield') {
     return <CubeField />;
+  } else if (config.contents === 'sort') {
+    return <Sort config={config} />;
   } else if (config.contents === 'chaos') {
     return <Shapes amplitude={config.noiseAmplitude * 1000} />;
   } else {
