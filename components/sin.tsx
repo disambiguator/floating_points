@@ -41,10 +41,10 @@ const Bendy = () => {
   return <P5Wrapper sketch={sketch} />;
 };
 
-export default () => (
-  <>
+export default function SinPage() {
+  return (
     <Page>
       <Bendy />
     </Page>
-  </>
-);
+  );
+}

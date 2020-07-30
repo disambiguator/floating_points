@@ -56,7 +56,7 @@ export const CubeField = () => {
   );
 };
 
-export default () => {
+export default function CubeFieldPage() {
   return (
     <Page>
       <Canvas
@@ -68,4 +68,4 @@ export default () => {
       </Canvas>
     </Page>
   );
-};
+}

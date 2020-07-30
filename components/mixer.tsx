@@ -396,10 +396,10 @@ const Mixer = <T extends Config>(props: { config: T }) => {
   );
 };
 
-export default ({ config }: { config: Config }) => {
+export default function MixerPage({ config }: { config: Config }) {
   return (
     <Page>
       <Mixer config={config} />
     </Page>
   );
-};
+}

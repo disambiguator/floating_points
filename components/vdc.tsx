@@ -26,7 +26,7 @@ varying vec2 vUv;
 uniform float time;
 
 void main()
-{    
+{
     vec2 position = vUv + mod(time/500., 0.005);
     float stripe = mod(position.x, 0.005) < 0.0002 || mod(position.y, 0.005) < 0.0002 ? 0. : 1.;
     gl_FragColor = vec4(vec3(stripe), 1.0);
@@ -98,12 +98,14 @@ const VDC = () => {
   );
 };
 
-export default () => (
-  <Page>
-    <div style={{ height: 1000, width: 1000 }}>
-      <FiberScene camera={{ far: 10000, position: [0, 0, 30], fov: 150 }}>
-        <VDC />
-      </FiberScene>
-    </div>
-  </Page>
-);
+export default function VdcPage() {
+  return (
+    <Page>
+      <div style={{ height: 1000, width: 1000 }}>
+        <FiberScene camera={{ far: 10000, position: [0, 0, 30], fov: 150 }}>
+          <VDC />
+        </FiberScene>
+      </div>
+    </Page>
+  );
+}

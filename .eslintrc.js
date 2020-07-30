@@ -29,7 +29,6 @@ module.exports = {
       },
     ],
     'object-shorthand': ['error', 'always'],
-    'react/display-name': 'off',
   },
   env: {
     browser: true,

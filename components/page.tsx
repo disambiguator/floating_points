@@ -10,10 +10,10 @@ const Container = styled.div`
   color: white;
 `;
 
-export default (props: {
+export default function Page(props: {
   children?: React.ReactNode;
   onClick?: () => void;
-}) => {
+}) {
   return (
     <React.StrictMode>
       <>
@@ -29,4 +29,4 @@ export default (props: {
       </>
     </React.StrictMode>
   );
-};
+}

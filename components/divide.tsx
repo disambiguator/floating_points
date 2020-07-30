@@ -71,8 +71,10 @@ const Divide = () => {
   return <canvas width={width} height={height} ref={ref} />;
 };
 
-export default () => (
-  <Page>
-    <Divide />
-  </Page>
-);
+export default function DividePage() {
+  return (
+    <Page>
+      <Divide />
+    </Page>
+  );
+}

@@ -112,7 +112,11 @@ const Box = ({
   );
 };
 
-export const Shapes = React.memo(({ amplitude }: { amplitude: number }) => {
+export const Shapes = React.memo(function Shapes({
+  amplitude,
+}: {
+  amplitude: number;
+}) {
   const { camera } = useThree();
   const materialRef = useRef<ShaderMaterial>();
   const displacement = useMemo(() => {
@@ -225,7 +229,7 @@ const Spiro = () => {
   );
 };
 
-export default () => {
+export default function GeoChaosPage() {
   const [started, start] = useState(false);
 
   return (
@@ -233,4 +237,4 @@ export default () => {
       {started ? <Spiro /> : <div>Click to start</div>}
     </Page>
   );
-};
+}

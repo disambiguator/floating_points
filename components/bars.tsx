@@ -70,7 +70,7 @@ export const BarsShader = {
 };
 
 const color = 'cyan';
-export const Bars = React.memo(({ config }: { config: Config }) => {
+export const Bars = React.memo(function Bars({ config }: { config: Config }) {
   const meshRef = useRef<MeshLine>();
   useFrame(() => {
     if (!config.frequencyData) return;
@@ -91,7 +91,7 @@ export const Bars = React.memo(({ config }: { config: Config }) => {
   }, []);
 });
 
-export default () => {
+export default function BarsPage() {
   const [started, start] = useState(false);
 
   const config: Config = {
@@ -108,4 +108,4 @@ export default () => {
       <div>Click to start</div>
     </Page>
   );
-};
+}

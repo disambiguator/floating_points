@@ -120,8 +120,10 @@ const Spiro = ({ width, height }: Dimensions) => {
   return <P5Wrapper sketch={sketch} />;
 };
 
-export default () => (
-  <Page>
-    <Spiro width={window.innerWidth} height={window.innerHeight} />
-  </Page>
-);
+export default function Spiro2DPage() {
+  return (
+    <Page>
+      <Spiro width={window.innerWidth} height={window.innerHeight} />
+    </Page>
+  );
+}

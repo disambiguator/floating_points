@@ -74,7 +74,7 @@ const CubeDraw = () => {
   );
 };
 
-export default () => {
+export default function CubeDrawPage() {
   return (
     <Page>
       <FiberScene
@@ -86,4 +86,4 @@ export default () => {
       </FiberScene>
     </Page>
   );
-};
+}

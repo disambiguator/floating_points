@@ -339,7 +339,7 @@ const HTTF = () => {
   );
 };
 
-export default () => {
+export default function HTTFPage() {
   const [started, start] = useState(false);
 
   return (
@@ -357,4 +357,4 @@ export default () => {
       )}
     </Page>
   );
-};
+}

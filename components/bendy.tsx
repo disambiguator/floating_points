@@ -126,10 +126,10 @@ const Bendy = () => {
   return <FixedSketch sketch={sketch} />;
 };
 
-export default () => (
-  <>
+export default function BendyPage() {
+  return (
     <Page>
       <Bendy />
     </Page>
-  </>
-);
+  );
+}

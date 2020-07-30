@@ -69,8 +69,10 @@ const Scatter = ({ width, height }: Dimensions) => {
   return <canvas width={width} height={height} ref={ref} />;
 };
 
-export default () => (
-  <Page>
-    <Scatter width={window.innerWidth} height={window.innerHeight} />
-  </Page>
-);
+export default function WashPage() {
+  return (
+    <Page>
+      <Scatter width={window.innerWidth} height={window.innerHeight} />
+    </Page>
+  );
+}

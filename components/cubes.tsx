@@ -90,7 +90,7 @@ const Cubes = () => {
   );
 };
 
-export default () => {
+export default function CubesPage() {
   return (
     <Page>
       <div style={{ height: 400, width: 400 }}>
@@ -105,4 +105,4 @@ export default () => {
       </div>
     </Page>
   );
-};
+}
