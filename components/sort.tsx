@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { Vector3, ShaderMaterial } from 'three';
-import Mixer, { defaultConfig, Config, scaleMidi, BaseConfig } from './mixer';
+import Mixer, { defaultConfig, scaleMidi, BaseConfig } from './mixer';
 
 export interface SortConfig extends BaseConfig {
   contents: 'sort';
