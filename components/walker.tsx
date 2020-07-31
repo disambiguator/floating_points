@@ -40,7 +40,7 @@ const Bendy = () => {
       .fill(undefined)
       .map(() => newWalker());
 
-    const weight = 10;
+    const weight = 50;
     let c = 0;
 
     p.setup = () => {
@@ -61,11 +61,12 @@ const Bendy = () => {
       else c++;
       p.stroke(c, 255, 255);
 
+      const step = 5;
       walkers.forEach((w) => {
         const choiceX = Math.floor(Math.random() * 3) - 1;
         const choiceY = Math.floor(Math.random() * 3) - 1;
-        let newX = w.x + (choiceX * weight) / 2;
-        let newY = w.y + (choiceY * weight) / 2;
+        let newX = w.x + choiceX * step;
+        let newY = w.y + choiceY * step;
 
         let tries = 0;
         while (hasVisited(newX, newY)) {
@@ -79,8 +80,8 @@ const Bendy = () => {
 
           const choiceX = Math.floor(Math.random() * 3) - 1;
           const choiceY = Math.floor(Math.random() * 3) - 1;
-          newX = w.x + (choiceX * weight) / 2;
-          newY = w.y + (choiceY * weight) / 2;
+          newX = w.x + choiceX * step;
+          newY = w.y + choiceY * step;
         }
 
         w.x = newX;
@@ -93,10 +94,10 @@ const Bendy = () => {
   return <FixedSketch sketch={sketch} />;
 };
 
-export default () => (
-  <>
+export default function WalkerPage() {
+  return (
     <Page>
       <Bendy />
     </Page>
-  </>
-);
+  );
+}
