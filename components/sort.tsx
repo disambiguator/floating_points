@@ -113,15 +113,18 @@ export const Sort = ({ config }: { config: SortConfig }) => {
   );
 };
 
-export default () => {
-  const config = {
-    ...defaultConfig,
-    contents: 'sort',
-    noiseAmplitude: 50,
-    zoomThreshold: 1,
-    trails: 115,
-    color: true,
-    sortMode: 'sort',
-  } as const;
-  return <Mixer config={config} />;
-};
+export default function SortPage() {
+  return (
+    <Mixer
+      config={{
+        ...defaultConfig,
+        contents: 'sort',
+        noiseAmplitude: 50,
+        zoomThreshold: 1,
+        trails: 115,
+        color: true,
+        sortMode: 'sort',
+      }}
+    />
+  );
+}

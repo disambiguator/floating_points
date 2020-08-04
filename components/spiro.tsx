@@ -157,7 +157,7 @@ export const SpiroControls = ({
   );
 };
 
-export default () => {
+export default function SpiroPage() {
   const router = useRouter();
   const urlSeeds = router.query.seeds as string | undefined;
 
@@ -167,4 +167,4 @@ export default () => {
     seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
   } as const;
   return <Mixer config={config} />;
-};
+}
