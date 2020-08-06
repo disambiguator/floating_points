@@ -244,29 +244,33 @@ const ControlPanel = <T extends Config>({
         step={1}
       />
       <DatBoolean path="audioEnabled" label="Microphone Audio" />
-      <DatMidi label="Volume" path="volume" />
-      <DatNumber
-        label="Scale"
-        path="volumeScaler"
-        min={0}
-        max={2}
-        step={0.0001}
-      />
-      <DatMidi label="Sub Bass" path="subBass" />
-      <DatMidi label="Bass" path="bass" />
-      <DatMidi label="Midrange" path="midrange" />
-      <DatMidi label="Treble" path="treble" />
-      <DatSelect
-        path="volumeControl"
-        label="Volume Control"
-        options={[
-          undefined,
-          'noiseAmplitude',
-          'trails',
-          'zoomThreshold',
-          'kaleidoscope',
-        ]}
-      />
+      {config.audioEnabled && (
+        <>
+          <DatMidi label="Volume" path="volume" />
+          <DatNumber
+            label="Scale"
+            path="volumeScaler"
+            min={0}
+            max={2}
+            step={0.0001}
+          />
+          <DatMidi label="Sub Bass" path="subBass" />
+          <DatMidi label="Bass" path="bass" />
+          <DatMidi label="Midrange" path="midrange" />
+          <DatMidi label="Treble" path="treble" />
+          <DatSelect
+            path="volumeControl"
+            label="Volume Control"
+            options={[
+              undefined,
+              'noiseAmplitude',
+              'trails',
+              'zoomThreshold',
+              'kaleidoscope',
+            ]}
+          />
+        </>
+      )}
       <DatBoolean path="color" label="Color" />
       <DatSelect path="contents" label="Contents" options={scenes} />
       <SceneControls config={config} onUpdate={onUpdate} />
