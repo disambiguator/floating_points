@@ -22,6 +22,7 @@ import { Bars } from './bars';
 import { api } from '../lib/store';
 import { CubeField } from './cubefield';
 import { Sort, SortConfig } from './sort';
+import { Cloth, ClothConfig, clothControls } from './cloth';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -49,14 +50,24 @@ export interface BaseConfig extends Spectrum {
   kaleidoscope: number;
   volumeControl?: MidiParam;
   volumeScaler: number;
+  CustomEffects: React.ComponentType<{ config: Config }> | null;
 }
 
-const scenes = ['spiro', 'chaos', 'dusen', 'bars', 'cubefield', 'sort'];
+const scenes = [
+  'spiro',
+  'chaos',
+  'cloth',
+  'dusen',
+  'bars',
+  'cubefield',
+  'sort',
+];
 
 export type Config = BaseConfig &
   (
     | SpiroConfig
     | SortConfig
+    | ClothConfig
     | {
         contents: 'bars' | 'chaos' | 'dusen' | 'cubefield';
       }
@@ -78,6 +89,7 @@ export const defaultConfig = {
   midrange: 0,
   treble: 0,
   frequencyData: [],
+  CustomEffects: null,
 };
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
@@ -145,7 +157,7 @@ const analyseSpectrum = (audio: Audio): Spectrum => {
   };
 };
 
-const SceneControls = ({
+const sceneControls = ({
   config,
   onUpdate,
 }: {
@@ -154,6 +166,8 @@ const SceneControls = ({
 }) => {
   if (config.contents === 'spiro') {
     return <SpiroControls onUpdate={onUpdate} />;
+  } else if (config.contents === 'cloth') {
+    return clothControls();
   } else {
     return null;
   }
@@ -207,7 +221,7 @@ export const Controls = <T extends Config>({
   return poppedOut ? <NewWindow>{controlPanel}</NewWindow> : controlPanel;
 };
 
-const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
+export const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
   <DatNumber {...props} min={0} step={1} max={127} />
 );
 
@@ -273,7 +287,7 @@ const ControlPanel = <T extends Config>({
       )}
       <DatBoolean path="color" label="Color" />
       <DatSelect path="contents" label="Contents" options={scenes} />
-      <SceneControls config={config} onUpdate={onUpdate} />
+      {sceneControls({ config, onUpdate })}
       <DatButton
         onClick={() => {
           setPoppedOut(!poppedOut);
@@ -310,6 +324,8 @@ const SceneContents = ({ config }: { config: Config }) => {
     return <CubeField />;
   } else if (config.contents === 'sort') {
     return <Sort config={config} />;
+  } else if (config.contents === 'cloth') {
+    return <Cloth config={config} />;
   } else if (config.contents === 'chaos') {
     return <Shapes amplitude={config.noiseAmplitude * 1000} />;
   } else {

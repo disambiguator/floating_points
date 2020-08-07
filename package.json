@@ -41,6 +41,7 @@
   "dependencies": {
     "lodash": "^4.17.19",
     "next": "^9.5.1",
+    "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
     "react": "^16.13.1",
     "react-dat-gui": "github:disambiguator/react-dat-gui",

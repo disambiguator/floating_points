@@ -13,7 +13,6 @@ import ZoomShader from '../lib/shaders/zoom';
 import React, { useRef, useEffect } from 'react';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import { scaleMidi, Config } from './mixer';
-import { BarsShader } from './bars';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -39,7 +38,7 @@ declare global {
 export const Effects = ({ config }: { config: Config }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const { trails } = config;
+  const { trails, CustomEffects } = config;
 
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
@@ -52,12 +51,14 @@ export const Effects = ({ config }: { config: Config }) => {
   return (
     <effectComposer ref={composer} args={[gl]}>
       <renderPass attachArray="passes" scene={scene} camera={camera} />
-      <afterimagePass
-        attachArray="passes"
-        args={[config.contents === 'bars' ? BarsShader : ZoomShader]}
-        uniforms-damp-value={scaleMidi(trails, 0, 1)}
-        uniforms-zoom-value={scaleMidi(config.zoomThreshold, 0, 0.3)}
-      />
+      {!['bars', 'cloth'].includes(config.contents) && (
+        <afterimagePass
+          attachArray="passes"
+          args={[ZoomShader]}
+          uniforms-damp-value={scaleMidi(trails, 0, 1)}
+          uniforms-zoom-value={scaleMidi(config.zoomThreshold, 0, 0.3)}
+        />
+      )}
       {config.kaleidoscope !== 0 ? (
         <shaderPass
           attachArray="passes"
@@ -66,6 +67,7 @@ export const Effects = ({ config }: { config: Config }) => {
           uniforms-numSides-value={config.kaleidoscope}
         />
       ) : null}
+      {CustomEffects && <CustomEffects config={config} />}
     </effectComposer>
   );
 };
