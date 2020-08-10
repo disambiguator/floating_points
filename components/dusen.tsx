@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useThree, useFrame } from 'react-three-fiber';
-import Mixer, { scaleMidi, defaultConfig, Config } from './mixer';
+import Mixer, { scaleMidi, defaultConfig, Config, BaseConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 
 const Shader = {
@@ -96,9 +96,7 @@ void main()
   },
 };
 
-export const Dusen = React.memo(function Dusen({
-  noiseAmplitude,
-}: Pick<Config, 'noiseAmplitude'>) {
+const Dusen = React.memo(function Dusen({ config }: { config: BaseConfig }) {
   const { aspect, size, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
 
@@ -114,16 +112,25 @@ export const Dusen = React.memo(function Dusen({
         args={[Shader]}
         attach="material"
         uniforms-aspect-value={aspect}
-        uniforms-radius-value={scaleMidi(noiseAmplitude, 0, 1)}
+        uniforms-radius-value={scaleMidi(config.noiseAmplitude, 0, 1)}
       />
     </mesh>
   );
 });
 
+export const dusenConfig = {
+  params: { name: 'dusen' as const },
+  Contents: Dusen,
+};
+
 export default function DusenPage() {
-  const config: Config = {
-    ...defaultConfig,
-    contents: 'dusen',
+  const config: Config<unknown> = {
+    ...dusenConfig,
+    params: {
+      ...defaultConfig,
+      ...dusenConfig.params,
+      noiseAmplitude: 27,
+    },
   };
   return <Mixer config={config} />;
 }

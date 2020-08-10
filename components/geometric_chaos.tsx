@@ -5,7 +5,7 @@ import sum from 'lodash/sum';
 import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
-import { scaleMidi, defaultConfig } from './mixer';
+import { scaleMidi, defaultConfig, BaseConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 import { api } from '../lib/store';
 const renderSpeed = 1000;
@@ -113,9 +113,9 @@ const Box = ({
 };
 
 export const Shapes = React.memo(function Shapes({
-  amplitude,
+  config,
 }: {
-  amplitude: number;
+  config: BaseConfig;
 }) {
   const { camera } = useThree();
   const materialRef = useRef<ShaderMaterial>();
@@ -126,6 +126,8 @@ export const Shapes = React.memo(function Shapes({
     }
     return d;
   }, []);
+
+  const amplitude = config.noiseAmplitude * 1000;
 
   const material = useMemo(
     () => (
@@ -207,13 +209,14 @@ const Scene = () => {
   const config = {
     ...defaultConfig,
     kaleidoscope: 5,
-    contents: 'chaos',
+    name: 'chaos',
+    noiseAmplitude: amplitude,
   } as const;
 
   return (
     <>
-      <Shapes amplitude={amplitude} />
-      <Effects config={config} />
+      <Shapes config={config} />
+      <Effects params={config} />
     </>
   );
 };
@@ -227,6 +230,11 @@ const Spiro = () => {
       <Scene />
     </FiberScene>
   );
+};
+
+export const chaosConfig = {
+  params: { name: 'chaos' as const },
+  Contents: Shapes,
 };
 
 export default function GeoChaosPage() {

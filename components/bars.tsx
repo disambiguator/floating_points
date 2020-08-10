@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import Mixer, { Config, defaultConfig } from './mixer';
+import Mixer, { Config, defaultConfig, BaseConfig, scaleMidi } from './mixer';
 import * as THREE from 'three';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ReactThreeFiber, useFrame } from 'react-three-fiber';
@@ -24,7 +24,16 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-export const BarsShader = {
+const Effects = ({ params }: { params: BaseConfig }) => (
+  <afterimagePass
+    attachArray="passes"
+    args={[BarsShader]}
+    uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
+    uniforms-zoom-value={scaleMidi(params.zoomThreshold, 0, 0.3)}
+  />
+);
+
+const BarsShader = {
   uniforms: {
     damp: { value: 0.96 },
     zoom: { value: 0.01 },
@@ -70,7 +79,7 @@ export const BarsShader = {
 };
 
 const color = 'cyan';
-export const Bars = React.memo(function Bars({ config }: { config: Config }) {
+const Bars = React.memo(function Bars({ config }: { config: BaseConfig }) {
   const meshRef = useRef<MeshLine>();
   useFrame(() => {
     if (!config.frequencyData) return;
@@ -91,15 +100,26 @@ export const Bars = React.memo(function Bars({ config }: { config: Config }) {
   }, []);
 });
 
+export const barsConfig = {
+  Contents: Bars,
+  CustomEffects: Effects,
+  params: {
+    name: 'bars',
+  },
+};
+
 export default function BarsPage() {
   const [started, start] = useState(false);
 
-  const config: Config = {
-    ...defaultConfig,
-    audioEnabled: true,
-    zoomThreshold: 2,
-    trails: 125,
-    contents: 'bars',
+  const config: Config<unknown> = {
+    ...barsConfig,
+    params: {
+      ...defaultConfig,
+      ...barsConfig.params,
+      audioEnabled: true,
+      zoomThreshold: 2,
+      trails: 125,
+    },
   };
   return started ? (
     <Mixer config={config} />

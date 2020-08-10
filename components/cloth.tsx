@@ -74,17 +74,16 @@ const BarsShader = {
   `,
 };
 
-export interface ClothConfig extends BaseConfig {
-  contents: 'cloth';
+type ClothParams = {
   lineWidth: number;
   speed: number;
-}
+};
 
 const color = 'cyan';
-export const Cloth = React.memo(function Bars({
+const Cloth = React.memo(function Bars({
   config,
 }: {
-  config: ClothConfig;
+  config: ClothParams & BaseConfig;
 }) {
   const meshRef = useRef<MeshLine>();
   const materialRef = useRef<MeshLineMaterial>();
@@ -123,31 +122,41 @@ export const Cloth = React.memo(function Bars({
   );
 });
 
-export const clothControls = () => (
-  <>
-    <DatMidi label="Line width" path="lineWidth" />
-    <DatMidi label="Speed" path="speed" />
-  </>
-);
+export const clothControls = () => [
+  // eslint-disable-next-line react/jsx-key
+  <DatMidi label="Line width" path="lineWidth" />,
+  // eslint-disable-next-line react/jsx-key
+  <DatMidi label="Speed" path="speed" />,
+];
 
-const Effects = ({ config }: { config: Config }) => (
+const Effects = ({ params }: { params: ClothParams & BaseConfig }) => (
   <afterimagePass
     attachArray="passes"
     args={[BarsShader]}
-    uniforms-damp-value={scaleMidi(config.trails, 0, 1)}
-    uniforms-zoom-value={scaleMidi(config.zoomThreshold, 0, 0.02)}
+    uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
+    uniforms-zoom-value={scaleMidi(params.speed, 0, 0.02)}
   />
 );
 
+export const clothConfig = {
+  params: { name: 'cloth' as const },
+  controls: clothControls,
+  CustomEffects: Effects,
+  Contents: Cloth,
+};
+
 export default function BarsPage() {
-  const config: ClothConfig = {
-    ...defaultConfig,
-    zoomThreshold: 57,
-    noiseAmplitude: 100,
-    trails: 125,
-    contents: 'cloth',
-    lineWidth: 1,
-    CustomEffects: Effects,
+  const config: Config<ClothParams> = {
+    ...clothConfig,
+    params: {
+      ...defaultConfig,
+      ...clothConfig.params,
+      zoomThreshold: 57,
+      noiseAmplitude: 100,
+      trails: 125,
+      lineWidth: 1,
+      speed: 10,
+    },
   };
   return <Mixer config={config} />;
 }

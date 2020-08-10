@@ -3,8 +3,7 @@ import { useFrame } from 'react-three-fiber';
 import { Vector3, ShaderMaterial } from 'three';
 import Mixer, { defaultConfig, scaleMidi, BaseConfig } from './mixer';
 
-export interface SortConfig extends BaseConfig {
-  contents: 'sort';
+interface SortConfig extends BaseConfig {
   sortMode: 'sort' | 'random';
 }
 
@@ -113,17 +112,25 @@ export const Sort = ({ config }: { config: SortConfig }) => {
   );
 };
 
+export const sortConfig = {
+  params: { name: 'sort' as const },
+  Contents: Sort,
+};
+
 export default function SortPage() {
   return (
     <Mixer
       config={{
-        ...defaultConfig,
-        contents: 'sort',
-        noiseAmplitude: 50,
-        zoomThreshold: 1,
-        trails: 115,
-        color: true,
-        sortMode: 'sort',
+        ...sortConfig,
+        params: {
+          ...defaultConfig,
+          ...sortConfig.params,
+          noiseAmplitude: 50,
+          zoomThreshold: 1,
+          trails: 115,
+          color: true,
+          sortMode: 'sort',
+        },
       }}
     />
   );

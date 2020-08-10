@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
-import Page from './page';
-import { useThree, useFrame, Canvas } from 'react-three-fiber';
+import { useThree, useFrame } from 'react-three-fiber';
 import { BoxData } from './cubedraw';
+import MixerPage, { Config, defaultConfig } from './mixer';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
@@ -56,16 +56,18 @@ export const CubeField = () => {
   );
 };
 
-export default function CubeFieldPage() {
-  return (
-    <Page>
-      <Canvas
-        gl2
-        gl={{ antialias: true }}
-        camera={{ position: [0, 0, 300], far: 10000 }}
-      >
-        <CubeField />
-      </Canvas>
-    </Page>
-  );
+export const cubefieldConfig = {
+  params: { name: 'cubefield' as const },
+  Contents: CubeField,
+};
+
+export default function DusenPage() {
+  const config: Config<unknown> = {
+    ...cubefieldConfig,
+    params: {
+      ...defaultConfig,
+      ...cubefieldConfig.params,
+    },
+  };
+  return <MixerPage config={config} />;
 }

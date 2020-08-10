@@ -5,7 +5,7 @@ import React from 'react';
 import SpiroShader from '../lib/shaders/spiro';
 import { useThree, useFrame } from 'react-three-fiber';
 import { DatButton } from 'react-dat-gui';
-import Mixer, { scaleMidi, BaseConfig, defaultConfig } from './mixer';
+import Mixer, { scaleMidi, BaseConfig, defaultConfig, Config } from './mixer';
 import { useRouter } from 'next/router';
 import { api } from '../lib/store';
 
@@ -59,11 +59,14 @@ function generateVertices(positions: Seed[]) {
 
 export const initPositions = () => [randPosition(), randPosition()];
 
-interface SpirographProps {
+interface SpiroParams {
   seeds?: Seed[];
-  config: SpiroConfig;
 }
-export const SpiroContents = ({ config }: SpirographProps) => {
+export const SpiroContents = ({
+  config,
+}: {
+  config: SpiroParams & BaseConfig;
+}) => {
   const { clock } = useThree();
   const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
@@ -130,21 +133,13 @@ export const SpiroContents = ({ config }: SpirographProps) => {
   );
 };
 
-interface SceneProps {
-  config: SpiroConfig;
-}
-
-export interface SpiroConfig extends BaseConfig {
-  contents: 'spiro';
-  seeds: Seed[];
-}
-
-export const SpiroControls = ({
+const spiroControls = ({
   onUpdate,
 }: {
-  onUpdate: (newData: Partial<SpiroConfig>) => void;
+  onUpdate: (newData: Partial<SpiroParams & BaseConfig>) => void;
 }) => {
-  return (
+  return [
+    // eslint-disable-next-line react/jsx-key
     <DatButton
       onClick={() => {
         const newSeeds = initPositions();
@@ -153,18 +148,27 @@ export const SpiroControls = ({
         window.history.pushState('', '', url);
       }}
       label="New Positions"
-    />
-  );
+    />,
+  ];
+};
+
+export const spiroConfig = {
+  Contents: SpiroContents,
+  controls: spiroControls,
+  params: { name: 'spiro' as const },
 };
 
 export default function SpiroPage() {
   const router = useRouter();
   const urlSeeds = router.query.seeds as string | undefined;
 
-  const config = {
-    ...defaultConfig,
-    contents: 'spiro',
-    seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
-  } as const;
+  const config: Config<SpiroParams> = {
+    ...spiroConfig,
+    params: {
+      ...defaultConfig,
+      ...spiroConfig.params,
+      seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
+    },
+  };
   return <Mixer config={config} />;
 }

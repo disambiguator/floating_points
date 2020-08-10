@@ -12,7 +12,7 @@ import { AfterimagePass } from './AfterimagePass';
 import ZoomShader from '../lib/shaders/zoom';
 import React, { useRef, useEffect } from 'react';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
-import { scaleMidi, Config } from './mixer';
+import { BaseConfig, CustomEffectsType, scaleMidi } from './mixer';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -35,10 +35,15 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-export const Effects = ({ config }: { config: Config }) => {
+export const Effects = <T extends BaseConfig>({
+  params,
+  CustomEffects,
+}: {
+  params: T;
+  CustomEffects?: CustomEffectsType<T>;
+}) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const { trails, CustomEffects } = config;
 
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
@@ -51,23 +56,23 @@ export const Effects = ({ config }: { config: Config }) => {
   return (
     <effectComposer ref={composer} args={[gl]}>
       <renderPass attachArray="passes" scene={scene} camera={camera} />
-      {!['bars', 'cloth'].includes(config.contents) && (
+      {!['bars', 'cloth'].includes(params.name) && (
         <afterimagePass
           attachArray="passes"
           args={[ZoomShader]}
-          uniforms-damp-value={scaleMidi(trails, 0, 1)}
-          uniforms-zoom-value={scaleMidi(config.zoomThreshold, 0, 0.3)}
+          uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
+          uniforms-zoom-value={scaleMidi(params.zoomThreshold, 0, 0.3)}
         />
       )}
-      {config.kaleidoscope !== 0 ? (
+      {params.kaleidoscope !== 0 ? (
         <shaderPass
           attachArray="passes"
           args={[KaleidoscopeShader]}
           uniforms-aspect-value={aspect}
-          uniforms-numSides-value={config.kaleidoscope}
+          uniforms-numSides-value={params.kaleidoscope}
         />
       ) : null}
-      {CustomEffects && <CustomEffects config={config} />}
+      {CustomEffects && <CustomEffects params={params} />}
     </effectComposer>
   );
 };
