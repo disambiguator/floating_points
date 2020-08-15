@@ -88,7 +88,7 @@ const Cloth = React.memo(function Bars({
   const meshRef = useRef<MeshLine>();
   const materialRef = useRef<MeshLineMaterial>();
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
-  const length = Math.floor(scaleMidi(config.noiseAmplitude, 1, 2000));
+  const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
   useFrame(({ clock, size }) => {
     const mesh = meshRef.current!;
     mesh.vertices = new Array(length)
@@ -97,16 +97,14 @@ const Cloth = React.memo(function Bars({
         (f, i) =>
           new THREE.Vector3(
             ((i * size.width) / length - size.width / 2) * 2,
-            noise2D(i * 0.01, clock.elapsedTime) * 100,
+            noise2D(i * 0.01, clock.elapsedTime) *
+              scaleMidi(config.noiseAmplitude, 1, 500),
             0,
           ),
       );
-    // materialRef.current!.color.setHex(String(Math.random() * 0xffffff * 0.8));
-    // materialRef.current!.color = new THREE.Color(
-    //   0,
-    //   0.5 + 0.5 * Math.sin((3 * clock.elapsedTime) % Math.PI),
-    //   0.5 + 0.5 * Math.sin((3 * clock.elapsedTime) % Math.PI),
-    // );
+    if (config.color) {
+      materialRef.current!.color.setHex(String(Math.random() * 0xffffff));
+    }
   });
 
   return (
@@ -134,7 +132,7 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => (
     attachArray="passes"
     args={[BarsShader]}
     uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
-    uniforms-zoom-value={scaleMidi(params.speed, 0, 0.02)}
+    uniforms-zoom-value={scaleMidi(params.speed, 0, 0.1)}
   />
 );
 

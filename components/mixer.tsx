@@ -269,6 +269,8 @@ const ControlPanel = <T extends BaseConfig>({
             'trails',
             'zoomThreshold',
             'kaleidoscope',
+            'speed',
+            'lineWidth',
           ]}
           /* eslint-enable react/jsx-key */
         />,
