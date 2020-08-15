@@ -1,13 +1,7 @@
 import React from 'react';
-import dynamic from 'next/dynamic';
 import Page from './page';
-import { P5WrapperComponent } from '../lib/types';
 import * as p5 from 'p5';
-
-const P5Wrapper: P5WrapperComponent = dynamic(
-  () => import('react-p5-wrapper'),
-  { ssr: false },
-);
+import P5Wrapper from 'react-p5-wrapper';
 
 const Bendy = () => {
   const sketch = (p: p5) => {
