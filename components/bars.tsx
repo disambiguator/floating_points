@@ -104,7 +104,7 @@ export const barsConfig = {
   Contents: Bars,
   CustomEffects: Effects,
   params: {
-    name: 'bars',
+    name: 'bars' as const,
   },
 };
 
