@@ -48,8 +48,7 @@ export default {
       }
 
     	vec4 texelOld = texture2D( tOld, coord ) * damp;
-
-    	gl_FragColor = max(texelNew, texelOld);
+    	gl_FragColor = length(texelNew) > 0. ? texelNew : texelOld;
     }
   `,
 };

@@ -68,8 +68,7 @@ const BarsShader = {
       coord.y-=zoom;
 
     	vec4 texelOld = texture2D( tOld, coord ) * damp;
-
-    	gl_FragColor = max(texelNew, texelOld);
+    	gl_FragColor = length(texelNew) > 0. ? texelNew : texelOld;
     }
   `,
 };
@@ -151,9 +150,10 @@ export default function BarsPage() {
       ...clothConfig.params,
       zoomThreshold: 57,
       noiseAmplitude: 100,
-      trails: 125,
-      lineWidth: 1,
+      trails: 127,
+      lineWidth: 46,
       speed: 10,
+      color: true,
     },
   };
   return <Mixer config={config} />;
