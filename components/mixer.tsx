@@ -73,7 +73,6 @@ export const defaultConfig = {
   kaleidoscope: 0,
   volume: 0,
   volumeScaler: 1,
-  contents: 'spiro',
   subBass: 0,
   bass: 0,
   midrange: 0,
@@ -235,6 +234,7 @@ const ControlPanel = <T extends BaseConfig>({
 
   return isOpen ? (
     <DatGui data={params} onUpdate={onUpdate} style={{ zIndex: 1 }}>
+      <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
       <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
       <DatMidi path="zoomThreshold" label="Zoom" />
@@ -276,7 +276,6 @@ const ControlPanel = <T extends BaseConfig>({
         />,
       ]}
       <DatBoolean path="color" label="Color" />
-      <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
       {customControls && customControls({ params, onUpdate })}
       <DatButton
         onClick={() => {

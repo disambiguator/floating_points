@@ -33,7 +33,8 @@ declare global {
 const BarsShader = {
   uniforms: {
     damp: { value: 0.96 },
-    zoom: { value: 0.01 },
+    xspeed: { value: 0.01 },
+    yspeed: { value: 0.01 },
     tOld: { value: null },
     tNew: { value: null },
   },
@@ -54,7 +55,8 @@ const BarsShader = {
     precision highp float;
     #endif
     uniform float damp;
-    uniform float zoom;
+    uniform float xspeed;
+    uniform float yspeed;
 
     uniform sampler2D tOld;
     uniform sampler2D tNew;
@@ -65,7 +67,9 @@ const BarsShader = {
     	vec4 texelNew = texture2D( tNew, vUv);
 
       vec2 coord = vUv;
-      coord.y-=zoom;
+      coord.y-=yspeed;
+
+      coord.x=(coord.x - 0.5) * (1. + xspeed) + 0.5;
 
     	vec4 texelOld = texture2D( tOld, coord ) * damp;
     	gl_FragColor = length(texelNew) > 0. ? texelNew : texelOld;
@@ -75,7 +79,8 @@ const BarsShader = {
 
 type ClothParams = {
   lineWidth: number;
-  speed: number;
+  xSpeed: number;
+  ySpeed: number;
 };
 
 const color = 'cyan';
@@ -120,10 +125,11 @@ const Cloth = React.memo(function Bars({
 });
 
 export const clothControls = () => [
-  // eslint-disable-next-line react/jsx-key
+  /* eslint-disable react/jsx-key */
   <DatMidi label="Line width" path="lineWidth" />,
-  // eslint-disable-next-line react/jsx-key
-  <DatMidi label="Speed" path="speed" />,
+  <DatMidi label="xSpeed" path="xSpeed" />,
+  <DatMidi label="ySpeed" path="ySpeed" />,
+  /* eslint-enable react/jsx-key */
 ];
 
 const Effects = ({ params }: { params: ClothParams & BaseConfig }) => (
@@ -131,7 +137,8 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => (
     attachArray="passes"
     args={[BarsShader]}
     uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
-    uniforms-zoom-value={scaleMidi(params.speed, 0, 0.1)}
+    uniforms-xspeed-value={scaleMidi(params.xSpeed, -0.04, 0.04)}
+    uniforms-yspeed-value={scaleMidi(params.ySpeed, -0.04, 0.04)}
   />
 );
 
@@ -152,7 +159,8 @@ export default function BarsPage() {
       noiseAmplitude: 100,
       trails: 127,
       lineWidth: 46,
-      speed: 10,
+      xSpeed: 64,
+      ySpeed: 64,
       color: true,
     },
   };
