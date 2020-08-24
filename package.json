@@ -39,6 +39,7 @@
     "webmidi": "^2.5.1"
   },
   "dependencies": {
+    "drei": "0.0.72",
     "lodash": "^4.17.20",
     "next": "^9.5.2",
     "open-simplex-noise": "^2.4.0-pre4",

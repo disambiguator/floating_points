@@ -6,29 +6,12 @@ import Mixer, {
   BaseConfig,
   DatMidi,
 } from './mixer';
-import * as THREE from 'three';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ReactThreeFiber, useFrame } from 'react-three-fiber';
-import { extend } from 'react-three-fiber';
-// @ts-ignore
-import { MeshLine, MeshLineMaterial } from 'threejs-meshline';
+import { useFrame } from 'react-three-fiber';
 import { makeNoise2D } from 'open-simplex-noise';
-
-extend({ MeshLine, MeshLineMaterial });
-
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      meshLine: ReactThreeFiber.Object3DNode<MeshLine, typeof MeshLine>;
-      meshLineMaterial: ReactThreeFiber.Object3DNode<
-        MeshLineMaterial,
-        typeof MeshLineMaterial
-      >;
-    }
-  }
-}
-/* eslint-enable @typescript-eslint/no-namespace */
+import { Line } from 'drei';
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
 
 const BarsShader = {
   uniforms: {
@@ -89,38 +72,41 @@ const Cloth = React.memo(function Bars({
 }: {
   config: ClothParams & BaseConfig;
 }) {
-  const meshRef = useRef<MeshLine>();
-  const materialRef = useRef<MeshLineMaterial>();
+  const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
   const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
   useFrame(({ clock, size }) => {
-    const mesh = meshRef.current!;
-    mesh.vertices = new Array(length)
-      .fill(undefined)
-      .map(
-        (f, i) =>
-          new THREE.Vector3(
-            ((i * size.width) / length - size.width / 2) * 2,
-            noise2D(i * 0.01, clock.elapsedTime) *
-              scaleMidi(config.noiseAmplitude, 1, 500),
-            0,
-          ),
-      );
+    const line = lineRef.current!;
+    const geometry = line.geometry as LineGeometry;
+    const material = line.material as LineMaterial;
+
+    geometry.setPositions(
+      new Array(length)
+        .fill(undefined)
+        .flatMap((f, i) => [
+          ((i * size.width) / length - size.width / 2) * 2,
+          noise2D(i * 0.01, clock.elapsedTime) *
+            scaleMidi(config.noiseAmplitude, 1, 500),
+          0,
+        ]),
+    );
+
     if (config.color) {
-      materialRef.current!.color.setHex(String(Math.random() * 0xffffff));
+      material.color.setHex(Math.random() * 0xffffff);
     }
   });
 
   return (
-    <mesh position={[0, -800, -1000]}>
-      <meshLine ref={meshRef} attach="geometry" />
-      <meshLineMaterial
-        ref={materialRef}
-        attach="material"
-        lineWidth={scaleMidi(config.lineWidth, 1, 30)}
-        color={color}
-      />
-    </mesh>
+    <Line
+      position={[0, -800, -1000]}
+      ref={lineRef}
+      color={color}
+      linewidth={scaleMidi(config.lineWidth, 1, 30)}
+      points={[
+        [0, 0, 0],
+        [0, 0, 100],
+      ]}
+    />
   );
 });
 
