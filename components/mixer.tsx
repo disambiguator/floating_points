@@ -15,7 +15,7 @@ import { Effects } from './effects';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
 import { mean } from 'lodash';
-import { api } from '../lib/store';
+import { useStore } from '../lib/store';
 import { sceneName, scenes } from './scenes';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
@@ -348,7 +348,7 @@ const Scene = <T extends BaseConfig>({
 
   useFrame(() => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    api.setState({ ray: raycaster.ray });
+    useStore.setState({ ray: raycaster.ray });
 
     if (audio) {
       const spectrum = analyseSpectrum(audio);

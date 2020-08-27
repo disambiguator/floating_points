@@ -7,7 +7,7 @@ import { useThree, useFrame } from 'react-three-fiber';
 import { DatButton } from 'react-dat-gui';
 import Mixer, { scaleMidi, BaseConfig, defaultConfig, Config } from './mixer';
 import { useRouter } from 'next/router';
-import { api } from '../lib/store';
+import { useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -93,7 +93,7 @@ export const SpiroContents = ({
       phi: p.phi + p.phiSpeed * renderSpeed,
     }));
 
-    const { ray } = api.getState();
+    const { ray } = useStore.getState();
 
     const shaderMaterial = shaderMaterialRef.current!;
     shaderMaterial.uniforms.origin.value = ray.origin;

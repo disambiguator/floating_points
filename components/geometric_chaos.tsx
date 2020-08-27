@@ -7,7 +7,7 @@ import { useFrame, useThree } from 'react-three-fiber';
 import { Effects } from './effects';
 import { scaleMidi, defaultConfig, BaseConfig } from './mixer';
 import { ShaderMaterial } from 'three';
-import { api } from '../lib/store';
+import { useStore } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -143,7 +143,7 @@ export const Shapes = React.memo(function Shapes({
 
   useFrame(() => {
     camera.translateX(-0.5);
-    const { ray } = api.getState();
+    const { ray } = useStore.getState();
 
     const material = materialRef.current!;
     material.uniforms.origin.value = ray.origin;
@@ -180,7 +180,7 @@ const Scene = () => {
     setAmplitude((oldAmp) => oldAmp + (value - oldAmp) * 0.8);
 
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    api.setState({ ray: raycaster.ray });
+    useStore.setState({ ray: raycaster.ray });
   });
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { airtablePut } from '../lib/airtable';
 import { Seed } from '../components/spiro';
-import { NowRequest, NowResponse } from '@now/node';
+import { NowRequest, NowResponse } from '@vercel/node';
 
 const addToPositions = (seed: Seed): Promise<PositionResponse> =>
   airtablePut('position', seed);
