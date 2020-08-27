@@ -7,3 +7,4 @@ dist/
 .env
 tsconfig.tsbuildinfo
 .now
+.vscode/*

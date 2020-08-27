@@ -7,6 +7,7 @@ import { extend } from 'react-three-fiber';
 // @ts-ignore
 import { MeshLine, MeshLineMaterial } from 'threejs-meshline';
 import Page from './page';
+import { useStore } from '../lib/store';
 
 extend({ MeshLine, MeshLineMaterial });
 
@@ -79,14 +80,14 @@ const BarsShader = {
 };
 
 const color = 'cyan';
-const Bars = React.memo(function Bars({ config }: { config: BaseConfig }) {
+const Bars = React.memo(function Bars() {
   const meshRef = useRef<MeshLine>();
   useFrame(() => {
-    if (!config.frequencyData) return;
+    const { frequencyData } = useStore.getState().spectrum;
+    if (frequencyData === []) return;
     const mesh = meshRef.current!;
-    mesh.vertices = config.frequencyData.map(
-      (f, i) =>
-        new THREE.Vector3(i * 5 - (config.frequencyData.length * 5) / 2, f, 0),
+    mesh.vertices = frequencyData.map(
+      (f, i) => new THREE.Vector3(i * 5 - (frequencyData.length * 5) / 2, f, 0),
     );
   });
 

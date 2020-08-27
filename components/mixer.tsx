@@ -15,7 +15,7 @@ import { Effects } from './effects';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
 import { mean } from 'lodash';
-import { useStore } from '../lib/store';
+import { State, useStore } from '../lib/store';
 import { sceneName, scenes } from './scenes';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
@@ -26,7 +26,7 @@ interface Audio {
   stream: MediaStream;
 }
 
-interface Spectrum {
+export interface Spectrum {
   subBass: number;
   volume: number;
   bass: number;
@@ -35,7 +35,7 @@ interface Spectrum {
   frequencyData: number[];
 }
 
-export interface BaseConfig extends Spectrum {
+export interface BaseConfig {
   color: boolean;
   zoomThreshold: number;
   audioEnabled: boolean;
@@ -71,13 +71,7 @@ export const defaultConfig = {
   pulseEnabled: false,
   audioEnabled: false,
   kaleidoscope: 0,
-  volume: 0,
   volumeScaler: 1,
-  subBass: 0,
-  bass: 0,
-  midrange: 0,
-  treble: 0,
-  frequencyData: [],
   CustomEffects: null,
 };
 
@@ -224,6 +218,7 @@ const ControlPanel = <T extends BaseConfig>({
   customControls?: CustomControls<T>;
 }) => {
   const [isOpen, setOpen] = useState(true);
+  const spectrum = useStore((state: State) => state.spectrum);
   const onUpdate = (newData: Partial<T>) => {
     if (newData.name && newData.name !== params.name) {
       changeScene(newData.name);
@@ -233,7 +228,11 @@ const ControlPanel = <T extends BaseConfig>({
   };
 
   return isOpen ? (
-    <DatGui data={params} onUpdate={onUpdate} style={{ zIndex: 1 }}>
+    <DatGui
+      data={{ ...params, ...spectrum }}
+      onUpdate={onUpdate}
+      style={{ zIndex: 1 }}
+    >
       <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
       <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
@@ -354,13 +353,14 @@ const Scene = <T extends BaseConfig>({
       const spectrum = analyseSpectrum(audio);
       const { volume } = spectrum;
 
-      const volumeControlledValue = {} as Record<MidiParam, number>;
       if (params.volumeControl) {
+        const volumeControlledValue = {} as Record<MidiParam, number>;
         volumeControlledValue[params.volumeControl] =
           volume * params.volumeScaler;
+        setParams({ ...params, ...volumeControlledValue });
       }
 
-      setParams({ ...params, ...spectrum, ...volumeControlledValue });
+      useStore.setState({ spectrum });
     }
   });
 
