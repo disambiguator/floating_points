@@ -331,6 +331,7 @@ const Scene = <T extends BaseConfig>({
           const source = context.createMediaStreamSource(stream);
           // @ts-ignore
           audio.setNodeSource(source);
+          listener.gain.disconnect();
 
           const analyser = new THREE.AudioAnalyser(audio, 1024);
           setAudio({ analyser, listener, stream });
