@@ -17,6 +17,7 @@ import NewWindow from 'react-new-window';
 import { mean } from 'lodash';
 import { State, useStore } from '../lib/store';
 import { sceneName, scenes } from './scenes';
+import { useRouter } from 'next/router';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -72,7 +73,6 @@ export const defaultConfig = {
   audioEnabled: false,
   kaleidoscope: 0,
   volumeScaler: 1,
-  CustomEffects: null,
 };
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
@@ -373,11 +373,28 @@ const Scene = <T extends BaseConfig>({
 };
 
 const Mixer = <T,>(props: { config: Config<T> }) => {
-  const [config, setConfig] = useState<Config<T>>(props.config);
+  const router = useRouter();
+  let initialProps = props.config;
+  const routerParams = router.query.params as string;
+  if (routerParams) {
+    const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
+    //@ts-ignore
+    initialProps = {
+      ...scenes()[parsedParams.name],
+      params: parsedParams,
+    };
+  }
+  const [config, setConfig] = useState<Config<T>>(initialProps);
   const { params } = config;
   const setParams = (params: Config<T>['params']) => {
     setConfig({ ...config, params });
   };
+
+  useEffect(() => {
+    const url = `/mixer?params=${JSON.stringify(params)}`;
+    window.history.pushState('', '', url);
+  }, [params]);
+
   const changeScene = (name: sceneName) => {
     const newScene = scenes()[name];
     //@ts-ignore
