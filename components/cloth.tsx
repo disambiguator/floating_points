@@ -9,8 +9,6 @@ import Mixer, {
 import { useFrame } from 'react-three-fiber';
 import { makeNoise2D } from 'open-simplex-noise';
 import { Line } from 'drei';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 
 const BarsShader = {
@@ -76,11 +74,9 @@ const Cloth = React.memo(function Bars({
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
   const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
   useFrame(({ clock, size }) => {
-    const line = lineRef.current!;
-    const geometry = line.geometry as LineGeometry;
-    const material = line.material as LineMaterial;
+    const { geometry, material } = lineRef.current!;
 
-    geometry.setPositions(
+    geometry!.setPositions(
       new Array(length)
         .fill(undefined)
         .flatMap((f, i) => [
@@ -92,7 +88,7 @@ const Cloth = React.memo(function Bars({
     );
 
     if (config.color) {
-      material.color.setHex(Math.random() * 0xffffff);
+      material!.color.setHex(Math.random() * 0xffffff);
     }
   });
 
