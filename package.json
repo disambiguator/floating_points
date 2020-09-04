@@ -5,7 +5,7 @@
   "main": ".eslintrc.js",
   "scripts": {
     "lint": "eslint_d . --ext=js,jsx,ts,tsx",
-    "test": "tsc --incremental --outDir /tmp/typescript --noEmit false && npm run lint",
+    "test": "tsc --incremental --outDir /tmp/typescript && npm run lint",
     "build": "next build",
     "start": "next start"
   },
@@ -20,16 +20,16 @@
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
-    "@vercel/node": "^1.8.0",
-    "@types/lodash": "^4.14.160",
-    "@types/node": "^14.6.0",
+    "@types/lodash": "^4.14.161",
+    "@types/node": "^14.6.4",
     "@types/p5": "^0.9.1",
-    "@types/react": "^16.9.48",
-    "@types/styled-components": "^5.1.2",
-    "@typescript-eslint/eslint-plugin": "^3.10.0",
-    "@typescript-eslint/parser": "^3.10.0",
+    "@types/react": "^16.9.49",
+    "@types/styled-components": "^5.1.3",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "@vercel/node": "^1.8.1",
     "babel-plugin-styled-components": "^1.11.1",
-    "eslint": "^7.7.0",
+    "eslint": "^7.8.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.6",
@@ -39,9 +39,9 @@
     "webmidi": "^2.5.1"
   },
   "dependencies": {
-    "drei": "^1.3.0",
+    "drei": "^1.3.2",
     "lodash": "^4.17.20",
-    "next": "^9.5.2",
+    "next": "^9.5.3",
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
     "react": "^16.13.1",
@@ -49,10 +49,10 @@
     "react-dom": "^16.13.1",
     "react-ga": "^3.1.2",
     "react-p5-wrapper": "^2.3.0",
-    "react-three-fiber": "^4.2.20",
+    "react-three-fiber": "^4.2.21",
     "styled-components": "^5.1.1",
-    "three": "^0.120",
+    "three": "^0.120.1",
     "threejs-meshline": "^2.0.11",
-    "zustand": "^3.0"
+    "zustand": "^3.1.0"
   }
 }
