@@ -106,11 +106,10 @@ const Dusen = React.memo(function Dusen({ config }: { config: BaseConfig }) {
 
   return (
     <mesh position={[0, 0, -215]}>
-      <planeGeometry args={[size.width, size.height]} attach="geometry" />
+      <planeGeometry args={[size.width, size.height]} />
       <shaderMaterial
         ref={ref}
         args={[Shader]}
-        attach="material"
         uniforms-aspect-value={aspect}
         uniforms-radius-value={scaleMidi(config.noiseAmplitude, 0, 1)}
       />

@@ -94,8 +94,8 @@ const Bars = React.memo(function Bars() {
   return useMemo(() => {
     return (
       <mesh position={[0, -800, -1000]}>
-        <meshLine ref={meshRef} attach="geometry" />
-        <meshLineMaterial attach="material" lineWidth={10} color={color} />
+        <meshLine ref={meshRef} />
+        <meshLineMaterial lineWidth={10} color={color} />
       </mesh>
     );
   }, []);

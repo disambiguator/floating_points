@@ -15,8 +15,8 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 
   return (
     <mesh ref={meshRef} position={position} rotation={rotation}>
-      <boxGeometry args={[100, 100, 100]} attach="geometry" />
-      <meshLambertMaterial attach="material" color={color} />
+      <boxGeometry args={[100, 100, 100]} />
+      <meshLambertMaterial color={color} />
     </mesh>
   );
 };

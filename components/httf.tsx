@@ -88,8 +88,8 @@ const Box = ({
 
   return (
     <mesh position={position}>
-      <boxGeometry args={[width, height, height]} attach="geometry" />
-      <meshBasicMaterial attach="material">
+      <boxGeometry args={[width, height, height]} />
+      <meshBasicMaterial>
         <canvasTexture ref={canvasTextureRef} attach="map" args={[canvas]} />
       </meshBasicMaterial>
     </mesh>
@@ -346,7 +346,6 @@ export default function HTTFPage() {
     <Page onClick={() => start(true)}>
       {started ? (
         <FiberScene
-          gl2
           gl={{ antialias: true }}
           camera={{ position: [0, 0, 3000], far: 10000 }}
         >

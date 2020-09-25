@@ -107,7 +107,7 @@ export const SpiroContents = ({
 
   return (
     <line>
-      <bufferGeometry attach="geometry">
+      <bufferGeometry>
         <bufferAttribute
           attachObject={['attributes', 'displacement']}
           count={renderSpeed}
@@ -127,7 +127,6 @@ export const SpiroContents = ({
         uniforms-color-value={color}
         uniforms-amplitude-value={scaleMidi(noiseAmplitude, 0, 0.0005)}
         uniforms-time-value={clock.elapsedTime}
-        attach="material"
       />
     </line>
   );

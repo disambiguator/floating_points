@@ -105,8 +105,8 @@ export const Sort = ({ config }: { config: SortConfig }) => {
   return (
     <>
       <mesh position={[0, 0, -600]}>
-        <planeGeometry args={[1000, 1000]} attach="geometry" />
-        <shaderMaterial ref={shaderRef} args={[Shader]} attach="material" />
+        <planeGeometry args={[1000, 1000]} />
+        <shaderMaterial ref={shaderRef} args={[Shader]} />
       </mesh>
     </>
   );

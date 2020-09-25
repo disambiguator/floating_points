@@ -25,10 +25,9 @@ const Cube = ({
     <mesh position={position} rotation={rotation}>
       <boxGeometry
         ref={boxGeometry}
-        attach="geometry"
         args={[sideLength, sideLength, sideLength]}
       />
-      <meshBasicMaterial attach="material" color={0xffffff} vertexColors />
+      <meshBasicMaterial color={0xffffff} vertexColors />
     </mesh>
   );
 };

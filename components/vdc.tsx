@@ -82,17 +82,13 @@ const VDC = () => {
   return (
     <>
       <mesh ref={floorMeshRef} position={[0, -100, 0]}>
-        <planeGeometry args={[10000, 10000]} attach="geometry" />
-        <shaderMaterial
-          ref={floorShaderRef}
-          args={[floorShader]}
-          attach="material"
-        />
+        <planeGeometry args={[10000, 10000]} />
+        <shaderMaterial ref={floorShaderRef} args={[floorShader]} />
       </mesh>
       <mesh ref={wallMeshRef} position={[200, -100, 0]}>
-        <planeGeometry args={[10000, 10000]} attach="geometry" />
+        <planeGeometry args={[10000, 10000]} />
 
-        <meshBasicMaterial ref={wallMaterialRef} attach="material" />
+        <meshBasicMaterial ref={wallMaterialRef} />
       </mesh>
     </>
   );

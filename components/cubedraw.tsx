@@ -21,8 +21,8 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 
   return (
     <mesh ref={meshRef} position={position} rotation={rotation}>
-      <boxGeometry args={[100, 100, 100]} attach="geometry" />
-      <meshLambertMaterial attach="material" color={color} />
+      <boxGeometry args={[100, 100, 100]} />
+      <meshLambertMaterial color={color} />
     </mesh>
   );
 };
@@ -61,12 +61,8 @@ const CubeDraw = () => {
   return (
     <>
       <mesh onPointerMove={addCube} position={[0, 0, 0]}>
-        <planeGeometry args={[1000, 1000]} attach="geometry" />
-        <meshBasicMaterial
-          visible={false}
-          side={THREE.DoubleSide}
-          attach="material"
-        />
+        <planeGeometry args={[1000, 1000]} />
+        <meshBasicMaterial visible={false} side={THREE.DoubleSide} />
       </mesh>
       {boxes}
       <pointLight position={[1000, 100, 1000]} />
@@ -78,7 +74,6 @@ export default function CubeDrawPage() {
   return (
     <Page>
       <FiberScene
-        gl2
         gl={{ antialias: true }}
         camera={{ position: [0, 0, 300], far: 10000 }}
       >

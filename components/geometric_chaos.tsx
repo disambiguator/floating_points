@@ -95,11 +95,7 @@ const Box = ({
 
   return (
     <mesh ref={meshRef}>
-      <boxBufferGeometry
-        attach="geometry"
-        args={[15, 15, 15]}
-        ref={geometryRef}
-      >
+      <boxBufferGeometry args={[15, 15, 15]} ref={geometryRef}>
         <bufferAttribute
           attachObject={['attributes', 'displacement']}
           count={renderSpeed}
@@ -134,7 +130,6 @@ export const Shapes = React.memo(function Shapes({
       <shaderMaterial
         args={[Shader]}
         ref={materialRef}
-        attach="material"
         uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
       />
     ),

@@ -82,10 +82,11 @@ function Scene() {
   const lightRef = useRef<THREE.SpotLight>();
   const shaderRef = useRef<THREE.ShaderMaterial>();
   const noise = makeNoise2D(Date.now());
-  const { clock, camera } = useThree();
+  const { clock } = useThree();
 
   useEffect(() => {
-    const vertices = planeRef.current!.attributes.position.array;
+    const vertices = planeRef.current!.attributes.position
+      .array as Float32Array;
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
         const z = noise(x / 20, y / 20);
@@ -96,8 +97,9 @@ function Scene() {
 
   useFrame(() => {
     i++;
-    const plane = planeRef.current!;
-    const oldVertices = plane.attributes.position.array.slice();
+    const { position } = planeRef.current!.attributes;
+    const vertices = position.array as Float32Array;
+    const oldVertices = vertices.slice();
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
         const z =
@@ -109,10 +111,10 @@ function Scene() {
           console.log({ x, y });
         }
 
-        plane.attributes.position.array[(y * (length + 1) + x) * 3 + 2] = z;
+        vertices[(y * (length + 1) + x) * 3 + 2] = z;
       }
     }
-    plane.attributes.position.needsUpdate = true;
+    position.needsUpdate = true;
     // const light = lightRef.current!;
     // light.position.y =
     //   50 * Math.sin((clock.elapsedTime * Math.PI) / 2 / 2) + 50;
@@ -138,17 +140,12 @@ function Scene() {
         castShadow
         receiveShadow
       >
-        <planeBufferGeometry
-          ref={planeRef}
-          args={[300, 300, length, width]}
-          attach="geometry"
-        />
+        <planeBufferGeometry ref={planeRef} args={[300, 300, length, width]} />
         <shaderMaterial
           ref={shaderRef}
           color={'blue'}
           args={[Shader]}
           side={THREE.DoubleSide}
-          attach="material"
         />
       </mesh>
       <spotLight ref={lightRef} castShadow position={[0, 100, 0]} />
