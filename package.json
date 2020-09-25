@@ -5,7 +5,7 @@
   "main": ".eslintrc.js",
   "scripts": {
     "lint": "eslint_d . --ext=js,jsx,ts,tsx",
-    "test": "tsc --incremental --outDir /tmp/typescript && npm run lint",
+    "test": "tsc --incremental && npm run lint",
     "build": "next build",
     "start": "next start"
   },
