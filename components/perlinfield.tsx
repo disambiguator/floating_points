@@ -85,12 +85,11 @@ function Scene() {
   const { clock } = useThree();
 
   useEffect(() => {
-    const vertices = planeRef.current!.attributes.position
-      .array as Float32Array;
+    const { position } = planeRef.current!.attributes;
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
         const z = noise(x / 20, y / 20);
-        vertices[(y * (length + 1) + x) * 3 + 2] = z * 40;
+        position.setZ(y * (length + 1) + x, z * 40);
       }
     }
   }, []);
@@ -98,20 +97,14 @@ function Scene() {
   useFrame(() => {
     i++;
     const { position } = planeRef.current!.attributes;
-    const vertices = position.array as Float32Array;
-    const oldVertices = vertices.slice();
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
         const z =
-          y === 0
+          y === width
             ? noise(x / 20, (width + i) / 20) * 40
-            : oldVertices[((y - 1) * (length + 1) + x) * 3 + 2];
+            : position.getZ((y + 1) * (length + 1) + x);
 
-        if (z === undefined) {
-          console.log({ x, y });
-        }
-
-        vertices[(y * (length + 1) + x) * 3 + 2] = z;
+        position.setZ(y * (length + 1) + x, z);
       }
     }
     position.needsUpdate = true;
