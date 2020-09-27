@@ -114,32 +114,11 @@ function Scene() {
     shaderRef.current!.uniforms.time.value = clock.elapsedTime;
   });
 
-  // length 2
-  // width 2
-
-  // [0, 1, 2,
-  //   3, 4, 5,
-  //    6, 7, 8]
-
-  //    [6, 7, 8,
-  //     0, 1, 2,
-  //     3, 4, 5]
-
   return (
     <>
-      <mesh
-        position={[0, 0, 0]}
-        rotation={[Math.PI / 2, 0, 0]}
-        castShadow
-        receiveShadow
-      >
+      <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeBufferGeometry ref={planeRef} args={[300, 300, length, width]} />
-        <shaderMaterial
-          ref={shaderRef}
-          color={'blue'}
-          args={[Shader]}
-          side={THREE.DoubleSide}
-        />
+        <shaderMaterial ref={shaderRef} color={'blue'} args={[Shader]} />
       </mesh>
       <spotLight ref={lightRef} castShadow position={[0, 100, 0]} />
     </>
