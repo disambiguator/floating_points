@@ -73,9 +73,13 @@ void main() {
   lights: true,
 };
 
+const length = 100;
+const width = 100;
+const zoom = 15;
+const zoomX = zoom;
+const zoomY = zoom;
+
 function Scene() {
-  const length = 300;
-  const width = 300;
   let i = 0;
 
   const planeRef = useRef<THREE.PlaneBufferGeometry>();
@@ -85,29 +89,35 @@ function Scene() {
   const { clock } = useThree();
 
   useEffect(() => {
-    const { position } = planeRef.current!.attributes;
+    const plane = planeRef.current!;
+    const { position } = plane.attributes;
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
-        const z = noise(x / 20, y / 20);
+        const z = noise((x * zoomX) / length, (y * zoomY) / width);
         position.setZ(y * (length + 1) + x, z * 40);
       }
     }
+    plane.computeVertexNormals();
   }, []);
 
   useFrame(() => {
     i++;
     const { position } = planeRef.current!.attributes;
-    for (let x = 0; x < length + 1; x++) {
-      for (let y = 0; y < width + 1; y++) {
-        const z =
-          y === width
-            ? noise(x / 20, (width + i) / 20) * 40
-            : position.getZ((y + 1) * (length + 1) + x);
+
+    for (let x = 0; x < length - 1; x++) {
+      const z = noise((x * zoomX) / length, ((width + i) * zoomY) / width) * 40;
+      position.setZ(width * (length + 1) + x, z);
+    }
+
+    for (let y = 0; y < width; y++) {
+      for (let x = 0; x < length + 1; x++) {
+        const z = position.getZ((y + 1) * (length + 1) + x);
 
         position.setZ(y * (length + 1) + x, z);
       }
     }
     position.needsUpdate = true;
+    planeRef.current!.computeVertexNormals();
     // const light = lightRef.current!;
     // light.position.y =
     //   50 * Math.sin((clock.elapsedTime * Math.PI) / 2 / 2) + 50;
