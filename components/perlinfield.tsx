@@ -75,7 +75,7 @@ void main() {
 
 const length = 100;
 const width = 100;
-const zoom = 15;
+const zoom = 8;
 const zoomX = zoom;
 const zoomY = zoom;
 
@@ -85,7 +85,14 @@ function Scene() {
   const planeRef = useRef<THREE.PlaneBufferGeometry>();
   const lightRef = useRef<THREE.SpotLight>();
   const shaderRef = useRef<THREE.ShaderMaterial>();
-  const noise = makeNoise2D(Date.now());
+  const noiseFunction = makeNoise2D(Date.now());
+  const noise = (x: number, y: number) => {
+    return (
+      Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 0.15) *
+      100
+    );
+  };
+
   const { clock } = useThree();
 
   useEffect(() => {
@@ -93,8 +100,7 @@ function Scene() {
     const { position } = plane.attributes;
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
-        const z = noise((x * zoomX) / length, (y * zoomY) / width);
-        position.setZ(y * (length + 1) + x, z * 40);
+        position.setZ(y * (length + 1) + x, noise(x, y));
       }
     }
     plane.computeVertexNormals();
@@ -102,11 +108,11 @@ function Scene() {
 
   useFrame(() => {
     i++;
+    shaderRef.current!.uniforms.time.value = clock.elapsedTime;
     const { position } = planeRef.current!.attributes;
 
     for (let x = 0; x < length - 1; x++) {
-      const z = noise((x * zoomX) / length, ((width + i) * zoomY) / width) * 40;
-      position.setZ(width * (length + 1) + x, z);
+      position.setZ(width * (length + 1) + x, noise(x, width + i));
     }
 
     for (let y = 0; y < width; y++) {
@@ -121,16 +127,18 @@ function Scene() {
     // const light = lightRef.current!;
     // light.position.y =
     //   50 * Math.sin((clock.elapsedTime * Math.PI) / 2 / 2) + 50;
-    shaderRef.current!.uniforms.time.value = clock.elapsedTime;
   });
 
   return (
     <>
       <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeBufferGeometry ref={planeRef} args={[300, 300, length, width]} />
+        <planeBufferGeometry
+          ref={planeRef}
+          args={[1000, 1000, length, width]}
+        />
         <shaderMaterial ref={shaderRef} color={'blue'} args={[Shader]} />
       </mesh>
-      <spotLight ref={lightRef} castShadow position={[0, 100, 0]} />
+      <spotLight ref={lightRef} castShadow position={[0, 500, 0]} />
     </>
   );
 }
