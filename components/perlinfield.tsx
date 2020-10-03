@@ -59,7 +59,7 @@ void main() {
 	#include <fog_vertex>
 
   vec3 p = position;
-  // p.z *= sin(time) + 2.;
+  // p.z *= sin(time + p.x/10.) + 2.;
   gl_Position = projectionMatrix *
   modelViewMatrix *
   vec4(p,1.0);
@@ -78,6 +78,10 @@ const width = 100;
 const zoom = 8;
 const zoomX = zoom;
 const zoomY = zoom;
+const speed = 1;
+const planeSize = 1000;
+
+const index = (x: number, y: number) => y * (length + 1) + x;
 
 function Scene() {
   let i = 0;
@@ -100,7 +104,7 @@ function Scene() {
     const { position } = plane.attributes;
     for (let x = 0; x < length + 1; x++) {
       for (let y = 0; y < width + 1; y++) {
-        position.setZ(y * (length + 1) + x, noise(x, y));
+        position.setZ(index(x, y), noise(x, y));
       }
     }
     plane.computeVertexNormals();
@@ -109,24 +113,29 @@ function Scene() {
   useFrame(() => {
     i++;
     shaderRef.current!.uniforms.time.value = clock.elapsedTime;
-    const { position } = planeRef.current!.attributes;
+    const plane = planeRef.current!;
 
-    for (let x = 0; x < length - 1; x++) {
-      position.setZ(width * (length + 1) + x, noise(x, width + i));
-    }
+    plane.translate(0, planeSize / length / speed, 0);
+
+    if (i % speed !== 0) return;
+    const { position } = plane.attributes;
 
     for (let y = 0; y < width; y++) {
       for (let x = 0; x < length + 1; x++) {
-        const z = position.getZ((y + 1) * (length + 1) + x);
-
-        position.setZ(y * (length + 1) + x, z);
+        const z = position.getZ(index(x, y + 1));
+        position.setY(index(x, y), position.getY(index(x, y + 1)));
+        position.setZ(index(x, y), z);
       }
     }
+    for (let x = 0; x < length + 1; x++) {
+      position.setY(
+        index(x, width),
+        position.getY(index(x, width)) - planeSize / length,
+      );
+      position.setZ(index(x, width), noise(x, width + i / speed));
+    }
     position.needsUpdate = true;
-    planeRef.current!.computeVertexNormals();
-    // const light = lightRef.current!;
-    // light.position.y =
-    //   50 * Math.sin((clock.elapsedTime * Math.PI) / 2 / 2) + 50;
+    plane.computeVertexNormals();
   });
 
   return (
@@ -134,7 +143,7 @@ function Scene() {
       <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeBufferGeometry
           ref={planeRef}
-          args={[1000, 1000, length, width]}
+          args={[planeSize, planeSize, length, width]}
         />
         <shaderMaterial ref={shaderRef} color={'blue'} args={[Shader]} />
       </mesh>
@@ -148,7 +157,7 @@ export default function PerlinField() {
     <Container>
       <Canvas
         gl={{ antialias: true }}
-        camera={{ position: [0, 100, 100], far: 10000 }}
+        camera={{ position: [0, 300, 500], far: 10000 }}
         shadowMap={true}
       >
         <Scene />
