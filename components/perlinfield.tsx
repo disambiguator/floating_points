@@ -73,13 +73,14 @@ void main() {
   lights: true,
 };
 
-const length = 100;
-const width = 100;
+const length = 500;
+const width = 500;
 const zoom = 8;
 const zoomX = zoom;
 const zoomY = zoom;
-const speed = 1;
+const speed = 50;
 const planeSize = 1000;
+const t = 20;
 
 const index = (x: number, y: number) => y * (length + 1) + x;
 
@@ -89,6 +90,7 @@ function Scene() {
   const planeRef = useRef<THREE.PlaneBufferGeometry>();
   const lightRef = useRef<THREE.SpotLight>();
   const shaderRef = useRef<THREE.ShaderMaterial>();
+  const meshRef = useRef<THREE.Mesh>();
   const noiseFunction = makeNoise2D(Date.now());
   const noise = (x: number, y: number) => {
     return (
@@ -115,24 +117,30 @@ function Scene() {
     shaderRef.current!.uniforms.time.value = clock.elapsedTime;
     const plane = planeRef.current!;
 
-    plane.translate(0, planeSize / length / speed, 0);
+    meshRef.current!.translateY((t * planeSize) / length / speed);
 
     if (i % speed !== 0) return;
     const { position } = plane.attributes;
 
-    for (let y = 0; y < width; y++) {
+    for (let y = 0; y < width - t + 1; y++) {
       for (let x = 0; x < length + 1; x++) {
-        const z = position.getZ(index(x, y + 1));
-        position.setY(index(x, y), position.getY(index(x, y + 1)));
+        const z = position.getZ(index(x, y + t));
+        position.setY(index(x, y), position.getY(index(x, y + t)));
         position.setZ(index(x, y), z);
       }
     }
-    for (let x = 0; x < length + 1; x++) {
-      position.setY(
-        index(x, width),
-        position.getY(index(x, width)) - planeSize / length,
-      );
-      position.setZ(index(x, width), noise(x, width + i / speed));
+
+    for (let y = 0; y < t; y++) {
+      for (let x = 0; x < length + 1; x++) {
+        position.setY(
+          index(x, width - y),
+          position.getY(index(x, width - y)) - (t * planeSize) / length,
+        );
+        position.setZ(
+          index(x, width - y),
+          noise(x, width + (t * i) / speed - y),
+        );
+      }
     }
     position.needsUpdate = true;
     plane.computeVertexNormals();
@@ -140,14 +148,19 @@ function Scene() {
 
   return (
     <>
-      <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh
+        ref={meshRef}
+        position={[0, 0, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        receiveShadow
+      >
         <planeBufferGeometry
           ref={planeRef}
           args={[planeSize, planeSize, length, width]}
         />
         <shaderMaterial ref={shaderRef} color={'blue'} args={[Shader]} />
       </mesh>
-      <spotLight ref={lightRef} castShadow position={[0, 500, 0]} />
+      <spotLight ref={lightRef} castShadow position={[0, 500, -50]} />
     </>
   );
 }
