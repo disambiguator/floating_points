@@ -1,4 +1,4 @@
-import { OrbitControls } from 'drei';
+import { OrbitControls, Sky } from 'drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from 'react-three-fiber';
 import styled from 'styled-components';
@@ -123,6 +123,7 @@ function Scene() {
 
   return (
     <>
+      <Sky distance={45000} />
       <group ref={groupRef}>{meshes}</group>
       <spotLight ref={lightRef} castShadow position={[0, 500, -50]} />
     </>
