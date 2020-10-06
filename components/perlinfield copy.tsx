@@ -1,0 +1,145 @@
+import { OrbitControls } from 'drei';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Canvas, useFrame } from 'react-three-fiber';
+import styled from 'styled-components';
+import * as THREE from 'three';
+import { makeNoise2D } from 'open-simplex-noise';
+
+const Container = styled.div`
+  height: 100vh;
+  width: 100vw;
+  background: black;
+`;
+
+const length = 400;
+const width = 400;
+const zoom = 8;
+const zoomX = zoom;
+const zoomY = zoom;
+const speed = 1;
+const planeLength = 1000;
+const planeWidth = 1000;
+const t = 1;
+
+const widthSpacing = planeWidth / width;
+const lengthSpacing = planeLength / length;
+
+const noiseFunction = makeNoise2D(Date.now());
+const noise = (x: number, y: number) =>
+  Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 0.15) *
+  100;
+
+const vertices = (x: number, y: number) => [
+  -planeWidth / 2 + x * widthSpacing,
+  noise(x, y),
+  -planeWidth / 2 + y * lengthSpacing,
+];
+
+const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
+  const meshRef = useRef<THREE.Mesh>();
+  const geometryRef = useRef<THREE.BufferGeometry>();
+  console.log(y);
+  useEffect(() => {
+    geometryRef.current!.computeVertexNormals();
+  }, []);
+
+  const array = new Array(width)
+    .fill(undefined)
+    .flatMap((_, x) => [
+      ...vertices(x, y),
+      ...vertices(x + 1, y),
+      ...vertices(x, y + 1),
+      ...vertices(x + 1, y + 1),
+    ]);
+
+  const indices = new Array(width)
+    .fill(undefined)
+    .flatMap((_, i) => [
+      i * 4,
+      i * 4 + 1,
+      i * 4 + 2,
+      i * 4 + 2,
+      i * 4 + 1,
+      i * 4 + 3,
+    ]);
+
+  return (
+    <mesh key={y} ref={meshRef} position={[0, 0, 0]} receiveShadow>
+      <bufferGeometry
+        ref={geometryRef}
+        index={new THREE.BufferAttribute(new Uint16Array(indices), 1)}
+      >
+        <bufferAttribute
+          attachObject={['attributes', 'position']}
+          count={array.length / 3}
+          itemSize={3}
+          array={new Float32Array(array)}
+        />
+      </bufferGeometry>
+      {material}
+    </mesh>
+  );
+};
+
+let i = -1;
+
+function Scene() {
+  const [meshes, setMeshes] = useState<Array<JSX.Element>>([]);
+  const lightRef = useRef<THREE.SpotLight>();
+  const groupRef = useRef<THREE.Group>();
+  const material = useMemo(
+    () => <meshPhongMaterial side={THREE.BackSide} />,
+    [],
+  );
+
+  useEffect(() => {
+    setMeshes(
+      new Array(length)
+        .fill(undefined)
+        .map((_, y) => <Row key={y} y={y} material={material} />),
+    );
+  }, []);
+
+  console.log('render');
+  useFrame(() => {
+    i++;
+
+    groupRef.current!.translateZ((-planeLength * t) / length / speed);
+
+    if (i % speed !== 0) return;
+    const newMeshes = [...meshes];
+    for (let j = 0; j < t; j++) {
+      newMeshes[((i * t) / speed + j) % length] = (
+        <Row
+          key={(i * t) / speed + j + length - 1}
+          y={(i * t) / speed + j + length - 1}
+          material={material}
+        />
+      );
+    }
+
+    setMeshes(newMeshes);
+  });
+
+  return (
+    <>
+      <group ref={groupRef}>{meshes}</group>
+      <spotLight ref={lightRef} castShadow position={[0, 500, -50]} />
+    </>
+  );
+}
+
+export default function PerlinField() {
+  return (
+    <Container>
+      <Canvas
+        gl={{ antialias: true }}
+        camera={{ position: [0, 300, 500], far: 10000 }}
+        shadowMap={true}
+      >
+        <Scene />
+        <OrbitControls />
+      </Canvas>
+    </Container>
+  );
+}

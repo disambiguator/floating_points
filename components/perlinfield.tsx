@@ -73,14 +73,14 @@ void main() {
   lights: true,
 };
 
-const length = 500;
-const width = 500;
+const length = 400;
+const width = 400;
 const zoom = 8;
 const zoomX = zoom;
 const zoomY = zoom;
-const speed = 50;
+const speed = 1;
 const planeSize = 1000;
-const t = 20;
+const t = 1;
 
 const index = (x: number, y: number) => y * (length + 1) + x;
 
@@ -92,12 +92,9 @@ function Scene() {
   const shaderRef = useRef<THREE.ShaderMaterial>();
   const meshRef = useRef<THREE.Mesh>();
   const noiseFunction = makeNoise2D(Date.now());
-  const noise = (x: number, y: number) => {
-    return (
-      Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 0.15) *
-      100
-    );
-  };
+  const noise = (x: number, y: number) =>
+    Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 0.15) *
+    100;
 
   const { clock } = useThree();
 
