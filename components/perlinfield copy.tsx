@@ -38,7 +38,6 @@ const vertices = (x: number, y: number) => [
 const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   const meshRef = useRef<THREE.Mesh>();
   const geometryRef = useRef<THREE.BufferGeometry>();
-  console.log(y);
   useEffect(() => {
     geometryRef.current!.computeVertexNormals();
   }, []);
@@ -100,7 +99,6 @@ function Scene() {
     );
   }, []);
 
-  console.log('render');
   useFrame(() => {
     i++;
 
@@ -123,7 +121,14 @@ function Scene() {
 
   return (
     <>
-      <Sky distance={45000} />
+      <Sky
+        // @ts-ignore
+        distance={45000}
+        mieCoefficient={0.005}
+        mieDirectionalG={0.7}
+        rayleigh={2.5}
+        turbidity={5.4}
+      />
       <group ref={groupRef}>{meshes}</group>
       <spotLight ref={lightRef} castShadow position={[0, 500, -50]} />
     </>
