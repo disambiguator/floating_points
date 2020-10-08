@@ -41,7 +41,7 @@
   "dependencies": {
     "drei": "^1.5.7",
     "lodash": "^4.17.20",
-    "next": "^9.5.3",
+    "next": "^9.5.4",
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
     "react": "^16.13.1",
