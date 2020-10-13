@@ -17,8 +17,8 @@ const zoom = 8;
 const zoomX = zoom;
 const zoomY = zoom;
 const speed = 1;
-const planeLength = 1000;
-const planeWidth = 1000;
+const planeLength = 5000;
+const planeWidth = 5000;
 const t = 1;
 
 const widthSpacing = planeWidth / width;
@@ -27,7 +27,7 @@ const lengthSpacing = planeLength / length;
 const noiseFunction = makeNoise2D(Date.now());
 const noise = (x: number, y: number) =>
   Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 0.15) *
-  100;
+  400;
 
 const vertices = (x: number, y: number) => [
   -planeWidth / 2 + x * widthSpacing,
@@ -81,22 +81,27 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
 };
 
 let i = -1;
-
 function Scene() {
   const [meshes, setMeshes] = useState<Array<JSX.Element>>([]);
   const lightRef = useRef<THREE.SpotLight>();
   const groupRef = useRef<THREE.Group>();
   const material = useMemo(
-    () => <meshPhongMaterial side={THREE.BackSide} />,
+    () => (
+      <meshLambertMaterial
+        side={THREE.BackSide}
+        color={new THREE.Color(242 / 255, 142 / 255, 92 / 255)}
+      />
+    ),
     [],
   );
-
+  const sunPosition = [Math.PI, 0, 0];
   useEffect(() => {
     setMeshes(
       new Array(length)
         .fill(undefined)
         .map((_, y) => <Row key={y} y={y} material={material} />),
     );
+    groupRef.current!.rotateY(-Math.PI / 2);
   }, []);
 
   useFrame(() => {
@@ -123,14 +128,15 @@ function Scene() {
     <>
       <Sky
         // @ts-ignore
-        distance={45000}
+        distance={4500}
         mieCoefficient={0.005}
         mieDirectionalG={0.7}
+        sunPosition={sunPosition}
         rayleigh={2.5}
         turbidity={5.4}
       />
       <group ref={groupRef}>{meshes}</group>
-      <spotLight ref={lightRef} castShadow position={[0, 500, -50]} />
+      <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
     </>
   );
 }
@@ -140,8 +146,8 @@ export default function PerlinField() {
     <Container>
       <Canvas
         gl={{ antialias: true }}
-        camera={{ position: [0, 300, 500], far: 10000 }}
-        shadowMap={true}
+        camera={{ position: [-500, 300, 0], far: 10000 }}
+        shadowMap
       >
         <Scene />
         <OrbitControls />
