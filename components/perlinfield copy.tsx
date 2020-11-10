@@ -114,7 +114,7 @@ function Scene() {
     for (let j = 0; j < t; j++) {
       newMeshes[((i * t) / speed + j) % length] = (
         <Row
-          key={(i * t) / speed + j + length - 1}
+          key={i + 400}
           y={(i * t) / speed + j + length - 1}
           material={material}
         />
