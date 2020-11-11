@@ -18,6 +18,7 @@ import { mean } from 'lodash';
 import { State, useStore } from '../lib/store';
 import { sceneName, scenes } from './scenes';
 import { useRouter } from 'next/router';
+import useMicrophone from '../hooks/useMicrophone';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -313,38 +314,9 @@ const Scene = <T extends BaseConfig>({
   CustomEffects?: CustomEffectsType<T>;
 }) => {
   const { camera, mouse } = useThree();
-  const [audio, setAudio] = useState<Audio>();
-
   const raycaster = new THREE.Raycaster();
 
-  useEffect(() => {
-    if (params.audioEnabled) {
-      const listener = new THREE.AudioListener();
-      camera.add(listener);
-
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: false })
-        .then((stream: MediaStream) => {
-          const audio = new THREE.Audio(listener);
-
-          const { context } = listener;
-          const source = context.createMediaStreamSource(stream);
-          // @ts-ignore
-          audio.setNodeSource(source);
-          listener.gain.disconnect();
-
-          const analyser = new THREE.AudioAnalyser(audio, 1024);
-          setAudio({ analyser, listener, stream });
-        });
-    } else {
-      if (audio) {
-        camera.remove(audio.listener);
-        audio.stream.getTracks().forEach(function (track) {
-          track.stop();
-        });
-      }
-    }
-  }, [params.audioEnabled]);
+  const audio = useMicrophone(params.audioEnabled);
 
   useFrame(() => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
