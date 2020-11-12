@@ -4,6 +4,7 @@ import { Canvas, useFrame } from 'react-three-fiber';
 import styled from 'styled-components';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
+import { analyseSpectrum, useMicrophone } from '../lib/audio';
 
 const Container = styled.div`
   height: 100vh;
@@ -34,6 +35,36 @@ const vertices = (x: number, y: number) => [
   noise(x, y),
   -planeWidth / 2 + y * lengthSpacing,
 ];
+
+const rand = (min: number, max: number) => min + Math.random() * (max - min);
+const newPosition = () =>
+  new THREE.Vector3(rand(-3000, 3000), rand(-3000, 3000), rand(-3000, 3000));
+
+const Stars = React.memo(function Stars() {
+  const audio = useMicrophone(true);
+
+  const materialRef = useRef<THREE.PointsMaterial>();
+
+  const vertices = useMemo(
+    () => new Array(2000).fill(undefined).map(newPosition),
+    [],
+  );
+
+  useFrame(() => {
+    const size = audio ? analyseSpectrum(audio).volume * 5 : 10;
+    materialRef.current!.size = size;
+  });
+
+  return (
+    <points position={[0, 0, -4]}>
+      <geometry vertices={vertices} />
+      <pointsMaterial
+        ref={materialRef}
+        args={[{ color: 0xffffff, size: 10 }]}
+      />
+    </points>
+  );
+});
 
 const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   const meshRef = useRef<THREE.Mesh>();
@@ -128,7 +159,7 @@ function Scene() {
     <>
       <Sky
         // @ts-ignore
-        distance={4500}
+        distance={7000}
         mieCoefficient={0.005}
         mieDirectionalG={0.7}
         sunPosition={sunPosition}
@@ -137,6 +168,7 @@ function Scene() {
       />
       <group ref={groupRef}>{meshes}</group>
       <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
+      <Stars />
     </>
   );
 }

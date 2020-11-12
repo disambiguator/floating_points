@@ -14,28 +14,12 @@ import DatGui, {
 import { Effects } from './effects';
 import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
-import { mean } from 'lodash';
 import { State, useStore } from '../lib/store';
 import { sceneName, scenes } from './scenes';
 import { useRouter } from 'next/router';
-import useMicrophone from '../hooks/useMicrophone';
+import { analyseSpectrum, useMicrophone } from '../lib/audio';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
-
-interface Audio {
-  analyser: THREE.AudioAnalyser;
-  listener: THREE.AudioListener;
-  stream: MediaStream;
-}
-
-export interface Spectrum {
-  subBass: number;
-  volume: number;
-  bass: number;
-  midrange: number;
-  treble: number;
-  frequencyData: number[];
-}
 
 export interface BaseConfig {
   color: boolean;
@@ -89,56 +73,6 @@ const MAPPINGS: Record<string, Record<number, MidiParam>> = {
     3: 'zoomThreshold',
     4: 'kaleidoscope',
   },
-};
-
-const analyseSpectrum = (audio: Audio): Spectrum => {
-  const { analyser } = audio;
-  const subBass: number[] = [];
-  const bass: number[] = [];
-  const midrange: number[] = [];
-  const treble: number[] = [];
-  let volume = 0;
-  const frequencyData: number[] = [];
-  const analyserData = analyser.getFrequencyData();
-
-  for (let i = 0; i < analyserData.length; i++) {
-    const frequency =
-      ((i + 1) * audio.listener.context.sampleRate) /
-      2 /
-      analyser.analyser.frequencyBinCount;
-    if (frequency > 15000) break;
-
-    const value = analyserData[i];
-
-    if (frequency >= 20 && frequency <= 60) {
-      subBass.push(value);
-    } else if (frequency <= 250) {
-      bass.push(value);
-    } else if (frequency <= 4000) {
-      midrange.push(value);
-    } else {
-      treble.push(value);
-    }
-
-    frequencyData.push(value);
-    volume += value;
-  }
-  // subBass 20 - 60 hz
-  // bass 60 - 250 hz
-  // low midrange 250 - 500 hz
-  // midrange 500 hz - 2 kHz
-  // upper midrange 2 - 4 khz
-  // presence 4 khz - 6 khz
-  // brilliance 6 khz - 20 khz
-
-  return {
-    frequencyData,
-    volume: volume / 2 / analyser.analyser.frequencyBinCount,
-    bass: mean(bass) / 2,
-    subBass: mean(subBass) / 2,
-    midrange: mean(midrange) / 2,
-    treble: mean(treble) / 2,
-  };
 };
 
 export const Controls = <T extends BaseConfig>({
