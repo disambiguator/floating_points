@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import Page from './page';
 import { FiberScene } from './scene';
 import { useThree, useFrame } from 'react-three-fiber';
+import { useAudioUrl } from '../lib/audio';
 
 const height = 200;
 const width = height * 2;
@@ -305,31 +306,15 @@ const Boxes = () => {
 };
 
 const HTTF = () => {
-  const { scene, camera } = useThree();
+  const { scene } = useThree();
 
   useEffect(() => {
     scene.background = new THREE.Color(0x7ec0ee);
   }, []);
 
-  useEffect(() => {
-    const audioLoader = new THREE.AudioLoader();
-    const listener = new THREE.AudioListener();
-    camera.add(listener);
-    const sound = new THREE.Audio(listener);
-
-    audioLoader.load(
-      'https://floating-points.s3.us-east-2.amazonaws.com/raindrops.mp3',
-      (buffer) => {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(0.5);
-        sound.play();
-      },
-    );
-    return () => {
-      sound.stop();
-    };
-  }, []);
+  useAudioUrl(
+    'https://floating-points.s3.us-east-2.amazonaws.com/raindrops.mp3',
+  );
 
   return (
     <>

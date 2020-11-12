@@ -8,6 +8,7 @@ import { Effects } from './effects';
 import { scaleMidi, defaultConfig, BaseConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 import { useStore } from '../lib/store';
+import { useAudioUrl } from '../lib/audio';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -161,15 +162,16 @@ export const Shapes = React.memo(function Shapes({
 
 const Scene = () => {
   const { camera, mouse } = useThree();
-  const [analyser, setAnalyser] = useState<THREE.AudioAnalyser>();
   const [amplitude, setAmplitude] = useState(0);
-
+  const audio = useAudioUrl(
+    'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
+  );
   const raycaster = new THREE.Raycaster();
 
   useFrame(() => {
-    if (analyser == null) return;
+    if (!audio) return;
 
-    const freq = analyser.getFrequencyData();
+    const freq = audio.analyser.getFrequencyData();
 
     const value = sum(freq) / 5000.0;
     setAmplitude((oldAmp) => oldAmp + (value - oldAmp) * 0.8);
@@ -177,29 +179,6 @@ const Scene = () => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
     useStore.setState({ ray: raycaster.ray });
   });
-
-  useEffect(() => {
-    const audioLoader = new THREE.AudioLoader();
-    const listener = new THREE.AudioListener();
-    camera.add(listener);
-    const sound = new THREE.Audio(listener);
-
-    audioLoader.load(
-      'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
-      (buffer) => {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(0.5);
-        sound.play();
-
-        const analyser = new THREE.AudioAnalyser(sound, 32);
-        setAnalyser(analyser);
-      },
-    );
-    return () => {
-      sound.stop();
-    };
-  }, []);
 
   const config = {
     ...defaultConfig,

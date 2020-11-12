@@ -4,7 +4,7 @@ import { Canvas, useFrame } from 'react-three-fiber';
 import styled from 'styled-components';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
-import { analyseSpectrum, useMicrophone } from '../lib/audio';
+import { analyseSpectrum, useAudioUrl, useMicrophone } from '../lib/audio';
 
 const Container = styled.div`
   height: 100vh;
@@ -41,7 +41,9 @@ const newPosition = () =>
   new THREE.Vector3(rand(-3000, 3000), rand(-3000, 3000), rand(-3000, 3000));
 
 const Stars = React.memo(function Stars() {
-  const audio = useMicrophone(true);
+  const audio = useAudioUrl(
+    'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
+  );
 
   const materialRef = useRef<THREE.PointsMaterial>();
 
@@ -51,7 +53,7 @@ const Stars = React.memo(function Stars() {
   );
 
   useFrame(() => {
-    const size = audio ? analyseSpectrum(audio).volume * 5 : 10;
+    const size = audio ? Math.pow(analyseSpectrum(audio).volume / 10, 2) : 10;
     materialRef.current!.size = size;
   });
 

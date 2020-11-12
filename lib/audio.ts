@@ -6,7 +6,6 @@ import * as THREE from 'three';
 interface Audio {
   analyser: THREE.AudioAnalyser;
   listener: THREE.AudioListener;
-  stream: MediaStream;
 }
 
 export interface Spectrum {
@@ -68,9 +67,38 @@ export const analyseSpectrum = (audio: Audio): Spectrum => {
   };
 };
 
+export const useAudioUrl = (url: string) => {
+  const { camera } = useThree();
+  const [audio, setAudio] = useState<Audio>();
+
+  useEffect(() => {
+    const audioLoader = new THREE.AudioLoader();
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+    const sound = new THREE.Audio(listener);
+
+    audioLoader.load(url, (buffer) => {
+      sound.setBuffer(buffer);
+      sound.setLoop(true);
+      sound.setVolume(0.5);
+      sound.play();
+
+      const analyser = new THREE.AudioAnalyser(sound, 32);
+      setAudio({ analyser, listener });
+    });
+    return () => {
+      camera.remove(listener);
+      sound.stop();
+    };
+  }, []);
+
+  return audio;
+};
+
 export function useMicrophone(enabled: boolean) {
   const { camera } = useThree();
   const [audio, setAudio] = useState<Audio>();
+  const [stream, setStream] = useState<MediaStream>();
 
   useEffect(() => {
     if (enabled) {
@@ -89,14 +117,16 @@ export function useMicrophone(enabled: boolean) {
           listener.gain.disconnect();
 
           const analyser = new THREE.AudioAnalyser(audio, 1024);
-          setAudio({ analyser, listener, stream });
+          setAudio({ analyser, listener });
+          setStream(stream);
         });
     } else {
       if (audio) {
         camera.remove(audio.listener);
-        audio.stream.getTracks().forEach(function (track) {
-          track.stop();
-        });
+        stream &&
+          stream.getTracks().forEach(function (track) {
+            track.stop();
+          });
       }
     }
   }, [enabled]);
