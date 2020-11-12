@@ -4,7 +4,7 @@ import { Canvas, useFrame } from 'react-three-fiber';
 import styled from 'styled-components';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
-import { analyseSpectrum, useAudioUrl, useMicrophone } from '../lib/audio';
+import { analyseSpectrum, useAudioUrl } from '../lib/audio';
 
 const Container = styled.div`
   height: 100vh;

@@ -1,6 +1,6 @@
 import create from 'zustand';
 import * as THREE from 'three';
-import { Spectrum } from '../components/mixer';
+import { Spectrum } from './audio';
 
 export type State = {
   ray: THREE.Ray;
