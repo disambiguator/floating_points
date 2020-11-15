@@ -88,7 +88,7 @@ export const useAudioUrl = (url: string) => {
     });
     return () => {
       camera.remove(listener);
-      sound.stop();
+      sound.source && sound.stop();
     };
   }, []);
 
