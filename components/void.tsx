@@ -114,9 +114,8 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
 };
 
 let i = -1;
-function Scene() {
+const Terrain = () => {
   const [meshes, setMeshes] = useState<Array<JSX.Element>>([]);
-  const lightRef = useRef<THREE.SpotLight>();
   const groupRef = useRef<THREE.Group>();
   const material = useMemo(
     () => (
@@ -127,7 +126,7 @@ function Scene() {
     ),
     [],
   );
-  const sunPosition = [Math.PI, 0, 0];
+
   useEffect(() => {
     setMeshes(
       new Array(length)
@@ -157,6 +156,14 @@ function Scene() {
     setMeshes(newMeshes);
   });
 
+  return <group ref={groupRef}>{meshes}</group>;
+};
+
+function Scene() {
+  const lightRef = useRef<THREE.SpotLight>();
+
+  const sunPosition = [Math.PI * 0.9, 0, 0];
+
   return (
     <>
       <Sky
@@ -168,7 +175,7 @@ function Scene() {
         rayleigh={2.5}
         turbidity={5.4}
       />
-      <group ref={groupRef}>{meshes}</group>
+      <Terrain />
       <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
       <Stars />
     </>
@@ -180,7 +187,7 @@ export default function PerlinField() {
     <Container>
       <Canvas
         gl={{ antialias: true }}
-        camera={{ position: [-500, 300, 0], far: 10000 }}
+        camera={{ position: [-500, 200, 0], far: 10000 }}
         shadowMap
       >
         <Scene />
