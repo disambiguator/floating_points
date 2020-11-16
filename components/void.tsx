@@ -52,7 +52,7 @@ const newPosition = () => {
   return pos;
 };
 
-const Stars = React.memo(function Stars() {
+const Stars = () => {
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
       ? 'void.mp3'
@@ -85,7 +85,7 @@ const Stars = React.memo(function Stars() {
       />
     </points>
   );
-});
+};
 
 const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   const meshRef = useRef<THREE.Mesh>();
@@ -115,7 +115,7 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
     ]);
 
   return (
-    <mesh key={y} ref={meshRef} position={[0, 0, 0]} receiveShadow>
+    <mesh key={y} ref={meshRef} receiveShadow>
       <bufferGeometry
         ref={geometryRef}
         index={new THREE.BufferAttribute(new Uint16Array(indices), 1)}
@@ -134,7 +134,6 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
 
 const Terrain = () => {
   const iRef = useRef(-1);
-  const [meshes, setMeshes] = useState<Array<JSX.Element>>([]);
   const groupRef = useRef<THREE.Group>();
   const material = useMemo(
     () => (
@@ -145,15 +144,12 @@ const Terrain = () => {
     ),
     [],
   );
-
-  useEffect(() => {
-    setMeshes(
-      new Array(length)
-        .fill(undefined)
-        .map((_, y) => <Row key={y} y={y} material={material} />),
-    );
-    groupRef.current!.rotateY(-Math.PI / 2);
-  }, []);
+  const [meshes, setMeshes] = useState(
+    new Array(length)
+      .fill(undefined)
+      .map((_, y) => <Row key={y} y={y} material={material} />),
+  );
+  const groupRef = useRef<THREE.Group>();
 
   useFrame(() => {
     iRef.current++;
@@ -166,7 +162,7 @@ const Terrain = () => {
     for (let j = 0; j < t; j++) {
       newMeshes[((i * t) / speed + j) % length] = (
         <Row
-          key={i + 400}
+          key={i + length}
           y={(i * t) / speed + j + length - 1}
           material={material}
         />
@@ -204,7 +200,7 @@ export default function PerlinField() {
     <Container>
       <Canvas
         gl={{ antialias: true }}
-        camera={{ position: [-500, 200, 0], far: 20000 }}
+        camera={{ position: [0, 400, 2500], far: 20000 }}
         shadowMap
       >
         <Scene />
