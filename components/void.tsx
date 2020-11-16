@@ -14,13 +14,14 @@ const Container = styled.div`
 
 const length = 400;
 const width = 400;
-const zoom = 8;
+const zoom = 10;
 const zoomX = zoom;
 const zoomY = zoom;
-const speed = 1;
+const speed = 30;
 const planeLength = 5000;
 const planeWidth = 5000;
 const t = 1;
+const sceneSize = 7000;
 
 const widthSpacing = planeWidth / width;
 const lengthSpacing = planeLength / length;
@@ -37,8 +38,19 @@ const vertices = (x: number, y: number) => [
 ];
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
-const newPosition = () =>
-  new THREE.Vector3(rand(-3000, 3000), rand(-3000, 3000), rand(-3000, 3000));
+const newPosition = () => {
+  const distance = rand(3536, 4000);
+  const pos = new THREE.Vector3();
+  const direction = new THREE.Vector3(
+    rand(-1, 1),
+    rand(0, 1),
+    rand(-1, 1),
+  ).normalize();
+
+  new THREE.Ray(new THREE.Vector3(0, 0, 0), direction).at(distance, pos);
+
+  return pos;
+};
 
 const Stars = React.memo(function Stars() {
   const audio = useAudioUrl(
@@ -46,6 +58,7 @@ const Stars = React.memo(function Stars() {
   );
 
   const materialRef = useRef<THREE.PointsMaterial>();
+  const pointsRef = useRef<THREE.Points>();
 
   const vertices = useMemo(
     () => new Array(2000).fill(undefined).map(newPosition),
@@ -53,12 +66,16 @@ const Stars = React.memo(function Stars() {
   );
 
   useFrame(() => {
-    const size = audio ? Math.pow(analyseSpectrum(audio).volume / 10, 2) : 10;
+    const size = audio
+      ? 20 + Math.pow(analyseSpectrum(audio).volume / 5, 2)
+      : 20;
     materialRef.current!.size = size;
+
+    pointsRef.current!.rotation.y += 0.001;
   });
 
   return (
-    <points position={[0, 0, -4]}>
+    <points ref={pointsRef}>
       <geometry vertices={vertices} />
       <pointsMaterial
         ref={materialRef}
@@ -161,17 +178,14 @@ const Terrain = () => {
 
 function Scene() {
   const lightRef = useRef<THREE.SpotLight>();
-
-  const sunPosition = [Math.PI * 0.9, 0, 0];
-
   return (
     <>
       <Sky
         // @ts-ignore
-        distance={7000}
+        distance={sceneSize}
         mieCoefficient={0.005}
         mieDirectionalG={0.7}
-        sunPosition={sunPosition}
+        sunPosition={[Math.PI, Math.PI * -0.045, 0]}
         rayleigh={2.5}
         turbidity={5.4}
       />
@@ -187,7 +201,7 @@ export default function PerlinField() {
     <Container>
       <Canvas
         gl={{ antialias: true }}
-        camera={{ position: [-500, 200, 0], far: 10000 }}
+        camera={{ position: [-500, 200, 0], far: 20000 }}
         shadowMap
       >
         <Scene />
