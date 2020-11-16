@@ -39,7 +39,7 @@ const vertices = (x: number, y: number) => [
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const newPosition = () => {
-  const distance = rand(3536, 4000);
+  const distance = rand(3536, 10000);
   const pos = new THREE.Vector3();
   const direction = new THREE.Vector3(
     rand(-1, 1),
@@ -54,7 +54,9 @@ const newPosition = () => {
 
 const Stars = React.memo(function Stars() {
   const audio = useAudioUrl(
-    'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
+    process.env.NODE_ENV === 'development'
+      ? 'void.mp3'
+      : 'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
   );
 
   const materialRef = useRef<THREE.PointsMaterial>();
@@ -130,8 +132,8 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   );
 };
 
-let i = -1;
 const Terrain = () => {
+  const iRef = useRef(-1);
   const [meshes, setMeshes] = useState<Array<JSX.Element>>([]);
   const groupRef = useRef<THREE.Group>();
   const material = useMemo(
@@ -154,7 +156,8 @@ const Terrain = () => {
   }, []);
 
   useFrame(() => {
-    i++;
+    iRef.current++;
+    const i = iRef.current;
 
     groupRef.current!.translateZ((-planeLength * t) / length / speed);
 
