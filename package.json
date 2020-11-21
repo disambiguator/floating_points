@@ -39,7 +39,7 @@
     "webmidi": "^2.5.1"
   },
   "dependencies": {
-    "drei": "^1.5.7",
+    "@react-three/drei": "^2.2.7",
     "lodash": "^4.17.20",
     "next": "^10.0.2",
     "open-simplex-noise": "^2.4.0-pre4",

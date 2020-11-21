@@ -225,7 +225,6 @@ function Scene({ params }: { params: Params }) {
   return (
     <>
       <Sky
-        // @ts-ignore
         distance={sceneSize}
         {...{
           terrainSpeed,
