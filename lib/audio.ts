@@ -87,7 +87,7 @@ export const useAudioUrl = (url: string) => {
       setAudio({ analyser, listener });
     });
     return () => {
-      camera.remove(listener);
+      camera && camera.remove(listener);
       sound.source && sound.stop();
     };
   }, []);

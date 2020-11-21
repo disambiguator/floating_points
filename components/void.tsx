@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
+import DatGui, { DatNumber } from 'react-dat-gui';
 
 const Container = styled.div`
   height: 100vh;
@@ -12,12 +13,33 @@ const Container = styled.div`
   background: black;
 `;
 
+type Params = {
+  speed: number;
+};
+
+const ControlPanel = ({
+  params,
+  setParams,
+}: {
+  params: Params;
+  setParams: (arg0: Params) => void;
+}) => {
+  const onUpdate = (newData: Partial<Params>) => {
+    setParams({ ...params, ...newData });
+  };
+
+  return (
+    <DatGui data={{ ...params }} onUpdate={onUpdate} style={{ zIndex: 1 }}>
+      <DatNumber path="speed" min={0} max={60} step={1} />
+    </DatGui>
+  );
+};
+
 const length = 400;
 const width = 400;
 const zoom = 10;
 const zoomX = zoom;
 const zoomY = zoom;
-const speed = 30;
 const planeLength = 5000;
 const planeWidth = 5000;
 const t = 1;
@@ -132,8 +154,9 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   );
 };
 
-const Terrain = () => {
+const Terrain = ({ speed }: { speed: number }) => {
   const iRef = useRef(-1);
+  const yRef = useRef(-1);
   const groupRef = useRef<THREE.Group>();
   const material = useMemo(
     () => (
@@ -149,23 +172,21 @@ const Terrain = () => {
       .fill(undefined)
       .map((_, y) => <Row key={y} y={y} material={material} />),
   );
-  const groupRef = useRef<THREE.Group>();
 
+  const frameOffset = Math.floor(60 / speed);
   useFrame(() => {
     iRef.current++;
     const i = iRef.current;
 
-    groupRef.current!.translateZ((-planeLength * t) / length / speed);
+    groupRef.current!.translateZ((-planeLength * t) / length / frameOffset);
 
-    if (i % speed !== 0) return;
+    if (i % frameOffset !== 0) return;
+    yRef.current++;
+    const y = yRef.current;
     const newMeshes = [...meshes];
     for (let j = 0; j < t; j++) {
-      newMeshes[((i * t) / speed + j) % length] = (
-        <Row
-          key={i + length}
-          y={(i * t) / speed + j + length - 1}
-          material={material}
-        />
+      newMeshes[(y * t + j) % length] = (
+        <Row key={i + length} y={y * t + j + length - 1} material={material} />
       );
     }
 
@@ -175,7 +196,8 @@ const Terrain = () => {
   return <group ref={groupRef}>{meshes}</group>;
 };
 
-function Scene() {
+function Scene({ params }: { params: Params }) {
+  const { speed } = params;
   const lightRef = useRef<THREE.SpotLight>();
   return (
     <>
@@ -183,12 +205,12 @@ function Scene() {
         // @ts-ignore
         distance={sceneSize}
         mieCoefficient={0.005}
-        mieDirectionalG={0.7}
+        mieDirectionalG={0.9}
         sunPosition={[Math.PI, Math.PI * -0.045, 0]}
         rayleigh={2.5}
         turbidity={5.4}
       />
-      <Terrain />
+      <Terrain speed={speed} />
       <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
       <Stars />
     </>
@@ -196,6 +218,7 @@ function Scene() {
 }
 
 export default function PerlinField() {
+  const [params, setParams] = useState<Params>({ speed: 3 });
   return (
     <Container>
       <Canvas
@@ -203,9 +226,10 @@ export default function PerlinField() {
         camera={{ position: [0, 400, 2500], far: 20000 }}
         shadowMap
       >
-        <Scene />
+        <Scene params={params} />
         <OrbitControls />
       </Canvas>
+      <ControlPanel {...{ params, setParams }} />
     </Container>
   );
 }
