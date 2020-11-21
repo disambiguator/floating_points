@@ -14,7 +14,8 @@ const Container = styled.div`
 `;
 
 type Params = {
-  speed: number;
+  terrainSpeed: number;
+  starSpeed: number;
   inclination: number;
 };
 
@@ -31,7 +32,8 @@ const ControlPanel = ({
 
   return (
     <DatGui data={{ ...params }} onUpdate={onUpdate} style={{ zIndex: 1 }}>
-      <DatNumber path="speed" min={0} max={60} step={1} />
+      <DatNumber path="terrainSpeed" min={0} max={60} step={1} />
+      <DatNumber path="starSpeed" min={0} max={0.01} step={0.0001} />
       <DatNumber path="inclination" min={-0.5} max={0.5} step={0.0001} />
     </DatGui>
   );
@@ -76,7 +78,7 @@ const newPosition = () => {
   return pos;
 };
 
-const Stars = () => {
+const Stars = React.memo(function Stars({ speed }: { speed: number }) {
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
       ? 'void.mp3'
@@ -97,7 +99,7 @@ const Stars = () => {
       : 20;
     materialRef.current!.size = size;
 
-    pointsRef.current!.rotation.y += 0.001;
+    pointsRef.current!.rotation.y += speed;
   });
 
   return (
@@ -109,7 +111,7 @@ const Stars = () => {
       />
     </points>
   );
-};
+});
 
 const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   const meshRef = useRef<THREE.Mesh>();
@@ -156,7 +158,7 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   );
 };
 
-const Terrain = ({ speed }: { speed: number }) => {
+const Terrain = React.memo(function Terrain({ speed }: { speed: number }) {
   const iRef = useRef(-1);
   const yRef = useRef(-1);
   const groupRef = useRef<THREE.Group>();
@@ -196,10 +198,10 @@ const Terrain = ({ speed }: { speed: number }) => {
   });
 
   return <group ref={groupRef}>{meshes}</group>;
-};
+});
 
 function Scene({ params }: { params: Params }) {
-  const { speed, inclination } = params;
+  const { terrainSpeed, starSpeed, inclination } = params;
   const lightRef = useRef<THREE.SpotLight>();
   console.log(params);
   return (
@@ -213,16 +215,17 @@ function Scene({ params }: { params: Params }) {
         rayleigh={8}
         turbidity={5.4}
       />
-      <Terrain speed={speed} />
+      <Terrain speed={terrainSpeed} />
       <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
-      <Stars />
+      <Stars speed={starSpeed} />
     </>
   );
 }
 
 export default function PerlinField() {
   const [params, setParams] = useState<Params>({
-    speed: 3,
+    terrainSpeed: 10,
+    starSpeed: 0.0005,
     inclination: Math.PI * -0.045,
   });
   return (
