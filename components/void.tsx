@@ -15,6 +15,7 @@ const Container = styled.div`
 
 type Params = {
   speed: number;
+  inclination: number;
 };
 
 const ControlPanel = ({
@@ -31,6 +32,7 @@ const ControlPanel = ({
   return (
     <DatGui data={{ ...params }} onUpdate={onUpdate} style={{ zIndex: 1 }}>
       <DatNumber path="speed" min={0} max={60} step={1} />
+      <DatNumber path="inclination" min={-0.5} max={0.5} step={0.0001} />
     </DatGui>
   );
 };
@@ -197,8 +199,9 @@ const Terrain = ({ speed }: { speed: number }) => {
 };
 
 function Scene({ params }: { params: Params }) {
-  const { speed } = params;
+  const { speed, inclination } = params;
   const lightRef = useRef<THREE.SpotLight>();
+  console.log(params);
   return (
     <>
       <Sky
@@ -206,8 +209,8 @@ function Scene({ params }: { params: Params }) {
         distance={sceneSize}
         mieCoefficient={0.005}
         mieDirectionalG={0.9}
-        sunPosition={[Math.PI, Math.PI * -0.045, 0]}
-        rayleigh={2.5}
+        sunPosition={[0, inclination, -Math.PI]}
+        rayleigh={8}
         turbidity={5.4}
       />
       <Terrain speed={speed} />
@@ -218,7 +221,10 @@ function Scene({ params }: { params: Params }) {
 }
 
 export default function PerlinField() {
-  const [params, setParams] = useState<Params>({ speed: 3 });
+  const [params, setParams] = useState<Params>({
+    speed: 3,
+    inclination: Math.PI * -0.045,
+  });
   return (
     <Container>
       <Canvas
