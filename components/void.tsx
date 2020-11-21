@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
-import DatGui, { DatNumber } from 'react-dat-gui';
+import DatGui, { DatFolder, DatNumber } from 'react-dat-gui';
 
 const Container = styled.div`
   height: 100vh;
@@ -17,6 +17,10 @@ type Params = {
   terrainSpeed: number;
   starSpeed: number;
   inclination: number;
+  turbidity: number;
+  rayleigh: number;
+  mieCoefficient: number;
+  mieDirectionalG: number;
 };
 
 const ControlPanel = ({
@@ -34,7 +38,13 @@ const ControlPanel = ({
     <DatGui data={{ ...params }} onUpdate={onUpdate} style={{ zIndex: 1 }}>
       <DatNumber path="terrainSpeed" min={0} max={60} step={1} />
       <DatNumber path="starSpeed" min={0} max={0.01} step={0.0001} />
-      <DatNumber path="inclination" min={-0.5} max={0.5} step={0.0001} />
+      <DatFolder title="Sun config" closed={false}>
+        <DatNumber path="inclination" min={-0.5} max={0.5} step={0.0001} />
+        <DatNumber path="turbidity" min={0} max={10} step={0.0001} />
+        <DatNumber path="rayleigh" min={0} max={10} step={0.0001} />
+        <DatNumber path="mieCoefficient" min={0} max={0.1} step={0.0001} />
+        <DatNumber path="mieDirectionalG" min={0} max={0.8} step={0.0001} />
+      </DatFolder>
     </DatGui>
   );
 };
@@ -201,7 +211,15 @@ const Terrain = React.memo(function Terrain({ speed }: { speed: number }) {
 });
 
 function Scene({ params }: { params: Params }) {
-  const { terrainSpeed, starSpeed, inclination } = params;
+  const {
+    terrainSpeed,
+    starSpeed,
+    inclination,
+    turbidity,
+    rayleigh,
+    mieCoefficient,
+    mieDirectionalG,
+  } = params;
   const lightRef = useRef<THREE.SpotLight>();
   console.log(params);
   return (
@@ -209,11 +227,15 @@ function Scene({ params }: { params: Params }) {
       <Sky
         // @ts-ignore
         distance={sceneSize}
-        mieCoefficient={0.005}
-        mieDirectionalG={0.9}
+        {...{
+          terrainSpeed,
+          starSpeed,
+          turbidity,
+          rayleigh,
+          mieCoefficient,
+          mieDirectionalG,
+        }}
         sunPosition={[0, inclination, -Math.PI]}
-        rayleigh={8}
-        turbidity={5.4}
       />
       <Terrain speed={terrainSpeed} />
       <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
@@ -227,6 +249,10 @@ export default function PerlinField() {
     terrainSpeed: 10,
     starSpeed: 0.0005,
     inclination: Math.PI * -0.045,
+    mieCoefficient: 0.005,
+    mieDirectionalG: 0.9,
+    turbidity: 5.4,
+    rayleigh: 2.5,
   });
   return (
     <Container>
