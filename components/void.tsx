@@ -6,12 +6,15 @@ import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
 import DatGui, { DatFolder, DatNumber } from 'react-dat-gui';
 import { OrbitControls } from '@react-three/drei/OrbitControls';
-import { Sky } from '@react-three/drei/Sky';
+import { Sky } from '@react-three/drei';
 
 const Container = styled.div`
+  display: flex;
   height: 100vh;
-  width: 100vw;
+  justify-content: center;
+  align-items: center;
   background: black;
+  color: white;
 `;
 
 type Params = {
@@ -222,7 +225,6 @@ function Scene({ params }: { params: Params }) {
     mieDirectionalG,
   } = params;
   const lightRef = useRef<THREE.SpotLight>();
-  console.log(params);
   return (
     <>
       <Sky
@@ -244,7 +246,7 @@ function Scene({ params }: { params: Params }) {
   );
 }
 
-export default function PerlinField() {
+function PerlinField() {
   const [params, setParams] = useState<Params>({
     terrainSpeed: 10,
     starSpeed: 0.0005,
@@ -255,7 +257,7 @@ export default function PerlinField() {
     rayleigh: 2.5,
   });
   return (
-    <Container>
+    <>
       <Canvas
         gl={{ antialias: true }}
         camera={{ position: [0, 400, 2500], far: 20000 }}
@@ -265,6 +267,15 @@ export default function PerlinField() {
         <OrbitControls />
       </Canvas>
       <ControlPanel {...{ params, setParams }} />
+    </>
+  );
+}
+
+export default function Page() {
+  const [started, start] = useState(false);
+  return (
+    <Container onClick={() => start(true)}>
+      {started ? <PerlinField /> : <div>Click to start</div>}
     </Container>
   );
 }
