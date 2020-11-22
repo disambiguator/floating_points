@@ -239,7 +239,11 @@ function Scene({ params }: { params: Params }) {
         sunPosition={[0, inclination, -Math.PI]}
       />
       <Terrain speed={terrainSpeed} />
-      <spotLight ref={lightRef} castShadow position={[4500, 800, 0]} />
+      <directionalLight
+        ref={lightRef}
+        castShadow
+        position={[0, (inclination + 0.2) * 32, -Math.PI]}
+      />
       <Stars speed={starSpeed} />
     </>
   );
@@ -252,7 +256,7 @@ function PerlinField() {
     inclination: Math.PI * -0.045,
     mieCoefficient: 0.005,
     mieDirectionalG: 0.9,
-    turbidity: 5.4,
+    turbidity: 10,
     rayleigh: 2.5,
   });
   return (
