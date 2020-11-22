@@ -58,10 +58,10 @@ const width = 400;
 const zoom = 10;
 const zoomX = zoom;
 const zoomY = zoom;
-const planeLength = 5000;
-const planeWidth = 5000;
-const t = 1;
 const sceneSize = 7000;
+const planeLength = sceneSize;
+const planeWidth = sceneSize;
+const t = 1;
 
 const widthSpacing = planeWidth / width;
 const lengthSpacing = planeLength / length;
@@ -260,7 +260,6 @@ function Scene({ params, started }: { params: Params; started: boolean }) {
           Click to start audio
         </Text>
       )}
-
       <Stars speed={starSpeed} started={started} />
     </>
   );
