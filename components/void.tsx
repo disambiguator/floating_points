@@ -68,8 +68,7 @@ const lengthSpacing = planeLength / length;
 
 const noiseFunction = makeNoise2D(Date.now());
 const noise = (x: number, y: number) =>
-  Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 0.15) *
-  400;
+  Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 1) * 400;
 
 const vertices = (x: number, y: number) => [
   -planeWidth / 2 + x * widthSpacing,
