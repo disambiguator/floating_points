@@ -6,7 +6,7 @@ import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
 import DatGui, { DatFolder, DatNumber } from 'react-dat-gui';
 import { OrbitControls } from '@react-three/drei/OrbitControls';
-import { Sky } from '@react-three/drei';
+import { Sky, Text } from '@react-three/drei';
 
 const Container = styled.div`
   display: flex;
@@ -91,11 +91,18 @@ const newPosition = () => {
   return pos;
 };
 
-const Stars = React.memo(function Stars({ speed }: { speed: number }) {
+const Stars = React.memo(function Stars({
+  speed,
+  started,
+}: {
+  speed: number;
+  started: boolean;
+}) {
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
       ? 'void.mp3'
       : 'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
+    started,
   );
 
   const materialRef = useRef<THREE.PointsMaterial>();
@@ -213,7 +220,7 @@ const Terrain = React.memo(function Terrain({ speed }: { speed: number }) {
   return <group ref={groupRef}>{meshes}</group>;
 });
 
-function Scene({ params }: { params: Params }) {
+function Scene({ params, started }: { params: Params; started: boolean }) {
   const {
     terrainSpeed,
     starSpeed,
@@ -244,12 +251,22 @@ function Scene({ params }: { params: Params }) {
         castShadow
         position={[0, (inclination + 0.2) * 32, -Math.PI]}
       />
-      <Stars speed={starSpeed} />
+      {!started && (
+        <Text
+          fontSize={200}
+          position={new THREE.Vector3(0, 500, 0)}
+          color="white"
+        >
+          Click to start audio
+        </Text>
+      )}
+
+      <Stars speed={starSpeed} started={started} />
     </>
   );
 }
 
-function PerlinField() {
+function PerlinField({ started }: { started: boolean }) {
   const [params, setParams] = useState<Params>({
     terrainSpeed: 10,
     starSpeed: 0.0005,
@@ -266,7 +283,7 @@ function PerlinField() {
         camera={{ position: [0, 400, 2500], far: 20000 }}
         shadowMap
       >
-        <Scene params={params} />
+        <Scene params={params} started={started} />
         <OrbitControls />
       </Canvas>
       <ControlPanel {...{ params, setParams }} />
@@ -278,7 +295,7 @@ export default function Page() {
   const [started, start] = useState(false);
   return (
     <Container onClick={() => start(true)}>
-      {started ? <PerlinField /> : <div>Click to start</div>}
+      <PerlinField started={started} />
     </Container>
   );
 }

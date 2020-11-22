@@ -67,11 +67,13 @@ export const analyseSpectrum = (audio: Audio): Spectrum => {
   };
 };
 
-export const useAudioUrl = (url: string) => {
+export const useAudioUrl = (url: string, enabled = true) => {
   const { camera } = useThree();
   const [audio, setAudio] = useState<Audio>();
 
   useEffect(() => {
+    if (!enabled) return;
+
     const audioLoader = new THREE.AudioLoader();
     const listener = new THREE.AudioListener();
     camera.add(listener);
@@ -90,7 +92,7 @@ export const useAudioUrl = (url: string) => {
       camera?.children && camera.remove(listener);
       sound.source && sound.stop();
     };
-  }, []);
+  }, [enabled]);
 
   return audio;
 };
