@@ -1,4 +1,3 @@
-import { OrbitControls, Sky } from 'drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from 'react-three-fiber';
 import styled from 'styled-components';
@@ -6,6 +5,8 @@ import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
 import DatGui, { DatFolder, DatNumber } from 'react-dat-gui';
+import { OrbitControls } from '@react-three/drei/OrbitControls';
+import { Sky } from '@react-three/drei/Sky';
 
 const Container = styled.div`
   height: 100vh;

@@ -8,7 +8,7 @@ import Mixer, {
 } from './mixer';
 import { useFrame } from 'react-three-fiber';
 import { makeNoise2D } from 'open-simplex-noise';
-import { Line } from 'drei';
+import { Line } from '@react-three/drei';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 
 const BarsShader = {
