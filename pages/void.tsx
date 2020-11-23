@@ -92,10 +92,11 @@ const newPosition = () => {
 
   new THREE.Ray(new THREE.Vector3(0, 0, 0), direction).at(distance, pos);
 
-  return pos;
+  return pos.toArray();
 };
 
 const Stars = React.memo(function Stars({ started }: { started: boolean }) {
+  const starsCount = 2000;
   const speed = useStore((state) => state.starSpeed);
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
@@ -108,7 +109,7 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
   const pointsRef = useRef<THREE.Points>();
 
   const vertices = useMemo(
-    () => new Array(2000).fill(undefined).map(newPosition),
+    () => new Array(starsCount).fill(undefined).flatMap(newPosition),
     [],
   );
 
@@ -123,7 +124,14 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
 
   return (
     <points ref={pointsRef}>
-      <geometry vertices={vertices} />
+      <bufferGeometry>
+        <bufferAttribute
+          attachObject={['attributes', 'position']}
+          count={starsCount}
+          array={new Float32Array(vertices)}
+          itemSize={3}
+        />
+      </bufferGeometry>
       <pointsMaterial
         ref={materialRef}
         args={[{ color: 0xffffff, size: 10 }]}
