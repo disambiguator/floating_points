@@ -114,7 +114,7 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
 
   useFrame(() => {
     const size = audio
-      ? 20 + Math.pow(analyseSpectrum(audio).volume / 5, 2)
+      ? 20 + Math.pow(analyseSpectrum(audio).volume / 4, 2)
       : 20;
     materialRef.current!.size = size;
 
