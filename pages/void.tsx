@@ -65,6 +65,7 @@ const zoomY = zoom;
 const sceneSize = 7000;
 const planeLength = sceneSize;
 const planeWidth = sceneSize;
+const minimumStarDistance = Math.sqrt((sceneSize * sceneSize) / 2);
 const t = 1;
 
 const widthSpacing = planeWidth / width;
@@ -82,7 +83,7 @@ const vertices = (x: number, y: number) => [
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const newPosition = () => {
-  const distance = rand(3536, 10000);
+  const distance = rand(minimumStarDistance, 10000);
   const pos = new THREE.Vector3();
   const direction = new THREE.Vector3(
     rand(-1, 1),
@@ -96,7 +97,7 @@ const newPosition = () => {
 };
 
 const Stars = React.memo(function Stars({ started }: { started: boolean }) {
-  const starsCount = 2000;
+  const starsCount = 4000;
   const speed = useStore((state) => state.starSpeed);
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
@@ -105,19 +106,39 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
     started,
   );
 
-  const materialRef = useRef<THREE.PointsMaterial>();
+  const materialRef = useRef<THREE.ShaderMaterial>();
   const pointsRef = useRef<THREE.Points>();
 
   const vertices = useMemo(
     () => new Array(starsCount).fill(undefined).flatMap(newPosition),
-    [],
+    [starsCount],
   );
+
+  const pointShader = {
+    uniforms: {
+      size: { value: 10 },
+      scale: { value: 350 },
+      color: { value: new THREE.Color('white') },
+    },
+    defines: {
+      USE_SIZEATTENUATION: '',
+    },
+    vertexShader: THREE.ShaderLib.points.vertexShader,
+    fragmentShader: `
+      uniform vec3 color;
+      void main() {
+          vec2 xy = gl_PointCoord.xy - vec2(0.5);
+          float ll = length(xy);
+          gl_FragColor = vec4(color, 2.*(0.5-ll));
+      }
+      `,
+  };
 
   useFrame(() => {
     const size = audio
       ? 20 + Math.pow(analyseSpectrum(audio).volume / 4, 2)
       : 20;
-    materialRef.current!.size = size;
+    materialRef.current!.uniforms.size.value = size;
 
     pointsRef.current!.rotation.y += speed;
   });
@@ -132,9 +153,12 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial
+      <shaderMaterial
         ref={materialRef}
-        args={[{ color: 0xffffff, size: 10 }]}
+        args={[pointShader]}
+        transparent
+        depthWrite={false}
+        depthTest
       />
     </points>
   );
