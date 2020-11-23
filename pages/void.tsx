@@ -7,6 +7,7 @@ import { analyseSpectrum, useAudioUrl } from '../lib/audio';
 import DatGui, { DatFolder, DatNumber } from 'react-dat-gui';
 import { OrbitControls } from '@react-three/drei/OrbitControls';
 import { Sky, Text } from '@react-three/drei';
+import create from 'zustand';
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +18,7 @@ const Container = styled.div`
   color: white;
 `;
 
-type Params = {
+type State = {
   terrainSpeed: number;
   starSpeed: number;
   inclination: number;
@@ -25,21 +26,24 @@ type Params = {
   rayleigh: number;
   mieCoefficient: number;
   mieDirectionalG: number;
+  setState: (state: Partial<State>) => void;
 };
+const useStore = create<State>((set) => ({
+  terrainSpeed: 10,
+  starSpeed: 0.0005,
+  inclination: Math.PI * -0.045,
+  mieCoefficient: 0.005,
+  mieDirectionalG: 0.9,
+  turbidity: 10,
+  rayleigh: 2.5,
+  setState: set,
+}));
 
-const ControlPanel = ({
-  params,
-  setParams,
-}: {
-  params: Params;
-  setParams: (arg0: Params) => void;
-}) => {
-  const onUpdate = (newData: Partial<Params>) => {
-    setParams({ ...params, ...newData });
-  };
+const ControlPanel = () => {
+  const state = useStore();
 
   return (
-    <DatGui data={{ ...params }} onUpdate={onUpdate} style={{ zIndex: 1 }}>
+    <DatGui data={{ ...state }} onUpdate={state.setState} style={{ zIndex: 1 }}>
       <DatNumber path="terrainSpeed" min={0} max={60} step={1} />
       <DatNumber path="starSpeed" min={0} max={0.01} step={0.0001} />
       <DatFolder title="Sun config" closed={false}>
@@ -91,13 +95,8 @@ const newPosition = () => {
   return pos;
 };
 
-const Stars = React.memo(function Stars({
-  speed,
-  started,
-}: {
-  speed: number;
-  started: boolean;
-}) {
+const Stars = React.memo(function Stars({ started }: { started: boolean }) {
+  const speed = useStore((state) => state.starSpeed);
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
       ? 'void.mp3'
@@ -178,7 +177,8 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
   );
 };
 
-const Terrain = React.memo(function Terrain({ speed }: { speed: number }) {
+const Terrain = React.memo(function Terrain() {
+  const speed = useStore((state) => state.terrainSpeed);
   const iRef = useRef(-1);
   const yRef = useRef(-1);
   const groupRef = useRef<THREE.Group>();
@@ -220,24 +220,34 @@ const Terrain = React.memo(function Terrain({ speed }: { speed: number }) {
   return <group ref={groupRef}>{meshes}</group>;
 });
 
-function Scene({ params, started }: { params: Params; started: boolean }) {
+function Sunset() {
   const {
-    terrainSpeed,
-    starSpeed,
     inclination,
     turbidity,
     rayleigh,
     mieCoefficient,
     mieDirectionalG,
-  } = params;
-  const lightRef = useRef<THREE.SpotLight>();
+  } = useStore(
+    ({
+      inclination,
+      turbidity,
+      rayleigh,
+      mieCoefficient,
+      mieDirectionalG,
+    }) => ({
+      inclination,
+      turbidity,
+      rayleigh,
+      mieCoefficient,
+      mieDirectionalG,
+    }),
+  );
+
   return (
     <>
       <Sky
         distance={sceneSize}
         {...{
-          terrainSpeed,
-          starSpeed,
           turbidity,
           rayleigh,
           mieCoefficient,
@@ -245,12 +255,19 @@ function Scene({ params, started }: { params: Params; started: boolean }) {
         }}
         sunPosition={[0, inclination, -Math.PI]}
       />
-      <Terrain speed={terrainSpeed} />
       <directionalLight
-        ref={lightRef}
         castShadow
         position={[0, (inclination + 0.2) * 32, -Math.PI]}
       />
+    </>
+  );
+}
+
+function Scene({ started }: { started: boolean }) {
+  return (
+    <>
+      <Sunset />
+      <Terrain />
       {!started && (
         <Text
           fontSize={200}
@@ -260,21 +277,12 @@ function Scene({ params, started }: { params: Params; started: boolean }) {
           Click to start audio
         </Text>
       )}
-      <Stars speed={starSpeed} started={started} />
+      <Stars started={started} />
     </>
   );
 }
 
 function PerlinField({ started }: { started: boolean }) {
-  const [params, setParams] = useState<Params>({
-    terrainSpeed: 10,
-    starSpeed: 0.0005,
-    inclination: Math.PI * -0.045,
-    mieCoefficient: 0.005,
-    mieDirectionalG: 0.9,
-    turbidity: 10,
-    rayleigh: 2.5,
-  });
   return (
     <>
       <Canvas
@@ -282,10 +290,10 @@ function PerlinField({ started }: { started: boolean }) {
         camera={{ position: [0, 400, 2500], far: 20000 }}
         shadowMap
       >
-        <Scene params={params} started={started} />
+        <Scene started={started} />
         <OrbitControls />
       </Canvas>
-      <ControlPanel {...{ params, setParams }} />
+      <ControlPanel />
     </>
   );
 }
