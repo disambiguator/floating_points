@@ -18,6 +18,7 @@ import { State, useStore } from '../lib/store';
 import { sceneName, scenes } from './scenes';
 import { useRouter } from 'next/router';
 import { analyseSpectrum, useMicrophone } from '../lib/audio';
+import { throttle } from 'lodash';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -279,6 +280,11 @@ const Scene = <T extends BaseConfig>({
   );
 };
 
+const throttledHistory = throttle((params) => {
+  const url = `/mixer?params=${JSON.stringify(params)}`;
+  window.history.pushState('', '', url);
+}, 1000);
+
 const Mixer = <T,>(props: { config: Config<T> }) => {
   const router = useRouter();
   let initialProps = props.config;
@@ -298,8 +304,7 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
   };
 
   useEffect(() => {
-    const url = `/mixer?params=${JSON.stringify(params)}`;
-    window.history.pushState('', '', url);
+    throttledHistory(params);
   }, [params]);
 
   const changeScene = (name: sceneName) => {
