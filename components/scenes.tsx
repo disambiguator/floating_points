@@ -3,7 +3,7 @@ import { barsConfig } from './bars';
 import { dusenConfig } from './dusen';
 import { cubefieldConfig } from './cubefield';
 import { chaosConfig } from './geometric_chaos';
-import { clothConfig } from './cloth';
+import { clothConfig } from '../pages/cloth';
 import { sortConfig } from './sort';
 
 export type sceneName =
