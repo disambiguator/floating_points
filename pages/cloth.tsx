@@ -65,7 +65,7 @@ type ClothParams = {
 };
 
 const color = 'cyan';
-const Cloth = React.memo(function Bars({
+const Cloth = React.memo(function Cloth({
   config,
 }: {
   config: ClothParams & BaseConfig;
@@ -75,14 +75,13 @@ const Cloth = React.memo(function Bars({
   const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
   useFrame(({ clock, size }) => {
     const { geometry, material } = lineRef.current!;
-
+    const amplitude = scaleMidi(config.noiseAmplitude, 1, 500);
     geometry!.setPositions(
       new Array(length)
         .fill(undefined)
         .flatMap((f, i) => [
           ((i * size.width) / length - size.width / 2) * 2,
-          noise2D(i * 0.01, clock.elapsedTime) *
-            scaleMidi(config.noiseAmplitude, 1, 500),
+          noise2D(i * 0.01, clock.elapsedTime) * amplitude,
           0,
         ]),
     );
