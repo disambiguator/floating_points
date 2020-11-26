@@ -6,10 +6,12 @@ import Mixer, {
   BaseConfig,
   DatMidi,
 } from '../components/mixer';
-import { useFrame } from 'react-three-fiber';
+import { useFrame, useThree } from 'react-three-fiber';
 import { makeNoise2D } from 'open-simplex-noise';
 import { Line } from '@react-three/drei';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { AfterimagePass } from '../components/AfterimagePass';
+import * as THREE from 'three';
 
 const BarsShader = {
   uniforms: {
@@ -18,6 +20,7 @@ const BarsShader = {
     yspeed: { value: 0.01 },
     tOld: { value: null },
     tNew: { value: null },
+    mouse: { value: new THREE.Vector2(0, 0) },
   },
 
   vertexShader: [
@@ -38,22 +41,33 @@ const BarsShader = {
     uniform float damp;
     uniform float xspeed;
     uniform float yspeed;
+    uniform vec2 mouse;
 
     uniform sampler2D tOld;
     uniform sampler2D tNew;
 
     varying vec2 vUv;
 
+    float blendOverlay(float base, float blend) {
+       return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
+    }
+
+    vec4 blendOverlay(vec4 base, vec4 blend) {
+      return vec4(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b), 1.);
+    }
+
     void main() {
     	vec4 texelNew = texture2D( tNew, vUv);
 
       vec2 coord = vUv;
-      coord.y-=yspeed;
 
-      coord.x=(coord.x - 0.5) * (1. + xspeed) + 0.5;
+      coord.y=(coord.y - mouse.y) * (1. + yspeed) + mouse.y;
+      coord.x=(coord.x - mouse.x) * (1. + xspeed) + mouse.x;
 
-    	vec4 texelOld = texture2D( tOld, coord ) * damp;
-    	gl_FragColor = length(texelNew) > 0. ? texelNew : texelOld;
+
+    	vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
+    	gl_FragColor = length(texelNew) > 0. ? mix(texelNew, texelOld, 0.5) : texelOld;
+    	//  gl_FragColor = vec4(vec3(abs(coord.x - mouse.x)), 1.0);
     }
   `,
 };
@@ -87,7 +101,7 @@ const Cloth = React.memo(function Cloth({
     );
 
     if (config.color) {
-      material!.color.setHex(Math.random() * 0xffffff);
+      material!.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.5);
     }
   });
 
@@ -113,15 +127,28 @@ export const clothControls = () => [
   /* eslint-enable react/jsx-key */
 ];
 
-const Effects = ({ params }: { params: ClothParams & BaseConfig }) => (
-  <afterimagePass
-    attachArray="passes"
-    args={[BarsShader]}
-    uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
-    uniforms-xspeed-value={scaleMidi(params.xSpeed, -0.04, 0.04)}
-    uniforms-yspeed-value={scaleMidi(params.ySpeed, -0.04, 0.04)}
-  />
-);
+const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
+  const afterimagePassRef = useRef<AfterimagePass>();
+  const { mouse } = useThree();
+  useFrame(() => {
+    const shaderMaterial = afterimagePassRef.current!;
+    shaderMaterial.uniforms.mouse.value = new THREE.Vector2(
+      (mouse.x + 1) / 2,
+      (mouse.y + 1) / 2,
+    );
+  });
+
+  return (
+    <afterimagePass
+      ref={afterimagePassRef}
+      attachArray="passes"
+      args={[BarsShader]}
+      uniforms-damp-value={scaleMidi(params.trails, 0.8, 1)}
+      uniforms-xspeed-value={scaleMidi(params.xSpeed, -0.04, 0.04)}
+      uniforms-yspeed-value={scaleMidi(params.ySpeed, -0.04, 0.04)}
+    />
+  );
+};
 
 export const clothConfig = {
   params: { name: 'cloth' as const },
