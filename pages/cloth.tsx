@@ -18,6 +18,7 @@ const BarsShader = {
     damp: { value: 0.96 },
     xspeed: { value: 0.01 },
     yspeed: { value: 0.01 },
+    time: { value: 0 },
     tOld: { value: null },
     tNew: { value: null },
     mouse: { value: new THREE.Vector2(0, 0) },
@@ -42,6 +43,9 @@ const BarsShader = {
     uniform float xspeed;
     uniform float yspeed;
     uniform vec2 mouse;
+    uniform float time;
+
+    const float PI = 3.14159265359;
 
     uniform sampler2D tOld;
     uniform sampler2D tNew;
@@ -56,14 +60,28 @@ const BarsShader = {
       return vec4(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b), 1.);
     }
 
+    vec2 rotation() {
+      float angle = 1.;
+      float rad = angle * PI / 180.;
+      return vec2(sin(rad), cos(rad));
+    }
+
     void main() {
     	vec4 texelNew = texture2D( tNew, vUv);
 
       vec2 coord = vUv;
 
+      coord -= 0.5;
+      coord *= 2.;
+
+      coord.x = coord.x * rotation().y + coord.y * rotation().x;
+      coord.y = coord.y * rotation().y - coord.x * rotation().x;
+
+      coord += 1.;
+      coord /= 2.;
+
       coord.y=(coord.y - mouse.y) * (1. + yspeed) + mouse.y;
       coord.x=(coord.x - mouse.x) * (1. + xspeed) + mouse.x;
-
 
     	vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
     	gl_FragColor = length(texelNew) > 0. ? mix(texelNew, texelOld, 0.5) : texelOld;
@@ -101,7 +119,7 @@ const Cloth = React.memo(function Cloth({
     );
 
     if (config.color) {
-      material!.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.5);
+      material!.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.2);
     }
   });
 
@@ -129,13 +147,14 @@ export const clothControls = () => [
 
 const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
   const afterimagePassRef = useRef<AfterimagePass>();
-  const { mouse } = useThree();
+  const { mouse, clock } = useThree();
   useFrame(() => {
     const shaderMaterial = afterimagePassRef.current!;
     shaderMaterial.uniforms.mouse.value = new THREE.Vector2(
       (mouse.x + 1) / 2,
       (mouse.y + 1) / 2,
     );
+    shaderMaterial.uniforms.time.value = clock.getElapsedTime();
   });
 
   return (
