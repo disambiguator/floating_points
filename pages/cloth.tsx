@@ -67,25 +67,24 @@ const BarsShader = {
     }
 
     void main() {
-    	vec4 texelNew = texture2D( tNew, vUv);
+    	vec4 texelNew = texture2D(tNew, vUv);
 
-      vec2 coord = vUv;
+      // Shift to -1 to 1 coordinate system
+      vec2 coord = (vUv - 0.5) * 2.;
 
-      coord -= 0.5;
-      coord *= 2.;
-
+      // Rotate defined angle
       coord.x = coord.x * rotation().y + coord.y * rotation().x;
       coord.y = coord.y * rotation().y - coord.x * rotation().x;
 
-      coord += 1.;
-      coord /= 2.;
+      // tunnel and zoom
+      float scale = 0.05;
+      coord.y=(coord.y - mouse.y) * (1. + scale * yspeed) + mouse.y;
+      coord.x=(coord.x - mouse.x) * (1. + scale * xspeed) + mouse.x;
 
-      coord.y=(coord.y - mouse.y) * (1. + yspeed) + mouse.y;
-      coord.x=(coord.x - mouse.x) * (1. + xspeed) + mouse.x;
+      // Get old frame (in 0 to 1 coordinate system)
+    	vec4 texelOld = texture2D(tOld, (coord + 1.)/2.) - (1. - damp);
 
-    	vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
     	gl_FragColor = length(texelNew) > 0. ? mix(texelNew, texelOld, 0.5) : texelOld;
-    	//  gl_FragColor = vec4(vec3(abs(coord.x - mouse.x)), 1.0);
     }
   `,
 };
@@ -150,10 +149,7 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
   const { mouse, clock } = useThree();
   useFrame(() => {
     const shaderMaterial = afterimagePassRef.current!;
-    shaderMaterial.uniforms.mouse.value = new THREE.Vector2(
-      (mouse.x + 1) / 2,
-      (mouse.y + 1) / 2,
-    );
+    shaderMaterial.uniforms.mouse.value = mouse;
     shaderMaterial.uniforms.time.value = clock.getElapsedTime();
   });
 
@@ -163,8 +159,8 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
       attachArray="passes"
       args={[BarsShader]}
       uniforms-damp-value={scaleMidi(params.trails, 0.8, 1)}
-      uniforms-xspeed-value={scaleMidi(params.xSpeed, -0.04, 0.04)}
-      uniforms-yspeed-value={scaleMidi(params.ySpeed, -0.04, 0.04)}
+      uniforms-xspeed-value={scaleMidi(params.xSpeed, -1, 1)}
+      uniforms-yspeed-value={scaleMidi(params.ySpeed, -1, 1)}
     />
   );
 };
