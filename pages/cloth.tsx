@@ -21,6 +21,7 @@ const BarsShader = {
     time: { value: 0 },
     tOld: { value: null },
     tNew: { value: null },
+    angle: { value: 0 },
     mouse: { value: new THREE.Vector2(0, 0) },
   },
 
@@ -42,6 +43,7 @@ const BarsShader = {
     uniform float damp;
     uniform float xspeed;
     uniform float yspeed;
+    uniform float angle;
     uniform vec2 mouse;
     uniform float time;
 
@@ -61,9 +63,7 @@ const BarsShader = {
     }
 
     vec2 rotation() {
-      float angle = 1.;
-      float rad = angle * PI / 180.;
-      return vec2(sin(rad), cos(rad));
+      return vec2(sin(angle), cos(angle));
     }
 
     void main() {
@@ -93,6 +93,7 @@ type ClothParams = {
   lineWidth: number;
   xSpeed: number;
   ySpeed: number;
+  angle: number;
 };
 
 const color = 'cyan';
@@ -141,6 +142,7 @@ export const clothControls = () => [
   <DatMidi label="Line width" path="lineWidth" />,
   <DatMidi label="xSpeed" path="xSpeed" />,
   <DatMidi label="ySpeed" path="ySpeed" />,
+  <DatMidi path="angle" />,
   /* eslint-enable react/jsx-key */
 ];
 
@@ -148,9 +150,10 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
   const afterimagePassRef = useRef<AfterimagePass>();
   const { mouse, clock } = useThree();
   useFrame(() => {
-    const shaderMaterial = afterimagePassRef.current!;
-    shaderMaterial.uniforms.mouse.value = mouse;
-    shaderMaterial.uniforms.time.value = clock.getElapsedTime();
+    const uniforms = afterimagePassRef.current!
+      .uniforms as typeof BarsShader['uniforms'];
+    uniforms.mouse.value = mouse;
+    uniforms.time.value = clock.getElapsedTime();
   });
 
   return (
@@ -159,6 +162,11 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
       attachArray="passes"
       args={[BarsShader]}
       uniforms-damp-value={scaleMidi(params.trails, 0.8, 1)}
+      uniforms-angle-value={scaleMidi(
+        params.angle,
+        -Math.PI / 10,
+        Math.PI / 10,
+      )}
       uniforms-xspeed-value={scaleMidi(params.xSpeed, -1, 1)}
       uniforms-yspeed-value={scaleMidi(params.ySpeed, -1, 1)}
     />
@@ -185,6 +193,7 @@ export default function BarsPage() {
       xSpeed: 64,
       ySpeed: 64,
       color: true,
+      angle: 0,
     },
   };
   return <Mixer config={config} />;
