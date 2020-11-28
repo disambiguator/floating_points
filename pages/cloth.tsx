@@ -23,6 +23,7 @@ const BarsShader = {
     tNew: { value: null },
     angle: { value: 0 },
     mouse: { value: new THREE.Vector2(0, 0) },
+    aspect: { value: 0 },
   },
 
   vertexShader: [
@@ -45,6 +46,7 @@ const BarsShader = {
     uniform float yspeed;
     uniform float angle;
     uniform vec2 mouse;
+    uniform float aspect;
     uniform float time;
 
     const float PI = 3.14159265359;
@@ -70,7 +72,8 @@ const BarsShader = {
     	vec4 texelNew = texture2D(tNew, vUv);
 
       // Shift to -1 to 1 coordinate system
-      vec2 coord = (vUv - 0.5) * 2.;
+      vec2 coord = vUv * 2. - 1.;
+      coord.x *= aspect;
 
       // Rotate defined angle
       coord.x = coord.x * rotation().y + coord.y * rotation().x;
@@ -82,7 +85,9 @@ const BarsShader = {
       coord.x=(coord.x - mouse.x) * (1. + scale * xspeed) + mouse.x;
 
       // Get old frame (in 0 to 1 coordinate system)
-    	vec4 texelOld = texture2D(tOld, (coord + 1.)/2.) - (1. - damp);
+      coord.x /= aspect;
+      coord = (coord + 1.)/2.;
+    	vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
 
     	gl_FragColor = length(texelNew) > 0. ? mix(texelNew, texelOld, 0.5) : texelOld;
     }
@@ -148,7 +153,7 @@ export const clothControls = () => [
 
 const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
   const afterimagePassRef = useRef<AfterimagePass>();
-  const { mouse, clock } = useThree();
+  const { mouse, clock, aspect } = useThree();
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof BarsShader['uniforms'];
@@ -166,9 +171,11 @@ const Effects = ({ params }: { params: ClothParams & BaseConfig }) => {
         params.angle,
         -Math.PI / 10,
         Math.PI / 10,
+        true,
       )}
-      uniforms-xspeed-value={scaleMidi(params.xSpeed, -1, 1)}
-      uniforms-yspeed-value={scaleMidi(params.ySpeed, -1, 1)}
+      uniforms-xspeed-value={scaleMidi(params.xSpeed, -1, 1, true)}
+      uniforms-aspect-value={aspect}
+      uniforms-yspeed-value={scaleMidi(params.ySpeed, -1, 1, true)}
     />
   );
 };
