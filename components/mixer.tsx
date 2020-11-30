@@ -163,6 +163,7 @@ const ControlPanel = <T extends BaseConfig>({
 }) => {
   const [isOpen, setOpen] = useState(true);
   const spectrum = useStore((state: State) => state.spectrum);
+  const exportScene = useStore((state: State) => state.exportScene);
   const onUpdate = (newData: Partial<T>) => {
     if (newData.name && newData.name !== params.name) {
       changeScene(newData.name);
@@ -226,6 +227,7 @@ const ControlPanel = <T extends BaseConfig>({
         }}
         label={poppedOut ? 'Pop In' : 'Pop Out'}
       />
+      <DatButton onClick={exportScene} label="Export" />
       <DatButton
         onClick={() => {
           setOpen(false);
@@ -256,7 +258,8 @@ const Scene = <T extends BaseConfig>({
   Contents: SceneContents<T>;
   CustomEffects?: CustomEffectsType<T>;
 }) => {
-  const { camera, mouse } = useThree();
+  const { camera, mouse, gl } = useThree();
+  const setExportScene = useStore((store) => store.setExportScene);
   const raycaster = new THREE.Raycaster();
 
   const audio = useMicrophone(params.audioEnabled);
@@ -279,6 +282,17 @@ const Scene = <T extends BaseConfig>({
       useStore.setState({ spectrum });
     }
   });
+  useEffect(() => {
+    setExportScene(() => {
+      const href = gl.domElement.toDataURL();
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = 'disambiguous_export.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }, []);
 
   return (
     <>
@@ -334,7 +348,11 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
       />
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
-        gl={{ antialias: true }}
+        gl={{
+          antialias: true,
+          // Only turn this on when exporting
+          // preserveDrawingBuffer: true,
+        }}
         controls={params.name !== 'cubefield'}
       >
         <Scene
