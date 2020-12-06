@@ -68,6 +68,30 @@ const BarsShader = {
       return vec2(sin(angle), cos(angle));
     }
 
+
+    vec3 blendDifference(vec3 base, vec3 blend) {
+	return abs(base-blend);
+}
+
+vec3 blendDifference(vec3 base, vec3 blend, float opacity) {
+	return (blendDifference(base, blend) * opacity + base * (1.0 - opacity));
+}
+
+    vec4 colorBlend(in vec4 colorNew, in vec4 colorOld) {
+      vec4 color;
+
+      // color = mix(colorNew, colorOld, 0.5);
+
+      // Modulus mixing, gets cool ink splatter effects
+      //color = mod(colorNew + colorOld, 1.0);
+
+
+
+      color = vec4(blendDifference(colorOld.rgb, colorNew.rgb, 1.0), 1.0);
+
+      return color;
+    }
+
     void main() {
     	vec4 texelNew = texture2D(tNew, vUv);
 
@@ -89,7 +113,7 @@ const BarsShader = {
       coord = (coord + 1.)/2.;
     	vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
 
-    	gl_FragColor = length(texelNew) > 0. ? mix(texelNew, texelOld, 0.5) : texelOld;
+    	gl_FragColor = length(texelNew) > 0. ? colorBlend(texelNew, texelOld) : texelOld;
     }
   `,
 };
@@ -200,7 +224,7 @@ export default function BarsPage() {
       xSpeed: 64,
       ySpeed: 64,
       color: true,
-      angle: 0,
+      angle: 64,
     },
   };
   return <Mixer config={config} />;
