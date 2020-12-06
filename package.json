@@ -43,7 +43,7 @@
     "lodash": "^4.17.20",
     "next": "^10.0.3",
     "next-compose-plugins": "^2.2.1",
-    "next-transpile-modules": "^4.1.0",
+    "next-transpile-modules": "^6.0.0",
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
     "react": "^17.0.1",

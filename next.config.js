@@ -5,7 +5,7 @@ const withTM = require('next-transpile-modules')([
   'three',
   // 'postprocessing',
   // 'react-three-gui',
-  // 'drei',
+  '@react-three/drei',
   'react-dat-gui',
 ]);
 
