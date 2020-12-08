@@ -1,34 +1,17 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Mixer, {
   Config,
   defaultConfig,
   BaseConfig,
   scaleMidi,
 } from '../components/mixer';
-import * as THREE from 'three';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ReactThreeFiber, useFrame } from 'react-three-fiber';
-import { extend } from 'react-three-fiber';
-// @ts-ignore
-import { MeshLine, MeshLineMaterial } from 'threejs-meshline';
+import { useFrame, useThree } from 'react-three-fiber';
 import Page from '../components/page';
 import { useStore } from '../lib/store';
-
-extend({ MeshLine, MeshLineMaterial });
-
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      meshLine: ReactThreeFiber.Object3DNode<MeshLine, typeof MeshLine>;
-      meshLineMaterial: ReactThreeFiber.Object3DNode<
-        MeshLineMaterial,
-        typeof MeshLineMaterial
-      >;
-    }
-  }
-}
-/* eslint-enable @typescript-eslint/no-namespace */
+import { Line } from '@react-three/drei';
+import { isEmpty } from 'lodash';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { SAMPLE_LENGTH } from '../lib/audio';
 
 const Effects = ({ params }: { params: BaseConfig }) => (
   <afterimagePass
@@ -86,24 +69,29 @@ const BarsShader = {
 
 const color = 'cyan';
 const Bars = React.memo(function Bars() {
-  const meshRef = useRef<MeshLine>();
+  const { size } = useThree();
+  const lineRef = useRef<Line2>(null);
   useFrame(() => {
+    const { geometry } = lineRef.current!;
     const { frequencyData } = useStore.getState().spectrum;
-    if (frequencyData === []) return;
-    const mesh = meshRef.current!;
-    mesh.vertices = frequencyData.map(
-      (f, i) => new THREE.Vector3(i * 5 - (frequencyData.length * 5) / 2, f, 0),
-    );
+    if (isEmpty(frequencyData)) return;
+
+    const vertices = frequencyData.flatMap((f, i) => {
+      return [((i * size.width) / SAMPLE_LENGTH - size.width / 2) * 2, f, 0];
+    });
+
+    geometry!.setPositions(vertices);
   });
 
-  return useMemo(() => {
-    return (
-      <mesh position={[0, -800, -1000]}>
-        <meshLine ref={meshRef} />
-        <meshLineMaterial lineWidth={10} color={color} />
-      </mesh>
-    );
-  }, []);
+  return (
+    <Line
+      position={[0, -800, -1000]}
+      ref={lineRef}
+      color={color}
+      linewidth={10}
+      points={new Array(SAMPLE_LENGTH * 3).fill(0)}
+    />
+  );
 });
 
 export const barsConfig = {
