@@ -54,7 +54,6 @@
     "react-three-fiber": "^5.3.3",
     "styled-components": "^5.2.1",
     "three": "^0.123.0",
-    "threejs-meshline": "^2.0.12",
     "zustand": "^3.2.0"
   }
 }
