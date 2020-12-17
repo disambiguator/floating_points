@@ -19,6 +19,7 @@ import { sceneName, scenes } from './scenes';
 import { useRouter } from 'next/router';
 import { analyseSpectrum, useMicrophone } from '../lib/audio';
 import { throttle } from 'lodash';
+import { ControlOptions, useControl } from 'react-three-gui';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
@@ -33,8 +34,6 @@ export interface BaseConfig {
   volumeScaler: number;
   name: sceneName;
   angle: number;
-  xSpeed: number;
-  ySpeed: number;
 }
 
 type CustomControls<T> = (props: {
@@ -61,8 +60,6 @@ export const defaultConfig: Omit<BaseConfig, 'name'> = {
   audioEnabled: false,
   kaleidoscope: 0,
   volumeScaler: 1,
-  xSpeed: 64,
-  ySpeed: 64,
   angle: 64,
 };
 
@@ -138,6 +135,11 @@ export const Controls = <T extends BaseConfig>({
 export const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
   <DatNumber {...props} min={0} step={1} max={127} />
 );
+
+export const useMidiControl = (
+  name: string,
+  options: Omit<ControlOptions, 'type' | 'min' | 'max'> = {},
+) => useControl(name, { ...options, type: 'number', min: 0, max: 127 });
 
 export const scaleMidi = (
   midi: number,

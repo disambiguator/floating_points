@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
+import { extend, useThree, useFrame } from 'react-three-fiber';
 import { ContainerProps } from 'react-three-fiber/targets/shared/web/ResizeContainer';
+import { Controls } from 'react-three-gui';
 
 // Make OrbitControls known as <orbitControls />
 extend({ OrbitControls });
 
-function Controls() {
+function SControls() {
   const ref = useRef<OrbitControls>();
   const { camera, gl } = useThree();
   useFrame(() => ref.current!.update());
@@ -16,9 +17,12 @@ function Controls() {
 export const FiberScene = (props: ContainerProps & { controls?: boolean }) => {
   const { controls, ...rest } = props;
   return (
-    <Canvas {...rest}>
-      {controls && <Controls />}
-      {props.children}
-    </Canvas>
+    <Controls.Provider>
+      <Controls.Canvas {...rest}>
+        {controls && <SControls />}
+        {props.children}
+      </Controls.Canvas>
+      <Controls />
+    </Controls.Provider>
   );
 };

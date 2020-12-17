@@ -5,25 +5,16 @@ import Mixer, {
   scaleMidi,
   BaseConfig,
   DatMidi,
+  useMidiControl,
 } from '../components/mixer';
 import { useFrame } from 'react-three-fiber';
 import { makeNoise2D } from 'open-simplex-noise';
 import { Line } from '@react-three/drei';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 
-type ClothParams = {
-  lineWidth: number;
-  xSpeed: number;
-  ySpeed: number;
-  angle: number;
-};
-
 const color = 'cyan';
-const Cloth = React.memo(function Cloth({
-  config,
-}: {
-  config: ClothParams & BaseConfig;
-}) {
+const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
+  const lineWidth = useMidiControl('Line width', { value: 46 });
   const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
   const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
@@ -50,7 +41,7 @@ const Cloth = React.memo(function Cloth({
       position={[0, -800, -1000]}
       ref={lineRef}
       color={color}
-      linewidth={scaleMidi(config.lineWidth, 1, 30)}
+      linewidth={scaleMidi(lineWidth, 1, 30)}
       points={[
         [0, 0, 0],
         [0, 0, 100],
@@ -72,7 +63,7 @@ export const clothConfig = {
 };
 
 export default function BarsPage() {
-  const config: Config<ClothParams> = {
+  const config: Config<BaseConfig> = {
     ...clothConfig,
     params: {
       ...defaultConfig,
@@ -80,7 +71,6 @@ export default function BarsPage() {
       zoomThreshold: 57,
       noiseAmplitude: 100,
       trails: 127,
-      lineWidth: 46,
       color: true,
     },
   };

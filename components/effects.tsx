@@ -12,7 +12,12 @@ import { AfterimagePass } from './AfterimagePass';
 import ZoomShader from '../lib/shaders/zoom';
 import React, { useRef, useEffect } from 'react';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
-import { BaseConfig, CustomEffectsType, scaleMidi } from './mixer';
+import {
+  BaseConfig,
+  CustomEffectsType,
+  scaleMidi,
+  useMidiControl,
+} from './mixer';
 import TunnelShader from '../lib/shaders/tunnel';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
@@ -39,6 +44,9 @@ declare global {
 const TunnelEffects = ({ params }: { params: BaseConfig }) => {
   const afterimagePassRef = useRef<AfterimagePass>();
   const { mouse, clock, aspect } = useThree();
+  const xSpeed = useMidiControl('X Speed', { value: 64 });
+  const ySpeed = useMidiControl('Y Speed', { value: 64 });
+
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
@@ -58,9 +66,9 @@ const TunnelEffects = ({ params }: { params: BaseConfig }) => {
         Math.PI / 10,
         true,
       )}
-      uniforms-xspeed-value={scaleMidi(params.xSpeed, -1, 1, true)}
+      uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={aspect}
-      uniforms-yspeed-value={scaleMidi(params.ySpeed, -1, 1, true)}
+      uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
     />
   );
 };
