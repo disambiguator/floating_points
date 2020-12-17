@@ -13,6 +13,7 @@ import ZoomShader from '../lib/shaders/zoom';
 import React, { useRef, useEffect } from 'react';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import { BaseConfig, CustomEffectsType, scaleMidi } from './mixer';
+import TunnelShader from '../lib/shaders/tunnel';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -34,6 +35,35 @@ declare global {
   }
 }
 /* eslint-enable @typescript-eslint/no-namespace */
+
+const TunnelEffects = ({ params }: { params: BaseConfig }) => {
+  const afterimagePassRef = useRef<AfterimagePass>();
+  const { mouse, clock, aspect } = useThree();
+  useFrame(() => {
+    const uniforms = afterimagePassRef.current!
+      .uniforms as typeof TunnelShader['uniforms'];
+    uniforms.mouse.value = mouse;
+    uniforms.time.value = clock.getElapsedTime();
+  });
+
+  return (
+    <afterimagePass
+      ref={afterimagePassRef}
+      attachArray="passes"
+      args={[TunnelShader]}
+      uniforms-damp-value={scaleMidi(params.trails, 0.8, 1)}
+      uniforms-angle-value={scaleMidi(
+        params.angle,
+        -Math.PI / 10,
+        Math.PI / 10,
+        true,
+      )}
+      uniforms-xspeed-value={scaleMidi(params.xSpeed, -1, 1, true)}
+      uniforms-aspect-value={aspect}
+      uniforms-yspeed-value={scaleMidi(params.ySpeed, -1, 1, true)}
+    />
+  );
+};
 
 export const Effects = <T extends BaseConfig>({
   params,
@@ -64,6 +94,7 @@ export const Effects = <T extends BaseConfig>({
           uniforms-zoom-value={scaleMidi(params.zoomThreshold, 0, 0.3)}
         />
       )}
+      {<TunnelEffects params={params} />}
       {params.kaleidoscope !== 0 ? (
         <shaderPass
           attachArray="passes"

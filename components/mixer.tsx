@@ -32,6 +32,9 @@ export interface BaseConfig {
   volumeControl?: MidiParam;
   volumeScaler: number;
   name: sceneName;
+  angle: number;
+  xSpeed: number;
+  ySpeed: number;
 }
 
 type CustomControls<T> = (props: {
@@ -50,15 +53,17 @@ export type Config<T> = {
   Contents: SceneContents<BaseConfig & T>;
 };
 
-export const defaultConfig = {
+export const defaultConfig: Omit<BaseConfig, 'name'> = {
   trails: 0,
   noiseAmplitude: 0.0,
   zoomThreshold: 0,
   color: false,
-  pulseEnabled: false,
   audioEnabled: false,
   kaleidoscope: 0,
   volumeScaler: 1,
+  xSpeed: 64,
+  ySpeed: 64,
+  angle: 64,
 };
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
@@ -182,6 +187,9 @@ const ControlPanel = <T extends BaseConfig>({
       <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
       <DatMidi path="zoomThreshold" label="Zoom" />
+      <DatMidi label="xSpeed" path="xSpeed" />
+      <DatMidi label="ySpeed" path="ySpeed" />
+      <DatMidi path="angle" />
       <DatNumber
         path="kaleidoscope"
         label="Kaleidoscope"
