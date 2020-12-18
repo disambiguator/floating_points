@@ -18,17 +18,6 @@ const pages = [
     ),
   },
   {
-    name: 'Kaleidoscope',
-    path: '/kaleidoscope',
-    description: (
-      <p>
-        Live music visualization using randomly generated shapes and shaders.
-        Written in ThreeJS and GLSL, music by{' '}
-        <a href="https://soundcloud.com/bjornfree">Bjorn</a>.
-      </p>
-    ),
-  },
-  {
     name: 'Dusen',
     path: '/dusen',
     description: (

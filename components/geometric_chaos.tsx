@@ -1,14 +1,9 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { FiberScene } from './scene';
-import sum from 'lodash/sum';
-import Page from './page';
 import { useFrame, useThree } from 'react-three-fiber';
-import { Effects } from './effects';
-import { scaleMidi, defaultConfig, BaseConfig } from './mixer';
+import { scaleMidi, BaseConfig } from './mixer';
 import { ShaderMaterial } from 'three';
 import { useStore } from '../lib/store';
-import { useAudioUrl } from '../lib/audio';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -160,63 +155,7 @@ export const Shapes = React.memo(function Shapes({
   return <>{cubes}</>;
 });
 
-const Scene = () => {
-  const { camera, mouse } = useThree();
-  const [amplitude, setAmplitude] = useState(0);
-  const audio = useAudioUrl(
-    'https://floating-points.s3.us-east-2.amazonaws.com/dreamspace.mp3',
-  );
-  const raycaster = new THREE.Raycaster();
-
-  useFrame(() => {
-    if (!audio) return;
-
-    const freq = audio.analyser.getFrequencyData();
-
-    const value = sum(freq) / 5000.0;
-    setAmplitude((oldAmp) => oldAmp + (value - oldAmp) * 0.8);
-
-    raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
-    useStore.setState({ ray: raycaster.ray });
-  });
-
-  const config = {
-    ...defaultConfig,
-    kaleidoscope: 5,
-    name: 'chaos',
-    noiseAmplitude: amplitude,
-  } as const;
-
-  return (
-    <>
-      <Shapes config={config} />
-      <Effects params={config} />
-    </>
-  );
-};
-
-const Spiro = () => {
-  return (
-    <FiberScene
-      camera={{ far: 10000, position: [0, 0, 300] }}
-      gl={{ antialias: true }}
-    >
-      <Scene />
-    </FiberScene>
-  );
-};
-
 export const chaosConfig = {
   params: { name: 'chaos' as const },
   Contents: Shapes,
 };
-
-export default function GeoChaosPage() {
-  const [started, start] = useState(false);
-
-  return (
-    <Page onClick={() => start(true)}>
-      {started ? <Spiro /> : <div>Click to start</div>}
-    </Page>
-  );
-}
