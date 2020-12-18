@@ -4,7 +4,6 @@ import Mixer, {
   defaultConfig,
   scaleMidi,
   BaseConfig,
-  DatMidi,
   useMidiControl,
 } from '../components/mixer';
 import { useFrame } from 'react-three-fiber';
@@ -50,15 +49,8 @@ const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
   );
 });
 
-export const clothControls = () => [
-  /* eslint-disable react/jsx-key */
-  <DatMidi label="Line width" path="lineWidth" />,
-  /* eslint-enable react/jsx-key */
-];
-
 export const clothConfig = {
   params: { name: 'cloth' as const },
-  controls: clothControls,
   Contents: Cloth,
 };
 
