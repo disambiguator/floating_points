@@ -41,6 +41,7 @@ const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
       ref={lineRef}
       color={color}
       linewidth={scaleMidi(lineWidth, 1, 30)}
+      stencilMask={false} // Not sure why I need this
       points={[
         [0, 0, 0],
         [0, 0, 100],

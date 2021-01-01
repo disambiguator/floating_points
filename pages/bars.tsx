@@ -90,6 +90,7 @@ const Bars = React.memo(function Bars() {
       color={color}
       linewidth={10}
       points={new Array(SAMPLE_LENGTH * 3).fill(0)}
+      stencilMask={false} // Not sure why I need this
     />
   );
 });
