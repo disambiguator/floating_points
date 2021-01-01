@@ -132,7 +132,7 @@ const endPoints = ({
 const setNewFragmentWidth = () => Math.floor(Math.random() * 15) + 1;
 
 const Scatter = () => {
-  const [hoverInterval, setHoverInterval] = useState<number | null>();
+  const [hoverInterval, setHoverInterval] = useState<NodeJS.Timeout | null>();
   const fragmentWidth = setNewFragmentWidth();
   let timer = 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
