@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame } from 'react-three-fiber';
+import { Canvas, useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
@@ -9,9 +9,22 @@ import { Sky, Text } from '@react-three/drei';
 import create from 'zustand';
 import Page from '../components/page';
 
+// 0 - stars: no rotation or freq response
+// 17- first bass stars respond to music
+const kickInTime = 33; // Sun fading in until this time
+// 1:07- strings in start rotating stars
+// 1:41- drums drop out
+// 2:15- minimal drop
+// 3:22- strings back In Sun can start fading out
+// 3:56- outro segment Sun completely faded out
+// 4:50 - end of song
+// fireflies running against the terrain as point lights
+// adding shapes to the peaks of the mountains like mushrooms or cacti
+
 type State = {
   terrainSpeed: number;
   starSpeed: number;
+  scale: number;
   inclination: number;
   turbidity: number;
   rayleigh: number;
@@ -21,6 +34,7 @@ type State = {
 };
 const useStore = create<State>((set) => ({
   terrainSpeed: 10,
+  scale: 400,
   starSpeed: 0.0005,
   inclination: Math.PI * -0.045,
   mieCoefficient: 0.005,
@@ -36,6 +50,7 @@ const ControlPanel = () => {
   return (
     <DatGui data={{ ...state }} onUpdate={state.setState} style={{ zIndex: 1 }}>
       <DatNumber path="terrainSpeed" min={0} max={60} step={1} />
+      <DatNumber path="scale" min={0} max={1000} step={1} />
       <DatNumber path="starSpeed" min={0} max={0.01} step={0.0001} />
       <DatFolder title="Sun config" closed={false}>
         <DatNumber path="inclination" min={-0.5} max={0.5} step={0.0001} />
@@ -63,16 +78,8 @@ const widthSpacing = planeWidth / width;
 const lengthSpacing = planeLength / length;
 
 const noiseFunction = makeNoise2D(Date.now());
-const noise = (x: number, y: number) =>
-  Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 1) * 400;
-
-const vertices = (x: number, y: number) => [
-  -planeWidth / 2 + x * widthSpacing,
-  noise(x, y),
-  -planeWidth / 2 + y * lengthSpacing,
-];
-
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
 const newPosition = () => {
   const distance = rand(minimumStarDistance, 10000);
   const pos = new THREE.Vector3();
@@ -156,6 +163,20 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
 });
 
 const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
+  const { scale } = useStore.getState();
+  const { clock } = useThree();
+
+  const noise = (x: number, y: number) =>
+    Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 1) *
+    clock.elapsedTime *
+    scale;
+
+  const vertices = (x: number, y: number) => [
+    -planeWidth / 2 + x * widthSpacing,
+    noise(x, y),
+    -planeWidth / 2 + y * lengthSpacing,
+  ];
+
   const meshRef = useRef<THREE.Mesh>();
   const geometryRef = useRef<THREE.BufferGeometry>();
   useEffect(() => {
@@ -244,13 +265,7 @@ const Terrain = React.memo(function Terrain() {
 });
 
 function Sunset() {
-  const {
-    inclination,
-    turbidity,
-    rayleigh,
-    mieCoefficient,
-    mieDirectionalG,
-  } = useStore(
+  const { turbidity, rayleigh, mieCoefficient, mieDirectionalG } = useStore(
     ({
       inclination,
       turbidity,
@@ -266,6 +281,14 @@ function Sunset() {
     }),
   );
 
+  const { clock } = useThree();
+  const [si, setSi] = useState(-0.5);
+
+  useFrame(() => {
+    if (clock.elapsedTime < kickInTime + 1)
+      setSi(Math.min(-0.5 + (0.4 * clock.elapsedTime) / kickInTime, -0.1));
+  });
+
   return (
     <>
       <Sky
@@ -276,12 +299,9 @@ function Sunset() {
           mieCoefficient,
           mieDirectionalG,
         }}
-        sunPosition={[0, inclination, -Math.PI]}
+        sunPosition={[0, si, -Math.PI]}
       />
-      <directionalLight
-        castShadow
-        position={[0, (inclination + 0.2) * 32, -Math.PI]}
-      />
+      <directionalLight castShadow position={[0, (si + 0.2) * 32, -Math.PI]} />
     </>
   );
 }
