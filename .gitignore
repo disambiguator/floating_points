@@ -8,3 +8,4 @@ dist/
 tsconfig.tsbuildinfo
 .now
 .vscode/*
+.vercel
