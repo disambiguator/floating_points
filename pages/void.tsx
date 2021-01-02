@@ -3,11 +3,12 @@ import { useFrame } from 'react-three-fiber';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl, Spectrum, Audio } from '../lib/audio';
-import { Sky, Text } from '@react-three/drei';
+import { Sky } from '@react-three/drei';
 import create from 'zustand';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import { useControl } from 'react-three-gui';
+import styled from 'styled-components';
 
 // 0 - stars: no rotation or freq response
 const bassStartTime = 17; // stars respond to music
@@ -320,12 +321,11 @@ function Sunset() {
   );
 }
 
-function Scene({ started }: { started: boolean }) {
+function Scene() {
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
       ? 'void.mp3'
       : 'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
-    started,
   );
   const setState = useStore((state) => state.setState);
   setState({ audio });
@@ -338,21 +338,12 @@ function Scene({ started }: { started: boolean }) {
     <>
       <Sunset />
       <Terrain />
-      {!started && (
-        <Text
-          fontSize={200}
-          position={new THREE.Vector3(0, 500, 0)}
-          color="white"
-        >
-          Click to start audio
-        </Text>
-      )}
       <Stars />
     </>
   );
 }
 
-function PerlinField({ started }: { started: boolean }) {
+function PerlinField() {
   return (
     <>
       <FiberScene
@@ -361,17 +352,47 @@ function PerlinField({ started }: { started: boolean }) {
         shadowMap
         controls
       >
-        <Scene started={started} />
+        <Scene />
       </FiberScene>
     </>
   );
 }
 
+const Title = styled.div`
+  @keyframes expand {
+    from {
+      letter-spacing: 1px;
+    }
+
+    to {
+      letter-spacing: 100px;
+    }
+  }
+
+  font-size: 45px;
+  margin-bottom: 50px;
+  animation-duration: 30s;
+  animation-name: expand;
+  letter-spacing: 100px;
+`;
+
+const Splash = styled.div`
+  text-align: center;
+  font-family: 'Inconsolata', monospace;
+`;
+
 export default function VoidPage() {
   const [started, start] = useState(false);
   return (
     <Page onClick={() => start(true)}>
-      {started && <PerlinField started={started} />}
+      {started ? (
+        <PerlinField />
+      ) : (
+        <Splash>
+          <Title>VOID</Title>
+          <div>Click to start</div>
+        </Splash>
+      )}
     </Page>
   );
 }
