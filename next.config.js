@@ -4,7 +4,7 @@ const withPlugins = require('next-compose-plugins');
 const withTM = require('next-transpile-modules')([
   'three',
   // 'postprocessing',
-  // 'react-three-gui',
+  'react-three-gui',
   '@react-three/drei',
   'react-dat-gui',
 ]);

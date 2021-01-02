@@ -11,7 +11,7 @@ export const FiberScene = (props: ContainerProps & { controls?: boolean }) => {
         {controls && <OrbitControls />}
         {props.children}
       </Controls.Canvas>
-      <Controls />
+      <Controls collapsed={false} />
     </Controls.Provider>
   );
 };

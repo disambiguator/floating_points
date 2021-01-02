@@ -7,7 +7,7 @@
     "lint": "eslint_d . --ext=js,jsx,ts,tsx",
     "test": "tsc --incremental && npm run lint",
     "build": "next build",
-    "start": "npm i -g vercel@latest; vercel dev"
+    "start": "vercel dev"
   },
   "repository": {
     "type": "git",

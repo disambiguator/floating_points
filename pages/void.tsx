@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame, useThree } from 'react-three-fiber';
+import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
 import { analyseSpectrum, useAudioUrl } from '../lib/audio';
-import DatGui, { DatFolder, DatNumber } from 'react-dat-gui';
-import { OrbitControls } from '@react-three/drei/OrbitControls';
 import { Sky, Text } from '@react-three/drei';
 import create from 'zustand';
 import Page from '../components/page';
+import { FiberScene } from '../components/scene';
+import { useControl } from 'react-three-gui';
 
 // 0 - stars: no rotation or freq response
 // 17- first bass stars respond to music
@@ -22,46 +22,11 @@ const kickInTime = 33; // Sun fading in until this time
 // adding shapes to the peaks of the mountains like mushrooms or cacti
 
 type State = {
-  terrainSpeed: number;
-  starSpeed: number;
-  scale: number;
-  inclination: number;
-  turbidity: number;
-  rayleigh: number;
-  mieCoefficient: number;
-  mieDirectionalG: number;
   setState: (state: Partial<State>) => void;
 };
-const useStore = create<State>((set) => ({
-  terrainSpeed: 10,
-  scale: 400,
-  starSpeed: 0.0005,
-  inclination: Math.PI * -0.045,
-  mieCoefficient: 0.005,
-  mieDirectionalG: 0.9,
-  turbidity: 10,
-  rayleigh: 2.5,
+create<State>((set) => ({
   setState: set,
 }));
-
-const ControlPanel = () => {
-  const state = useStore();
-
-  return (
-    <DatGui data={{ ...state }} onUpdate={state.setState} style={{ zIndex: 1 }}>
-      <DatNumber path="terrainSpeed" min={0} max={60} step={1} />
-      <DatNumber path="scale" min={0} max={1000} step={1} />
-      <DatNumber path="starSpeed" min={0} max={0.01} step={0.0001} />
-      <DatFolder title="Sun config" closed={false}>
-        <DatNumber path="inclination" min={-0.5} max={0.5} step={0.0001} />
-        <DatNumber path="turbidity" min={0} max={10} step={0.0001} />
-        <DatNumber path="rayleigh" min={0} max={10} step={0.0001} />
-        <DatNumber path="mieCoefficient" min={0} max={0.1} step={0.0001} />
-        <DatNumber path="mieDirectionalG" min={0} max={0.8} step={0.0001} />
-      </DatFolder>
-    </DatGui>
-  );
-};
 
 const length = 400;
 const width = 400;
@@ -96,7 +61,13 @@ const newPosition = () => {
 
 const Stars = React.memo(function Stars({ started }: { started: boolean }) {
   const starsCount = 4000;
-  const speed = useStore((state) => state.starSpeed);
+  const speed = useControl('starSpeed', {
+    type: 'number',
+    min: 0,
+    max: 0.01,
+    value: 0.0005,
+  });
+
   const audio = useAudioUrl(
     process.env.NODE_ENV === 'development'
       ? 'void.mp3'
@@ -162,8 +133,15 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
   );
 });
 
-const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
-  const { scale } = useStore.getState();
+const Row = ({
+  y,
+  material,
+  scale,
+}: {
+  y: number;
+  scale: number;
+  material: JSX.Element;
+}) => {
   const { clock } = useThree();
 
   const noise = (x: number, y: number) =>
@@ -222,7 +200,19 @@ const Row = ({ y, material }: { y: number; material: JSX.Element }) => {
 };
 
 const Terrain = React.memo(function Terrain() {
-  const speed = useStore((state) => state.terrainSpeed);
+  const speed = useControl('terrainSpeed', {
+    type: 'number',
+    min: 0,
+    max: 60,
+    value: 10,
+  });
+  const scale = useControl('terrainScale', {
+    type: 'number',
+    min: 0,
+    max: 1000,
+    value: 400,
+  });
+
   const iRef = useRef(-1);
   const yRef = useRef(-1);
   const groupRef = useRef<THREE.Group>();
@@ -238,7 +228,7 @@ const Terrain = React.memo(function Terrain() {
   const [meshes, setMeshes] = useState(
     new Array(length)
       .fill(undefined)
-      .map((_, y) => <Row key={y} y={y} material={material} />),
+      .map((_, y) => <Row key={y} y={y} scale={scale} material={material} />),
   );
 
   const frameOffset = Math.floor(60 / speed);
@@ -254,7 +244,12 @@ const Terrain = React.memo(function Terrain() {
     const newMeshes = [...meshes];
     for (let j = 0; j < t; j++) {
       newMeshes[(y * t + j) % length] = (
-        <Row key={i + length} y={y * t + j + length - 1} material={material} />
+        <Row
+          key={i + length}
+          y={y * t + j + length - 1}
+          scale={scale}
+          material={material}
+        />
       );
     }
 
@@ -265,21 +260,37 @@ const Terrain = React.memo(function Terrain() {
 });
 
 function Sunset() {
-  const { turbidity, rayleigh, mieCoefficient, mieDirectionalG } = useStore(
-    ({
-      inclination,
-      turbidity,
-      rayleigh,
-      mieCoefficient,
-      mieDirectionalG,
-    }) => ({
-      inclination,
-      turbidity,
-      rayleigh,
-      mieCoefficient,
-      mieDirectionalG,
-    }),
-  );
+  const mieCoefficient = useControl('mieCoefficient', {
+    type: 'number',
+    min: 0,
+    max: 0.1,
+    value: 0.005,
+  });
+  const rayleigh = useControl('rayleigh', {
+    type: 'number',
+    min: 0,
+    max: 10,
+    value: 2.5,
+  });
+  const mieDirectionalG = useControl('mieDirectionalG', {
+    type: 'number',
+    min: 0,
+    max: 1,
+    value: 0.9,
+  });
+  const turbidity = useControl('turbidity', {
+    type: 'number',
+    min: 0,
+    max: 10,
+    value: 10,
+  });
+
+  useControl('inclination', {
+    type: 'number',
+    min: -0.5,
+    max: 0.5,
+    value: Math.PI * -0.045,
+  });
 
   const { clock } = useThree();
   const [si, setSi] = useState(-0.5);
@@ -328,15 +339,14 @@ function Scene({ started }: { started: boolean }) {
 function PerlinField({ started }: { started: boolean }) {
   return (
     <>
-      <Canvas
+      <FiberScene
         gl={{ antialias: true }}
         camera={{ position: [0, 400, 2500], far: 20000 }}
         shadowMap
+        controls
       >
         <Scene started={started} />
-        <OrbitControls />
-      </Canvas>
-      <ControlPanel />
+      </FiberScene>
     </>
   );
 }
@@ -345,7 +355,7 @@ export default function VoidPage() {
   const [started, start] = useState(false);
   return (
     <Page onClick={() => start(true)}>
-      <PerlinField started={started} />
+      {started && <PerlinField started={started} />}
     </Page>
   );
 }
