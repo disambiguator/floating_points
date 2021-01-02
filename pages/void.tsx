@@ -10,9 +10,9 @@ import { FiberScene } from '../components/scene';
 import { useControl } from 'react-three-gui';
 
 // 0 - stars: no rotation or freq response
-// 17- first bass stars respond to music
+const bassStartTime = 17; // stars respond to music
 const kickInTime = 33; // Sun fading in until this time
-// 1:07- strings in start rotating stars
+const stringsStartTime = 67; // start rotating stars
 // 1:41- drums drop out
 // 2:15- minimal drop
 // 3:22- strings back In Sun can start fading out
@@ -104,11 +104,17 @@ const Stars = React.memo(function Stars() {
   };
 
   useFrame(() => {
-    const { volume } = useStore.getState().spectrum;
-    const size = 20 + Math.pow(volume / 4, 2);
-    materialRef.current!.uniforms.size.value = size;
+    const time = currentTime(useStore.getState());
 
-    pointsRef.current!.rotation.y += speed;
+    if (time > bassStartTime) {
+      const { volume } = useStore.getState().spectrum;
+      const size = 20 + Math.pow(volume / 4, 2);
+      materialRef.current!.uniforms.size.value = size;
+    }
+
+    if (time > stringsStartTime) {
+      pointsRef.current!.rotation.y += speed;
+    }
   });
 
   return (
