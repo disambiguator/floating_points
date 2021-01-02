@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 
-interface Audio {
+export interface Audio {
   analyser: THREE.AudioAnalyser;
   listener: THREE.AudioListener;
 }

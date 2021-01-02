@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
+import { useFrame } from 'react-three-fiber';
 import * as THREE from 'three';
 import { makeNoise2D } from 'open-simplex-noise';
-import { analyseSpectrum, useAudioUrl } from '../lib/audio';
+import { analyseSpectrum, useAudioUrl, Spectrum, Audio } from '../lib/audio';
 import { Sky, Text } from '@react-three/drei';
 import create from 'zustand';
 import Page from '../components/page';
@@ -22,11 +22,18 @@ const kickInTime = 33; // Sun fading in until this time
 // adding shapes to the peaks of the mountains like mushrooms or cacti
 
 type State = {
+  spectrum: Spectrum;
+  audio: Audio | undefined;
   setState: (state: Partial<State>) => void;
 };
-create<State>((set) => ({
+const useStore = create<State>((set) => ({
+  spectrum: { volume: 0 } as Spectrum,
   setState: set,
+  audio: undefined,
 }));
+
+const currentTime = ({ audio }: State) =>
+  audio ? audio.listener.context.currentTime : 0;
 
 const length = 400;
 const width = 400;
@@ -59,7 +66,7 @@ const newPosition = () => {
   return pos.toArray();
 };
 
-const Stars = React.memo(function Stars({ started }: { started: boolean }) {
+const Stars = React.memo(function Stars() {
   const starsCount = 4000;
   const speed = useControl('starSpeed', {
     type: 'number',
@@ -67,13 +74,6 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
     max: 0.01,
     value: 0.0005,
   });
-
-  const audio = useAudioUrl(
-    process.env.NODE_ENV === 'development'
-      ? 'void.mp3'
-      : 'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
-    started,
-  );
 
   const materialRef = useRef<THREE.ShaderMaterial>();
   const pointsRef = useRef<THREE.Points>();
@@ -104,9 +104,8 @@ const Stars = React.memo(function Stars({ started }: { started: boolean }) {
   };
 
   useFrame(() => {
-    const size = audio
-      ? 20 + Math.pow(analyseSpectrum(audio).volume / 4, 2)
-      : 20;
+    const { volume } = useStore.getState().spectrum;
+    const size = 20 + Math.pow(volume / 4, 2);
     materialRef.current!.uniforms.size.value = size;
 
     pointsRef.current!.rotation.y += speed;
@@ -142,11 +141,9 @@ const Row = ({
   scale: number;
   material: JSX.Element;
 }) => {
-  const { clock } = useThree();
-
   const noise = (x: number, y: number) =>
     Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 1) *
-    clock.elapsedTime *
+    currentTime(useStore.getState()) *
     scale;
 
   const vertices = (x: number, y: number) => [
@@ -210,7 +207,7 @@ const Terrain = React.memo(function Terrain() {
     type: 'number',
     min: 0,
     max: 1000,
-    value: 400,
+    value: 10,
   });
 
   const iRef = useRef(-1);
@@ -285,19 +282,19 @@ function Sunset() {
     value: 10,
   });
 
+  const [si, setSi] = useState(Math.PI * -0.045);
+
   useControl('inclination', {
     type: 'number',
     min: -0.5,
     max: 0.5,
-    value: Math.PI * -0.045,
+    state: [si, setSi],
   });
 
-  const { clock } = useThree();
-  const [si, setSi] = useState(-0.5);
-
   useFrame(() => {
-    if (clock.elapsedTime < kickInTime + 1)
-      setSi(Math.min(-0.5 + (0.4 * clock.elapsedTime) / kickInTime, -0.1));
+    const time = currentTime(useStore.getState());
+    if (time < kickInTime + 1)
+      setSi(Math.min(-0.4 + (0.3 * time) / kickInTime, -0.1));
   });
 
   return (
@@ -318,6 +315,19 @@ function Sunset() {
 }
 
 function Scene({ started }: { started: boolean }) {
+  const audio = useAudioUrl(
+    process.env.NODE_ENV === 'development'
+      ? 'void.mp3'
+      : 'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
+    started,
+  );
+  const setState = useStore((state) => state.setState);
+  setState({ audio });
+
+  useFrame(() => {
+    if (audio) setState({ spectrum: analyseSpectrum(audio) });
+  });
+
   return (
     <>
       <Sunset />
@@ -331,7 +341,7 @@ function Scene({ started }: { started: boolean }) {
           Click to start audio
         </Text>
       )}
-      <Stars started={started} />
+      <Stars />
     </>
   );
 }
