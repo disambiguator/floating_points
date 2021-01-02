@@ -36,8 +36,8 @@ const useStore = create<State>((set) => ({
 const currentTime = ({ audio }: State) =>
   audio ? audio.listener.context.currentTime : 0;
 
-const length = 400;
-const width = 400;
+const length = 100;
+const width = 100;
 const zoom = 10;
 const zoomX = zoom;
 const zoomY = zoom;
@@ -268,13 +268,13 @@ function Sunset() {
     type: 'number',
     min: 0,
     max: 0.1,
-    value: 0.005,
+    value: 0.1,
   });
   const rayleigh = useControl('rayleigh', {
     type: 'number',
     min: 0,
     max: 10,
-    value: 2.5,
+    value: 10,
   });
   const mieDirectionalG = useControl('mieDirectionalG', {
     type: 'number',
