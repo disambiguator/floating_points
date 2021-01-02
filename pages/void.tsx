@@ -362,16 +362,19 @@ const Title = styled.div`
   @keyframes expand {
     from {
       letter-spacing: 1px;
+      margin-left: 1px;
     }
 
     to {
       letter-spacing: 100px;
+      margin-left: 100px;
     }
   }
 
   font-size: 45px;
   margin-bottom: 50px;
-  animation-duration: 30s;
+  margin-left: 100px;
+  animation-duration: 60s;
   animation-name: expand;
   letter-spacing: 100px;
 `;
