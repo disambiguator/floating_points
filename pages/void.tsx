@@ -36,8 +36,8 @@ const useStore = create<State>((set) => ({
 const currentTime = ({ audio }: State) =>
   audio ? audio.listener.context.currentTime : 0;
 
-const length = 100;
-const width = 100;
+const length = 400;
+const width = 400;
 const zoom = 10;
 const zoomX = zoom;
 const zoomY = zoom;
