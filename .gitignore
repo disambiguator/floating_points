@@ -9,3 +9,4 @@ tsconfig.tsbuildinfo
 .now
 .vscode/*
 .vercel
+.DS_Store
