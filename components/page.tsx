@@ -6,13 +6,16 @@ const Container = styled.div`
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background: black;
   color: white;
 `;
 
-export default function Page(props: {
+export default function Page({
+  background = 'black',
+  ...rest
+}: {
   children?: React.ReactNode;
   onClick?: () => void;
+  background?: string;
 }) {
   return (
     <React.StrictMode>
@@ -25,7 +28,7 @@ export default function Page(props: {
             display: block;
           }
         `}</style>
-        <Container {...props} id="container" />
+        <Container {...rest} style={{ background }} id="container" />
       </>
     </React.StrictMode>
   );
