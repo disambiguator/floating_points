@@ -189,8 +189,6 @@ const ControlPanel = <T extends BaseConfig>({
       <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
       <DatMidi path="zoomThreshold" label="Zoom" />
-      <DatMidi label="xSpeed" path="xSpeed" />
-      <DatMidi label="ySpeed" path="ySpeed" />
       <DatMidi path="angle" />
       <DatNumber
         path="kaleidoscope"

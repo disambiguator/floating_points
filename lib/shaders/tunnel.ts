@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default {
+const TunnelShader = {
   uniforms: {
     damp: { value: 0.96 },
     xspeed: { value: 0.01 },
@@ -104,3 +104,5 @@ export default {
       }
     `,
 };
+
+export default TunnelShader;
