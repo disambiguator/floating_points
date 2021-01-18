@@ -19,6 +19,7 @@ import {
   useMidiControl,
 } from './mixer';
 import TunnelShader from '../lib/shaders/tunnel';
+import { Vector2 } from 'three';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -50,7 +51,7 @@ const TunnelEffects = ({ params }: { params: BaseConfig }) => {
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
-    uniforms.mouse.value = mouse;
+    uniforms.mouse.value = new Vector2(mouse.x * aspect, mouse.y);
     uniforms.time.value = clock.getElapsedTime();
   });
 
