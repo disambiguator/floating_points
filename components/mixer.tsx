@@ -359,7 +359,7 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
         gl={{
           antialias: true,
           // Only turn this on when exporting
-          // preserveDrawingBuffer: true,
+          preserveDrawingBuffer: true,
         }}
         controls={params.name !== 'cubefield'}
       >
