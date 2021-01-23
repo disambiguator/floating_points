@@ -51,6 +51,7 @@
   "dependencies": {
     "@react-three/drei": "^3.9.0",
     "@types/three": "^0.125.3",
+    "glsl-noise": "^0.0.0",
     "lodash": "^4.17.20",
     "next": "^10.0.3",
     "next-compose-plugins": "^2.2.1",

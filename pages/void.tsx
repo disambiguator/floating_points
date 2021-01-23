@@ -1,5 +1,6 @@
 import { Sky } from '@react-three/drei';
 import { makeNoise2D } from 'open-simplex-noise';
+import { Perf } from 'r3f-perf';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { useControl } from 'react-three-gui';
@@ -186,7 +187,7 @@ const Row = ({
     ]);
 
   return (
-    <mesh key={y} ref={meshRef} receiveShadow>
+    <mesh key={y} ref={meshRef}>
       <bufferGeometry
         ref={geometryRef}
         index={new THREE.BufferAttribute(new Uint16Array(indices), 1)}
@@ -289,7 +290,7 @@ function Sunset() {
     value: 10,
   });
 
-  const [si, setSi] = useState(Math.PI * -0.045);
+  const [si, setSi] = useState(-0.1);
 
   useControl('inclination', {
     type: 'number',
@@ -298,25 +299,9 @@ function Sunset() {
     state: [si, setSi],
   });
 
-  useFrame(() => {
-    const time = currentTime(useStore.getState());
-    if (time < kickInTime + 1)
-      setSi(Math.min(-0.4 + (0.3 * time) / kickInTime, -0.1));
-  });
-
   return (
     <>
-      <Sky
-        distance={sceneSize}
-        {...{
-          turbidity,
-          rayleigh,
-          mieCoefficient,
-          mieDirectionalG,
-        }}
-        sunPosition={[0, si, -Math.PI]}
-      />
-      <directionalLight castShadow position={[0, (si + 0.2) * 32, -Math.PI]} />
+      <directionalLight position={[0, (si + 0.2) * 32, -Math.PI]} />
     </>
   );
 }
@@ -338,7 +323,7 @@ function Scene() {
     <>
       <Sunset />
       <Terrain />
-      <Stars />
+      <Perf />
     </>
   );
 }
@@ -349,7 +334,6 @@ function PerlinField() {
       <FiberScene
         gl={{ antialias: true }}
         camera={{ position: [0, 400, 2500], far: 20000 }}
-        shadowMap
         controls
       >
         <Scene />
