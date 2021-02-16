@@ -86,7 +86,7 @@ export const Controls = <T extends BaseConfig>({
 }: {
   params: T;
   changeScene: (name: sceneName) => void;
-  setParams: (params: T) => void;
+  setParams: (params: Partial<T>) => void;
   customControls?: CustomControls<T>;
 }) => {
   const [poppedOut, setPoppedOut] = useState(false);
@@ -102,7 +102,7 @@ export const Controls = <T extends BaseConfig>({
           if (param) {
             const newValue: Partial<T> = {};
             newValue[param] = e.value;
-            setParams({ ...params, ...newValue });
+            setParams(newValue);
           } else {
             console.log(e);
           }
@@ -116,7 +116,7 @@ export const Controls = <T extends BaseConfig>({
       });
       if (WebMidi.enabled) WebMidi.disable();
     };
-  }, []);
+  }, [setParams]);
 
   const controlPanel = (
     <ControlPanel
@@ -162,7 +162,7 @@ const ControlPanel = <T extends BaseConfig>({
   changeScene,
 }: {
   params: T;
-  setParams: (arg0: T) => void;
+  setParams: (arg0: Partial<T>) => void;
   poppedOut: boolean;
   changeScene: (name: sceneName) => void;
   setPoppedOut: (arg0: boolean) => void;
@@ -175,7 +175,7 @@ const ControlPanel = <T extends BaseConfig>({
     if (newData.name && newData.name !== params.name) {
       changeScene(newData.name);
     } else {
-      setParams({ ...params, ...newData });
+      setParams(newData);
     }
   };
 
@@ -300,7 +300,7 @@ const Scene = <T extends BaseConfig>({
       link.click();
       document.body.removeChild(link);
     });
-  }, []);
+  }, [gl.domElement, setExportScene]);
 
   return (
     <>
@@ -328,10 +328,14 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
     };
   }
   const [config, setConfig] = useState<Config<T>>(initialProps);
-  const { params } = config;
-  const setParams = (params: Config<T>['params']) => {
-    setConfig({ ...config, params });
+  const setParams = (params: Partial<Config<T>['params']>) => {
+    setConfig((config) => ({
+      ...config,
+      params: { ...config.params, ...params },
+    }));
   };
+
+  const { params } = config;
 
   useEffect(() => {
     throttledHistory(params);
