@@ -1,4 +1,7 @@
 {
   "presets": ["next/babel"],
-  "plugins": ["babel-plugin-styled-components", "glsl"]
+  "plugins": [
+    ["styled-components", { "ssr": true }],
+    "glsl"
+  ]
 }
