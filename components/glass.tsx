@@ -23,7 +23,7 @@ const Bendy = () => {
     const width = p.windowWidth;
     const height = p.windowHeight;
 
-    const weight = 5;
+    const weight = 1;
     const distance = 1;
     let i = 0;
     const cracks: Crack[] = [];
@@ -57,7 +57,7 @@ const Bendy = () => {
 
       const lineLen = p.dist(x1, y1, x2, y2);
 
-      const buffer = 0.1;
+      const buffer = 0.01;
 
       if (d1 + d2 >= lineLen - buffer && d1 + d2 <= lineLen + buffer) {
         return true;
@@ -68,14 +68,13 @@ const Bendy = () => {
     p.setup = () => {
       p.createCanvas(width, height);
       p.frameRate(60);
-      p.colorMode(p.HSB);
       p.strokeWeight(weight);
 
-      const c1 = p.color(0, 255, 255);
-      const c2 = p.color(255, 255, 255);
+      const c1 = p.color(8, 38, 69);
+      const c2 = p.color(8, 18, 69);
       setGradient(c1, c2);
 
-      p.stroke(0);
+      p.stroke(219, 193, 96);
     };
 
     p.draw = () => {
@@ -100,11 +99,15 @@ const Bendy = () => {
 
         p.line(x, y, newX, newY);
 
-        if (
-          newX > width ||
-          newY > height ||
-          intersectsCracks(crack, newX, newY)
-        ) {
+        if (newX > width || newY > height) {
+          crack.angle = undefined;
+          return;
+        }
+
+        if (intersectsCracks(crack, newX, newY)) {
+          p.strokeWeight(7);
+          p.point(newX, newY);
+          p.strokeWeight(weight);
           crack.angle = undefined;
           return;
         }
@@ -120,7 +123,7 @@ const Bendy = () => {
       // const points = 3 + Math.floor(Math.random() * 5);
       // const offset = Math.random() * 360;
 
-      const points = 3 + Math.floor(Math.random() * 5);
+      const points = 3 + Math.floor(Math.random() * 3);
       const offset = Math.random() * 360;
 
       for (let i = 0; i < points; i++) {
