@@ -47,6 +47,7 @@
     "webmidi": "^2.5.1"
   },
   "dependencies": {
+    "@dagrejs/graphlib": "^2.1.4",
     "@react-three/drei": "^2.2.7",
     "lodash": "^4.17.20",
     "next": "^10.0.3",
