@@ -73,7 +73,7 @@ const Box = ({
   material: JSX.Element;
 }) => {
   const meshRef = useRef<THREE.Mesh>();
-  const geometryRef = useRef<THREE.Geometry>();
+  const geometryRef = useRef<THREE.BufferGeometry>();
 
   useEffect(() => {
     const m = meshRef.current!;

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useFrame } from 'react-three-fiber';
 import Page from '../components/page';
 import * as THREE from 'three';
@@ -13,20 +13,31 @@ const Cube = ({
   position?: [number, number, number];
   rotation?: [number, number, number];
 }) => {
-  const boxGeometry = useRef<THREE.Geometry>();
-  useEffect(() => {
-    const geometry = boxGeometry.current!;
-    for (let i = 0; i < geometry.faces.length; i++) {
-      geometry.faces[i].color.setHex(Math.random() * 0xffffff);
+  const boxGeometry = useRef<THREE.BufferGeometry>();
+  const colors = useMemo(() => {
+    const d = new Float32Array(24 * 3);
+    for (let i = 0; i < 24; i++) {
+      d[i * 3] = Math.random();
+      d[i * 3 + 1] = Math.random();
+      d[i * 3 + 2] = Math.random();
     }
-  });
+
+    return d;
+  }, []);
 
   return (
     <mesh position={position} rotation={rotation}>
       <boxGeometry
         ref={boxGeometry}
         args={[sideLength, sideLength, sideLength]}
-      />
+      >
+        <bufferAttribute
+          attachObject={['attributes', 'color']}
+          count={24}
+          array={colors}
+          itemSize={3}
+        />
+      </boxGeometry>
       <meshBasicMaterial color={0xffffff} vertexColors />
     </mesh>
   );
@@ -98,6 +109,7 @@ export default function CubesPage() {
             far: 10000,
             position: [0, 0, 300],
           }}
+          controls
         >
           <Cubes />
         </FiberScene>

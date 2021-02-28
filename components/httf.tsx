@@ -32,12 +32,13 @@ const Box = ({
 }) => {
   const canvasTextureRef = useRef<THREE.CanvasTexture>();
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
 
   canvas.width = width;
   canvas.height = height;
 
   useEffect(() => {
+    const ctx = canvas.getContext('2d')!;
+
     const interval = setInterval(() => {
       if (index === happy || index === birthday) {
         const text = happy === index ? 'Happy' : 'birthday';
@@ -77,8 +78,9 @@ const Box = ({
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [canvas, data, index]);
 
+  const ctx = canvas.getContext('2d')!;
   ctx.fillStyle = data.background;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = data.textColor;
@@ -98,6 +100,7 @@ const Box = ({
 };
 
 const TOP = 1000;
+const MAX = 5000;
 
 const newPosition = () => ({
   velocity: new THREE.Vector3(0, rand(-60, 0), 0),
@@ -105,20 +108,31 @@ const newPosition = () => ({
   acceleration: new THREE.Vector3(0, rand(-1, -0.1), 0),
 });
 
+type Particle = {
+  position: THREE.Vector3;
+  velocity: THREE.Vector3;
+  acceleration: THREE.Vector3;
+};
+
+const positionsFromParticles = (particles: Particle[]): Float32Array => {
+  const d = new Float32Array(MAX * 3);
+  particles.forEach((p, i) => {
+    d[i * 3] = p.position.x;
+    d[i * 3 + 1] = p.position.y;
+    d[i * 3 + 2] = p.position.z;
+  });
+
+  return d;
+};
+
 const Rain = () => {
-  const MAX = 5000;
-  const particles: {
-    position: THREE.Vector3;
-    velocity: THREE.Vector3;
-    acceleration: THREE.Vector3;
-  }[] = [];
-  const geo = new THREE.Geometry();
+  const particles: Particle[] = [];
   for (let i = 0; i < MAX; i++) {
     const newParticle = newPosition();
     particles.push(newParticle);
-    geo.vertices.push(newParticle.position);
   }
   const mat = new THREE.PointsMaterial({ color: 0x0033ff, size: 10 });
+  const positionAttributeRef = useRef<THREE.BufferAttribute>();
 
   useFrame(() => {
     particles.forEach((p) => {
@@ -134,12 +148,25 @@ const Rain = () => {
         p.position.z = n.position.z;
       }
     });
-    geo.verticesNeedUpdate = true;
+
+    const positionAttribute = positionAttributeRef.current!;
+    positionAttribute.array = positionsFromParticles(particles);
+    positionAttribute.needsUpdate = true;
   });
 
   return (
     <>
-      <points geometry={geo} material={mat} position={[0, 0, -4]}></points>
+      <points material={mat} position={[0, 0, -4]}>
+        <bufferGeometry>
+          <bufferAttribute
+            ref={positionAttributeRef}
+            attachObject={['attributes', 'position']}
+            count={MAX}
+            array={positionsFromParticles(particles)}
+            itemSize={3}
+          />
+        </bufferGeometry>
+      </points>
     </>
   );
 };
@@ -333,6 +360,7 @@ export default function HTTFPage() {
         <FiberScene
           gl={{ antialias: true }}
           camera={{ position: [0, 0, 3000], far: 10000 }}
+          controls
         >
           <HTTF />
         </FiberScene>

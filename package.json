@@ -47,7 +47,8 @@
     "webmidi": "^2.5.1"
   },
   "dependencies": {
-    "@react-three/drei": "^2.2.7",
+    "@react-three/drei": "^3.9.0",
+    "@types/three": "^0.125.3",
     "lodash": "^4.17.20",
     "next": "^10.0.3",
     "next-compose-plugins": "^2.2.1",
@@ -62,7 +63,7 @@
     "react-three-fiber": "^5.3.3",
     "react-three-gui": "^0.4.2",
     "styled-components": "^5.2.1",
-    "three": "^0.124.0",
+    "three": "^0.126.0",
     "zustand": "^3.2.0"
   }
 }
