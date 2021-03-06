@@ -27,13 +27,13 @@ extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      effectComposer: ReactThreeFiber.Object3DNode<
+      effectComposer: ReactThreeFiber.Node<
         EffectComposer,
         typeof EffectComposer
       >;
-      renderPass: ReactThreeFiber.Object3DNode<RenderPass, typeof RenderPass>;
-      shaderPass: ReactThreeFiber.Object3DNode<ShaderPass, typeof ShaderPass>;
-      afterimagePass: ReactThreeFiber.Object3DNode<
+      renderPass: ReactThreeFiber.Node<RenderPass, typeof RenderPass>;
+      shaderPass: ReactThreeFiber.Node<ShaderPass, typeof ShaderPass>;
+      afterimagePass: ReactThreeFiber.Node<
         AfterimagePass,
         typeof AfterimagePass
       >;

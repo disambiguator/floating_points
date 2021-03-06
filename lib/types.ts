@@ -6,7 +6,9 @@ export interface Dimensions {
   height: number;
 }
 
-export interface P5WrapperProps {
+interface P5WrapperProps {
   sketch: (p: p5) => void;
 }
 export type P5WrapperComponent = ComponentType<P5WrapperProps>;
+
+export type Glslify = unknown;
