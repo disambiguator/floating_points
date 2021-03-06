@@ -28,6 +28,7 @@ varying vec2 vUv;
 
 const int numOctaves = 8;
 const float H = 0.707;
+const float timeScale = 500.;
 
 float fbm( in vec2 x) //, in float H )
 {
@@ -35,7 +36,7 @@ float fbm( in vec2 x) //, in float H )
     float f = 3.0;
     float a = 1.0;
     float t = 0.0;
-    float tt = time/50.0;
+    float tt = time/timeScale;
 
     for( int i=0; i<numOctaves; i++ )
     {
@@ -49,7 +50,7 @@ float fbm( in vec2 x) //, in float H )
 
 void main()
 {
-    float t = time/50.0;
+    float t = time/timeScale;
     vec2 position = vUv * 2. - 1.;
     position.x *= aspect;
     position.y += t;
