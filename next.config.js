@@ -26,7 +26,7 @@ const match = (path) => {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const withTM = require('next-transpile-modules')(
   ['three', 'react-three-gui', '@react-three/drei', 'react-dat-gui'], // '@react-three/postprocessing'
-  { debug, unstable_webpack5: false, match }, // symlink-caused loops which cause memory to get bloated exponentially.
+  { debug, __unstable_matcher: match }, // symlink-caused loops which cause memory to get bloated exponentially.
 );
 
 const nextConfig = {
