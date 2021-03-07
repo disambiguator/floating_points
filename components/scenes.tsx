@@ -1,6 +1,6 @@
 import { spiroConfig } from '../pages/spiro';
 import { barsConfig } from '../pages/bars';
-import { dusenConfig } from './dusen';
+import { dusenConfig } from '../pages/dusen';
 import { cubefieldConfig } from './cubefield';
 import { chaosConfig } from './geometric_chaos';
 import { clothConfig } from '../pages/cloth';
