@@ -1,4 +1,4 @@
-import { spiroConfig } from './spiro';
+import { spiroConfig } from '../pages/spiro';
 import { barsConfig } from '../pages/bars';
 import { dusenConfig } from './dusen';
 import { cubefieldConfig } from './cubefield';
