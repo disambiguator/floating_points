@@ -317,17 +317,20 @@ const throttledHistory = throttle((params) => {
 
 const Mixer = <T,>(props: { config: Config<T> }) => {
   const router = useRouter();
-  let initialProps = props.config;
-  const routerParams = router.query.params as string;
-  if (routerParams) {
-    const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
-    //@ts-ignore
-    initialProps = {
-      ...scenes()[parsedParams.name],
-      params: parsedParams,
-    };
-  }
-  const [config, setConfig] = useState<Config<T>>(initialProps);
+  const [config, setConfig] = useState<Config<T>>(props.config);
+
+  useEffect(() => {
+    const routerParams = router.query.params as string;
+    if (routerParams) {
+      const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
+      //@ts-ignore
+      setConfig({
+        ...scenes()[parsedParams.name],
+        params: parsedParams,
+      });
+    }
+  }, [router.query.params]);
+
   const setParams = (params: Partial<Config<T>['params']>) => {
     setConfig((config) => ({
       ...config,
