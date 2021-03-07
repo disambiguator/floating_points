@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     Router.events.on('routeChangeComplete', () => {
       trackPageViewed();
     });
-  }, []);
+  }, [init, trackPageViewed]);
 
   return <Component {...pageProps} />;
 }
