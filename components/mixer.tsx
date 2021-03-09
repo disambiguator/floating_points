@@ -28,7 +28,6 @@ export interface BaseConfig {
   volumeControl?: MidiParam;
   volumeScaler: number;
   name: sceneName;
-  angle: number;
 }
 
 type CustomControls<T> = (props: {
@@ -50,7 +49,6 @@ export type Config<T> = {
 export const defaultConfig: Omit<BaseConfig, 'name'> = {
   audioEnabled: false,
   volumeScaler: 1,
-  angle: 64,
 };
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
@@ -174,7 +172,6 @@ const ControlPanel = <T extends BaseConfig>({
       style={{ zIndex: 1 }}
     >
       <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
-      <DatMidi path="angle" />
       <DatNumber
         path="kaleidoscope"
         label="Kaleidoscope"
@@ -300,13 +297,14 @@ const throttledHistory = throttle((params) => {
 }, 1000);
 
 const GuiControls = () => {
-  const { color, zoomThreshold, noiseAmplitude, set, trails } = useStore(
-    ({ color, zoomThreshold, noiseAmplitude, trails, set }) => ({
+  const { color, zoomThreshold, noiseAmplitude, set, trails, angle } = useStore(
+    ({ color, zoomThreshold, noiseAmplitude, trails, set, angle }) => ({
       color,
       zoomThreshold,
       noiseAmplitude,
       trails,
       set,
+      angle,
     }),
   );
 
@@ -325,6 +323,10 @@ const GuiControls = () => {
 
   useMidiControl('Trails', {
     state: [trails, (z) => set({ trails: z })],
+  });
+
+  useMidiControl('Angle', {
+    state: [angle, (z) => set({ angle: z })],
   });
 
   return null;

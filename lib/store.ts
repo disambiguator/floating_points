@@ -21,6 +21,7 @@ export type State = {
   noiseAmplitude: number;
   trails: number;
   kaleidoscope: number;
+  angle: number;
 };
 const useStore = create<State>((set) => ({
   ray: new THREE.Ray(),
@@ -43,6 +44,7 @@ const useStore = create<State>((set) => ({
   noiseAmplitude: 0,
   trails: 0,
   kaleidoscope: 0,
+  angle: 64,
   set,
 }));
 

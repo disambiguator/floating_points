@@ -37,13 +37,16 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-const TunnelEffects = ({ params }: { params: BaseConfig }) => {
+const TunnelEffects = () => {
   const afterimagePassRef = useRef<AfterimagePass>();
   const { mouse, clock, aspect } = useThree();
   const xSpeed = useMidiControl('X Speed', { value: 64 });
   const ySpeed = useMidiControl('Y Speed', { value: 64 });
 
-  const { trails } = useStore(({ trails }) => ({ trails }));
+  const { trails, angle } = useStore(({ trails, angle }) => ({
+    trails,
+    angle,
+  }));
 
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
@@ -58,12 +61,7 @@ const TunnelEffects = ({ params }: { params: BaseConfig }) => {
       attachArray="passes"
       args={[TunnelShader]}
       uniforms-damp-value={scaleMidi(trails, 0.8, 1)}
-      uniforms-angle-value={scaleMidi(
-        params.angle,
-        -Math.PI / 10,
-        Math.PI / 10,
-        true,
-      )}
+      uniforms-angle-value={scaleMidi(angle, -Math.PI / 10, Math.PI / 10, true)}
       uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={aspect}
       uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
@@ -106,7 +104,7 @@ export const Effects = <T extends BaseConfig>({
           uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
         />
       )}
-      {<TunnelEffects params={params} />}
+      <TunnelEffects />
       {kaleidoscope !== 0 ? (
         <shaderPass
           attachArray="passes"
