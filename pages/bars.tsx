@@ -11,16 +11,22 @@ import Mixer, {
 } from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
-import { useStore } from '../lib/store';
+import { useStateUpdate, useStore } from '../lib/store';
 
-const Effects = ({ params }: { params: BaseConfig }) => (
-  <afterimagePass
-    attachArray="passes"
-    args={[BarsShader]}
-    uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
-    uniforms-zoom-value={scaleMidi(params.zoomThreshold, 0, 0.3)}
-  />
-);
+const Effects = ({ params }: { params: BaseConfig }) => {
+  const { zoomThreshold } = useStore(({ zoomThreshold }) => ({
+    zoomThreshold,
+  }));
+
+  return (
+    <afterimagePass
+      attachArray="passes"
+      args={[BarsShader]}
+      uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
+      uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
+    />
+  );
+};
 
 const BarsShader = {
   uniforms: {
@@ -103,6 +109,7 @@ export const barsConfig = {
 };
 
 export default function BarsPage() {
+  useStateUpdate({ zoomThreshold: 2 });
   const [started, start] = useState(false);
 
   const config: Config<unknown> = {
@@ -111,7 +118,6 @@ export default function BarsPage() {
       ...defaultConfig,
       ...barsConfig.params,
       audioEnabled: true,
-      zoomThreshold: 2,
       trails: 125,
     },
   };

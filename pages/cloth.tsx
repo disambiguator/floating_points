@@ -16,8 +16,11 @@ const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
   const lineWidth = useMidiControl('Line width', { value: 46 });
   const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
-  const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
-  const color = useStore((state) => state.color);
+  const { color, zoomThreshold } = useStore(({ color, zoomThreshold }) => ({
+    color,
+    zoomThreshold,
+  }));
+  const length = Math.floor(scaleMidi(zoomThreshold, 1, 2000));
 
   useFrame(({ clock, size }) => {
     const { geometry, material } = lineRef.current!;
@@ -57,14 +60,13 @@ export const clothConfig = {
 };
 
 export default function BarsPage() {
-  useStateUpdate({ color: true });
+  useStateUpdate({ color: true, zoomThreshold: 57 });
 
   const config: Config<BaseConfig> = {
     ...clothConfig,
     params: {
       ...defaultConfig,
       ...clothConfig.params,
-      zoomThreshold: 57,
       noiseAmplitude: 100,
       trails: 127,
     },

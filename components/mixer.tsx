@@ -24,7 +24,6 @@ import { sceneName, scenes } from './scenes';
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
 export interface BaseConfig {
-  zoomThreshold: number;
   audioEnabled: boolean;
   noiseAmplitude: number;
   trails: number;
@@ -54,7 +53,6 @@ export type Config<T> = {
 export const defaultConfig: Omit<BaseConfig, 'name'> = {
   trails: 0,
   noiseAmplitude: 0.0,
-  zoomThreshold: 0,
   audioEnabled: false,
   kaleidoscope: 0,
   volumeScaler: 1,
@@ -88,7 +86,7 @@ export const Controls = <T extends BaseConfig>({
   customControls?: CustomControls<T>;
 }) => {
   const [poppedOut, setPoppedOut] = useState(false);
-
+  const set = useStore((state) => state.set);
   useEffect(() => {
     WebMidi.enable(() => {
       WebMidi.inputs.forEach((input) => {
@@ -98,9 +96,13 @@ export const Controls = <T extends BaseConfig>({
         input.addListener('controlchange', 'all', (e) => {
           const param = mapping[e.controller.number];
           if (param) {
-            const newValue: Partial<T> = {};
-            newValue[param] = e.value;
-            setParams(newValue);
+            if (param === 'zoomThreshold') {
+              set({ [param]: e.value });
+            } else {
+              const newValue: Partial<T> = {};
+              newValue[param] = e.value;
+              setParams(newValue);
+            }
           } else {
             console.log(e);
           }
@@ -114,7 +116,7 @@ export const Controls = <T extends BaseConfig>({
       });
       if (WebMidi.enabled) WebMidi.disable();
     };
-  }, [setParams]);
+  }, [set, setParams]);
 
   const controlPanel = (
     <ControlPanel
@@ -186,7 +188,6 @@ const ControlPanel = <T extends BaseConfig>({
       <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
       <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
-      <DatMidi path="zoomThreshold" label="Zoom" />
       <DatMidi path="angle" />
       <DatNumber
         path="kaleidoscope"
@@ -313,10 +314,15 @@ const throttledHistory = throttle((params) => {
 }, 1000);
 
 const GuiControls = () => {
-  const { color, set } = useStore((state) => state);
+  const { color, zoomThreshold, set } = useStore((state) => state);
+
   useControl('color', {
     type: 'boolean',
     state: [color, (color) => set({ color })],
+  });
+
+  useMidiControl('Zoom', {
+    state: [zoomThreshold, (z) => set({ zoomThreshold: z })],
   });
 
   return null;

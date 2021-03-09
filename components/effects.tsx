@@ -7,6 +7,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import TunnelShader from '../lib/shaders/tunnel';
 import ZoomShader from '../lib/shaders/zoom';
+import { useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
 import {
   BaseConfig,
@@ -77,7 +78,9 @@ export const Effects = <T extends BaseConfig>({
 }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-
+  const { zoomThreshold } = useStore(({ zoomThreshold }) => ({
+    zoomThreshold,
+  }));
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
   }, [size]);
@@ -94,7 +97,7 @@ export const Effects = <T extends BaseConfig>({
           attachArray="passes"
           args={[ZoomShader]}
           uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
-          uniforms-zoom-value={scaleMidi(params.zoomThreshold, 0, 0.3)}
+          uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
         />
       )}
       {<TunnelEffects params={params} />}

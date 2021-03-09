@@ -120,7 +120,7 @@ export const sortConfig = {
 };
 
 export default function SortPage() {
-  useStateUpdate({ color: true });
+  useStateUpdate({ color: true, zoomThreshold: 1 });
 
   return (
     <Mixer
@@ -130,7 +130,6 @@ export default function SortPage() {
           ...defaultConfig,
           ...sortConfig.params,
           noiseAmplitude: 50,
-          zoomThreshold: 1,
           trails: 115,
           sortMode: 'sort',
         },
