@@ -80,10 +80,13 @@ export const Effects = <T extends BaseConfig>({
 }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const { zoomThreshold, trails } = useStore(({ zoomThreshold, trails }) => ({
-    zoomThreshold,
-    trails,
-  }));
+  const { zoomThreshold, trails, kaleidoscope } = useStore(
+    ({ zoomThreshold, trails, kaleidoscope }) => ({
+      zoomThreshold,
+      trails,
+      kaleidoscope,
+    }),
+  );
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
   }, [size]);
@@ -104,12 +107,12 @@ export const Effects = <T extends BaseConfig>({
         />
       )}
       {<TunnelEffects params={params} />}
-      {params.kaleidoscope !== 0 ? (
+      {kaleidoscope !== 0 ? (
         <shaderPass
           attachArray="passes"
           args={[KaleidoscopeShader]}
           uniforms-aspect-value={aspect}
-          uniforms-numSides-value={params.kaleidoscope}
+          uniforms-numSides-value={kaleidoscope}
         />
       ) : null}
       {CustomEffects && <CustomEffects params={params} />}

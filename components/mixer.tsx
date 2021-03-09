@@ -25,7 +25,6 @@ type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
 export interface BaseConfig {
   audioEnabled: boolean;
-  kaleidoscope: number;
   volumeControl?: MidiParam;
   volumeScaler: number;
   name: sceneName;
@@ -50,7 +49,6 @@ export type Config<T> = {
 
 export const defaultConfig: Omit<BaseConfig, 'name'> = {
   audioEnabled: false,
-  kaleidoscope: 0,
   volumeScaler: 1,
   angle: 64,
 };
@@ -92,17 +90,7 @@ export const Controls = <T extends BaseConfig>({
         input.addListener('controlchange', 'all', (e) => {
           const param = mapping[e.controller.number];
           if (param) {
-            if (
-              param === 'zoomThreshold' ||
-              param === 'noiseAmplitude' ||
-              param === 'trails'
-            ) {
-              set({ [param]: e.value });
-            } else {
-              const newValue: Partial<T> = {};
-              newValue[param] = e.value;
-              setParams(newValue);
-            }
+            set({ [param]: e.value });
           } else {
             console.log(e);
           }
