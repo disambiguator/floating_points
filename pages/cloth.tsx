@@ -63,14 +63,18 @@ export const clothConfig = {
 };
 
 export default function BarsPage() {
-  useStateUpdate({ color: true, zoomThreshold: 57, noiseAmplitude: 100 });
+  useStateUpdate({
+    color: true,
+    zoomThreshold: 57,
+    noiseAmplitude: 100,
+    trails: 127,
+  });
 
   const config: Config<BaseConfig> = {
     ...clothConfig,
     params: {
       ...defaultConfig,
       ...clothConfig.params,
-      trails: 127,
     },
   };
   return <Mixer config={config} />;

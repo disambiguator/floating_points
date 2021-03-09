@@ -2,27 +2,22 @@ import { Line } from '@react-three/drei';
 import { isEmpty } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
-import { Line2 } from 'three/examples/jsm/lines/Line2';
-import Mixer, {
-  BaseConfig,
-  Config,
-  defaultConfig,
-  scaleMidi,
-} from '../components/mixer';
+import Mixer, { Config, defaultConfig, scaleMidi } from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { useStateUpdate, useStore } from '../lib/store';
 
-const Effects = ({ params }: { params: BaseConfig }) => {
-  const { zoomThreshold } = useStore(({ zoomThreshold }) => ({
+const Effects = () => {
+  const { zoomThreshold, trails } = useStore(({ zoomThreshold, trails }) => ({
     zoomThreshold,
+    trails,
   }));
 
   return (
     <afterimagePass
       attachArray="passes"
       args={[BarsShader]}
-      uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
+      uniforms-damp-value={scaleMidi(trails, 0, 1)}
       uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
     />
   );
@@ -109,7 +104,7 @@ export const barsConfig = {
 };
 
 export default function BarsPage() {
-  useStateUpdate({ zoomThreshold: 2 });
+  useStateUpdate({ zoomThreshold: 2, trails: 125 });
   const [started, start] = useState(false);
 
   const config: Config<unknown> = {
@@ -118,7 +113,6 @@ export default function BarsPage() {
       ...defaultConfig,
       ...barsConfig.params,
       audioEnabled: true,
-      trails: 125,
     },
   };
   return started ? (

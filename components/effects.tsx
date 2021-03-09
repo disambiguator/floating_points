@@ -43,6 +43,8 @@ const TunnelEffects = ({ params }: { params: BaseConfig }) => {
   const xSpeed = useMidiControl('X Speed', { value: 64 });
   const ySpeed = useMidiControl('Y Speed', { value: 64 });
 
+  const { trails } = useStore(({ trails }) => ({ trails }));
+
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
@@ -55,7 +57,7 @@ const TunnelEffects = ({ params }: { params: BaseConfig }) => {
       ref={afterimagePassRef}
       attachArray="passes"
       args={[TunnelShader]}
-      uniforms-damp-value={scaleMidi(params.trails, 0.8, 1)}
+      uniforms-damp-value={scaleMidi(trails, 0.8, 1)}
       uniforms-angle-value={scaleMidi(
         params.angle,
         -Math.PI / 10,
@@ -78,8 +80,9 @@ export const Effects = <T extends BaseConfig>({
 }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const { zoomThreshold } = useStore(({ zoomThreshold }) => ({
+  const { zoomThreshold, trails } = useStore(({ zoomThreshold, trails }) => ({
     zoomThreshold,
+    trails,
   }));
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
@@ -96,7 +99,7 @@ export const Effects = <T extends BaseConfig>({
         <afterimagePass
           attachArray="passes"
           args={[ZoomShader]}
-          uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
+          uniforms-damp-value={scaleMidi(trails, 0, 1)}
           uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
         />
       )}
