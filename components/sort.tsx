@@ -9,8 +9,11 @@ interface SortConfig extends BaseConfig {
 }
 
 export const Sort = ({ config }: { config: SortConfig }) => {
-  const color = useStore((state) => state.color);
-  const { noiseAmplitude, sortMode } = config;
+  const { color, noiseAmplitude } = useStore(({ color, noiseAmplitude }) => ({
+    color,
+    noiseAmplitude,
+  }));
+  const { sortMode } = config;
   const arrayLength = Math.floor(scaleMidi(noiseAmplitude, 1, 500));
   const shaderRef = useRef<ShaderMaterial>();
 
@@ -120,7 +123,7 @@ export const sortConfig = {
 };
 
 export default function SortPage() {
-  useStateUpdate({ color: true, zoomThreshold: 1 });
+  useStateUpdate({ color: true, zoomThreshold: 1, noiseAmplitude: 50 });
 
   return (
     <Mixer
@@ -129,7 +132,6 @@ export default function SortPage() {
         params: {
           ...defaultConfig,
           ...sortConfig.params,
-          noiseAmplitude: 50,
           trails: 115,
           sortMode: 'sort',
         },

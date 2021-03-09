@@ -18,6 +18,7 @@ export type State = {
   color: boolean;
   set: SetState<State>;
   zoomThreshold: number;
+  noiseAmplitude: number;
 };
 const useStore = create<State>((set) => ({
   ray: new THREE.Ray(),
@@ -37,6 +38,7 @@ const useStore = create<State>((set) => ({
   },
   color: false,
   zoomThreshold: 0,
+  noiseAmplitude: 0,
   set,
 }));
 

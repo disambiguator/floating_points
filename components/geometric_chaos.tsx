@@ -3,7 +3,7 @@ import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import { ShaderMaterial } from 'three';
 import { useStore } from '../lib/store';
-import { BaseConfig, scaleMidi } from './mixer';
+import { scaleMidi } from './mixer';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -104,11 +104,7 @@ const Box = ({
   );
 };
 
-export const Shapes = React.memo(function Shapes({
-  config,
-}: {
-  config: BaseConfig;
-}) {
+export const Shapes = React.memo(function Shapes() {
   const { camera } = useThree();
   const materialRef = useRef<ShaderMaterial>();
   const displacement = useMemo(() => {
@@ -119,7 +115,11 @@ export const Shapes = React.memo(function Shapes({
     return d;
   }, []);
 
-  const amplitude = config.noiseAmplitude * 1000;
+  const { noiseAmplitude } = useStore(({ noiseAmplitude }) => ({
+    noiseAmplitude,
+  }));
+
+  const amplitude = noiseAmplitude * 1000;
 
   const material = useMemo(
     () => (

@@ -12,19 +12,22 @@ import Mixer, {
 } from '../components/mixer';
 import { useStateUpdate, useStore } from '../lib/store';
 
-const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
+const Cloth = React.memo(function Cloth() {
   const lineWidth = useMidiControl('Line width', { value: 46 });
   const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
-  const { color, zoomThreshold } = useStore(({ color, zoomThreshold }) => ({
-    color,
-    zoomThreshold,
-  }));
+  const { color, zoomThreshold, noiseAmplitude } = useStore(
+    ({ color, zoomThreshold, noiseAmplitude }) => ({
+      color,
+      zoomThreshold,
+      noiseAmplitude,
+    }),
+  );
   const length = Math.floor(scaleMidi(zoomThreshold, 1, 2000));
 
   useFrame(({ clock, size }) => {
     const { geometry, material } = lineRef.current!;
-    const amplitude = scaleMidi(config.noiseAmplitude, 1, 500);
+    const amplitude = scaleMidi(noiseAmplitude, 1, 500);
     geometry!.setPositions(
       new Array(length)
         .fill(undefined)
@@ -60,14 +63,13 @@ export const clothConfig = {
 };
 
 export default function BarsPage() {
-  useStateUpdate({ color: true, zoomThreshold: 57 });
+  useStateUpdate({ color: true, zoomThreshold: 57, noiseAmplitude: 100 });
 
   const config: Config<BaseConfig> = {
     ...clothConfig,
     params: {
       ...defaultConfig,
       ...clothConfig.params,
-      noiseAmplitude: 100,
       trails: 127,
     },
   };

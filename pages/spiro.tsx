@@ -82,8 +82,11 @@ export const SpiroContents = ({
     }
     return d;
   }, []);
-  const color = useStore((state) => state.color);
-  const { seeds, noiseAmplitude } = config;
+  const { color, noiseAmplitude } = useStore(({ color, noiseAmplitude }) => ({
+    color,
+    noiseAmplitude,
+  }));
+  const { seeds } = config;
 
   const positions = useRef(seeds ?? initPositions());
 

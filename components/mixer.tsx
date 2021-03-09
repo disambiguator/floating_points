@@ -25,7 +25,6 @@ type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
 export interface BaseConfig {
   audioEnabled: boolean;
-  noiseAmplitude: number;
   trails: number;
   kaleidoscope: number;
   volumeControl?: MidiParam;
@@ -52,7 +51,6 @@ export type Config<T> = {
 
 export const defaultConfig: Omit<BaseConfig, 'name'> = {
   trails: 0,
-  noiseAmplitude: 0.0,
   audioEnabled: false,
   kaleidoscope: 0,
   volumeScaler: 1,
@@ -96,7 +94,7 @@ export const Controls = <T extends BaseConfig>({
         input.addListener('controlchange', 'all', (e) => {
           const param = mapping[e.controller.number];
           if (param) {
-            if (param === 'zoomThreshold') {
+            if (param === 'zoomThreshold' || param === 'noiseAmplitude') {
               set({ [param]: e.value });
             } else {
               const newValue: Partial<T> = {};
@@ -186,7 +184,6 @@ const ControlPanel = <T extends BaseConfig>({
       style={{ zIndex: 1 }}
     >
       <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
-      <DatMidi path="noiseAmplitude" label="Amplitude" />
       <DatMidi path="trails" label="Trails" />
       <DatMidi path="angle" />
       <DatNumber
@@ -314,7 +311,14 @@ const throttledHistory = throttle((params) => {
 }, 1000);
 
 const GuiControls = () => {
-  const { color, zoomThreshold, set } = useStore((state) => state);
+  const { color, zoomThreshold, noiseAmplitude, set } = useStore(
+    ({ color, zoomThreshold, noiseAmplitude, set }) => ({
+      color,
+      zoomThreshold,
+      noiseAmplitude,
+      set,
+    }),
+  );
 
   useControl('color', {
     type: 'boolean',
@@ -323,6 +327,10 @@ const GuiControls = () => {
 
   useMidiControl('Zoom', {
     state: [zoomThreshold, (z) => set({ zoomThreshold: z })],
+  });
+
+  useMidiControl('Amplitude', {
+    state: [noiseAmplitude, (z) => set({ noiseAmplitude: z })],
   });
 
   return null;
