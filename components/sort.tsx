@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { ShaderMaterial, Vector3 } from 'three';
+import { useStateUpdate, useStore } from '../lib/store';
 import Mixer, { BaseConfig, defaultConfig, scaleMidi } from './mixer';
 
 interface SortConfig extends BaseConfig {
@@ -8,7 +9,8 @@ interface SortConfig extends BaseConfig {
 }
 
 export const Sort = ({ config }: { config: SortConfig }) => {
-  const { color, noiseAmplitude, sortMode } = config;
+  const color = useStore((state) => state.color);
+  const { noiseAmplitude, sortMode } = config;
   const arrayLength = Math.floor(scaleMidi(noiseAmplitude, 1, 500));
   const shaderRef = useRef<ShaderMaterial>();
 
@@ -118,6 +120,8 @@ export const sortConfig = {
 };
 
 export default function SortPage() {
+  useStateUpdate({ color: true });
+
   return (
     <Mixer
       config={{
@@ -128,7 +132,6 @@ export default function SortPage() {
           noiseAmplitude: 50,
           zoomThreshold: 1,
           trails: 115,
-          color: true,
           sortMode: 'sort',
         },
       }}

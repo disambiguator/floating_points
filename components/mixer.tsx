@@ -24,7 +24,6 @@ import { sceneName, scenes } from './scenes';
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
 export interface BaseConfig {
-  color: boolean;
   zoomThreshold: number;
   audioEnabled: boolean;
   noiseAmplitude: number;
@@ -56,7 +55,6 @@ export const defaultConfig: Omit<BaseConfig, 'name'> = {
   trails: 0,
   noiseAmplitude: 0.0,
   zoomThreshold: 0,
-  color: false,
   audioEnabled: false,
   kaleidoscope: 0,
   volumeScaler: 1,
@@ -227,7 +225,6 @@ const ControlPanel = <T extends BaseConfig>({
           /* eslint-enable react/jsx-key */
         />,
       ]}
-      <DatBoolean path="color" label="Color" />
       {customControls && customControls({ params, onUpdate })}
       <DatButton
         onClick={() => {
@@ -315,9 +312,20 @@ const throttledHistory = throttle((params) => {
   window.history.pushState('', '', url);
 }, 1000);
 
+const GuiControls = () => {
+  const { color, set } = useStore((state) => state);
+  useControl('color', {
+    type: 'boolean',
+    state: [color, (color) => set({ color })],
+  });
+
+  return null;
+};
+
 const Mixer = <T,>(props: { config: Config<T> }) => {
   const router = useRouter();
   const [config, setConfig] = useState<Config<T>>(props.config);
+  const set = useStore((state) => state.set);
 
   useEffect(() => {
     const routerParams = router.query.params as string;
@@ -351,6 +359,9 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
       ...newScene,
       params: { ...config.params, ...newScene.params },
     });
+    if ('color' in newScene.params) {
+      set(newScene.params);
+    }
   };
 
   return (
@@ -369,6 +380,7 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
           // preserveDrawingBuffer: true,
         }}
         controls={params.name !== 'cubefield'}
+        gui
       >
         <Scene
           params={params}
@@ -376,6 +388,7 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
           Contents={config.Contents}
           CustomEffects={config.CustomEffects}
         />
+        <GuiControls />
       </FiberScene>
     </>
   );
