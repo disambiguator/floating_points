@@ -221,21 +221,12 @@ const Scene = <T extends BaseConfig>({
   CustomEffects?: CustomEffectsType<T>;
 }) => {
   const { camera, mouse, gl } = useThree();
-  const {
-    setExportScene,
-    audioEnabled,
-    set,
-    volumeScaler,
-    volumeControl,
-  } = useStore(
-    ({ setExportScene, audioEnabled, volumeScaler, set, volumeControl }) => ({
-      setExportScene,
-      audioEnabled,
-      volumeScaler,
-      set,
-      volumeControl,
-    }),
-  );
+  const setExportScene = useStore((state) => state.setExportScene);
+  const audioEnabled = useStore((state) => state.audioEnabled);
+  const set = useStore((state) => state.set);
+  const volumeScaler = useStore((state) => state.volumeScaler);
+  const volumeControl = useStore((state) => state.volumeControl);
+
   const raycaster = new THREE.Raycaster();
 
   const audio = useMicrophone(audioEnabled);
