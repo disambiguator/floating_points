@@ -14,16 +14,13 @@ import { ControlOptions, useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { analyseSpectrum, useMicrophone } from '../lib/audio';
-import { useStore } from '../lib/store';
+import { MidiParam, useStore } from '../lib/store';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { sceneName, scenes } from './scenes';
 
-type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
-
 export interface BaseConfig {
-  volumeControl?: MidiParam;
   name: sceneName;
 }
 
@@ -183,20 +180,7 @@ const ControlPanel = <T extends BaseConfig>({
         <DatMidi label="Bass" path="bass" />,
         <DatMidi label="Midrange" path="midrange" />,
         <DatMidi label="Treble" path="treble" />,
-        <DatSelect
-          path="volumeControl"
-          label="Volume Control"
-          options={[
-            undefined,
-            'noiseAmplitude',
-            'trails',
-            'zoomThreshold',
-            'kaleidoscope',
-            'speed',
-            'lineWidth',
-          ]}
-          /* eslint-enable react/jsx-key */
-        />,
+        /* eslint-enable react/jsx-key */
       ]}
       {customControls && customControls({ params, onUpdate })}
       <DatButton
@@ -237,12 +221,19 @@ const Scene = <T extends BaseConfig>({
   CustomEffects?: CustomEffectsType<T>;
 }) => {
   const { camera, mouse, gl } = useThree();
-  const { setExportScene, audioEnabled, set, volumeScaler } = useStore(
-    ({ setExportScene, audioEnabled, volumeScaler, set }) => ({
+  const {
+    setExportScene,
+    audioEnabled,
+    set,
+    volumeScaler,
+    volumeControl,
+  } = useStore(
+    ({ setExportScene, audioEnabled, volumeScaler, set, volumeControl }) => ({
       setExportScene,
       audioEnabled,
       volumeScaler,
       set,
+      volumeControl,
     }),
   );
   const raycaster = new THREE.Raycaster();
@@ -257,9 +248,9 @@ const Scene = <T extends BaseConfig>({
       const spectrum = analyseSpectrum(audio);
       const { volume } = spectrum;
 
-      if (params.volumeControl) {
+      if (volumeControl) {
         const volumeControlledValue = {} as Record<MidiParam, number>;
-        volumeControlledValue[params.volumeControl] = volume * volumeScaler;
+        volumeControlledValue[volumeControl] = volume * volumeScaler;
         setParams({ ...params, ...volumeControlledValue });
         set(volumeControlledValue);
       }
@@ -302,6 +293,7 @@ const GuiControls = () => {
     angle,
     audioEnabled,
     volumeScaler,
+    volumeControl,
   } = useStore(
     ({
       color,
@@ -312,6 +304,7 @@ const GuiControls = () => {
       angle,
       audioEnabled,
       volumeScaler,
+      volumeControl,
     }) => ({
       color,
       zoomThreshold,
@@ -321,6 +314,7 @@ const GuiControls = () => {
       angle,
       audioEnabled,
       volumeScaler,
+      volumeControl,
     }),
   );
 
@@ -355,6 +349,19 @@ const GuiControls = () => {
     state: [volumeScaler, (volumeScaler) => set({ volumeScaler })],
     min: 0,
     max: 2,
+  });
+
+  useControl('Volume Control', {
+    type: 'select',
+    items: [
+      'noiseAmplitude',
+      'trails',
+      'zoomThreshold',
+      'kaleidoscope',
+      'speed',
+      'lineWidth',
+    ],
+    state: [volumeControl, (volumeControl) => set({ volumeControl })],
   });
 
   return null;

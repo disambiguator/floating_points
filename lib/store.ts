@@ -3,6 +3,12 @@ import * as THREE from 'three';
 import create, { PartialState, SetState } from 'zustand';
 import { Spectrum } from './audio';
 
+export type MidiParam =
+  | 'noiseAmplitude'
+  | 'trails'
+  | 'zoomThreshold'
+  | 'kaleidoscope';
+
 export const useStateUpdate = (update: PartialState<State>) => {
   const set = useStore((state) => state.set);
   useEffect(() => {
@@ -24,6 +30,7 @@ export type State = {
   angle: number;
   audioEnabled: boolean;
   volumeScaler: number;
+  volumeControl: MidiParam | null;
 };
 const useStore = create<State>((set) => ({
   ray: new THREE.Ray(),
@@ -49,6 +56,7 @@ const useStore = create<State>((set) => ({
   angle: 64,
   audioEnabled: false,
   volumeScaler: 1,
+  volumeControl: null,
   set,
 }));
 
