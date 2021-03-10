@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { ShaderMaterial, Vector3 } from 'three';
 import { useStateUpdate, useStore } from '../lib/store';
-import Mixer, { BaseConfig, defaultConfig, scaleMidi } from './mixer';
+import Mixer, { BaseConfig, scaleMidi } from './mixer';
 
 interface SortConfig extends BaseConfig {
   sortMode: 'sort' | 'random';
@@ -134,11 +134,7 @@ export default function SortPage() {
     <Mixer
       config={{
         ...sortConfig,
-        params: {
-          ...defaultConfig,
-          ...sortConfig.params,
-          sortMode: 'sort',
-        },
+        params: { ...sortConfig.params, sortMode: 'sort' },
       }}
     />
   );

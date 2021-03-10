@@ -23,6 +23,7 @@ export type State = {
   kaleidoscope: number;
   angle: number;
   audioEnabled: boolean;
+  volumeScaler: number;
 };
 const useStore = create<State>((set) => ({
   ray: new THREE.Ray(),
@@ -47,6 +48,7 @@ const useStore = create<State>((set) => ({
   kaleidoscope: 0,
   angle: 64,
   audioEnabled: false,
+  volumeScaler: 1,
   set,
 }));
 

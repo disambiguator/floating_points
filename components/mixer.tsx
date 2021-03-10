@@ -24,7 +24,6 @@ type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
 export interface BaseConfig {
   volumeControl?: MidiParam;
-  volumeScaler: number;
   name: sceneName;
 }
 
@@ -42,10 +41,6 @@ export type Config<T> = {
   CustomEffects?: CustomEffectsType<BaseConfig & T>;
   controls?: CustomControls<BaseConfig & T>;
   Contents: SceneContents<BaseConfig & T>;
-};
-
-export const defaultConfig: Omit<BaseConfig, 'name'> = {
-  volumeScaler: 1,
 };
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
@@ -184,13 +179,6 @@ const ControlPanel = <T extends BaseConfig>({
       {audioEnabled && [
         /* eslint-disable react/jsx-key */
         <DatMidi label="Volume" path="volume" />,
-        <DatNumber
-          label="Scale"
-          path="volumeScaler"
-          min={0}
-          max={2}
-          step={0.0001}
-        />,
         <DatMidi label="Sub Bass" path="subBass" />,
         <DatMidi label="Bass" path="bass" />,
         <DatMidi label="Midrange" path="midrange" />,
@@ -249,10 +237,11 @@ const Scene = <T extends BaseConfig>({
   CustomEffects?: CustomEffectsType<T>;
 }) => {
   const { camera, mouse, gl } = useThree();
-  const { setExportScene, audioEnabled, set } = useStore(
-    ({ setExportScene, audioEnabled, set }) => ({
+  const { setExportScene, audioEnabled, set, volumeScaler } = useStore(
+    ({ setExportScene, audioEnabled, volumeScaler, set }) => ({
       setExportScene,
       audioEnabled,
+      volumeScaler,
       set,
     }),
   );
@@ -270,8 +259,7 @@ const Scene = <T extends BaseConfig>({
 
       if (params.volumeControl) {
         const volumeControlledValue = {} as Record<MidiParam, number>;
-        volumeControlledValue[params.volumeControl] =
-          volume * params.volumeScaler;
+        volumeControlledValue[params.volumeControl] = volume * volumeScaler;
         setParams({ ...params, ...volumeControlledValue });
         set(volumeControlledValue);
       }
@@ -313,6 +301,7 @@ const GuiControls = () => {
     trails,
     angle,
     audioEnabled,
+    volumeScaler,
   } = useStore(
     ({
       color,
@@ -322,6 +311,7 @@ const GuiControls = () => {
       set,
       angle,
       audioEnabled,
+      volumeScaler,
     }) => ({
       color,
       zoomThreshold,
@@ -330,6 +320,7 @@ const GuiControls = () => {
       set,
       angle,
       audioEnabled,
+      volumeScaler,
     }),
   );
 
@@ -357,6 +348,13 @@ const GuiControls = () => {
   useControl('Microphone Audio', {
     type: 'boolean',
     state: [audioEnabled, (audioEnabled) => set({ audioEnabled })],
+  });
+
+  useControl('Scale', {
+    type: 'number',
+    state: [volumeScaler, (volumeScaler) => set({ volumeScaler })],
+    min: 0,
+    max: 2,
   });
 
   return null;

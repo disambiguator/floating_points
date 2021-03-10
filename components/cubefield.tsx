@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import { BoxData } from './cubedraw';
-import MixerPage, { Config, defaultConfig } from './mixer';
+import MixerPage from './mixer';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
@@ -62,12 +62,5 @@ export const cubefieldConfig = {
 };
 
 export default function DusenPage() {
-  const config: Config<unknown> = {
-    ...cubefieldConfig,
-    params: {
-      ...defaultConfig,
-      ...cubefieldConfig.params,
-    },
-  };
-  return <MixerPage config={config} />;
+  return <MixerPage config={cubefieldConfig} />;
 }

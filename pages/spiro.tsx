@@ -5,12 +5,7 @@ import React from 'react';
 import { DatButton } from 'react-dat-gui';
 import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
-import Mixer, {
-  BaseConfig,
-  Config,
-  defaultConfig,
-  scaleMidi,
-} from '../components/mixer';
+import Mixer, { BaseConfig, Config, scaleMidi } from '../components/mixer';
 import SpiroShader from '../lib/shaders/spiro';
 import { useStore } from '../lib/store';
 
@@ -172,7 +167,6 @@ export default function SpiroPage() {
   const config: Config<SpiroParams> = {
     ...spiroConfig,
     params: {
-      ...defaultConfig,
       ...spiroConfig.params,
       seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
     },

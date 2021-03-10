@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import Mixer, { Config, defaultConfig, scaleMidi } from '../components/mixer';
+import Mixer, { scaleMidi } from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { useStateUpdate, useStore } from '../lib/store';
@@ -108,15 +108,8 @@ export default function BarsPage() {
   useStateUpdate({ zoomThreshold: 2, trails: 125, audioEnabled: true });
   const [started, start] = useState(false);
 
-  const config: Config<unknown> = {
-    ...barsConfig,
-    params: {
-      ...defaultConfig,
-      ...barsConfig.params,
-    },
-  };
   return started ? (
-    <Mixer config={config} />
+    <Mixer config={barsConfig} />
   ) : (
     <Page onClick={() => start(true)}>
       <div>Click to start</div>
