@@ -165,7 +165,7 @@ const ControlPanel = <T extends BaseConfig>({
       onUpdate={onUpdate}
       style={{ zIndex: 1 }}
     >
-      <DatSelect path="name" label="Contents" options={Object.keys(scenes())} />
+      <DatSelect path="name" label="Contents" options={Object.keys(scenes)} />
       <DatNumber
         path="kaleidoscope"
         label="Kaleidoscope"
@@ -369,7 +369,7 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
       const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
       //@ts-ignore
       setConfig({
-        ...scenes()[parsedParams.name],
+        ...scenes[parsedParams.name],
         params: parsedParams,
       });
     }
@@ -389,7 +389,7 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
   }, [params]);
 
   const changeScene = (name: sceneName) => {
-    const newScene = scenes()[name];
+    const newScene = scenes[name];
     //@ts-ignore
     setConfig({
       ...newScene,

@@ -15,7 +15,7 @@ export type sceneName =
   | 'cubefield'
   | 'sort';
 
-export const scenes = () => ({
+export const scenes = {
   spiro: spiroConfig,
   bars: barsConfig,
   dusen: dusenConfig,
@@ -23,4 +23,4 @@ export const scenes = () => ({
   chaos: chaosConfig,
   cloth: clothConfig,
   sort: sortConfig,
-});
+};
