@@ -2,6 +2,7 @@ import { Line } from '@react-three/drei';
 import { isEmpty } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
 import Mixer, { Config, defaultConfig, scaleMidi } from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
@@ -104,7 +105,7 @@ export const barsConfig = {
 };
 
 export default function BarsPage() {
-  useStateUpdate({ zoomThreshold: 2, trails: 125 });
+  useStateUpdate({ zoomThreshold: 2, trails: 125, audioEnabled: true });
   const [started, start] = useState(false);
 
   const config: Config<unknown> = {
@@ -112,7 +113,6 @@ export default function BarsPage() {
     params: {
       ...defaultConfig,
       ...barsConfig.params,
-      audioEnabled: true,
     },
   };
   return started ? (

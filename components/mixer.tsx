@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import DatGui, {
-  DatBoolean,
   DatButton,
   DatNumber,
   DatNumberProps,
@@ -15,7 +14,7 @@ import { ControlOptions, useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { analyseSpectrum, useMicrophone } from '../lib/audio';
-import { State, useStore } from '../lib/store';
+import { useStore } from '../lib/store';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
@@ -24,7 +23,6 @@ import { sceneName, scenes } from './scenes';
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 
 export interface BaseConfig {
-  audioEnabled: boolean;
   volumeControl?: MidiParam;
   volumeScaler: number;
   name: sceneName;
@@ -47,7 +45,6 @@ export type Config<T> = {
 };
 
 export const defaultConfig: Omit<BaseConfig, 'name'> = {
-  audioEnabled: false,
   volumeScaler: 1,
 };
 
@@ -155,8 +152,13 @@ const ControlPanel = <T extends BaseConfig>({
   customControls?: CustomControls<T>;
 }) => {
   const [isOpen, setOpen] = useState(true);
-  const spectrum = useStore((state: State) => state.spectrum);
-  const exportScene = useStore((state: State) => state.exportScene);
+  const { spectrum, exportScene, audioEnabled } = useStore(
+    ({ spectrum, exportScene, audioEnabled }) => ({
+      spectrum,
+      exportScene,
+      audioEnabled,
+    }),
+  );
   const onUpdate = (newData: Partial<T>) => {
     if (newData.name && newData.name !== params.name) {
       changeScene(newData.name);
@@ -179,8 +181,7 @@ const ControlPanel = <T extends BaseConfig>({
         max={127}
         step={1}
       />
-      <DatBoolean path="audioEnabled" label="Microphone Audio" />
-      {params.audioEnabled && [
+      {audioEnabled && [
         /* eslint-disable react/jsx-key */
         <DatMidi label="Volume" path="volume" />,
         <DatNumber
@@ -248,10 +249,15 @@ const Scene = <T extends BaseConfig>({
   CustomEffects?: CustomEffectsType<T>;
 }) => {
   const { camera, mouse, gl } = useThree();
-  const setExportScene = useStore((store) => store.setExportScene);
+  const { setExportScene, audioEnabled } = useStore(
+    ({ setExportScene, audioEnabled }) => ({
+      setExportScene,
+      audioEnabled,
+    }),
+  );
   const raycaster = new THREE.Raycaster();
 
-  const audio = useMicrophone(params.audioEnabled);
+  const audio = useMicrophone(audioEnabled);
 
   useFrame(() => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
@@ -297,14 +303,31 @@ const throttledHistory = throttle((params) => {
 }, 1000);
 
 const GuiControls = () => {
-  const { color, zoomThreshold, noiseAmplitude, set, trails, angle } = useStore(
-    ({ color, zoomThreshold, noiseAmplitude, trails, set, angle }) => ({
+  const {
+    color,
+    zoomThreshold,
+    noiseAmplitude,
+    set,
+    trails,
+    angle,
+    audioEnabled,
+  } = useStore(
+    ({
       color,
       zoomThreshold,
       noiseAmplitude,
       trails,
       set,
       angle,
+      audioEnabled,
+    }) => ({
+      color,
+      zoomThreshold,
+      noiseAmplitude,
+      trails,
+      set,
+      angle,
+      audioEnabled,
     }),
   );
 
@@ -327,6 +350,11 @@ const GuiControls = () => {
 
   useMidiControl('Angle', {
     state: [angle, (z) => set({ angle: z })],
+  });
+
+  useControl('Microphone Audio', {
+    type: 'boolean',
+    state: [audioEnabled, (audioEnabled) => set({ audioEnabled })],
   });
 
   return null;
