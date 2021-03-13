@@ -101,9 +101,7 @@ void main()
 const Dusen = React.memo(function Dusen() {
   const { aspect, size, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
-  const { noiseAmplitude } = useStore(({ noiseAmplitude }) => ({
-    noiseAmplitude,
-  }));
+  const noiseAmplitude = useStore((state) => state.noiseAmplitude);
 
   useFrame(() => {
     ref.current!.uniforms.time.value = clock.elapsedTime;

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import * as THREE from 'three';
 import create, { PartialState, SetState } from 'zustand';
-import { sceneName } from '../components/scenes';
 import { Spectrum } from './audio';
 
 export type MidiParam =
@@ -28,7 +27,7 @@ export type CustomEffectsType<T> = React.ComponentType<{
 }>;
 
 export type Config<T> = {
-  name: sceneName;
+  name: string;
   params: T;
   CustomEffects?: CustomEffectsType<T>;
   controls?: CustomControls;

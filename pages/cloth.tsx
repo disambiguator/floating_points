@@ -3,27 +3,26 @@ import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import Mixer, { useMidiControl } from '../components/mixer';
+import { useMidiControl } from '../components/mixer';
+import MixerPage from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
-import { useStateUpdate, useStore } from '../lib/store';
+import { useStore } from '../lib/store';
+import { useStateUpdate } from '../lib/store';
 
 const Cloth = React.memo(function Cloth() {
   const lineWidth = useMidiControl('Line width', { value: 46 });
   const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
-  const { color, zoomThreshold, noiseAmplitude } = useStore(
-    ({ color, zoomThreshold, noiseAmplitude }) => ({
-      color,
-      zoomThreshold,
-      noiseAmplitude,
-    }),
-  );
-  const length = Math.floor(scaleMidi(zoomThreshold, 1, 2000));
 
   useFrame(({ clock, size }) => {
-    const { geometry, material } = lineRef.current!;
+    const { color, zoomThreshold, noiseAmplitude } = useStore.getState();
+    const length = Math.floor(scaleMidi(zoomThreshold, 1, 2000));
+
+    const line = lineRef.current;
+    if (!line) return;
+    const { geometry, material } = line;
     const amplitude = scaleMidi(noiseAmplitude, 1, 500);
-    geometry!.setPositions(
+    geometry.setPositions(
       new Array(length)
         .fill(undefined)
         .flatMap((f, i) => [
@@ -67,5 +66,5 @@ export default function BarsPage() {
     env: clothConfig,
   });
 
-  return <Mixer />;
+  return <MixerPage />;
 }

@@ -10,10 +10,8 @@ type SortConfig = {
 };
 
 export const Sort = ({ config }: { config: SortConfig }) => {
-  const { color, noiseAmplitude } = useStore(({ color, noiseAmplitude }) => ({
-    color,
-    noiseAmplitude,
-  }));
+  const color = useStore((state) => state.color);
+  const noiseAmplitude = useStore((state) => state.noiseAmplitude);
   const { sortMode } = config;
   const arrayLength = Math.floor(scaleMidi(noiseAmplitude, 1, 500));
   const shaderRef = useRef<ShaderMaterial>();

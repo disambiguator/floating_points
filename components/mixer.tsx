@@ -1,5 +1,4 @@
 import { throttle } from 'lodash';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import React from 'react';
 import DatGui, { DatButton, DatNumber, DatNumberProps } from 'react-dat-gui';
@@ -174,11 +173,11 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
 
   useControl('Contents', {
     type: 'select',
-    items: Object.keys(scenes),
+    items: Object.keys(scenes()),
     state: [
       name,
       (name: sceneName) => {
-        set({ env: { ...scenes[name] } });
+        set({ env: { ...scenes()[name] } });
       },
     ],
   });
@@ -239,21 +238,17 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   return null;
 };
 
-const Mixer = <T,>() => {
-  const router = useRouter();
+const Mixer = () => {
+  // const router = useRouter();
   const env = useStore((state) => state.env);
 
-  useEffect(() => {
-    const routerParams = router.query.params as string;
-    if (routerParams) {
-      const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
+  // useEffect(() => {
+  //   const routerParams = router.query.params as string;
+  //   if (routerParams) {
+  //     const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
 
-      //@ts-ignore
-      setConfig({
-        params: parsedParams,
-      });
-    }
-  }, [router.query.params]);
+  //   }
+  // }, [router.query.params]);
 
   // useEffect(() => {
   //   throttledHistory(params);

@@ -39,16 +39,15 @@ const TunnelEffects = () => {
   const xSpeed = useMidiControl('X Speed', { value: 64 });
   const ySpeed = useMidiControl('Y Speed', { value: 64 });
 
-  const { trails, angle } = useStore(({ trails, angle }) => ({
-    trails,
-    angle,
-  }));
-
   useFrame(() => {
+    const { trails, angle } = useStore.getState();
+
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
     uniforms.mouse.value = new Vector2(mouse.x * aspect, mouse.y);
     uniforms.time.value = clock.getElapsedTime();
+    uniforms.damp.value = scaleMidi(trails, 0.8, 1);
+    uniforms.angle.value = scaleMidi(angle, -Math.PI / 10, Math.PI / 10, true);
   });
 
   return (
@@ -56,8 +55,6 @@ const TunnelEffects = () => {
       ref={afterimagePassRef}
       attachArray="passes"
       args={[TunnelShader]}
-      uniforms-damp-value={scaleMidi(trails, 0.8, 1)}
-      uniforms-angle-value={scaleMidi(angle, -Math.PI / 10, Math.PI / 10, true)}
       uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={aspect}
       uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
@@ -82,11 +79,11 @@ export const Effects = <T,>({
   const kaleidoscope = useStore((state) => state.kaleidoscope);
 
   useEffect(() => {
-    composer.current!.setSize(size.width, size.height);
+    if (composer.current) composer.current.setSize(size.width, size.height);
   }, [size]);
 
   useFrame(() => {
-    composer.current!.render();
+    if (composer.current) composer.current.render();
   }, 1);
 
   return (

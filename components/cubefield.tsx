@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
+import { useStateUpdate } from '../lib/store';
 import { BoxData } from './cubedraw';
 import MixerPage from './mixer';
-import { useStateUpdate } from '../lib/store';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
