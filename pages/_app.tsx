@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
 import { AppProps } from 'next/app';
-import 'react-dat-gui/dist/index.css';
 import Router from 'next/router';
+import React, { useEffect } from 'react';
+import 'react-dat-gui/dist/index.css';
 import { useAnalytics } from '../hooks/useAnalytics';
 
 // https://johnkueh.com/articles/adding-a-use-analytics-hook

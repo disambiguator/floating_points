@@ -1,25 +1,19 @@
-import {
-  useThree,
-  useFrame,
-  extend,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ReactThreeFiber,
-} from 'react-three-fiber';
+import React, { useEffect, useRef } from 'react';
+import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
+import { Vector2 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { AfterimagePass } from './AfterimagePass';
-import ZoomShader from '../lib/shaders/zoom';
-import React, { useRef, useEffect } from 'react';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
+import TunnelShader from '../lib/shaders/tunnel';
+import ZoomShader from '../lib/shaders/zoom';
+import { AfterimagePass } from './AfterimagePass';
 import {
   BaseConfig,
   CustomEffectsType,
   scaleMidi,
   useMidiControl,
 } from './mixer';
-import TunnelShader from '../lib/shaders/tunnel';
-import { Vector2 } from 'three';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 

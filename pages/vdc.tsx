@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
-import { useFrame, useThree } from 'react-three-fiber';
 
 const floorShader = {
   vertexShader: /* glsl */ `

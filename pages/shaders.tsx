@@ -1,10 +1,10 @@
+import { useRouter } from 'next/router';
 import React, { useRef } from 'react';
-import { useThree, useFrame } from 'react-three-fiber';
+import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
-import FbmShader from '../lib/shaders/fbm';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
-import { useRouter } from 'next/router';
+import FbmShader from '../lib/shaders/fbm';
 
 const allShaders = {
   fbm: FbmShader,

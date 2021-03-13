@@ -22,6 +22,14 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     'prefer-destructuring': 2,
     'react/prop-types': 'off',
+    'sort-imports': ['error', { ignoreDeclarationSort: true }],
+    'import/order': [
+      'error',
+      {
+        alphabetize: { order: 'asc' },
+        groups: ['builtin', 'external', 'internal', ['parent', 'sibling']],
+      },
+    ],
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-unused-vars': [
       // Allow unused args/vars to be marked with an underscore

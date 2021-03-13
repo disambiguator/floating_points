@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
+import { PointerEvent, useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import Page from './page';
 import { FiberScene } from './scene';
-import { useThree, useFrame, PointerEvent } from 'react-three-fiber';
 
 export type BoxData = {
   position: [number, number, number];

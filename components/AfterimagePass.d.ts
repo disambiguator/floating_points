@@ -1,4 +1,4 @@
-import { WebGLRenderTarget, ShaderMaterial } from 'three';
+import { ShaderMaterial, WebGLRenderTarget } from 'three';
 
 import { Pass } from './Pass';
 

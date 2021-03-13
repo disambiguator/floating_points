@@ -1,25 +1,25 @@
-import * as THREE from 'three';
-import Page from './page';
-import { useState, useEffect } from 'react';
+import { throttle } from 'lodash';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import React from 'react';
-import { useThree, useFrame } from 'react-three-fiber';
-import { FiberScene } from './scene';
 import DatGui, {
-  DatNumber,
   DatBoolean,
   DatButton,
-  DatSelect,
+  DatNumber,
   DatNumberProps,
+  DatSelect,
 } from 'react-dat-gui';
-import { Effects } from './effects';
-import WebMidi from 'webmidi';
 import NewWindow from 'react-new-window';
-import { State, useStore } from '../lib/store';
-import { sceneName, scenes } from './scenes';
-import { useRouter } from 'next/router';
-import { analyseSpectrum, useMicrophone } from '../lib/audio';
-import { throttle } from 'lodash';
+import { useFrame, useThree } from 'react-three-fiber';
 import { ControlOptions, useControl } from 'react-three-gui';
+import * as THREE from 'three';
+import WebMidi from 'webmidi';
+import { analyseSpectrum, useMicrophone } from '../lib/audio';
+import { State, useStore } from '../lib/store';
+import { Effects } from './effects';
+import Page from './page';
+import { FiberScene } from './scene';
+import { sceneName, scenes } from './scenes';
 
 type MidiParam = 'noiseAmplitude' | 'trails' | 'zoomThreshold' | 'kaleidoscope';
 

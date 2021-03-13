@@ -1,17 +1,17 @@
-import React, { useRef, useState } from 'react';
-import Mixer, {
-  Config,
-  defaultConfig,
-  BaseConfig,
-  scaleMidi,
-} from '../components/mixer';
-import { useFrame, useThree } from 'react-three-fiber';
-import Page from '../components/page';
-import { useStore } from '../lib/store';
 import { Line } from '@react-three/drei';
 import { isEmpty } from 'lodash';
+import React, { useRef, useState } from 'react';
+import { useFrame, useThree } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
+import Mixer, {
+  BaseConfig,
+  Config,
+  defaultConfig,
+  scaleMidi,
+} from '../components/mixer';
+import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
+import { useStore } from '../lib/store';
 
 const Effects = ({ params }: { params: BaseConfig }) => (
   <afterimagePass

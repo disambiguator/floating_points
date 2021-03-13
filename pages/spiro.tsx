@@ -1,17 +1,17 @@
-import * as THREE from 'three';
 import { sumBy } from 'lodash';
-import { useMemo, useEffect, useRef } from 'react';
-import React from 'react';
-import SpiroShader from '../lib/shaders/spiro';
-import { useThree, useFrame } from 'react-three-fiber';
-import { DatButton } from 'react-dat-gui';
-import Mixer, {
-  scaleMidi,
-  BaseConfig,
-  defaultConfig,
-  Config,
-} from '../components/mixer';
 import { useRouter } from 'next/router';
+import { useEffect, useMemo, useRef } from 'react';
+import React from 'react';
+import { DatButton } from 'react-dat-gui';
+import { useFrame, useThree } from 'react-three-fiber';
+import * as THREE from 'three';
+import Mixer, {
+  BaseConfig,
+  Config,
+  defaultConfig,
+  scaleMidi,
+} from '../components/mixer';
+import SpiroShader from '../lib/shaders/spiro';
 import { useStore } from '../lib/store';
 
 const numPoints = 50000;

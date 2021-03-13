@@ -1,14 +1,14 @@
+import { Sky } from '@react-three/drei';
+import { makeNoise2D } from 'open-simplex-noise';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from 'react-three-fiber';
+import { useControl } from 'react-three-gui';
+import styled from 'styled-components';
 import * as THREE from 'three';
-import { makeNoise2D } from 'open-simplex-noise';
-import { analyseSpectrum, useAudioUrl, Spectrum, Audio } from '../lib/audio';
-import { Sky } from '@react-three/drei';
 import create from 'zustand';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
-import { useControl } from 'react-three-gui';
-import styled from 'styled-components';
+import { Audio, Spectrum, analyseSpectrum, useAudioUrl } from '../lib/audio';
 
 // 0 - stars: no rotation or freq response
 const bassStartTime = 17; // stars respond to music

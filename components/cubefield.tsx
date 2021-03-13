@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
+import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
-import { useThree, useFrame } from 'react-three-fiber';
 import { BoxData } from './cubedraw';
 import MixerPage, { Config, defaultConfig } from './mixer';
 

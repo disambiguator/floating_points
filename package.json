@@ -5,6 +5,7 @@
   "main": ".eslintrc.js",
   "scripts": {
     "lint": "eslint_d . --ext=js,jsx,ts,tsx",
+    "lint-fix": "eslint_d . --ext=js,jsx,ts,tsx --fix",
     "test": "tsc --incremental && npm run lint",
     "build": "next build",
     "start": "vercel dev"

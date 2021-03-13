@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
+import { useAudioUrl } from '../lib/audio';
 import Page from './page';
 import { FiberScene } from './scene';
-import { useThree, useFrame } from 'react-three-fiber';
-import { useAudioUrl } from '../lib/audio';
 
 const height = 200;
 const width = height * 2;

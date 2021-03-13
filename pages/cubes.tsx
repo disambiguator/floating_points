@@ -1,7 +1,7 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useFrame } from 'react-three-fiber';
-import Page from '../components/page';
 import * as THREE from 'three';
+import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 
 const Cube = ({

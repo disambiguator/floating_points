@@ -1,8 +1,8 @@
-import React from 'react';
-import Page from './page';
 import * as p5 from 'p5';
-import styled from 'styled-components';
+import React from 'react';
 import P5Wrapper from 'react-p5-wrapper';
+import styled from 'styled-components';
+import Page from './page';
 
 const FixedSketch = styled(P5Wrapper)`
   canvas {

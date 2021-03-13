@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
 import { useFrame, useThree } from 'react-three-fiber';
-import { scaleMidi, BaseConfig } from './mixer';
+import * as THREE from 'three';
 import { ShaderMaterial } from 'three';
 import { useStore } from '../lib/store';
+import { BaseConfig, scaleMidi } from './mixer';
 const renderSpeed = 1000;
 
 const Shader = {

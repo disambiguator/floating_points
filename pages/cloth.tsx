@@ -1,15 +1,15 @@
+import { Line } from '@react-three/drei';
+import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
+import { useFrame } from 'react-three-fiber';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
 import Mixer, {
+  BaseConfig,
   Config,
   defaultConfig,
   scaleMidi,
-  BaseConfig,
   useMidiControl,
 } from '../components/mixer';
-import { useFrame } from 'react-three-fiber';
-import { makeNoise2D } from 'open-simplex-noise';
-import { Line } from '@react-three/drei';
-import { Line2 } from 'three/examples/jsm/lines/Line2';
 
 const color = 'cyan';
 const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {

@@ -1,5 +1,5 @@
-import { airtableShow } from '../lib/airtable';
 import { NowRequest, NowResponse } from '@vercel/node';
+import { airtableShow } from '../lib/airtable';
 
 type AirtableResponse = {
   fields: Record<string, unknown>;

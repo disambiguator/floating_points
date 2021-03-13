@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
-import { useThree, useFrame } from 'react-three-fiber';
-import Mixer, {
-  scaleMidi,
-  defaultConfig,
-  Config,
-  BaseConfig,
-} from '../components/mixer';
+import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
+import Mixer, {
+  BaseConfig,
+  Config,
+  defaultConfig,
+  scaleMidi,
+} from '../components/mixer';
 
 const Shader = {
   vertexShader: /* glsl */ `
