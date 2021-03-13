@@ -3,24 +3,26 @@ import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import Mixer, {
-  BaseConfig,
-  Config,
-  defaultConfig,
-  scaleMidi,
-  useMidiControl,
-} from '../components/mixer';
+import { useMidiControl } from '../components/mixer';
+import MixerPage from '../components/mixer';
+import { scaleMidi } from '../lib/midi';
+import { useStore } from '../lib/store';
+import { useStateUpdate } from '../lib/store';
 
-const color = 'cyan';
-const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
+const Cloth = React.memo(function Cloth() {
   const lineWidth = useMidiControl('Line width', { value: 46 });
   const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
-  const length = Math.floor(scaleMidi(config.zoomThreshold, 1, 2000));
+
   useFrame(({ clock, size }) => {
-    const { geometry, material } = lineRef.current!;
-    const amplitude = scaleMidi(config.noiseAmplitude, 1, 500);
-    geometry!.setPositions(
+    const { color, zoomThreshold, noiseAmplitude } = useStore.getState();
+    const length = Math.floor(scaleMidi(zoomThreshold, 1, 2000));
+
+    const line = lineRef.current;
+    if (!line) return;
+    const { geometry, material } = line;
+    const amplitude = scaleMidi(noiseAmplitude, 1, 500);
+    geometry.setPositions(
       new Array(length)
         .fill(undefined)
         .flatMap((f, i) => [
@@ -30,7 +32,7 @@ const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
         ]),
     );
 
-    if (config.color) {
+    if (color) {
       material!.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.2);
     }
   });
@@ -39,7 +41,7 @@ const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
     <Line
       position={[0, -800, -1000]}
       ref={lineRef}
-      color={color}
+      color={'cyan'}
       linewidth={scaleMidi(lineWidth, 1, 30)}
       points={[
         [0, 0, 0],
@@ -50,21 +52,19 @@ const Cloth = React.memo(function Cloth({ config }: { config: BaseConfig }) {
 });
 
 export const clothConfig = {
-  params: { name: 'cloth' as const },
+  name: 'cloth' as const,
   Contents: Cloth,
+  params: {},
 };
 
 export default function BarsPage() {
-  const config: Config<BaseConfig> = {
-    ...clothConfig,
-    params: {
-      ...defaultConfig,
-      ...clothConfig.params,
-      zoomThreshold: 57,
-      noiseAmplitude: 100,
-      trails: 127,
-      color: true,
-    },
-  };
-  return <Mixer config={config} />;
+  useStateUpdate({
+    color: true,
+    zoomThreshold: 57,
+    noiseAmplitude: 100,
+    trails: 127,
+    env: clothConfig,
+  });
+
+  return <MixerPage />;
 }

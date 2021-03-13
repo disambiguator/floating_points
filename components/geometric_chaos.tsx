@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import { ShaderMaterial } from 'three';
+import { scaleMidi } from '../lib/midi';
 import { useStore } from '../lib/store';
-import { BaseConfig, scaleMidi } from './mixer';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -104,11 +104,7 @@ const Box = ({
   );
 };
 
-export const Shapes = React.memo(function Shapes({
-  config,
-}: {
-  config: BaseConfig;
-}) {
+export const Shapes = React.memo(function Shapes() {
   const { camera } = useThree();
   const materialRef = useRef<ShaderMaterial>();
   const displacement = useMemo(() => {
@@ -119,22 +115,14 @@ export const Shapes = React.memo(function Shapes({
     return d;
   }, []);
 
-  const amplitude = config.noiseAmplitude * 1000;
-
-  const material = useMemo(
-    () => (
-      <shaderMaterial
-        args={[Shader]}
-        ref={materialRef}
-        uniforms-amplitude-value={scaleMidi(amplitude, 0, 0.0005)}
-      />
-    ),
-    [],
-  );
+  const material = useMemo(() => {
+    return <shaderMaterial args={[Shader]} ref={materialRef} />;
+  }, []);
 
   useFrame(() => {
     camera.translateX(-0.5);
-    const { ray } = useStore.getState();
+    const { ray, noiseAmplitude } = useStore.getState();
+    const amplitude = noiseAmplitude * 1000;
 
     const material = materialRef.current!;
     material.uniforms.origin.value = ray.origin;
@@ -149,13 +137,14 @@ export const Shapes = React.memo(function Shapes({
         .map((_value, i) => (
           <Box key={i} displacement={displacement} material={material} />
         )),
-    [],
+    [displacement, material],
   );
 
   return <>{cubes}</>;
 });
 
 export const chaosConfig = {
-  params: { name: 'chaos' as const },
+  name: 'chaos' as const,
   Contents: Shapes,
+  params: {},
 };

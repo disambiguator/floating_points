@@ -1,12 +1,9 @@
 import React, { useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
-import Mixer, {
-  BaseConfig,
-  Config,
-  defaultConfig,
-  scaleMidi,
-} from '../components/mixer';
+import Mixer from '../components/mixer';
+import { scaleMidi } from '../lib/midi';
+import { useStateUpdate, useStore } from '../lib/store';
 
 const Shader = {
   vertexShader: /* glsl */ `
@@ -101,9 +98,10 @@ void main()
   },
 };
 
-const Dusen = React.memo(function Dusen({ config }: { config: BaseConfig }) {
+const Dusen = React.memo(function Dusen() {
   const { aspect, size, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
+  const noiseAmplitude = useStore((state) => state.noiseAmplitude);
 
   useFrame(() => {
     ref.current!.uniforms.time.value = clock.elapsedTime;
@@ -116,25 +114,20 @@ const Dusen = React.memo(function Dusen({ config }: { config: BaseConfig }) {
         ref={ref}
         args={[Shader]}
         uniforms-aspect-value={aspect}
-        uniforms-radius-value={scaleMidi(config.noiseAmplitude, 0, 1)}
+        uniforms-radius-value={scaleMidi(noiseAmplitude, 0, 1)}
       />
     </mesh>
   );
 });
 
 export const dusenConfig = {
-  params: { name: 'dusen' as const },
+  name: 'dusen' as const,
   Contents: Dusen,
+  params: {},
 };
 
 export default function DusenPage() {
-  const config: Config<unknown> = {
-    ...dusenConfig,
-    params: {
-      ...defaultConfig,
-      ...dusenConfig.params,
-      noiseAmplitude: 27,
-    },
-  };
-  return <Mixer config={config} />;
+  useStateUpdate({ noiseAmplitude: 27, env: dusenConfig });
+
+  return <Mixer />;
 }

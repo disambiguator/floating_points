@@ -18,7 +18,7 @@ export const FiberScene = ({
       <Controls collapsed={false} />
     </Controls.Provider>
   ) : (
-    <Canvas {...rest}>
+    <Canvas concurrent {...rest}>
       {controls && <OrbitControls />}
       {children}
     </Canvas>

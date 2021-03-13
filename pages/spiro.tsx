@@ -1,18 +1,15 @@
 import { sumBy } from 'lodash';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useRef } from 'react';
 import React from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { DatButton } from 'react-dat-gui';
 import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
-import Mixer, {
-  BaseConfig,
-  Config,
-  defaultConfig,
-  scaleMidi,
-} from '../components/mixer';
+import Mixer from '../components/mixer';
+import { scaleMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
-import { useStore } from '../lib/store';
+import { useStateUpdate } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -67,11 +64,7 @@ export const initPositions = () => [randPosition(), randPosition()];
 interface SpiroParams {
   seeds?: Seed[];
 }
-export const SpiroContents = ({
-  config,
-}: {
-  config: SpiroParams & BaseConfig;
-}) => {
+export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   const { clock } = useThree();
   const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
@@ -83,7 +76,7 @@ export const SpiroContents = ({
     return d;
   }, []);
 
-  const { seeds, color, noiseAmplitude } = config;
+  const { seeds } = config;
 
   const positions = useRef(seeds ?? initPositions());
 
@@ -98,16 +91,26 @@ export const SpiroContents = ({
       phi: p.phi + p.phiSpeed * renderSpeed,
     }));
 
-    const { ray } = useStore.getState();
+    const { ray, color, noiseAmplitude } = useStore.getState();
 
-    const shaderMaterial = shaderMaterialRef.current!;
-    shaderMaterial.uniforms.origin.value = ray.origin;
-    shaderMaterial.uniforms.direction.value = ray.direction;
-    shaderMaterial.uniforms.time.value = clock.elapsedTime;
+    const shaderMaterial = shaderMaterialRef.current;
+    if (shaderMaterial) {
+      shaderMaterial.uniforms.origin.value = ray.origin;
+      shaderMaterial.uniforms.direction.value = ray.direction;
+      shaderMaterial.uniforms.time.value = clock.elapsedTime;
+      shaderMaterial.uniforms.color.value = color;
+      shaderMaterial.uniforms.amplitude.value = scaleMidi(
+        noiseAmplitude,
+        0,
+        0.0005,
+      );
+    }
 
-    const positionAttribute = positionAttributeRef.current!;
-    positionAttribute.array = generateVertices(positions.current);
-    positionAttribute.needsUpdate = true;
+    const positionAttribute = positionAttributeRef.current;
+    if (positionAttribute) {
+      positionAttribute.array = generateVertices(positions.current);
+      positionAttribute.needsUpdate = true;
+    }
   });
 
   return (
@@ -129,8 +132,6 @@ export const SpiroContents = ({
       <shaderMaterial
         ref={shaderMaterialRef}
         args={[SpiroShader]}
-        uniforms-color-value={color}
-        uniforms-amplitude-value={scaleMidi(noiseAmplitude, 0, 0.0005)}
         uniforms-time-value={clock.elapsedTime}
       />
     </line>
@@ -140,7 +141,7 @@ export const SpiroContents = ({
 const spiroControls = ({
   onUpdate,
 }: {
-  onUpdate: (newData: Partial<SpiroParams & BaseConfig>) => void;
+  onUpdate: (newData: Partial<SpiroParams>) => void;
 }) => {
   return [
     // eslint-disable-next-line react/jsx-key
@@ -156,23 +157,26 @@ const spiroControls = ({
   ];
 };
 
-export const spiroConfig = {
+export const spiroConfig: Config<SpiroParams> = {
   Contents: SpiroContents,
   controls: spiroControls,
-  params: { name: 'spiro' as const },
+  name: 'spiro' as const,
+  params: { seeds: initPositions() },
 };
 
 export default function SpiroPage() {
   const router = useRouter();
   const urlSeeds = router.query.seeds as string | undefined;
 
-  const config: Config<SpiroParams> = {
-    ...spiroConfig,
-    params: {
-      ...defaultConfig,
-      ...spiroConfig.params,
-      seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
+  useStateUpdate({
+    env: {
+      ...spiroConfig,
+      params: {
+        ...spiroConfig.params,
+        seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
+      },
     },
-  };
-  return <Mixer config={config} />;
+  });
+
+  return <Mixer />;
 }

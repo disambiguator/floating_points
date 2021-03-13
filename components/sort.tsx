@@ -1,14 +1,18 @@
 import React, { useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { ShaderMaterial, Vector3 } from 'three';
-import Mixer, { BaseConfig, defaultConfig, scaleMidi } from './mixer';
+import { scaleMidi } from '../lib/midi';
+import { useStateUpdate, useStore } from '../lib/store';
+import Mixer from './mixer';
 
-interface SortConfig extends BaseConfig {
+type SortConfig = {
   sortMode: 'sort' | 'random';
-}
+};
 
 export const Sort = ({ config }: { config: SortConfig }) => {
-  const { color, noiseAmplitude, sortMode } = config;
+  const color = useStore((state) => state.color);
+  const noiseAmplitude = useStore((state) => state.noiseAmplitude);
+  const { sortMode } = config;
   const arrayLength = Math.floor(scaleMidi(noiseAmplitude, 1, 500));
   const shaderRef = useRef<ShaderMaterial>();
 
@@ -113,25 +117,19 @@ export const Sort = ({ config }: { config: SortConfig }) => {
 };
 
 export const sortConfig = {
-  params: { name: 'sort' as const },
+  name: 'sort' as const,
   Contents: Sort,
+  params: { sortMode: 'sort' as const },
 };
 
 export default function SortPage() {
-  return (
-    <Mixer
-      config={{
-        ...sortConfig,
-        params: {
-          ...defaultConfig,
-          ...sortConfig.params,
-          noiseAmplitude: 50,
-          zoomThreshold: 1,
-          trails: 115,
-          color: true,
-          sortMode: 'sort',
-        },
-      }}
-    />
-  );
+  useStateUpdate({
+    color: true,
+    zoomThreshold: 1,
+    noiseAmplitude: 50,
+    trails: 115,
+    env: sortConfig,
+  });
+
+  return <Mixer />;
 }

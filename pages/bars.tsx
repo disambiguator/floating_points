@@ -3,24 +3,26 @@ import { isEmpty } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import Mixer, {
-  BaseConfig,
-  Config,
-  defaultConfig,
-  scaleMidi,
-} from '../components/mixer';
+import Mixer from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
+import { scaleMidi } from '../lib/midi';
+import { useStateUpdate } from '../lib/store';
 import { useStore } from '../lib/store';
 
-const Effects = ({ params }: { params: BaseConfig }) => (
-  <afterimagePass
-    attachArray="passes"
-    args={[BarsShader]}
-    uniforms-damp-value={scaleMidi(params.trails, 0, 1)}
-    uniforms-zoom-value={scaleMidi(params.zoomThreshold, 0, 0.3)}
-  />
-);
+const Effects = () => {
+  const zoomThreshold = useStore((state) => state.zoomThreshold);
+  const trails = useStore((state) => state.trails);
+
+  return (
+    <afterimagePass
+      attachArray="passes"
+      args={[BarsShader]}
+      uniforms-damp-value={scaleMidi(trails, 0, 1)}
+      uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
+    />
+  );
+};
 
 const BarsShader = {
   uniforms: {
@@ -97,26 +99,21 @@ const Bars = React.memo(function Bars() {
 export const barsConfig = {
   Contents: Bars,
   CustomEffects: Effects,
-  params: {
-    name: 'bars' as const,
-  },
+  name: 'bars' as const,
+  params: {},
 };
 
 export default function BarsPage() {
+  useStateUpdate({
+    zoomThreshold: 2,
+    trails: 125,
+    audioEnabled: true,
+    env: barsConfig,
+  });
   const [started, start] = useState(false);
 
-  const config: Config<unknown> = {
-    ...barsConfig,
-    params: {
-      ...defaultConfig,
-      ...barsConfig.params,
-      audioEnabled: true,
-      zoomThreshold: 2,
-      trails: 125,
-    },
-  };
   return started ? (
-    <Mixer config={config} />
+    <Mixer />
   ) : (
     <Page onClick={() => start(true)}>
       <div>Click to start</div>
