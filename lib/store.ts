@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import * as THREE from 'three';
 import create, { PartialState, SetState } from 'zustand';
+import { sceneName } from '../components/scenes';
 import { Spectrum } from './audio';
 
 export type MidiParam =
@@ -14,6 +15,24 @@ export const useStateUpdate = (update: PartialState<State>) => {
   useEffect(() => {
     set(update);
   }, [set, update]);
+};
+
+export type CustomControls = React.ReactNode;
+
+export type SceneContents<T> = React.ComponentType<{
+  config: T;
+}>;
+
+export type CustomEffectsType<T> = React.ComponentType<{
+  params: T;
+}>;
+
+export type Config<T> = {
+  name: sceneName;
+  params: T;
+  CustomEffects?: CustomEffectsType<T>;
+  controls?: CustomControls;
+  Contents: SceneContents<T>;
 };
 
 export type State = {
@@ -31,6 +50,7 @@ export type State = {
   audioEnabled: boolean;
   volumeScaler: number;
   volumeControl: MidiParam | null;
+  env: Config<any> | null;
 };
 const useStore = create<State>((set) => ({
   ray: new THREE.Ray(),
@@ -57,6 +77,7 @@ const useStore = create<State>((set) => ({
   audioEnabled: false,
   volumeScaler: 1,
   volumeControl: null,
+  env: null,
   set,
 }));
 

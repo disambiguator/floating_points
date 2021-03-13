@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
-import Mixer, { scaleMidi } from '../components/mixer';
+import Mixer from '../components/mixer';
+import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
 
 const Shader = {
@@ -122,12 +123,13 @@ const Dusen = React.memo(function Dusen() {
 });
 
 export const dusenConfig = {
-  params: { name: 'dusen' as const },
+  name: 'dusen' as const,
   Contents: Dusen,
+  params: {},
 };
 
 export default function DusenPage() {
-  useStateUpdate({ noiseAmplitude: 27 });
+  useStateUpdate({ noiseAmplitude: 27, env: dusenConfig });
 
-  return <Mixer config={dusenConfig} />;
+  return <Mixer />;
 }

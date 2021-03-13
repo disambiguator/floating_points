@@ -4,17 +4,13 @@ import { Vector2 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import { scaleMidi } from '../lib/midi';
 import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import TunnelShader from '../lib/shaders/tunnel';
 import ZoomShader from '../lib/shaders/zoom';
-import { useStore } from '../lib/store';
+import { Config, CustomEffectsType, useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
-import {
-  BaseConfig,
-  CustomEffectsType,
-  scaleMidi,
-  useMidiControl,
-} from './mixer';
+import { useMidiControl } from './mixer';
 
 extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
 
@@ -69,22 +65,22 @@ const TunnelEffects = () => {
   );
 };
 
-export const Effects = <T extends BaseConfig>({
+export const Effects = <T,>({
+  name,
   params,
   CustomEffects,
 }: {
+  name: Config<T>['name'];
   params: T;
   CustomEffects?: CustomEffectsType<T>;
 }) => {
   const { gl, scene, camera, size, aspect } = useThree();
   const composer = useRef<EffectComposer>();
-  const { zoomThreshold, trails, kaleidoscope } = useStore(
-    ({ zoomThreshold, trails, kaleidoscope }) => ({
-      zoomThreshold,
-      trails,
-      kaleidoscope,
-    }),
-  );
+
+  const zoomThreshold = useStore((state) => state.zoomThreshold);
+  const trails = useStore((state) => state.trails);
+  const kaleidoscope = useStore((state) => state.kaleidoscope);
+
   useEffect(() => {
     composer.current!.setSize(size.width, size.height);
   }, [size]);
@@ -96,7 +92,7 @@ export const Effects = <T extends BaseConfig>({
   return (
     <effectComposer ref={composer} args={[gl]}>
       <renderPass attachArray="passes" scene={scene} camera={camera} />
-      {!['bars', 'cloth'].includes(params.name) && (
+      {!['bars', 'cloth'].includes(name) && (
         <afterimagePass
           attachArray="passes"
           args={[ZoomShader]}

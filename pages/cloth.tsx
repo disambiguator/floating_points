@@ -3,7 +3,8 @@ import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import Mixer, { scaleMidi, useMidiControl } from '../components/mixer';
+import Mixer, { useMidiControl } from '../components/mixer';
+import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
 
 const Cloth = React.memo(function Cloth() {
@@ -52,8 +53,9 @@ const Cloth = React.memo(function Cloth() {
 });
 
 export const clothConfig = {
-  params: { name: 'cloth' as const },
+  name: 'cloth' as const,
   Contents: Cloth,
+  params: {},
 };
 
 export default function BarsPage() {
@@ -62,7 +64,8 @@ export default function BarsPage() {
     zoomThreshold: 57,
     noiseAmplitude: 100,
     trails: 127,
+    env: clothConfig,
   });
 
-  return <Mixer config={clothConfig} />;
+  return <Mixer />;
 }

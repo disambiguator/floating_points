@@ -1,44 +1,18 @@
 import { throttle } from 'lodash';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import React from 'react';
-import DatGui, {
-  DatButton,
-  DatNumber,
-  DatNumberProps,
-  DatSelect,
-} from 'react-dat-gui';
-import NewWindow from 'react-new-window';
+import DatGui, { DatButton, DatNumber, DatNumberProps } from 'react-dat-gui';
 import { useFrame, useThree } from 'react-three-fiber';
 import { ControlOptions, useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { analyseSpectrum, useMicrophone } from '../lib/audio';
-import { MidiParam, useStore } from '../lib/store';
+import { Config, MidiParam, useStore } from '../lib/store';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { sceneName, scenes } from './scenes';
-
-export interface BaseConfig {
-  name: sceneName;
-}
-
-type CustomControls<T> = (props: {
-  params: T;
-  onUpdate: (newData: Partial<T>) => void;
-}) => Array<React.ReactNode>;
-
-type SceneContents<T> = React.ComponentType<{ config: T }>;
-
-export type CustomEffectsType<T> = React.ComponentType<{ params: T }>;
-
-export type Config<T> = {
-  params: BaseConfig & T;
-  CustomEffects?: CustomEffectsType<BaseConfig & T>;
-  controls?: CustomControls<BaseConfig & T>;
-  Contents: SceneContents<BaseConfig & T>;
-};
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
   'Nocturn Keyboard': {
@@ -55,18 +29,11 @@ const MAPPINGS: Record<string, Record<number, MidiParam>> = {
   },
 };
 
-export const Controls = <T extends BaseConfig>({
-  params,
-  setParams,
-  customControls,
-  changeScene,
+export const Controls = <T,>({
+  controls,
 }: {
-  params: T;
-  changeScene: (name: sceneName) => void;
-  setParams: (params: Partial<T>) => void;
-  customControls?: CustomControls<T>;
+  controls: Config<T>['controls'];
 }) => {
-  const [poppedOut, setPoppedOut] = useState(false);
   const set = useStore((state) => state.set);
   useEffect(() => {
     WebMidi.enable(() => {
@@ -91,20 +58,9 @@ export const Controls = <T extends BaseConfig>({
       });
       if (WebMidi.enabled) WebMidi.disable();
     };
-  }, [set, setParams]);
+  }, [set]);
 
-  const controlPanel = (
-    <ControlPanel
-      params={params}
-      setParams={setParams}
-      customControls={customControls}
-      poppedOut={poppedOut}
-      changeScene={changeScene}
-      setPoppedOut={setPoppedOut}
-    />
-  );
-
-  return poppedOut ? <NewWindow>{controlPanel}</NewWindow> : controlPanel;
+  return <ControlPanel controls={controls} />;
 };
 
 export const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
@@ -116,63 +72,23 @@ export const useMidiControl = (
   options: Omit<ControlOptions, 'type' | 'min' | 'max'> = {},
 ) => useControl(name, { ...options, type: 'number', min: 0, max: 127 });
 
-export const scaleMidi = (
-  midi: number,
-  min: number,
-  max: number,
-  deadzone = false,
-) => {
-  if (deadzone && [63, 64].includes(midi)) {
-    return min + (63.5 * (max - min)) / 127;
-  }
-  return min + (midi * (max - min)) / 127;
-};
-
-const ControlPanel = <T extends BaseConfig>({
-  params,
-  setParams,
-  poppedOut,
-  setPoppedOut,
-  customControls,
-  changeScene,
+const ControlPanel = <T,>({
+  controls,
 }: {
-  params: T;
-  setParams: (arg0: Partial<T>) => void;
-  poppedOut: boolean;
-  changeScene: (name: sceneName) => void;
-  setPoppedOut: (arg0: boolean) => void;
-  customControls?: CustomControls<T>;
+  controls: Config<T>['controls'];
 }) => {
-  const [isOpen, setOpen] = useState(true);
-  const { spectrum, exportScene, audioEnabled } = useStore(
-    ({ spectrum, exportScene, audioEnabled }) => ({
-      spectrum,
-      exportScene,
-      audioEnabled,
-    }),
-  );
-  const onUpdate = (newData: Partial<T>) => {
-    if (newData.name && newData.name !== params.name) {
-      changeScene(newData.name);
-    } else {
-      setParams(newData);
-    }
-  };
+  const spectrum = useStore((state) => state.spectrum);
+  const exportScene = useStore((state) => state.exportScene);
+  const audioEnabled = useStore((state) => state.audioEnabled);
 
-  return isOpen ? (
+  return (
     <DatGui
-      data={{ ...params, ...spectrum }}
-      onUpdate={onUpdate}
+      data={spectrum}
+      onUpdate={() => {
+        return null;
+      }}
       style={{ zIndex: 1 }}
     >
-      <DatSelect path="name" label="Contents" options={Object.keys(scenes)} />
-      <DatNumber
-        path="kaleidoscope"
-        label="Kaleidoscope"
-        min={0}
-        max={127}
-        step={1}
-      />
       {audioEnabled && [
         /* eslint-disable react/jsx-key */
         <DatMidi label="Volume" path="volume" />,
@@ -182,44 +98,13 @@ const ControlPanel = <T extends BaseConfig>({
         <DatMidi label="Treble" path="treble" />,
         /* eslint-enable react/jsx-key */
       ]}
-      {customControls && customControls({ params, onUpdate })}
-      <DatButton
-        onClick={() => {
-          setPoppedOut(!poppedOut);
-        }}
-        label={poppedOut ? 'Pop In' : 'Pop Out'}
-      />
+      {controls}
       <DatButton onClick={exportScene} label="Export" />
-      <DatButton
-        onClick={() => {
-          setOpen(false);
-        }}
-        label="Close"
-      />
-    </DatGui>
-  ) : (
-    <DatGui data={params} onUpdate={onUpdate} style={{ zIndex: 1 }}>
-      <DatButton
-        onClick={() => {
-          setOpen(true);
-        }}
-        label="Open"
-      />
     </DatGui>
   );
 };
 
-const Scene = <T extends BaseConfig>({
-  params,
-  setParams,
-  Contents,
-  CustomEffects,
-}: {
-  params: T;
-  setParams: (params: T) => void;
-  Contents: SceneContents<T>;
-  CustomEffects?: CustomEffectsType<T>;
-}) => {
+const Scene = <T,>({ env }: { env: Config<T> }) => {
   const { camera, mouse, gl } = useThree();
   const setExportScene = useStore((state) => state.setExportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
@@ -240,10 +125,7 @@ const Scene = <T extends BaseConfig>({
       const { volume } = spectrum;
 
       if (volumeControl) {
-        const volumeControlledValue = {} as Record<MidiParam, number>;
-        volumeControlledValue[volumeControl] = volume * volumeScaler;
-        setParams({ ...params, ...volumeControlledValue });
-        set(volumeControlledValue);
+        set({ [volumeControl]: volume * volumeScaler });
       }
 
       useStore.setState({ spectrum });
@@ -263,51 +145,43 @@ const Scene = <T extends BaseConfig>({
 
   return (
     <>
-      <Contents config={params} />
-      <Effects params={params} CustomEffects={CustomEffects} />
+      <env.Contents config={env.params} />
+      <Effects
+        name={env.name}
+        params={env.params}
+        CustomEffects={env.CustomEffects}
+      />
     </>
   );
 };
 
-const throttledHistory = throttle((params) => {
+const _throttledHistory = throttle((params) => {
   const url = `/mixer?params=${JSON.stringify(params)}`;
   window.history.pushState('', '', url);
 }, 1000);
 
-const GuiControls = () => {
-  const {
-    color,
-    zoomThreshold,
-    noiseAmplitude,
-    set,
-    trails,
-    angle,
-    audioEnabled,
-    volumeScaler,
-    volumeControl,
-  } = useStore(
-    ({
-      color,
-      zoomThreshold,
-      noiseAmplitude,
-      trails,
-      set,
-      angle,
-      audioEnabled,
-      volumeScaler,
-      volumeControl,
-    }) => ({
-      color,
-      zoomThreshold,
-      noiseAmplitude,
-      trails,
-      set,
-      angle,
-      audioEnabled,
-      volumeScaler,
-      volumeControl,
-    }),
-  );
+const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
+  const color = useStore((state) => state.color);
+  const zoomThreshold = useStore((state) => state.zoomThreshold);
+  const noiseAmplitude = useStore((state) => state.noiseAmplitude);
+  const trails = useStore((state) => state.trails);
+  const set = useStore((state) => state.set);
+  const angle = useStore((state) => state.angle);
+  const audioEnabled = useStore((state) => state.audioEnabled);
+  const volumeScaler = useStore((state) => state.volumeScaler);
+  const volumeControl = useStore((state) => state.volumeControl);
+  const kaleidoscope = useStore((state) => state.kaleidoscope);
+
+  useControl('Contents', {
+    type: 'select',
+    items: Object.keys(scenes),
+    state: [
+      name,
+      (name: sceneName) => {
+        set({ env: { ...scenes[name] } });
+      },
+    ],
+  });
 
   useControl('color', {
     type: 'boolean',
@@ -324,6 +198,13 @@ const GuiControls = () => {
 
   useMidiControl('Trails', {
     state: [trails, (z) => set({ trails: z })],
+  });
+
+  useControl('Kaleidoscope', {
+    type: 'number',
+    state: [kaleidoscope, (z) => set({ kaleidoscope: z })],
+    min: 0,
+    max: 127,
   });
 
   useMidiControl('Angle', {
@@ -358,56 +239,31 @@ const GuiControls = () => {
   return null;
 };
 
-const Mixer = <T,>(props: { config: Config<T> }) => {
+const Mixer = <T,>() => {
   const router = useRouter();
-  const [config, setConfig] = useState<Config<T>>(props.config);
-  const set = useStore((state) => state.set);
+  const env = useStore((state) => state.env);
 
   useEffect(() => {
     const routerParams = router.query.params as string;
     if (routerParams) {
       const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
+
       //@ts-ignore
       setConfig({
-        ...scenes[parsedParams.name],
         params: parsedParams,
       });
     }
   }, [router.query.params]);
 
-  const setParams = (params: Partial<Config<T>['params']>) => {
-    setConfig((config) => ({
-      ...config,
-      params: { ...config.params, ...params },
-    }));
-  };
+  // useEffect(() => {
+  //   throttledHistory(params);
+  // }, [params]);
 
-  const { params } = config;
-
-  useEffect(() => {
-    throttledHistory(params);
-  }, [params]);
-
-  const changeScene = (name: sceneName) => {
-    const newScene = scenes[name];
-    //@ts-ignore
-    setConfig({
-      ...newScene,
-      params: { ...config.params, ...newScene.params },
-    });
-    if ('color' in newScene.params) {
-      set(newScene.params);
-    }
-  };
+  if (!env) return null;
 
   return (
     <>
-      <Controls
-        params={params}
-        setParams={setParams}
-        changeScene={changeScene}
-        customControls={config.controls}
-      />
+      <Controls controls={env.controls} />
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
         gl={{
@@ -415,25 +271,20 @@ const Mixer = <T,>(props: { config: Config<T> }) => {
           // Only turn this on when exporting
           // preserveDrawingBuffer: true,
         }}
-        controls={params.name !== 'cubefield'}
+        controls={env.name !== 'cubefield'}
         gui
       >
-        <Scene
-          params={params}
-          setParams={setParams}
-          Contents={config.Contents}
-          CustomEffects={config.CustomEffects}
-        />
-        <GuiControls />
+        <Scene env={env} />
+        <GuiControls name={env.name} />
       </FiberScene>
     </>
   );
 };
 
-export default function MixerPage<T>({ config }: { config: Config<T> }) {
+export default function MixerPage() {
   return (
     <Page>
-      <Mixer config={config} />
+      <Mixer />
     </Page>
   );
 }

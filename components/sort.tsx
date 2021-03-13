@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { ShaderMaterial, Vector3 } from 'three';
+import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
-import Mixer, { BaseConfig, scaleMidi } from './mixer';
+import Mixer from './mixer';
 
-interface SortConfig extends BaseConfig {
+type SortConfig = {
   sortMode: 'sort' | 'random';
-}
+};
 
 export const Sort = ({ config }: { config: SortConfig }) => {
   const { color, noiseAmplitude } = useStore(({ color, noiseAmplitude }) => ({
@@ -118,8 +119,9 @@ export const Sort = ({ config }: { config: SortConfig }) => {
 };
 
 export const sortConfig = {
-  params: { name: 'sort' as const },
+  name: 'sort' as const,
   Contents: Sort,
+  params: { sortMode: 'sort' as const },
 };
 
 export default function SortPage() {
@@ -128,14 +130,8 @@ export default function SortPage() {
     zoomThreshold: 1,
     noiseAmplitude: 50,
     trails: 115,
+    env: sortConfig,
   });
 
-  return (
-    <Mixer
-      config={{
-        ...sortConfig,
-        params: { ...sortConfig.params, sortMode: 'sort' },
-      }}
-    />
-  );
+  return <Mixer />;
 }

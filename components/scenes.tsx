@@ -1,10 +1,10 @@
-import { barsConfig } from '../pages/bars';
 import { clothConfig } from '../pages/cloth';
 import { dusenConfig } from '../pages/dusen';
-import { spiroConfig } from '../pages/spiro';
+import { barsConfig } from './bars';
 import { cubefieldConfig } from './cubefield';
 import { chaosConfig } from './geometric_chaos';
 import { sortConfig } from './sort';
+import { spiroConfig } from './spiro';
 
 export type sceneName =
   | 'spiro'
@@ -24,3 +24,6 @@ export const scenes = {
   cloth: clothConfig,
   sort: sortConfig,
 };
+
+const possibleScenes = Object.values(scenes);
+export type Scenes = typeof possibleScenes[number];
