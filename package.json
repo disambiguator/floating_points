@@ -48,6 +48,7 @@
     "@react-three/drei": "^5.2.0",
     "@react-three/fiber": "^6.0.1",
     "@types/three": "^0.128.0",
+    "glsl-noise": "^0.0.0",
     "leva": "^0.9.10",
     "lodash": "^4.17.20",
     "next": "^10.0.3",

@@ -1,7 +1,7 @@
-import { Sky } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
+import { Perf } from 'r3f-perf';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import create, { SetState } from 'zustand';
@@ -68,7 +68,7 @@ const newPosition = () => {
   return pos.toArray();
 };
 
-const Stars = React.memo(function Stars() {
+const _Stars = React.memo(function Stars() {
   const starsCount = 4000;
   const { speed } = useControls({
     speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
@@ -184,7 +184,7 @@ const Row = ({
     ]);
 
   return (
-    <mesh key={y} ref={meshRef} receiveShadow>
+    <mesh key={y} ref={meshRef}>
       <bufferGeometry
         ref={geometryRef}
         index={new THREE.BufferAttribute(new Uint16Array(indices), 1)}
@@ -276,17 +276,7 @@ function Sunset() {
 
   return (
     <>
-      <Sky
-        distance={sceneSize}
-        {...{
-          turbidity,
-          rayleigh,
-          mieCoefficient,
-          mieDirectionalG,
-        }}
-        sunPosition={[0, si, -Math.PI]}
-      />
-      <directionalLight castShadow position={[0, (si + 0.2) * 32, -Math.PI]} />
+      <directionalLight position={[0, (si + 0.2) * 32, -Math.PI]} />
     </>
   );
 }
@@ -304,7 +294,7 @@ function Scene() {
     <>
       <Sunset />
       <Terrain />
-      <Stars />
+      <Perf />
     </>
   );
 }
