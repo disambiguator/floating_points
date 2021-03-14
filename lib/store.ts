@@ -30,7 +30,6 @@ export type Config<T> = {
   name: string;
   params: T;
   CustomEffects?: CustomEffectsType<T>;
-  controls?: CustomControls;
   Contents: SceneContents<T>;
 };
 

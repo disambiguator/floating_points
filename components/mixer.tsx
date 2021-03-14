@@ -28,11 +28,7 @@ const MAPPINGS: Record<string, Record<number, MidiParam>> = {
   },
 };
 
-export const Controls = <T,>({
-  controls,
-}: {
-  controls: Config<T>['controls'];
-}) => {
+export const Controls = () => {
   const set = useStore((state) => state.set);
   useEffect(() => {
     WebMidi.enable(() => {
@@ -60,7 +56,7 @@ export const Controls = <T,>({
     };
   }, [set]);
 
-  return <ControlPanel controls={controls} />;
+  return <ControlPanel />;
 };
 
 export const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
@@ -72,11 +68,7 @@ export const useMidiControl = (
   options: Omit<ControlOptions, 'type' | 'min' | 'max'> = {},
 ) => useControl(name, { ...options, type: 'number', min: 0, max: 127 });
 
-const ControlPanel = <T,>({
-  controls,
-}: {
-  controls: Config<T>['controls'];
-}) => {
+const ControlPanel = () => {
   const spectrum = useStore((state) => state.spectrum);
   const audioEnabled = useStore((state) => state.audioEnabled);
 
@@ -97,7 +89,6 @@ const ControlPanel = <T,>({
         <DatMidi label="Treble" path="treble" />,
         /* eslint-enable react/jsx-key */
       ]}
-      {controls}
     </DatGui>
   );
 };
@@ -265,7 +256,7 @@ const Mixer = () => {
 
   return (
     <>
-      <Controls controls={env.controls} />
+      <Controls />
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
         gl={{

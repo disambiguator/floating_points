@@ -1,15 +1,13 @@
 import { sumBy } from 'lodash';
 import { useRouter } from 'next/router';
-import React from 'react';
-import { useEffect, useMemo, useRef } from 'react';
-import { DatButton } from 'react-dat-gui';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
+import { useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import Mixer from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
-import { useStateUpdate } from '../lib/store';
-import { Config, useStore } from '../lib/store';
+import { Config, useStateUpdate, useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -65,6 +63,23 @@ interface SpiroParams {
   seeds?: Seed[];
 }
 export const SpiroContents = ({ config }: { config: SpiroParams }) => {
+  const set = useStore((state) => state.set);
+
+  useControl('New Positions', {
+    type: 'button',
+    onClick: () => {
+      const newSeeds = initPositions();
+      set((state) => {
+        const env = state.env as Config<SpiroParams>;
+        return {
+          env: { ...env, params: { ...env.params, seeds: newSeeds } },
+        };
+      });
+      const url = `/spiro?seeds=${JSON.stringify(newSeeds)}`;
+      window.history.pushState('', '', url);
+    },
+  });
+
   const { clock } = useThree();
   const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
@@ -138,28 +153,8 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   );
 };
 
-const spiroControls = ({
-  onUpdate,
-}: {
-  onUpdate: (newData: Partial<SpiroParams>) => void;
-}) => {
-  return [
-    // eslint-disable-next-line react/jsx-key
-    <DatButton
-      onClick={() => {
-        const newSeeds = initPositions();
-        onUpdate({ seeds: newSeeds });
-        const url = `/spiro?seeds=${JSON.stringify(newSeeds)}`;
-        window.history.pushState('', '', url);
-      }}
-      label="New Positions"
-    />,
-  ];
-};
-
 export const spiroConfig: Config<SpiroParams> = {
   Contents: SpiroContents,
-  controls: spiroControls,
   name: 'spiro' as const,
   params: { seeds: initPositions() },
 };
