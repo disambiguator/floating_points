@@ -1,7 +1,7 @@
 import { throttle } from 'lodash';
 import { useEffect } from 'react';
 import React from 'react';
-import DatGui, { DatButton, DatNumber, DatNumberProps } from 'react-dat-gui';
+import DatGui, { DatNumber, DatNumberProps } from 'react-dat-gui';
 import { useFrame, useThree } from 'react-three-fiber';
 import { ControlOptions, useControl } from 'react-three-gui';
 import * as THREE from 'three';
@@ -78,7 +78,6 @@ const ControlPanel = <T,>({
   controls: Config<T>['controls'];
 }) => {
   const spectrum = useStore((state) => state.spectrum);
-  const exportScene = useStore((state) => state.exportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
 
   return (
@@ -99,7 +98,6 @@ const ControlPanel = <T,>({
         /* eslint-enable react/jsx-key */
       ]}
       {controls}
-      <DatButton onClick={exportScene} label="Export" />
     </DatGui>
   );
 };
@@ -235,6 +233,13 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
       'lineWidth',
     ],
     state: [volumeControl, (volumeControl) => set({ volumeControl })],
+  });
+
+  useControl('Export', {
+    type: 'button',
+    onClick: () => {
+      useStore.getState().exportScene();
+    },
   });
 
   return null;
