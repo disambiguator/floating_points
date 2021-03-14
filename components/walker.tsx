@@ -18,7 +18,7 @@ type Walker = {
 const visited: Array<Array<boolean>> = [];
 
 const hasVisited = (x: number, y: number) => {
-  if (visited[x] == undefined) visited[x] = [];
+  if (visited[x] === undefined) visited[x] = [];
 
   if (visited[x][y] === true) return true;
 

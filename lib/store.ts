@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as THREE from 'three';
-import create, { PartialState, SetState } from 'zustand';
+import create, { SetState } from 'zustand';
 import { Spectrum } from './audio';
 
 export type MidiParam =
@@ -9,7 +9,7 @@ export type MidiParam =
   | 'zoomThreshold'
   | 'kaleidoscope';
 
-export const useStateUpdate = (update: PartialState<State>) => {
+export const useStateUpdate: SetState<State> = (update) => {
   const set = useStore((state) => state.set);
   useEffect(() => {
     set(update);

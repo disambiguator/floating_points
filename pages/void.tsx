@@ -5,7 +5,7 @@ import { useFrame } from 'react-three-fiber';
 import { useControl } from 'react-three-gui';
 import styled from 'styled-components';
 import * as THREE from 'three';
-import create from 'zustand';
+import create, { SetState } from 'zustand';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import { Audio, Spectrum, analyseSpectrum, useAudioUrl } from '../lib/audio';
@@ -25,7 +25,7 @@ const stringsStartTime = 67; // start rotating stars
 type State = {
   spectrum: Spectrum;
   audio: Audio | undefined;
-  setState: (state: Partial<State>) => void;
+  setState: SetState<State>;
 };
 const useStore = create<State>((set) => ({
   spectrum: { volume: 0 } as Spectrum,

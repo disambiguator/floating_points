@@ -43,6 +43,7 @@ export const Controls = <T,>({
         input.addListener('controlchange', 'all', (e) => {
           const param = mapping[e.controller.number];
           if (param) {
+            // @ts-ignore
             set({ [param]: e.value });
           } else {
             console.log(e);
@@ -124,6 +125,7 @@ const Scene = <T,>({ env }: { env: Config<T> }) => {
       const { volume } = spectrum;
 
       if (volumeControl) {
+        //@ts-ignore
         set({ [volumeControl]: volume * volumeScaler });
       }
 
