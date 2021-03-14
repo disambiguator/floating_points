@@ -72,6 +72,8 @@ const ControlPanel = () => {
   const spectrum = useStore((state) => state.spectrum);
   const audioEnabled = useStore((state) => state.audioEnabled);
 
+  if (!audioEnabled) return null;
+
   return (
     <DatGui
       data={spectrum}
@@ -80,15 +82,11 @@ const ControlPanel = () => {
       }}
       style={{ zIndex: 1 }}
     >
-      {audioEnabled && [
-        /* eslint-disable react/jsx-key */
-        <DatMidi label="Volume" path="volume" />,
-        <DatMidi label="Sub Bass" path="subBass" />,
-        <DatMidi label="Bass" path="bass" />,
-        <DatMidi label="Midrange" path="midrange" />,
-        <DatMidi label="Treble" path="treble" />,
-        /* eslint-enable react/jsx-key */
-      ]}
+      <DatMidi label="Volume" path="volume" />,
+      <DatMidi label="Sub Bass" path="subBass" />,
+      <DatMidi label="Bass" path="bass" />,
+      <DatMidi label="Midrange" path="midrange" />,
+      <DatMidi label="Treble" path="treble" />,
     </DatGui>
   );
 };
