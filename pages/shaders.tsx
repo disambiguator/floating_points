@@ -4,12 +4,7 @@ import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
-import FbmShader from '../lib/shaders/fbm';
-
-const allShaders = {
-  fbm: FbmShader,
-};
-type ShaderName = keyof typeof allShaders;
+import { ShaderName, shaders } from '../components/scenes';
 
 const Shaders = React.memo(function Shader({
   shaderName,
@@ -28,7 +23,7 @@ const Shaders = React.memo(function Shader({
       <planeGeometry args={[size.width, size.height]} />
       <shaderMaterial
         ref={ref}
-        args={[allShaders[shaderName]]}
+        args={[shaders[shaderName]]}
         uniforms-aspect-value={aspect}
       />
     </mesh>

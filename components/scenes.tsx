@@ -1,3 +1,4 @@
+import DusenShader from '../lib/shaders/dusen';
 import { barsConfig } from '../pages/bars';
 import { clothConfig } from '../pages/cloth';
 import { dusenConfig } from '../pages/dusen';
@@ -6,14 +7,10 @@ import { cubefieldConfig } from './cubefield';
 import { chaosConfig } from './geometric_chaos';
 import { sortConfig } from './sort';
 
-export type sceneName =
-  | 'spiro'
-  | 'bars'
-  | 'chaos'
-  | 'cloth'
-  | 'dusen'
-  | 'cubefield'
-  | 'sort';
+export const shaders = {
+  dusen: DusenShader,
+};
+export type ShaderName = keyof typeof shaders;
 
 export const scenes = () => ({
   spiro: spiroConfig,
@@ -24,3 +21,5 @@ export const scenes = () => ({
   cloth: clothConfig,
   sort: sortConfig,
 });
+
+export type sceneName = keyof ReturnType<typeof scenes>;
