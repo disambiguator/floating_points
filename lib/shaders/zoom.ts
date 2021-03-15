@@ -1,4 +1,4 @@
-export default {
+const ZoomShader = {
   uniforms: {
     damp: { value: 0.96 },
     zoom: { value: 0.01 },
@@ -52,3 +52,5 @@ export default {
     }
   `,
 };
+
+export default ZoomShader;
