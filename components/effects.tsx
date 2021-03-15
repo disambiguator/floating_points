@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import { Effects as DreiEffects } from '@react-three/drei';
+import React, { useRef } from 'react';
 import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
 import { Vector2 } from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { scaleMidi } from '../lib/midi';
@@ -11,17 +11,12 @@ import ZoomShader from '../lib/shaders/zoom';
 import { Config, CustomEffectsType, useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
 import { useMidiControl } from './mixer';
-
-extend({ EffectComposer, ShaderPass, RenderPass, AfterimagePass });
+extend({ ShaderPass, RenderPass, AfterimagePass });
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      effectComposer: ReactThreeFiber.Node<
-        EffectComposer,
-        typeof EffectComposer
-      >;
       renderPass: ReactThreeFiber.Node<RenderPass, typeof RenderPass>;
       shaderPass: ReactThreeFiber.Node<ShaderPass, typeof ShaderPass>;
       afterimagePass: ReactThreeFiber.Node<
@@ -71,23 +66,14 @@ export const Effects = <T,>({
   params: T;
   CustomEffects?: CustomEffectsType<T>;
 }) => {
-  const { gl, scene, camera, size, aspect } = useThree();
-  const composer = useRef<EffectComposer>();
+  const { scene, camera, aspect } = useThree();
 
   const zoomThreshold = useStore((state) => state.zoomThreshold);
   const trails = useStore((state) => state.trails);
   const kaleidoscope = useStore((state) => state.kaleidoscope);
 
-  useEffect(() => {
-    if (composer.current) composer.current.setSize(size.width, size.height);
-  }, [size]);
-
-  useFrame(() => {
-    if (composer.current) composer.current.render();
-  }, 1);
-
   return (
-    <effectComposer ref={composer} args={[gl]}>
+    <DreiEffects>
       <renderPass attachArray="passes" scene={scene} camera={camera} />
       {!['bars', 'cloth'].includes(name) && (
         <afterimagePass
@@ -107,6 +93,6 @@ export const Effects = <T,>({
         />
       ) : null}
       {CustomEffects && <CustomEffects params={params} />}
-    </effectComposer>
+    </DreiEffects>
   );
 };
