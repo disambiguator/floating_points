@@ -11,16 +11,17 @@ const Divide = () => {
   let timer = 0;
 
   const ref = useRef<HTMLCanvasElement>(null);
-  let mount: HTMLCanvasElement;
-  let ctx: CanvasRenderingContext2D;
 
   useEffect(() => {
-    mount = ref.current!;
-    ctx = mount.getContext('2d')!;
+    const mount = ref.current!;
+    const ctx = mount.getContext('2d')!;
     ctx.lineWidth = 5;
   });
 
   const animate = () => {
+    const mount = ref.current!;
+    const ctx = mount.getContext('2d')!;
+
     if (timer % 5 === 0) {
       topX = Math.random() * 800;
       bottomX = Math.random() * 800;

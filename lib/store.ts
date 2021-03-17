@@ -48,6 +48,7 @@ export type State = {
   audioEnabled: boolean;
   volumeScaler: number;
   volumeControl: MidiParam | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   env: Config<any> | null;
 };
 const useStore = create<State>((set) => ({

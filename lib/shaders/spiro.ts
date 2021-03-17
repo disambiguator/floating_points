@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default {
+const spiroShader = {
   uniforms: {
     amplitude: new THREE.Uniform(0.0),
     origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
@@ -59,3 +59,5 @@ void main() {
 }
 `,
 };
+
+export default spiroShader;

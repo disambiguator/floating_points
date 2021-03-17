@@ -4,8 +4,8 @@
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
   "scripts": {
-    "lint": "eslint_d . --ext=js,jsx,ts,tsx",
-    "lint-fix": "eslint_d . --ext=js,jsx,ts,tsx --fix",
+    "lint": "eslint_d . --ext=ts,tsx",
+    "lint-fix": "eslint_d . --ext=ts,tsx --fix",
     "test": "tsc --incremental && npm run lint",
     "build": "next build",
     "watch": "tsc --watch",

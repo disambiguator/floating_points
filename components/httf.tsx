@@ -327,7 +327,7 @@ const Boxes = () => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [boxes.length]);
 
   return <>{boxes}</>;
 };
@@ -337,7 +337,7 @@ const HTTF = () => {
 
   useEffect(() => {
     scene.background = new THREE.Color(0x7ec0ee);
-  }, []);
+  }, [scene]);
 
   useAudioUrl(
     'https://floating-points.s3.us-east-2.amazonaws.com/raindrops.mp3',

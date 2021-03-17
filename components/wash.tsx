@@ -12,8 +12,6 @@ interface Point {
 const Scatter = ({ width, height }: Dimensions) => {
   const ref = useRef<HTMLCanvasElement>(null);
   let points: Array<Point>;
-  let mount: HTMLCanvasElement;
-  let ctx: CanvasRenderingContext2D;
 
   const inRange = (point: Point) =>
     point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height;
@@ -35,6 +33,9 @@ const Scatter = ({ width, height }: Dimensions) => {
   };
 
   const animate = () => {
+    const mount = ref.current!;
+    const ctx = mount.getContext('2d')!;
+
     if (timer % 50 === 0) {
       points = endPoints();
     }
@@ -55,8 +56,8 @@ const Scatter = ({ width, height }: Dimensions) => {
   };
 
   useEffect(() => {
-    mount = ref.current!;
-    ctx = mount.getContext('2d')!;
+    const mount = ref.current!;
+    const ctx = mount.getContext('2d')!;
     ctx.lineWidth = 5;
 
     const interval = setInterval(animate, 20);
