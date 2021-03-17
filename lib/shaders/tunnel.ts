@@ -67,14 +67,14 @@ const TunnelShader = {
       vec4 colorBlend(in vec4 colorNew, in vec4 colorOld) {
         vec4 color;
 
-        // color = mix(colorNew, colorOld, 0.5);
+        color = mix(colorNew, colorOld, 0.5);
 
         // Modulus mixing, gets cool ink splatter effects
         //color = mod(colorNew + colorOld, 1.0);
 
 
-
-        color = vec4(blendDifference(colorOld.rgb, colorNew.rgb, 1.0), 1.0);
+        // Creat flashing effects but a bit rough
+        // color = vec4(blendDifference(colorOld.rgb, colorNew.rgb, 1.0), 1.0);
 
         return color;
       }

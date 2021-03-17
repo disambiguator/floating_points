@@ -82,11 +82,11 @@ const ControlPanel = () => {
       }}
       style={{ zIndex: 1 }}
     >
-      <DatMidi label="Volume" path="volume" />,
-      <DatMidi label="Sub Bass" path="subBass" />,
-      <DatMidi label="Bass" path="bass" />,
-      <DatMidi label="Midrange" path="midrange" />,
-      <DatMidi label="Treble" path="treble" />,
+      <DatMidi label="Volume" path="volume" />
+      <DatMidi label="Sub Bass" path="subBass" />
+      <DatMidi label="Bass" path="bass" />
+      <DatMidi label="Midrange" path="midrange" />
+      <DatMidi label="Treble" path="treble" />
     </DatGui>
   );
 };
