@@ -16,7 +16,7 @@ function randInt(min: number, max: number) {
   return Math.floor(Math.random() * max) + min;
 }
 
-export interface Seed {
+interface Seed {
   radius: number;
   arc: number;
   phi: number;
