@@ -75,14 +75,16 @@ export const Effects = <T,>({
   return (
     <DreiEffects>
       <renderPass attachArray="passes" scene={scene} camera={camera} />
-      {!['bars', 'cloth'].includes(name) && (
-        <afterimagePass
-          attachArray="passes"
-          args={[ZoomShader]}
-          uniforms-damp-value={scaleMidi(trails, 0, 1)}
-          uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
-        />
-      )}
+      {!['bars', 'cloth'].includes(name) &&
+        trails !== 0 &&
+        zoomThreshold !== 0 && (
+          <afterimagePass
+            attachArray="passes"
+            args={[ZoomShader]}
+            uniforms-damp-value={scaleMidi(trails, 0, 1)}
+            uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
+          />
+        )}
       <TunnelEffects />
       {kaleidoscope !== 0 ? (
         <shaderPass
