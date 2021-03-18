@@ -1,3 +1,4 @@
+import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
@@ -5,7 +6,6 @@ import MixerPage from '../components/mixer';
 import { shaders } from '../components/scenes';
 import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
-
 const Dusen = React.memo(function Dusen() {
   const { aspect, size } = useThree();
   const ref = useRef<ShaderMaterial>();
@@ -26,8 +26,9 @@ const Dusen = React.memo(function Dusen() {
         ref={ref}
         args={[shader]}
         uniforms-aspect-value={aspect}
-        uniforms-G-value={aspect}
+        // uniforms-G-value={aspect}
       />
+      <Perf />
     </mesh>
   );
 });
