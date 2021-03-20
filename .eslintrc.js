@@ -20,6 +20,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     'prefer-destructuring': 2,
     'react/prop-types': 'off',
     'sort-imports': ['error', { ignoreDeclarationSort: true }],

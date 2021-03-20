@@ -1,5 +1,5 @@
 import { Effects as DreiEffects } from '@react-three/drei';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
 import { Vector2 } from 'three';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -20,7 +20,7 @@ declare global {
       renderPass: ReactThreeFiber.Node<RenderPass, typeof RenderPass>;
       shaderPass: ReactThreeFiber.Node<ShaderPass, typeof ShaderPass>;
       afterimagePass: ReactThreeFiber.Node<
-        AfterimagePass,
+        AfterimagePass<any>,
         typeof AfterimagePass
       >;
     }
@@ -29,20 +29,43 @@ declare global {
 /* eslint-enable @typescript-eslint/no-namespace */
 
 const TunnelEffects = () => {
-  const afterimagePassRef = useRef<AfterimagePass>();
+  const afterimagePassRef = useRef<AfterimagePass<typeof TunnelShader>>();
   const { mouse, clock, aspect } = useThree();
   const xSpeed = useMidiControl('X Speed', { value: 64 });
   const ySpeed = useMidiControl('Y Speed', { value: 64 });
 
-  useFrame(() => {
-    const { trails, angle } = useStore.getState();
+  useEffect(() => {
+    return useStore.subscribe(
+      (trails: number) => {
+        afterimagePassRef.current!.uniforms.damp.value = scaleMidi(
+          trails,
+          0.8,
+          1,
+        );
+      },
+      (state) => state.trails,
+    );
+  }, []);
 
+  useEffect(() => {
+    return useStore.subscribe(
+      (angle: number) => {
+        afterimagePassRef.current!.uniforms.angle.value = scaleMidi(
+          angle,
+          -Math.PI / 10,
+          Math.PI / 10,
+          true,
+        );
+      },
+      (state) => state.angle,
+    );
+  }, []);
+
+  useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
     uniforms.mouse.value = new Vector2(mouse.x * aspect, mouse.y);
     uniforms.time.value = clock.getElapsedTime();
-    uniforms.damp.value = scaleMidi(trails, 0.8, 1);
-    uniforms.angle.value = scaleMidi(angle, -Math.PI / 10, Math.PI / 10, true);
   });
 
   return (
