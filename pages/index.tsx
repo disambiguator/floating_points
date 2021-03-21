@@ -259,7 +259,7 @@ const Scatter = () => {
           >
             <PageTitle>
               <Link href={p.path}>
-                <a>{p.name}</a>
+                <a href={p.path}>{p.name}</a>
               </Link>
             </PageTitle>
             {p.description}
