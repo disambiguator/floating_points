@@ -17,8 +17,6 @@ extend({ ShaderPass, RenderPass, AfterimagePass });
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      renderPass: ReactThreeFiber.Node<RenderPass, typeof RenderPass>;
-      shaderPass: ReactThreeFiber.Node<ShaderPass, typeof ShaderPass>;
       afterimagePass: ReactThreeFiber.Node<
         AfterimagePass<any>,
         typeof AfterimagePass
@@ -89,7 +87,7 @@ export const Effects = <T,>({
   params: T;
   CustomEffects?: CustomEffectsType<T>;
 }) => {
-  const { scene, camera, aspect } = useThree();
+  const { aspect } = useThree();
 
   const zoomThreshold = useStore((state) => state.zoomThreshold);
   const trails = useStore((state) => state.trails);
@@ -97,7 +95,6 @@ export const Effects = <T,>({
 
   return (
     <DreiEffects>
-      <renderPass attachArray="passes" scene={scene} camera={camera} />
       {!['bars', 'cloth'].includes(name) &&
         trails !== 0 &&
         zoomThreshold !== 0 && (
