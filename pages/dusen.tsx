@@ -12,7 +12,7 @@ const Dusen = React.memo(function Dusen() {
   const noiseAmplitude = useStore((state) => state.noiseAmplitude);
 
   useFrame(() => {
-    ref.current!.uniforms.time.value = clock.elapsedTime;
+    if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;
   });
 
   const name = 'dusen';

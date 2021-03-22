@@ -5,7 +5,6 @@ import { Vector2 } from 'three';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { scaleMidi } from '../lib/midi';
-import { KaleidoscopeShader } from '../lib/shaders/kaleidoscope';
 import TunnelShader from '../lib/shaders/tunnel';
 import ZoomShader from '../lib/shaders/zoom';
 import { Config, CustomEffectsType, useStore } from '../lib/store';
@@ -42,6 +41,15 @@ const TunnelEffects = () => {
         );
       },
       (state) => state.trails,
+    );
+  }, []);
+
+  useEffect(() => {
+    return useStore.subscribe(
+      (kaleidoscope: number) => {
+        afterimagePassRef.current!.uniforms.numSides.value = kaleidoscope;
+      },
+      (state) => state.kaleidoscope,
     );
   }, []);
 
@@ -87,11 +95,8 @@ export const Effects = <T,>({
   params: T;
   CustomEffects?: CustomEffectsType<T>;
 }) => {
-  const { aspect } = useThree();
-
   const zoomThreshold = useStore((state) => state.zoomThreshold);
   const trails = useStore((state) => state.trails);
-  const kaleidoscope = useStore((state) => state.kaleidoscope);
 
   return (
     <DreiEffects>
@@ -106,14 +111,6 @@ export const Effects = <T,>({
           />
         )}
       <TunnelEffects />
-      {kaleidoscope !== 0 ? (
-        <shaderPass
-          attachArray="passes"
-          args={[KaleidoscopeShader]}
-          uniforms-aspect-value={aspect}
-          uniforms-numSides-value={kaleidoscope}
-        />
-      ) : null}
       {CustomEffects && <CustomEffects params={params} />}
     </DreiEffects>
   );

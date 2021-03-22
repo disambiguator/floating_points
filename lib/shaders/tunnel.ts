@@ -1,3 +1,4 @@
+import glsl from 'glslify';
 import * as THREE from 'three';
 
 const TunnelShader = {
@@ -11,6 +12,7 @@ const TunnelShader = {
     angle: { value: 0 },
     mouse: { value: new THREE.Vector2(0, 0) },
     aspect: { value: 0 },
+    numSides: { value: 0 },
   },
 
   vertexShader: [
@@ -24,7 +26,7 @@ const TunnelShader = {
     '}',
   ].join('\n'),
 
-  fragmentShader: /* glsl */ `
+  fragmentShader: glsl`
       #ifdef GL_ES
       precision highp float;
       #endif
@@ -35,6 +37,7 @@ const TunnelShader = {
       uniform vec2 mouse;
       uniform float aspect;
       uniform float time;
+      uniform float numSides;
 
       const float PI = 3.14159265359;
 
@@ -42,6 +45,8 @@ const TunnelShader = {
       uniform sampler2D tNew;
 
       varying vec2 vUv;
+
+      #pragma glslify: kaleidoscope = require(./kaleidoscope.glsl)
 
       float blendOverlay(float base, float blend) {
          return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
@@ -80,11 +85,13 @@ const TunnelShader = {
       }
 
       void main() {
-          vec4 texelNew = texture2D(tNew, vUv);
-
         // Shift to -1 to 1 coordinate system
         vec2 coord = vUv * 2. - 1.;
         coord.x *= aspect;
+
+        if(numSides > 0.0) {
+          coord = kaleidoscope(coord, numSides);
+        }
 
         // Rotate defined angle
         coord.x = coord.x * rotation().y + coord.y * rotation().x;
@@ -98,9 +105,10 @@ const TunnelShader = {
         // Get old frame (in 0 to 1 coordinate system)
         coord.x /= aspect;
         coord = (coord + 1.)/2.;
-          vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
+        vec4 texelNew = texture2D(tNew, coord);
+        vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
 
-          gl_FragColor = length(texelNew) > 0. ? colorBlend(texelNew, texelOld) : texelOld;
+        gl_FragColor = length(texelNew) > 0. ? colorBlend(texelNew, texelOld) : texelOld;
       }
     `,
 };

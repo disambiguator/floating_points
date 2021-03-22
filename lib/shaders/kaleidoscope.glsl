@@ -1,35 +1,6 @@
-export const KaleidoscopeShader = {
-  uniforms: {
-    tDiffuse: { value: null },
-    numSides: { value: 12.0 },
-    aspect: { value: 0.0 },
-  },
-
-  vertexShader: /* glsl */ `
-    varying vec2 vUv;
-
-    void main() {
-    	vUv = uv;
-    	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }`,
-  fragmentShader: /* glsl */ `
-    #ifdef GL_ES
-    precision highp float;
-    #endif
-
-    uniform sampler2D tDiffuse;
-
-    varying vec2 vUv;
-
-    uniform float numSides;
-
-    uniform float aspect;
-
     const float PI = 3.14159265359;
 
-    const float time = 0.0;
-
-    vec2 smallKoleidoscope(vec2 uv) {
+    vec2 smallKoleidoscope(vec2 uv, float numSides) {
         float KA = PI / numSides;
         // get the angle in radians of the current coords relative to origin (i.e. center of screen)
         float angle = atan (uv.y, uv.x);
@@ -49,12 +20,8 @@ export const KaleidoscopeShader = {
       return mod(i,1.)*-(step(1.,i)*2.-1.) + step(1.0,i);
     }
 
-    void main() {
-      vec2 position = vUv * 2. - 1.;
-      position.x *= aspect;
-
-      position = reflectImage(smallKoleidoscope(position));
-      gl_FragColor = texture2D(tDiffuse, position);
+    vec2 kaleidoscope(vec2 position, float numSides) {
+      return numSides > 0. ? reflectImage(smallKoleidoscope(position, numSides)) : position;
     }
-  `,
-};
+
+    #pragma glslify: export(kaleidoscope)
