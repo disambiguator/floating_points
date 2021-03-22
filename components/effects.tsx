@@ -4,10 +4,10 @@ import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
 import { Vector2 } from 'three';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import ZoomShader from '../lib/shaders/zoom';
-import { Config, CustomEffectsType, useStore } from '../lib/store';
+import { Config, CustomEffectsType, State, useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
 import { useMidiControl } from './mixer';
 extend({ ShaderPass, RenderPass, AfterimagePass });
@@ -32,16 +32,23 @@ const TunnelEffects = () => {
   const ySpeed = useMidiControl('Y Speed', { value: 64 });
 
   useEffect(() => {
-    return useStore.subscribe(
-      (trails: number) => {
-        afterimagePassRef.current!.uniforms.damp.value = scaleMidi(
-          trails,
-          0.8,
-          1,
-        );
-      },
-      (state) => state.trails,
-    );
+    const pass = afterimagePassRef.current!;
+
+    const updateZoom = ([trails, name]: [number, string]) => {
+      pass.uniforms.damp.value = scaleMidi(trails, 0.8, 1);
+      pass.uniforms.zoomDamp.value = ['bars', 'cloth'].includes(name)
+        ? 0
+        : scaleMidi(trails, 0, 1);
+    };
+
+    const zoomStateSelector = (state: State): [number, string] => [
+      state.trails,
+      state.env!.name,
+    ];
+
+    updateZoom(zoomStateSelector(useStore.getState()));
+
+    return useStore.subscribe(updateZoom, zoomStateSelector, shallow);
   }, []);
 
   useEffect(() => {
@@ -67,6 +74,20 @@ const TunnelEffects = () => {
     );
   }, []);
 
+  useEffect(() => {
+    const updateThreshold = (zoomThreshold: number) => {
+      afterimagePassRef.current!.uniforms.zoom.value = scaleMidi(
+        zoomThreshold,
+        0,
+        0.3,
+      );
+    };
+
+    updateThreshold(useStore.getState().zoomThreshold);
+
+    return useStore.subscribe(updateThreshold, (state) => state.zoomThreshold);
+  }, []);
+
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
@@ -87,7 +108,6 @@ const TunnelEffects = () => {
 };
 
 export const Effects = <T,>({
-  name,
   params,
   CustomEffects,
 }: {
@@ -95,21 +115,8 @@ export const Effects = <T,>({
   params: T;
   CustomEffects?: CustomEffectsType<T>;
 }) => {
-  const zoomThreshold = useStore((state) => state.zoomThreshold);
-  const trails = useStore((state) => state.trails);
-
   return (
     <DreiEffects>
-      {!['bars', 'cloth'].includes(name) &&
-        trails !== 0 &&
-        zoomThreshold !== 0 && (
-          <afterimagePass
-            attachArray="passes"
-            args={[ZoomShader]}
-            uniforms-damp-value={scaleMidi(trails, 0, 1)}
-            uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
-          />
-        )}
       <TunnelEffects />
       {CustomEffects && <CustomEffects params={params} />}
     </DreiEffects>

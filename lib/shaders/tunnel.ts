@@ -13,6 +13,8 @@ const TunnelShader = {
     mouse: { value: new THREE.Vector2(0, 0) },
     aspect: { value: 0 },
     numSides: { value: 0 },
+    zoomDamp: { value: 0.96 },
+    zoom: { value: 0.01 },
   },
 
   vertexShader: [
@@ -31,6 +33,8 @@ const TunnelShader = {
       precision highp float;
       #endif
       uniform float damp;
+      uniform float zoom;
+      uniform float zoomDamp;
       uniform float xspeed;
       uniform float yspeed;
       uniform float angle;
@@ -47,6 +51,7 @@ const TunnelShader = {
       varying vec2 vUv;
 
       #pragma glslify: kaleidoscope = require(./kaleidoscope.glsl)
+      #pragma glslify: zoomFun = require(./zoom.glsl)
 
       float blendOverlay(float base, float blend) {
          return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
@@ -88,6 +93,9 @@ const TunnelShader = {
         // Shift to -1 to 1 coordinate system
         vec2 coord = vUv * 2. - 1.;
         coord.x *= aspect;
+
+        // Zoom multiplier
+        coord = zoomFun(coord, zoomDamp, zoom);
 
         if(numSides > 0.0) {
           coord = kaleidoscope(coord, numSides);
