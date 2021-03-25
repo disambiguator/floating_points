@@ -95,7 +95,9 @@ const TunnelShader = {
         coord.x *= aspect;
 
         // Zoom multiplier
-        coord = zoomFun(coord, zoomDamp, zoom);
+        if(zoom > 0.0) {
+          coord = zoomFun(coord, zoomDamp, zoom);
+        }
 
         if(numSides > 0.0) {
           coord = kaleidoscope(coord, numSides);

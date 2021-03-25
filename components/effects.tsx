@@ -3,14 +3,13 @@ import React, { useEffect, useRef } from 'react';
 import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
 import { Vector2 } from 'three';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { Config, CustomEffectsType, State, useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
 import { useMidiControl } from './mixer';
-extend({ ShaderPass, RenderPass, AfterimagePass });
+extend({ RenderPass, AfterimagePass });
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
@@ -34,21 +33,16 @@ const TunnelEffects = () => {
   useEffect(() => {
     const pass = afterimagePassRef.current!;
 
-    const updateZoom = ([trails, name]: [number, string]) => {
+    const updateZoom = (trails: number) => {
       pass.uniforms.damp.value = scaleMidi(trails, 0.8, 1);
-      pass.uniforms.zoomDamp.value = ['bars', 'cloth'].includes(name)
-        ? 0
-        : scaleMidi(trails, 0, 1);
+      pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
     };
 
-    const zoomStateSelector = (state: State): [number, string] => [
-      state.trails,
-      state.env!.name,
-    ];
+    const zoomStateSelector = (state: State) => state.trails;
 
     updateZoom(zoomStateSelector(useStore.getState()));
 
-    return useStore.subscribe(updateZoom, zoomStateSelector, shallow);
+    return useStore.subscribe(updateZoom, zoomStateSelector);
   }, []);
 
   useEffect(() => {
@@ -75,17 +69,24 @@ const TunnelEffects = () => {
   }, []);
 
   useEffect(() => {
-    const updateThreshold = (zoomThreshold: number) => {
-      afterimagePassRef.current!.uniforms.zoom.value = scaleMidi(
-        zoomThreshold,
-        0,
-        0.3,
-      );
+    const updateThreshold = ([zoomThreshold, name]: [number, string]) => {
+      afterimagePassRef.current!.uniforms.zoom.value = [
+        'bars',
+        'cloth',
+      ].includes(name)
+        ? 0
+        : scaleMidi(zoomThreshold, 0, 0.3);
+      console.log(afterimagePassRef.current!.uniforms.zoomDamp.value);
     };
 
-    updateThreshold(useStore.getState().zoomThreshold);
+    const zoomStateSelector = (state: State): [number, string] => [
+      state.zoomThreshold,
+      state.env!.name,
+    ];
 
-    return useStore.subscribe(updateThreshold, (state) => state.zoomThreshold);
+    updateThreshold(zoomStateSelector(useStore.getState()));
+
+    return useStore.subscribe(updateThreshold, zoomStateSelector, shallow);
   }, []);
 
   useFrame(() => {
