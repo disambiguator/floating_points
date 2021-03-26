@@ -49,7 +49,7 @@
     "webmidi": "^2.5.1"
   },
   "dependencies": {
-    "@react-three/drei": "^4.0.0-beta.5",
+    "@react-three/drei": "^3.11.2",
     "@types/three": "^0.125.3",
     "lodash": "^4.17.20",
     "next": "^10.0.3",
