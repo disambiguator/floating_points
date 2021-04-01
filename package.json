@@ -57,7 +57,7 @@
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
     "react": "^17.0.1",
-    "react-dat-gui": "github:disambiguator/react-dat-gui",
+    "react-dat-gui": "^4.1.1",
     "react-dom": "^17.0.1",
     "react-ga": "^3.3.0",
     "react-p5-wrapper": "^2.3.0",
