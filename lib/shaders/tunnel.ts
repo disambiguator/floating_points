@@ -61,11 +61,6 @@ const TunnelShader = {
         return vec4(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b), 1.);
       }
 
-      vec2 rotation() {
-        return vec2(sin(angle), cos(angle));
-      }
-
-
       vec3 blendDifference(vec3 base, vec3 blend) {
       return abs(base-blend);
   }
@@ -90,6 +85,8 @@ const TunnelShader = {
       }
 
       void main() {
+        vec2 rotation = vec2(sin(angle), cos(angle));
+
         // Shift to -1 to 1 coordinate system
         vec2 coord = vUv * 2. - 1.;
         coord.x *= aspect;
@@ -104,8 +101,8 @@ const TunnelShader = {
         }
 
         // Rotate defined angle
-        coord.x = coord.x * rotation().y + coord.y * rotation().x;
-        coord.y = coord.y * rotation().y - coord.x * rotation().x;
+        coord.x = coord.x * rotation.y + coord.y * rotation.x;
+        coord.y = coord.y * rotation.y - coord.x * rotation.x;
 
         // tunnel and zoom
         float scale = 0.05;

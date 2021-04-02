@@ -24,7 +24,6 @@ uniform float radius;
 uniform float G;
 varying vec2 vUv;
 
-#pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 
 const int numOctaves = 8;

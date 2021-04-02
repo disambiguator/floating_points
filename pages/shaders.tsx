@@ -1,5 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRouter } from 'next/router';
+import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
 import { ShaderMaterial } from 'three';
 import Page from '../components/page';
@@ -39,6 +40,7 @@ export default function ShaderPage() {
       <div style={{ height: '90vh', width: '90vh' }}>
         <FiberScene>
           <Shaders shaderName={shaderName} />
+          <Perf />
         </FiberScene>
       </div>
     </Page>
