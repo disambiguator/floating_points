@@ -1,8 +1,8 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import Mixer from '../components/mixer';
 import { scaleMidi } from '../lib/midi';

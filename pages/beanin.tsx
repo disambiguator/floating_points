@@ -1,5 +1,5 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
 import * as THREE from 'three';
 import Page from '../components/page';
@@ -75,7 +75,7 @@ void main() {
 };
 
 const Dusen = function Dusen() {
-  const { aspect, size, invalidate, clock } = useThree();
+  const { viewport, size, invalidate, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
   const zoomState = useRef({
     mouse: { clientX: 0, clientY: 0 },
@@ -110,7 +110,7 @@ const Dusen = function Dusen() {
 
     const bounds = uniforms.bounds.value as THREE.Vector2;
     const normalizedCoords = new THREE.Vector2(
-      ((mouse.clientX / window.innerWidth) * 2 - 1) * aspect,
+      ((mouse.clientX / window.innerWidth) * 2 - 1) * viewport.aspect,
       ((window.innerHeight - mouse.clientY) / window.innerHeight) * 2 - 1,
     );
 
@@ -137,7 +137,7 @@ const Dusen = function Dusen() {
       <shaderMaterial
         ref={ref}
         args={[Shader]}
-        uniforms-aspect-value={aspect}
+        uniforms-aspect-value={viewport.aspect}
       />
     </mesh>
   );

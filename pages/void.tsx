@@ -1,8 +1,8 @@
 import { Sky } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useFrame } from 'react-three-fiber';
 import styled from 'styled-components';
 import * as THREE from 'three';
 import create, { SetState } from 'zustand';
@@ -315,7 +315,7 @@ function PerlinField() {
       <FiberScene
         gl={{ antialias: true }}
         camera={{ position: [0, 400, 2500], far: 20000 }}
-        shadowMap
+        shadows
         controls
       >
         <Scene />

@@ -1,6 +1,6 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRouter } from 'next/router';
 import React, { useRef } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
@@ -11,7 +11,7 @@ const Shaders = React.memo(function Shader({
 }: {
   shaderName: ShaderName;
 }) {
-  const { aspect, size, clock } = useThree();
+  const { viewport, size, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
 
   useFrame(() => {
@@ -24,7 +24,7 @@ const Shaders = React.memo(function Shader({
       <shaderMaterial
         ref={ref}
         args={[shaders[shaderName]]}
-        uniforms-aspect-value={aspect}
+        uniforms-aspect-value={viewport.aspect}
       />
     </mesh>
   );

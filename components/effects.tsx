@@ -1,15 +1,20 @@
 import { Effects as DreiEffects } from '@react-three/drei';
+import {
+  ReactThreeFiber,
+  extend,
+  useFrame,
+  useThree,
+} from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
-import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
 import { Vector2 } from 'three';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { Config, CustomEffectsType, State, useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
-extend({ RenderPass, AfterimagePass });
+
+extend({ AfterimagePass });
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
@@ -26,7 +31,7 @@ declare global {
 
 const TunnelEffects = () => {
   const afterimagePassRef = useRef<AfterimagePass<typeof TunnelShader>>();
-  const { mouse, clock, aspect } = useThree();
+  const { mouse, clock, viewport } = useThree();
   const { xSpeed, ySpeed } = useControls({
     xSpeed: { value: 64, min: 0, max: 127, label: 'X Speed' },
     ySpeed: { value: 64, min: 0, max: 127, label: 'Y Speed' },
@@ -94,7 +99,7 @@ const TunnelEffects = () => {
   useFrame(() => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
-    uniforms.mouse.value = new Vector2(mouse.x * aspect, mouse.y);
+    uniforms.mouse.value = new Vector2(mouse.x * viewport.aspect, mouse.y);
     uniforms.time.value = clock.getElapsedTime();
   });
 
@@ -104,7 +109,7 @@ const TunnelEffects = () => {
       attachArray="passes"
       args={[TunnelShader]}
       uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
-      uniforms-aspect-value={aspect}
+      uniforms-aspect-value={viewport.aspect}
       uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
     />
   );

@@ -1,8 +1,8 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { throttle } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import React from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';

@@ -1,5 +1,5 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import { ShaderMaterial } from 'three';
 import { scaleMidi } from '../lib/midi';

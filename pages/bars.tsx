@@ -1,8 +1,8 @@
 import { Line } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
 import { isEmpty } from 'lodash';
 import React, { useRef, useState } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
-import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { Line2 } from 'three-stdlib';
 import Mixer from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';

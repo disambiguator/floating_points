@@ -14,7 +14,7 @@ import {
   WebGLRenderTarget,
   WebGLRenderer,
 } from 'three';
-import { FullScreenQuad, Pass } from 'three-stdlib/postprocessing/Pass';
+import { FullScreenQuad, Pass } from 'three-stdlib';
 
 class AfterimagePass<T extends ShaderMaterialParameters> extends Pass {
   shader: T;

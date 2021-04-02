@@ -1,5 +1,5 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useRef } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';

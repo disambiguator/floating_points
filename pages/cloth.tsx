@@ -1,9 +1,8 @@
 import { Line } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
-import { useFrame } from 'react-three-fiber';
-import { Line2 } from 'three/examples/jsm/lines/Line2';
 import MixerPage from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
 import { useStore } from '../lib/store';
@@ -13,7 +12,7 @@ const Cloth = React.memo(function Cloth() {
   const { lineWidth } = useControls({
     lineWidth: { value: 46, min: 0, max: 127, label: 'Line width' },
   });
-  const lineRef = useRef<Line2>(null);
+  const lineRef = useRef<typeof Line>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
 
   useFrame(({ clock, size }) => {
@@ -22,6 +21,8 @@ const Cloth = React.memo(function Cloth() {
 
     const line = lineRef.current;
     if (!line) return;
+
+    // @ts-ignore
     const { geometry, material } = line;
     const amplitude = scaleMidi(noiseAmplitude, 1, 500);
     geometry.setPositions(
@@ -42,6 +43,7 @@ const Cloth = React.memo(function Cloth() {
   return (
     <Line
       position={[0, -800, -1000]}
+      // @ts-ignore
       ref={lineRef}
       color={'cyan'}
       linewidth={scaleMidi(lineWidth, 1, 30)}

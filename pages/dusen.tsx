@@ -1,5 +1,5 @@
+import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
 import { ShaderMaterial } from 'three';
 import MixerPage from '../components/mixer';
 import { shaders } from '../components/scenes';
@@ -7,7 +7,7 @@ import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
 
 const Dusen = React.memo(function Dusen() {
-  const { aspect, size, clock } = useThree();
+  const { viewport, size, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
   const noiseAmplitude = useStore((state) => state.noiseAmplitude);
 
@@ -24,7 +24,7 @@ const Dusen = React.memo(function Dusen() {
       <shaderMaterial
         ref={ref}
         args={[shader]}
-        uniforms-aspect-value={aspect}
+        uniforms-aspect-value={viewport.aspect}
         uniforms-radius-value={scaleMidi(noiseAmplitude, 0, 1)}
       />
     </mesh>
