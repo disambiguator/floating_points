@@ -62,7 +62,7 @@
     "react-ga": "^3.3.0",
     "react-p5-wrapper": "^2.3.0",
     "styled-components": "^5.2.3",
-    "three": "^0.126.0",
+    "three": "^0.127.0",
     "three-stdlib": "^1.0.1",
     "zustand": "^3.2.0"
   }
