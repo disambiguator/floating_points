@@ -2,7 +2,6 @@ import { OrbitControls } from '@react-three/drei';
 import { Leva } from 'leva';
 import React from 'react';
 import { Canvas, ContainerProps } from 'react-three-fiber';
-import { Controls } from 'react-three-gui';
 
 export const FiberScene = ({
   controls,
@@ -10,21 +9,13 @@ export const FiberScene = ({
   children,
   ...rest
 }: ContainerProps & { controls?: boolean; gui?: boolean }) => {
-  return gui ? (
+  return (
     <>
-      <Leva />
-      <Controls.Provider>
-        <Controls.Canvas {...rest}>
-          {controls && <OrbitControls />}
-          {children}
-        </Controls.Canvas>
-        <Controls collapsed={false} />
-      </Controls.Provider>
+      {gui && <Leva />}
+      <Canvas concurrent {...rest}>
+        {controls && <OrbitControls />}
+        {children}
+      </Canvas>
     </>
-  ) : (
-    <Canvas concurrent {...rest}>
-      {controls && <OrbitControls />}
-      {children}
-    </Canvas>
   );
 };

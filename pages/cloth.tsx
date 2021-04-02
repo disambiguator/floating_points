@@ -1,16 +1,18 @@
 import { Line } from '@react-three/drei';
+import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import { useMidiControl } from '../components/mixer';
 import MixerPage from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
 import { useStore } from '../lib/store';
 import { useStateUpdate } from '../lib/store';
 
 const Cloth = React.memo(function Cloth() {
-  const lineWidth = useMidiControl('Line width', { value: 46 });
+  const { lineWidth } = useControls({
+    lineWidth: { value: 46, min: 0, max: 127, label: 'Line width' },
+  });
   const lineRef = useRef<Line2>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
 

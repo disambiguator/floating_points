@@ -1,8 +1,8 @@
 import { Sky } from '@react-three/drei';
+import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from 'react-three-fiber';
-import { useControl } from 'react-three-gui';
 import styled from 'styled-components';
 import * as THREE from 'three';
 import create, { SetState } from 'zustand';
@@ -69,11 +69,8 @@ const newPosition = () => {
 
 const Stars = React.memo(function Stars() {
   const starsCount = 4000;
-  const speed = useControl('starSpeed', {
-    type: 'number',
-    min: 0,
-    max: 0.01,
-    value: 0.0005,
+  const { speed } = useControls({
+    speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
   });
 
   const materialRef = useRef<THREE.ShaderMaterial>();
@@ -204,17 +201,9 @@ const Row = ({
 };
 
 const Terrain = React.memo(function Terrain() {
-  const speed = useControl('terrainSpeed', {
-    type: 'number',
-    min: 0,
-    max: 60,
-    value: 10,
-  });
-  const scale = useControl('terrainScale', {
-    type: 'number',
-    min: 0,
-    max: 1000,
-    value: 10,
+  const { speed, scale } = useControls({
+    speed: { label: 'terrainSpeed', min: 0, max: 60, value: 10 },
+    scale: { label: 'terrainScale', min: 0, max: 1000, value: 10 },
   });
 
   const iRef = useRef(-1);
@@ -264,44 +253,21 @@ const Terrain = React.memo(function Terrain() {
 });
 
 function Sunset() {
-  const mieCoefficient = useControl('mieCoefficient', {
-    type: 'number',
-    min: 0,
-    max: 0.1,
-    value: 0.1,
-  });
-  const rayleigh = useControl('rayleigh', {
-    type: 'number',
-    min: 0,
-    max: 10,
-    value: 10,
-  });
-  const mieDirectionalG = useControl('mieDirectionalG', {
-    type: 'number',
-    min: 0,
-    max: 1,
-    value: 0.9,
-  });
-  const turbidity = useControl('turbidity', {
-    type: 'number',
-    min: 0,
-    max: 10,
-    value: 10,
-  });
-
-  const [si, setSi] = useState(Math.PI * -0.045);
-
-  useControl('inclination', {
-    type: 'number',
-    min: -0.5,
-    max: 0.5,
-    state: [si, setSi],
-  });
+  const [
+    { mieCoefficient, rayleigh, mieDirectionalG, turbidity, si },
+    set,
+  ] = useControls(() => ({
+    mieCoefficient: { min: 0, max: 0.1, value: 0.1 },
+    rayleigh: { min: 0, max: 10, value: 10 },
+    mieDirectionalG: { min: 0, max: 1, value: 0.9 },
+    turbidity: { min: 0, max: 10, value: 10 },
+    si: { min: -0.5, max: 0.5, value: Math.PI * -0.045, label: 'inclination' },
+  }));
 
   useFrame(() => {
     const time = currentTime(useStore.getState());
     if (time < kickInTime + 1)
-      setSi(Math.min(-0.4 + (0.3 * time) / kickInTime, -0.1));
+      set({ si: Math.min(-0.4 + (0.3 * time) / kickInTime, -0.1) });
   });
 
   return (

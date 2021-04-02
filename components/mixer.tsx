@@ -1,9 +1,8 @@
-import { useControls } from 'leva';
+import { button, useControls } from 'leva';
 import { throttle } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import React from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
-import { ControlOptions, useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
@@ -60,11 +59,6 @@ export const Controls = () => {
 
   return audioEnabled ? <ControlPanel /> : null;
 };
-
-export const useMidiControl = (
-  name: string,
-  options: Omit<ControlOptions, 'type' | 'min' | 'max'> = {},
-) => useControl(name, { ...options, type: 'number', min: 0, max: 127 });
 
 const ControlPanel = () => {
   const [_values, set] = useControls(() => ({
@@ -145,87 +139,85 @@ const _throttledHistory = throttle((params) => {
 }, 1000);
 
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
-  const color = useStore((state) => state.color);
-  const zoomThreshold = useStore((state) => state.zoomThreshold);
-  const noiseAmplitude = useStore((state) => state.noiseAmplitude);
-  const trails = useStore((state) => state.trails);
-  const set = useStore((state) => state.set);
-  const angle = useStore((state) => state.angle);
-  const audioEnabled = useStore((state) => state.audioEnabled);
-  const volumeScaler = useStore((state) => state.volumeScaler);
-  const volumeControl = useStore((state) => state.volumeControl);
-  const kaleidoscope = useStore((state) => state.kaleidoscope);
+  const {
+    color,
+    angle,
+    zoomThreshold,
+    noiseAmplitude,
+    trails,
+    kaleidoscope,
+    audioEnabled,
+    volumeScaler,
+    volumeControl,
+    set,
+  } = useMemo(() => useStore.getState(), []);
 
-  useControl('Contents', {
-    type: 'select',
-    items: Object.keys(scenes()),
-    state: [
-      name,
-      (name: sceneName) => {
-        set({ env: { ...scenes()[name] } });
-      },
-    ],
-  });
-
-  useControl('color', {
-    type: 'boolean',
-    state: [color, (color) => set({ color })],
-  });
-
-  useMidiControl('Zoom', {
-    state: [zoomThreshold, (z) => set({ zoomThreshold: z })],
-  });
-
-  useMidiControl('Amplitude', {
-    state: [noiseAmplitude, (z) => set({ noiseAmplitude: z })],
-  });
-
-  useMidiControl('Trails', {
-    state: [trails, (z) => set({ trails: z })],
-  });
-
-  useControl('Kaleidoscope', {
-    type: 'number',
-    state: [kaleidoscope, (z) => set({ kaleidoscope: z })],
-    min: 0,
-    max: 127,
-  });
-
-  useMidiControl('Angle', {
-    state: [angle, (z) => set({ angle: z })],
-  });
-
-  useControl('Microphone Audio', {
-    type: 'boolean',
-    state: [audioEnabled, (audioEnabled) => set({ audioEnabled })],
-  });
-
-  useControl('Scale', {
-    type: 'number',
-    state: [volumeScaler, (volumeScaler) => set({ volumeScaler })],
-    min: 0,
-    max: 2,
-  });
-
-  useControl('Volume Control', {
-    type: 'select',
-    items: [
-      'noiseAmplitude',
-      'trails',
-      'zoomThreshold',
-      'kaleidoscope',
-      'speed',
-      'lineWidth',
-    ],
-    state: [volumeControl, (volumeControl) => set({ volumeControl })],
-  });
-
-  useControl('Export', {
-    type: 'button',
-    onClick: () => {
-      useStore.getState().exportScene();
+  useControls(() => ({
+    Contents: {
+      value: name,
+      options: Object.keys(scenes()),
+      onChange: (name: sceneName) => set({ env: { ...scenes()[name] } }),
     },
-  });
+    Color: {
+      value: color,
+      onChange: (color) => set({ color }),
+    },
+    Zoom: {
+      value: zoomThreshold,
+      min: 0,
+      max: 127,
+      onChange: (zoomThreshold) => set({ zoomThreshold }),
+    },
+    Amplitude: {
+      value: noiseAmplitude,
+      min: 0,
+      max: 127,
+      onChange: (noiseAmplitude) => set({ noiseAmplitude }),
+    },
+    Trails: {
+      value: trails,
+      min: 0,
+      max: 127,
+      onChange: (trails) => set({ trails }),
+    },
+    Kaleidoscope: {
+      value: kaleidoscope,
+      min: 0,
+      max: 127,
+      onChange: (kaleidoscope) => set({ kaleidoscope }),
+    },
+    Angle: {
+      value: angle,
+      min: 0,
+      max: 127,
+      onChange: (angle) => set({ angle }),
+    },
+    'Microphone Audio': {
+      value: audioEnabled,
+      onChange: (audioEnabled) => set({ audioEnabled }),
+    },
+    Scale: {
+      value: volumeScaler,
+      min: 0,
+      max: 2,
+      onChange: (volumeScaler) => set({ volumeScaler }),
+    },
+    'Volume Control': {
+      value: volumeControl,
+      options: [
+        'noiseAmplitude',
+        'trails',
+        'zoomThreshold',
+        'kaleidoscope',
+        'speed',
+        'lineWidth',
+      ],
+      onChange: (volumeControl) => set({ volumeControl }),
+    },
+    Export: button(() => {
+      useStore.getState().exportScene();
+    }),
+  }));
 
   return null;
 };

@@ -1,8 +1,8 @@
+import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
-import { useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import Mixer from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
@@ -65,9 +65,8 @@ interface SpiroParams {
 export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   const set = useStore((state) => state.set);
 
-  useControl('New Positions', {
-    type: 'button',
-    onClick: () => {
+  useControls({
+    'New Positions': button(() => {
       const newSeeds = initPositions();
       set((state) => {
         const env = state.env as Config<SpiroParams>;
@@ -77,7 +76,7 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
       });
       const url = `/spiro?seeds=${JSON.stringify(newSeeds)}`;
       window.history.pushState('', '', url);
-    },
+    }),
   });
 
   const { clock } = useThree();

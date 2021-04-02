@@ -1,4 +1,5 @@
 import { Effects as DreiEffects } from '@react-three/drei';
+import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
 import { ReactThreeFiber, extend, useFrame, useThree } from 'react-three-fiber';
 import { Vector2 } from 'three';
@@ -8,7 +9,6 @@ import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { Config, CustomEffectsType, State, useStore } from '../lib/store';
 import { AfterimagePass } from './AfterimagePass';
-import { useMidiControl } from './mixer';
 extend({ RenderPass, AfterimagePass });
 
 /* eslint-disable @typescript-eslint/no-namespace */
@@ -27,8 +27,10 @@ declare global {
 const TunnelEffects = () => {
   const afterimagePassRef = useRef<AfterimagePass<typeof TunnelShader>>();
   const { mouse, clock, aspect } = useThree();
-  const xSpeed = useMidiControl('X Speed', { value: 64 });
-  const ySpeed = useMidiControl('Y Speed', { value: 64 });
+  const { xSpeed, ySpeed } = useControls({
+    xSpeed: { value: 64, min: 0, max: 127, label: 'X Speed' },
+    ySpeed: { value: 64, min: 0, max: 127, label: 'Y Speed' },
+  });
 
   useEffect(() => {
     const pass = afterimagePassRef.current!;
