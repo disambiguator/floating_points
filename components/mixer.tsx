@@ -156,7 +156,10 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     Contents: {
       value: name,
       options: Object.keys(scenes()),
-      onChange: (name: sceneName) => set({ env: { ...scenes()[name] } }),
+      onChange: (name: sceneName) => {
+        if (name !== useStore.getState().env?.name)
+          set({ env: { ...scenes()[name] } });
+      },
     },
     Color: {
       value: color,

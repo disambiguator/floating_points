@@ -6,7 +6,10 @@ import MixerPage from '../components/mixer';
 import { shaders } from '../components/scenes';
 import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
-const Dusen = React.memo(function Dusen() {
+
+const shader = shaders['fbm'];
+
+const FbmContents = React.memo(function FbmContents() {
   const { viewport, size } = useThree();
   const ref = useRef<ShaderMaterial>();
 
@@ -15,9 +18,6 @@ const Dusen = React.memo(function Dusen() {
     ref.current!.uniforms.time.value +=
       scaleMidi(noiseAmplitude / 2, 0, 20) ** 5;
   });
-
-  const name = 'fbm';
-  const shader = shaders[name];
 
   return (
     <mesh position={[0, 0, -215]}>
@@ -34,8 +34,8 @@ const Dusen = React.memo(function Dusen() {
 });
 
 export const fbmConfig = {
-  name: 'dusen' as const,
-  Contents: Dusen,
+  name: 'fbm',
+  Contents: FbmContents,
   params: {},
 };
 

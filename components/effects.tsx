@@ -83,7 +83,6 @@ const TunnelEffects = () => {
       ].includes(name)
         ? 0
         : scaleMidi(zoomThreshold, 0, 0.3);
-      console.log(afterimagePassRef.current!.uniforms.zoomDamp.value);
     };
 
     const zoomStateSelector = (state: State): [number, string] => [
