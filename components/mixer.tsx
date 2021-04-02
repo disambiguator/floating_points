@@ -1,12 +1,12 @@
+import { useControls } from 'leva';
 import { throttle } from 'lodash';
 import { useEffect } from 'react';
 import React from 'react';
-import DatGui, { DatNumber, DatNumberProps } from 'react-dat-gui';
 import { useFrame, useThree } from 'react-three-fiber';
 import { ControlOptions, useControl } from 'react-three-gui';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
-import { analyseSpectrum, useMicrophone } from '../lib/audio';
+import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { Config, MidiParam, useStore } from '../lib/store';
 import { Effects } from './effects';
 import Page from './page';
@@ -30,6 +30,8 @@ const MAPPINGS: Record<string, Record<number, MidiParam>> = {
 
 export const Controls = () => {
   const set = useStore((state) => state.set);
+  const audioEnabled = useStore((state) => state.audioEnabled);
+
   useEffect(() => {
     WebMidi.enable(() => {
       WebMidi.inputs.forEach((input) => {
@@ -56,12 +58,8 @@ export const Controls = () => {
     };
   }, [set]);
 
-  return <ControlPanel />;
+  return audioEnabled ? <ControlPanel /> : null;
 };
-
-export const DatMidi = (props: Pick<DatNumberProps, 'path' | 'label'>) => (
-  <DatNumber {...props} min={0} step={1} max={127} />
-);
 
 export const useMidiControl = (
   name: string,
@@ -69,26 +67,24 @@ export const useMidiControl = (
 ) => useControl(name, { ...options, type: 'number', min: 0, max: 127 });
 
 const ControlPanel = () => {
-  const spectrum = useStore((state) => state.spectrum);
-  const audioEnabled = useStore((state) => state.audioEnabled);
+  const [_values, set] = useControls(() => ({
+    volume: { value: 0, min: 0, max: 127 },
+    subBass: { value: 0, min: 0, max: 127 },
+    bass: { value: 0, min: 0, max: 127 },
+    midrange: { value: 0, min: 0, max: 127 },
+    treble: { value: 0, min: 0, max: 127 },
+  }));
 
-  if (!audioEnabled) return null;
+  useEffect(() => {
+    return useStore.subscribe(
+      ({ volume, subBass, bass, midrange, treble }: Spectrum) => {
+        set({ volume, subBass, bass, midrange, treble });
+      },
+      (state) => state.spectrum,
+    );
+  }, [set]);
 
-  return (
-    <DatGui
-      data={spectrum}
-      onUpdate={() => {
-        return null;
-      }}
-      style={{ zIndex: 1 }}
-    >
-      <DatMidi label="Volume" path="volume" />
-      <DatMidi label="Sub Bass" path="subBass" />
-      <DatMidi label="Bass" path="bass" />
-      <DatMidi label="Midrange" path="midrange" />
-      <DatMidi label="Treble" path="treble" />
-    </DatGui>
-  );
+  return null;
 };
 
 const Scene = <T,>({ env }: { env: Config<T> }) => {
