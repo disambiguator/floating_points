@@ -201,8 +201,8 @@ const Row = ({
 };
 
 const Terrain = React.memo(function Terrain() {
-  const { speed, scale } = useControls({
-    speed: { label: 'terrainSpeed', min: 0, max: 60, value: 10 },
+  const { terrainSpeed, scale } = useControls({
+    terrainSpeed: { label: 'terrainSpeed', min: 0, max: 60, value: 10 },
     scale: { label: 'terrainScale', min: 0, max: 1000, value: 10 },
   });
 
@@ -224,7 +224,7 @@ const Terrain = React.memo(function Terrain() {
       .map((_, y) => <Row key={y} y={y} scale={scale} material={material} />),
   );
 
-  const frameOffset = Math.floor(60 / speed);
+  const frameOffset = Math.floor(60 / terrainSpeed);
   useFrame(() => {
     iRef.current++;
     const i = iRef.current;
