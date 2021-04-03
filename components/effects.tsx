@@ -8,11 +8,11 @@ import {
 import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
 import { Vector2 } from 'three';
+import { AfterimagePass } from 'three-stdlib';
 import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { Config, CustomEffectsType, State, useStore } from '../lib/store';
-import { AfterimagePass } from './AfterimagePass';
 
 extend({ AfterimagePass });
 
@@ -21,7 +21,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       afterimagePass: ReactThreeFiber.Node<
-        AfterimagePass<any>,
+        AfterimagePass,
         typeof AfterimagePass
       >;
     }
@@ -30,7 +30,7 @@ declare global {
 /* eslint-enable @typescript-eslint/no-namespace */
 
 const TunnelEffects = () => {
-  const afterimagePassRef = useRef<AfterimagePass<typeof TunnelShader>>();
+  const afterimagePassRef = useRef<AfterimagePass>();
   const { mouse, clock, viewport } = useThree();
   const { xSpeed, ySpeed } = useControls({
     xSpeed: { value: 64, min: 0, max: 127, label: 'X Speed' },
@@ -106,7 +106,7 @@ const TunnelEffects = () => {
     <afterimagePass
       ref={afterimagePassRef}
       attachArray="passes"
-      args={[TunnelShader]}
+      args={[0.96, TunnelShader]}
       uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={viewport.aspect}
       uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}

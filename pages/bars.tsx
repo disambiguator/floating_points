@@ -17,7 +17,7 @@ const Effects = () => {
   return (
     <afterimagePass
       attachArray="passes"
-      args={[BarsShader]}
+      args={[scaleMidi(trails, 0, 1), BarsShader]}
       uniforms-damp-value={scaleMidi(trails, 0, 1)}
       uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
     />
