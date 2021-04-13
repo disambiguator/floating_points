@@ -19,17 +19,15 @@ export default function Page({
 }) {
   return (
     <React.StrictMode>
-      <>
-        <style global jsx>{`
-          body {
-            margin: 0;
-          }
-          canvas {
-            display: block;
-          }
-        `}</style>
-        <Container {...rest} style={{ background }} id="container" />
-      </>
+      <style global jsx>{`
+        body {
+          margin: 0;
+        }
+        canvas {
+          display: block;
+        }
+      `}</style>
+      <Container {...rest} style={{ background }} id="container" />
     </React.StrictMode>
   );
 }
