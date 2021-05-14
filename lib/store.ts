@@ -44,6 +44,7 @@ export type State = {
   noiseAmplitude: number;
   trails: number;
   kaleidoscope: number;
+  bitcrush: number;
   angle: number;
   audioEnabled: boolean;
   volumeScaler: number;
@@ -72,6 +73,7 @@ const useStore = create<State>((set) => ({
   trails: 0,
   kaleidoscope: 0,
   angle: 64,
+  bitcrush: 0,
   audioEnabled: false,
   volumeScaler: 1,
   volumeControl: null,

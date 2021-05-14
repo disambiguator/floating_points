@@ -149,6 +149,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     audioEnabled,
     volumeScaler,
     volumeControl,
+    bitcrush,
     set,
   } = useMemo(() => useStore.getState(), []);
 
@@ -188,6 +189,12 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
       min: 0,
       max: 127,
       onChange: (kaleidoscope) => set({ kaleidoscope }),
+    },
+    Bitcrush: {
+      value: bitcrush,
+      min: 0,
+      max: 32,
+      onChange: (bitcrush) => set({ bitcrush }),
     },
     Angle: {
       value: angle,

@@ -32,6 +32,7 @@ declare global {
 const TunnelEffects = () => {
   const afterimagePassRef = useRef<AfterimagePass>();
   const { mouse, clock, viewport } = useThree();
+  const { size } = useThree();
   const { xSpeed, ySpeed } = useControls({
     xSpeed: { value: 64, min: 0, max: 127, label: 'X Speed' },
     ySpeed: { value: 64, min: 0, max: 127, label: 'Y Speed' },
@@ -58,6 +59,15 @@ const TunnelEffects = () => {
         afterimagePassRef.current!.uniforms.numSides.value = kaleidoscope;
       },
       (state) => state.kaleidoscope,
+    );
+  }, []);
+
+  useEffect(() => {
+    return useStore.subscribe(
+      (bitcrush: number) => {
+        afterimagePassRef.current!.uniforms.bitcrush.value = bitcrush;
+      },
+      (state) => state.bitcrush,
     );
   }, []);
 
@@ -110,6 +120,10 @@ const TunnelEffects = () => {
       uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={viewport.aspect}
       uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
+      uniforms-resolution-value={new Vector2(
+        size.width,
+        size.height,
+      ).multiplyScalar(window.devicePixelRatio)}
     />
   );
 };

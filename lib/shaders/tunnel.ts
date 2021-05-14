@@ -13,8 +13,10 @@ const TunnelShader = {
     mouse: { value: new THREE.Vector2(0, 0) },
     aspect: { value: 0 },
     numSides: { value: 0 },
+    bitcrush: { value: 2 },
     zoomDamp: { value: 0.96 },
     zoom: { value: 0.01 },
+    resolution: { value: new THREE.Vector2(0, 0) },
   },
 
   vertexShader: [
@@ -35,10 +37,12 @@ const TunnelShader = {
       uniform float damp;
       uniform float zoom;
       uniform float zoomDamp;
+      uniform float bitcrush;
       uniform float xspeed;
       uniform float yspeed;
       uniform float angle;
       uniform vec2 mouse;
+      uniform vec2 resolution;
       uniform float aspect;
       uniform float time;
       uniform float numSides;
@@ -87,8 +91,11 @@ const TunnelShader = {
       void main() {
         vec2 rotation = vec2(sin(angle), cos(angle));
 
+        vec2 dxy = bitcrush / resolution;
+        vec2 coord = dxy * floor( vUv / dxy );
+
         // Shift to -1 to 1 coordinate system
-        vec2 coord = vUv * 2. - 1.;
+        coord = coord * 2. - 1.;
         coord.x *= aspect;
 
         // Zoom multiplier
