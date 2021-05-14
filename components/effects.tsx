@@ -112,6 +112,8 @@ const TunnelEffects = () => {
     uniforms.time.value = clock.getElapsedTime();
   });
 
+  const { bitcrush } = useStore.getState();
+
   return (
     <afterimagePass
       ref={afterimagePassRef}
@@ -120,6 +122,7 @@ const TunnelEffects = () => {
       uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={viewport.aspect}
       uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
+      uniforms-bitcrush-value={bitcrush}
       uniforms-resolution-value={new Vector2(
         size.width,
         size.height,
