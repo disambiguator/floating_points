@@ -91,8 +91,12 @@ const TunnelShader = {
       void main() {
         vec2 rotation = vec2(sin(angle), cos(angle));
 
-        vec2 dxy = bitcrush / resolution;
-        vec2 coord = dxy * floor( vUv / dxy );
+        vec2 coord = vUv;
+
+        if(bitcrush > 0.0) {
+          vec2 dxy = bitcrush / resolution;
+          coord = dxy * floor( vUv / dxy );
+        }
 
         // Shift to -1 to 1 coordinate system
         coord = coord * 2. - 1.;

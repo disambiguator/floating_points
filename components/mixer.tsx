@@ -193,7 +193,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     Bitcrush: {
       value: bitcrush,
       min: 0,
-      max: 32,
+      max: 127,
       onChange: (bitcrush) => set({ bitcrush }),
     },
     Angle: {
