@@ -1,6 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { ShaderMaterial } from 'three';
 import * as THREE from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
@@ -76,7 +75,7 @@ void main() {
 
 const Dusen = function Dusen() {
   const { viewport, size, invalidate, clock } = useThree();
-  const ref = useRef<ShaderMaterial>();
+  const ref = useRef<THREE.ShaderMaterial>();
   const zoomState = useRef({
     mouse: { clientX: 0, clientY: 0 },
     zooming: false,

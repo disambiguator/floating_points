@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { ShaderMaterial } from 'three';
 import { scaleMidi } from '../lib/midi';
 import { useStore } from '../lib/store';
 const renderSpeed = 1000;
@@ -106,7 +105,7 @@ const Box = ({
 
 export const Shapes = React.memo(function Shapes() {
   const { camera } = useThree();
-  const materialRef = useRef<ShaderMaterial>();
+  const materialRef = useRef<THREE.ShaderMaterial>();
   const displacement = useMemo(() => {
     const d = new Float32Array(renderSpeed);
     for (let i = 0; i < renderSpeed; i++) {
