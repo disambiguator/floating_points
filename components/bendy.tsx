@@ -1,14 +1,7 @@
 import * as p5 from 'p5';
 import React from 'react';
 import P5Wrapper from 'react-p5-wrapper';
-import styled from 'styled-components';
 import Page from './page';
-
-const FixedSketch = styled(P5Wrapper)`
-  canvas {
-    position: fixed;
-  }
-`;
 
 const Bendy = () => {
   const sketch = (p: p5) => {
@@ -123,7 +116,7 @@ const Bendy = () => {
     };
   };
 
-  return <FixedSketch sketch={sketch} />;
+  return <P5Wrapper sketch={sketch} />;
 };
 
 export default function BendyPage() {

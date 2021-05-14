@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-
+import styles from './index.module.scss';
 const pages = [
   // { name: 'Pixelsorting', path: '/pixel_sort' },
   {
@@ -57,52 +56,6 @@ const pages = [
 ];
 
 const translateDistance = 1;
-
-const PageTitle = styled.div`
-  font-weight: bold;
-  font-size: 20px;
-  padding-top: 20px;
-`;
-
-const Section = styled.div``;
-
-const Contents = styled.div`
-  @font-face {
-    font-family: 'Inconsolata';
-    src: url('Inconsolata-Medium.ttf');
-  }
-
-  color: white;
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 400px;
-  display: flex;
-  padding: 20px;
-  margin: 10px;
-  flex-direction: column;
-  justify-content: center;
-  font-family: 'Inconsolata', monospace;
-  font-size: 17px;
-  line-height: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-
-  @media only screen and (max-width: 400px) {
-    width: auto;
-  }
-
-  a,
-  a:visited,
-  a:hover,
-  a:active {
-    color: inherit;
-  }
-`;
-
-const SubHeading = styled.div`
-  padding-bottom: 10px;
-`;
 
 const endPoints = ({
   width,
@@ -227,10 +180,10 @@ const Scatter = () => {
 
   return (
     <div>
-      <Contents>
-        <SubHeading>A series of visual experiments.</SubHeading>
+      <div className={styles.contents}>
+        <div className={styles.subheading}>A series of visual experiments.</div>
         {pages.map((p) => (
-          <Section
+          <div
             key={p.name}
             onMouseEnter={() => {
               if (hoverInterval) clearInterval(hoverInterval);
@@ -257,13 +210,13 @@ const Scatter = () => {
               }
             }}
           >
-            <PageTitle>
+            <div className={styles.title}>
               <Link href={p.path}>
                 <a href={p.path}>{p.name}</a>
               </Link>
-            </PageTitle>
+            </div>
             {p.description}
-          </Section>
+          </div>
         ))}
         <p>
           by Paras Sanghavi{' | '}
@@ -271,7 +224,7 @@ const Scatter = () => {
           {' | '}
           <a href="mailto:paras@disambiguo.us">email</a>
         </p>
-      </Contents>
+      </div>
       <canvas
         style={{ position: 'fixed', top: 0, left: 0 }}
         width={1}

@@ -3,12 +3,12 @@ import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
 import * as THREE from 'three';
 import create, { SetState } from 'zustand';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import { Audio, Spectrum, analyseSpectrum, useAudioUrl } from '../lib/audio';
+import styles from './void.module.scss';
 
 // 0 - stars: no rotation or freq response
 const bassStartTime = 17; // stars respond to music
@@ -324,32 +324,6 @@ function PerlinField() {
   );
 }
 
-const Title = styled.div`
-  @keyframes expand {
-    from {
-      letter-spacing: 1px;
-      margin-left: 1px;
-    }
-
-    to {
-      letter-spacing: 100px;
-      margin-left: 100px;
-    }
-  }
-
-  font-size: 45px;
-  margin-bottom: 50px;
-  margin-left: 100px;
-  animation-duration: 60s;
-  animation-name: expand;
-  letter-spacing: 100px;
-`;
-
-const Splash = styled.div`
-  text-align: center;
-  font-family: 'Inconsolata', monospace;
-`;
-
 export default function VoidPage() {
   const [started, start] = useState(false);
   return (
@@ -357,10 +331,10 @@ export default function VoidPage() {
       {started ? (
         <PerlinField />
       ) : (
-        <Splash>
-          <Title>VOID</Title>
+        <div className={styles.splash}>
+          <div className={styles.title}>VOID</div>
           <div>Click to start</div>
-        </Splash>
+        </div>
       )}
     </Page>
   );

@@ -1,0 +1,43 @@
+.title {
+  font-weight: bold;
+  font-size: 20px;
+  padding-top: 20px;
+}
+
+.contents {
+  @font-face {
+    font-family: 'Inconsolata';
+    src: url('/Inconsolata-Medium.ttf');
+  }
+
+  color: white;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  display: flex;
+  padding: 20px;
+  margin: 10px;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Inconsolata', monospace;
+  font-size: 17px;
+  line-height: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+
+  @media only screen and (max-width: 400px) {
+    width: auto;
+  }
+
+  a,
+  a:visited,
+  a:hover,
+  a:active {
+    color: inherit;
+  }
+}
+
+.subheading {
+  padding-bottom: 10px;
+}

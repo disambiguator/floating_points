@@ -1,13 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
-
-const Container = styled.div`
-  display: flex;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  color: white;
-`;
+import styles from './page.module.scss';
 
 export default function Page({
   background = 'black',
@@ -27,7 +19,12 @@ export default function Page({
           display: block;
         }
       `}</style>
-      <Container {...rest} style={{ background }} id="container" />
+      <div
+        className={styles.container}
+        {...rest}
+        style={{ background }}
+        id="container"
+      />
     </React.StrictMode>
   );
 }
