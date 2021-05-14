@@ -10,6 +10,8 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const { clock } = useThree();
   useFrame(() => {
     const mesh = meshRef.current!;
+    if (!mesh) return;
+
     const factor = Math.sin(creationTime + clock.elapsedTime);
     mesh.scale.set(factor, factor, factor);
   });
