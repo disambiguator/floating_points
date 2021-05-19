@@ -221,7 +221,7 @@ const Scatter = () => {
         ))}
         <p>
           by Paras Sanghavi{' | '}
-          <a href="github.com/disambiguator/floating_points">github</a>
+          <a href="https://github.com/disambiguator/floating_points">github</a>
           {' | '}
           <a href="mailto:paras@disambiguo.us">email</a>
         </p>
