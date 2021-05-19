@@ -4,12 +4,7 @@ import Page from '../components/page';
 import styles from './index.module.scss';
 const pages = [
   {
-    name: 'work',
-    path: '/work',
-    description: '',
-  },
-  {
-    name: 'play',
+    name: 'enter gallery',
     path: '/art',
     description: '',
   },
@@ -36,10 +31,12 @@ const Scatter = () => {
           ))}
         </div>
         <div>
-          {'Contact me: '}
+          {'contact me: '}
           <a href="mailto:paras@disambiguo.us">email</a>
           {' | '}
           <a href="https://matrix.to/#/@paras:disambiguo.us">matrix</a>
+          {' | '}
+          <a href="https://linkedin.com/in/psanghavi">linkedin</a>
           {' | '}
           <a href="https://github.com/disambiguator">github</a>
         </div>
