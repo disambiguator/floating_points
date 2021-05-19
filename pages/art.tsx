@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './index.module.scss';
+import styles from './art.module.scss';
 const pages = [
   // { name: 'Pixelsorting', path: '/pixel_sort' },
   {
@@ -92,10 +92,10 @@ const Scatter = () => {
   let slopeX = 0;
   let slopeY = 0;
   let points: { x: number; y: number }[];
-  let ctx: CanvasRenderingContext2D;
-  let canvas: HTMLCanvasElement;
 
   const updateDimensions = () => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d')!;
     const temp = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
     canvas.width = window.innerWidth;
@@ -105,6 +105,8 @@ const Scatter = () => {
   };
 
   const animate = () => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d')!;
     const { width, height } = canvas;
 
     if (timer % fragmentWidth === 0) {
@@ -155,12 +157,9 @@ const Scatter = () => {
   };
 
   useEffect(() => {
-    canvas = canvasRef.current!;
-    ctx = canvas.getContext('2d')!;
-  });
-
-  useEffect(() => {
     updateDimensions();
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d')!;
     const { width, height } = canvas;
 
     const animateInterval = window.setInterval(animate, 50);
@@ -187,6 +186,8 @@ const Scatter = () => {
             key={p.name}
             onMouseEnter={() => {
               if (hoverInterval) clearInterval(hoverInterval);
+              const canvas = canvasRef.current!;
+              const ctx = canvas.getContext('2d')!;
               const { width, height } = canvas;
               ctx.fillText(
                 p.name,
@@ -212,7 +213,7 @@ const Scatter = () => {
           >
             <div className={styles.title}>
               <Link href={p.path}>
-                <a href={p.path}>{p.name}</a>
+                <a>{p.name}</a>
               </Link>
             </div>
             {p.description}

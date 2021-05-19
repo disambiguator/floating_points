@@ -21,6 +21,15 @@ const nextConfig = {
     ignoreDevErrors: true,
   },
   future: { webpack5: true },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/art',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 module.exports = plugins(
