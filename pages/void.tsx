@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import create, { SetState } from 'zustand';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
+import assetUrl from '../lib/assetUrl';
 import { Audio, Spectrum, analyseSpectrum, useAudioUrl } from '../lib/audio';
 import styles from './void.module.scss';
 
@@ -253,16 +254,19 @@ const Terrain = React.memo(function Terrain() {
 });
 
 function Sunset() {
-  const [
-    { mieCoefficient, rayleigh, mieDirectionalG, turbidity, si },
-    set,
-  ] = useControls(() => ({
-    mieCoefficient: { min: 0, max: 0.1, value: 0.1 },
-    rayleigh: { min: 0, max: 10, value: 10 },
-    mieDirectionalG: { min: 0, max: 1, value: 0.9 },
-    turbidity: { min: 0, max: 10, value: 10 },
-    si: { min: -0.5, max: 0.5, value: Math.PI * -0.045, label: 'inclination' },
-  }));
+  const [{ mieCoefficient, rayleigh, mieDirectionalG, turbidity, si }, set] =
+    useControls(() => ({
+      mieCoefficient: { min: 0, max: 0.1, value: 0.1 },
+      rayleigh: { min: 0, max: 10, value: 10 },
+      mieDirectionalG: { min: 0, max: 1, value: 0.9 },
+      turbidity: { min: 0, max: 10, value: 10 },
+      si: {
+        min: -0.5,
+        max: 0.5,
+        value: Math.PI * -0.045,
+        label: 'inclination',
+      },
+    }));
 
   useFrame(() => {
     const time = currentTime(useStore.getState());
@@ -288,11 +292,7 @@ function Sunset() {
 }
 
 function Scene() {
-  const audio = useAudioUrl(
-    process.env.NODE_ENV === 'development'
-      ? 'void.mp3'
-      : 'https://floating-points.s3.us-east-2.amazonaws.com/void.mp3',
-  );
+  const audio = useAudioUrl(assetUrl('void.mp3'));
   const setState = useStore((state) => state.setState);
   setState({ audio });
 

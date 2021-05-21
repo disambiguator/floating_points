@@ -1,6 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import assetUrl from '../lib/assetUrl';
 import { useAudioUrl } from '../lib/audio';
 import Page from './page';
 import { FiberScene } from './scene';
@@ -339,9 +340,7 @@ const HTTF = () => {
     scene.background = new THREE.Color(0x7ec0ee);
   }, [scene]);
 
-  useAudioUrl(
-    'https://floating-points.s3.us-east-2.amazonaws.com/raindrops.mp3',
-  );
+  useAudioUrl(assetUrl('raindrops.mp3'));
 
   return (
     <>
