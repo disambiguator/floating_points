@@ -1,6 +1,6 @@
 import * as p5 from 'p5';
-import React from 'react';
 import P5Wrapper from 'react-p5-wrapper';
+import React from 'react';
 import Page from './page';
 
 type Walker = {

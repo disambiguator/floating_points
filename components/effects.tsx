@@ -7,8 +7,8 @@ import {
 } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
-import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
+import { Vector2 } from 'three';
 import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
