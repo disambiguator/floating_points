@@ -7,7 +7,7 @@ const artwork = [
   // { name: 'Pixelsorting', path: '/pixel_sort' },
   {
     name: 'Spirographs',
-    path: '/spiro',
+    path: 'spiro',
     description: (
       <p>
         Loosely based off a model of planetary motion, generative shapes and
@@ -20,7 +20,7 @@ const artwork = [
   },
   {
     name: 'Dusen',
-    path: '/dusen',
+    path: 'dusen',
     description: (
       <p>
         Seeing how much texture and vibrancy I can add with simple shapes and
@@ -31,7 +31,7 @@ const artwork = [
   },
   {
     name: 'Warp',
-    path: '/bendy',
+    path: 'bendy',
     description: (
       <p>
         A wormhole feedback effect with interactive mouse movements and canvas
@@ -41,12 +41,12 @@ const artwork = [
   },
   {
     name: 'Divide',
-    path: '/divide',
+    path: 'divide',
     description: <p>A soothing color tunnel, written in pure HTML canvas.</p>,
   },
   {
     name: 'Cubes',
-    path: '/cubes',
+    path: 'cubes',
     description: (
       <p>
         A quick experiment to explore perspective cameras. Click and drag to
