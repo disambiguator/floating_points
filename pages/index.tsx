@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useMediaQuery } from 'react-responsive';
 import React, { useEffect, useRef } from 'react';
 import assetUrl from '../lib/assetUrl';
 import styles from './index.module.scss';
@@ -93,6 +94,10 @@ const Scatter = () => {
   let slopeX = 0;
   let slopeY = 0;
   let points: { x: number; y: number }[];
+
+  const isMobile = useMediaQuery({
+    query: '(max-width: 768px)',
+  });
 
   const updateDimensions = () => {
     const canvas = canvasRef.current!;
@@ -202,6 +207,7 @@ const Scatter = () => {
               <Link href={p.path}>
                 <video
                   loop
+                  autoPlay={isMobile}
                   style={{ cursor: 'pointer' }}
                   //@ts-ignore
                   onMouseOver={(event) => event.target.play()}
