@@ -89,7 +89,7 @@ const Bendy = () => {
         drawCircle();
         drawLine();
 
-        lineIncrement -= 0.1;
+        lineIncrement -= 0.04;
 
         counter += 1;
         if (counter > 1000) counter = 0;

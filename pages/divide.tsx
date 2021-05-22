@@ -16,7 +16,7 @@ const Divide = () => {
     const mount = ref.current!;
     const ctx = mount.getContext('2d')!;
     ctx.lineWidth = 5;
-  });
+  }, []);
 
   const animate = () => {
     const mount = ref.current!;

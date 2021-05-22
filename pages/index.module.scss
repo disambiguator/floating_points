@@ -4,24 +4,27 @@
   padding-top: 20px;
 }
 
-.contents {
+.root {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+
   @font-face {
     font-family: 'Inconsolata';
     src: url('/Inconsolata-Medium.ttf');
   }
-
-  color: white;
-  display: flex;
-  padding: 40px;
-  flex-direction: column;
-  justify-content: center;
   font-family: 'Inconsolata', monospace;
   font-size: 17px;
   line-height: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
 
-  @media only screen and (max-width: 400px) {
-    width: auto;
+  > div {
+    background-color: rgba(255, 255, 255, 0.1);
+  margin: 10px;
   }
 
   a,
@@ -30,6 +33,33 @@
   a:active {
     color: inherit;
   }
+}
+
+.contents {
+  min-width: 400px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  // @media only screen and (max-width: 400px) {
+  //   width: auto;
+  // }
+}
+
+.gallery {
+  display: flex;
+  flex-flow: row wrap;
+
+  video {
+      /* override other styles to make responsive */
+  width: 100%    !important;
+  height: auto   !important;
+  }
+}
+
+.galleryItem {
+  padding: 20px;
+  width: 400px;
 }
 
 .subheading {
