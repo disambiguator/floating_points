@@ -103,6 +103,7 @@ const Scatter = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.putImageData(temp, 0, 0);
   };
 
