@@ -13,18 +13,22 @@
   top: 0;
   left: 0;
   color: white;
+  width: 100%;
+
+  @media screen and (max-width: 768px) {
+    font-size: 4vw;
+    flex-direction: column;
+  }
 
   @font-face {
     font-family: 'Inconsolata';
     src: url('/Inconsolata-Medium.ttf');
   }
   font-family: 'Inconsolata', monospace;
-  font-size: 17px;
-  line-height: 20px;
 
   > div {
     background-color: rgba(255, 255, 255, 0.1);
-  margin: 10px;
+  margin: 16px;
   }
 
   a,
@@ -38,12 +42,15 @@
 .contents {
   min-width: 400px;
   width: 400px;
+
+  @media screen and (max-width: 768px) {
+    min-width: unset;
+    width: unset;
+  }
+
   display: flex;
   flex-direction: column;
   padding: 20px;
-  // @media only screen and (max-width: 400px) {
-  //   width: auto;
-  // }
 }
 
 .gallery {
@@ -60,6 +67,11 @@
 .galleryItem {
   padding: 20px;
   width: 400px;
+
+  @media screen and (max-width: 768px) {
+    min-width: unset;
+    width: unset;
+  }
 }
 
 .subheading {

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import assetUrl from '../lib/assetUrl';
 import styles from './index.module.scss';
 
@@ -87,7 +87,6 @@ const endPoints = ({
 const setNewFragmentWidth = () => Math.floor(Math.random() * 15) + 1;
 
 const Scatter = () => {
-  const [hoverInterval, setHoverInterval] = useState<NodeJS.Timeout | null>();
   const fragmentWidth = setNewFragmentWidth();
   let timer = 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -170,12 +169,9 @@ const Scatter = () => {
     ctx.lineWidth = 5;
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = '#646464';
-    ctx.textAlign = 'center';
-    ctx.font = '80px Courier New';
 
     return () => {
       clearInterval(animateInterval);
-      if (hoverInterval) clearInterval(hoverInterval);
       window.removeEventListener('resize', updateDimensions);
     };
   }, []);
@@ -202,36 +198,7 @@ const Scatter = () => {
 
         <div className={styles.gallery}>
           {artwork.map((p) => (
-            <div
-              className={styles.galleryItem}
-              key={p.name}
-              onMouseEnter={() => {
-                if (hoverInterval) clearInterval(hoverInterval);
-                const canvas = canvasRef.current!;
-                const ctx = canvas.getContext('2d')!;
-                const { width, height } = canvas;
-                ctx.fillText(
-                  p.name,
-                  width * Math.random() * 0.9,
-                  height * Math.random() * 0.9,
-                );
-                setHoverInterval(
-                  setInterval(() => {
-                    ctx.fillText(
-                      p.name,
-                      width * Math.random() * 0.9,
-                      height * Math.random() * 0.9,
-                    );
-                  }, 750),
-                );
-              }}
-              onMouseLeave={() => {
-                if (hoverInterval) {
-                  clearInterval(hoverInterval);
-                  setHoverInterval(null);
-                }
-              }}
-            >
+            <div className={styles.galleryItem} key={p.name}>
               <Link href={p.path}>
                 <video
                   loop
