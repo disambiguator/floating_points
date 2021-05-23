@@ -40,7 +40,6 @@
     "glslify": "^7.1.1",
     "glslify-loader": "^2.0.0",
     "prettier": "^2.2.0",
-    "r3f-perf": "^2.0.4",
     "raw-loader": "^4.0.2",
     "typescript": "^4.1.2",
     "webmidi": "^2.5.1"
@@ -55,6 +54,7 @@
     "next-compose-plugins": "^2.2.1",
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
+    "r3f-perf": "^2.0.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-ga": "^3.3.0",

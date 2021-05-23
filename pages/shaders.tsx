@@ -2,15 +2,15 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useRouter } from 'next/router';
 import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
-import { ShaderMaterial } from 'three';
+import { ShaderMaterial, ShaderMaterialParameters } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
-import { ShaderName, shaders } from '../components/scenes';
+import { shaders } from '../components/scenes';
 
 const Shaders = React.memo(function Shader({
-  shaderName,
+  shader,
 }: {
-  shaderName: ShaderName;
+  shader: ShaderMaterialParameters;
 }) {
   const { viewport, size, clock } = useThree();
   const ref = useRef<ShaderMaterial>();
@@ -24,7 +24,7 @@ const Shaders = React.memo(function Shader({
       <planeGeometry args={[size.width, size.height]} />
       <shaderMaterial
         ref={ref}
-        args={[shaders[shaderName]]}
+        args={[shader]}
         uniforms-aspect-value={viewport.aspect}
       />
     </mesh>
@@ -33,16 +33,23 @@ const Shaders = React.memo(function Shader({
 
 export default function ShaderPage() {
   const { query } = useRouter();
-  const shaderName = query.name as ShaderName;
+  const shaderName = query.name;
+
+  // @ts-ignore
+  const shader = shaders[shaderName];
 
   return (
     <Page>
-      <div style={{ height: '90vh', width: '90vh' }}>
-        <FiberScene>
-          <Shaders shaderName={shaderName} />
-          <Perf />
-        </FiberScene>
-      </div>
+      {shader ? (
+        <div style={{ height: '90vh', width: '90vh' }}>
+          <FiberScene>
+            <Shaders shader={shader} />
+            <Perf />
+          </FiberScene>
+        </div>
+      ) : (
+        'Invalid shader name'
+      )}
     </Page>
   );
 }
