@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Page from '../components/page';
+import styles from './divide.module.scss';
 
 const translateDistance = 1;
 const width = 800;
@@ -69,7 +70,9 @@ const Divide = () => {
     };
   });
 
-  return <canvas width={width} height={height} ref={ref} />;
+  return (
+    <canvas className={styles.root} width={width} height={height} ref={ref} />
+  );
 };
 
 export default function DividePage() {
