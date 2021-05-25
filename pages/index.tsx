@@ -218,7 +218,9 @@ const Scatter = () => {
                   Your browser does not support the video tag.
                 </video>
               </Link>
-              <div className={styles.title}>{p.name}</div>
+              <Link href={p.path}>
+                <a className={styles.title}>{p.name}</a>
+              </Link>
               {p.description}
             </div>
           ))}
