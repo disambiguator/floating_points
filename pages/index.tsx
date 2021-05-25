@@ -112,7 +112,9 @@ const Scatter = () => {
   };
 
   const animate = () => {
-    const canvas = canvasRef.current!;
+    const canvas = canvasRef.current;
+    if (canvas == null) return;
+
     const ctx = canvas.getContext('2d')!;
     const { width, height } = canvas;
 
