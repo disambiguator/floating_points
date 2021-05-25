@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { useMediaQuery } from 'react-responsive';
 import React, { useEffect, useRef } from 'react';
 import assetUrl from '../lib/assetUrl';
+import { useIsMobile } from '../lib/mediaQueries';
 import styles from './index.module.scss';
 
 const artwork = [
@@ -95,9 +95,7 @@ const Scatter = () => {
   let slopeY = 0;
   let points: { x: number; y: number }[];
 
-  const isMobile = useMediaQuery({
-    query: '(max-width: 768px)',
-  });
+  const isMobile = useIsMobile();
 
   const updateDimensions = () => {
     const canvas = canvasRef.current!;

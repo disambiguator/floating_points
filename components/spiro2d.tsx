@@ -1,7 +1,7 @@
 import { times } from 'lodash';
 import p5 from 'p5';
-import P5Wrapper from 'react-p5-wrapper';
 import React from 'react';
+import P5Wrapper from 'react-p5-wrapper';
 import Page from '../components/page';
 import { Dimensions } from '../lib/types';
 
