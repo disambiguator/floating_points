@@ -11,3 +11,4 @@ tsconfig.tsbuildinfo
 .vercel
 .DS_Store
 *.mp4
+*.wav
