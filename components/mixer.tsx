@@ -1,5 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { button, useControls } from 'leva';
+import { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import { throttle } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import React from 'react';
@@ -138,6 +139,12 @@ const _throttledHistory = throttle((params) => {
   window.history.pushState('', '', url);
 }, 1000);
 
+const onUserChange =
+  (onChange: OnChangeHandler): OnChangeHandler =>
+  (value, path, context) => {
+    if (!context.initial) onChange(value, path, context);
+  };
+
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   const {
     color,
@@ -157,60 +164,60 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     Contents: {
       value: name,
       options: Object.keys(scenes()),
-      onChange: (name: sceneName) => {
+      onChange: onUserChange((name: sceneName) => {
         if (name !== useStore.getState().env?.name)
           set({ env: { ...scenes()[name] } });
-      },
+      }),
     },
     Color: {
       value: color,
-      onChange: (color) => set({ color }),
+      onChange: onUserChange((color) => set({ color })),
     },
     Zoom: {
       value: zoomThreshold,
       min: 0,
       max: 127,
-      onChange: (zoomThreshold) => set({ zoomThreshold }),
+      onChange: onUserChange((zoomThreshold) => set({ zoomThreshold })),
     },
     Amplitude: {
       value: noiseAmplitude,
       min: 0,
       max: 127,
-      onChange: (noiseAmplitude) => set({ noiseAmplitude }),
+      onChange: onUserChange((noiseAmplitude) => set({ noiseAmplitude })),
     },
     Trails: {
       value: trails,
       min: 0,
       max: 127,
-      onChange: (trails) => set({ trails }),
+      onChange: onUserChange((trails) => set({ trails })),
     },
     Kaleidoscope: {
       value: kaleidoscope,
       min: 0,
       max: 127,
-      onChange: (kaleidoscope) => set({ kaleidoscope }),
+      onChange: onUserChange((kaleidoscope) => set({ kaleidoscope })),
     },
     Bitcrush: {
       value: bitcrush,
       min: 0,
       max: 127,
-      onChange: (bitcrush) => set({ bitcrush }),
+      onChange: onUserChange((bitcrush) => set({ bitcrush })),
     },
     Angle: {
       value: angle,
       min: 0,
       max: 127,
-      onChange: (angle) => set({ angle }),
+      onChange: onUserChange((angle) => set({ angle })),
     },
     'Microphone Audio': {
       value: audioEnabled,
-      onChange: (audioEnabled) => set({ audioEnabled }),
+      onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
     },
     Scale: {
       value: volumeScaler,
       min: 0,
       max: 2,
-      onChange: (volumeScaler) => set({ volumeScaler }),
+      onChange: onUserChange((volumeScaler) => set({ volumeScaler })),
     },
     'Volume Control': {
       value: volumeControl,
@@ -222,7 +229,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
         'speed',
         'lineWidth',
       ],
-      onChange: (volumeControl) => set({ volumeControl }),
+      onChange: onUserChange((volumeControl) => set({ volumeControl })),
     },
     Export: button(() => {
       useStore.getState().exportScene();
