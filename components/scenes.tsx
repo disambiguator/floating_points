@@ -3,9 +3,9 @@ import FbmShader from '../lib/shaders/fbm';
 import MarbleShader from '../lib/shaders/marble';
 import { barsConfig } from '../pages/bars';
 import { clothConfig } from '../pages/cloth';
+import { cubefieldConfig } from '../pages/cubefield';
 import { dusenConfig } from '../pages/dusen';
 import { spiroConfig } from '../pages/spiro';
-import { cubefieldConfig } from './cubefield';
 import { chaosConfig } from './geometric_chaos';
 import { sortConfig } from './sort';
 

@@ -138,11 +138,9 @@ export const Effects = <T,>({
   name: Config<T>['name'];
   params: T;
   CustomEffects?: CustomEffectsType<T>;
-}) => {
-  return (
-    <DreiEffects>
-      <TunnelEffects />
-      {CustomEffects && <CustomEffects params={params} />}
-    </DreiEffects>
-  );
-};
+}) => (
+  <DreiEffects>
+    <TunnelEffects />
+    {CustomEffects && <CustomEffects params={params} />}
+  </DreiEffects>
+);
