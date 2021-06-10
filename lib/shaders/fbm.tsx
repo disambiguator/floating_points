@@ -31,8 +31,8 @@ const float timeScale = 500.;
 
 float fbm( in vec2 x) //, in float H )
 {
-    float f = 3.0;
-    float a = 1.0;
+    float f = 2.0;
+    float a = 0.8;
     float t = 0.0;
     float tt = time/timeScale;
 

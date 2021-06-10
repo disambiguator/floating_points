@@ -1,55 +1,12 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { Perf } from 'r3f-perf';
-import React, { useRef } from 'react';
-import { ShaderMaterial, ShaderMaterialParameters } from 'three';
-import Page from '../components/page';
-import { FiberScene } from '../components/scene';
-import { shaders } from '../components/scenes';
+import React from 'react';
 
-const Shaders = React.memo(function Shader({
-  shader,
-}: {
-  shader: ShaderMaterialParameters;
-}) {
-  const { viewport, size, clock } = useThree();
-  const ref = useRef<ShaderMaterial>();
-
-  useFrame(() => {
-    ref.current!.uniforms.time.value = clock.elapsedTime;
-  });
-
-  return (
-    <mesh position={[0, 0, -215]}>
-      <planeGeometry args={[size.width, size.height]} />
-      <shaderMaterial
-        ref={ref}
-        args={[shader]}
-        uniforms-aspect-value={viewport.aspect}
-      />
-    </mesh>
-  );
-});
-
-export default function ShaderPage() {
+export default function Wash() {
   const { query } = useRouter();
   const shaderName = query.name;
 
-  // @ts-ignore
-  const shader = shaders[shaderName];
+  const Spiro = dynamic(() => import('../components/shaders'), { ssr: false });
 
-  return (
-    <Page>
-      {shader ? (
-        <div style={{ height: '90vh', width: '90vh' }}>
-          <FiberScene>
-            <Shaders shader={shader} />
-            <Perf />
-          </FiberScene>
-        </div>
-      ) : (
-        'Invalid shader name'
-      )}
-    </Page>
-  );
+  return <Spiro name={shaderName} />;
 }

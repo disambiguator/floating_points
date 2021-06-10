@@ -63,6 +63,7 @@
     "sass": "^1.32.13",
     "three": "^0.128.0",
     "three-stdlib": "^2.0.3",
+    "use-capture": "^0.4.0",
     "zustand": "^3.2.0"
   }
 }
