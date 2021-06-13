@@ -15,10 +15,6 @@ export const FiberScene = ({
 
   return (
     <>
-      <Canvas mode="concurrent" {...rest}>
-        {controls && <OrbitControls />}
-        {children}
-      </Canvas>
       {gui && (
         <Leva
           hideCopyButton
@@ -27,6 +23,10 @@ export const FiberScene = ({
           titleBar={{ title: 'Controls', filter: false }}
         />
       )}
+      <Canvas mode="concurrent" {...rest}>
+        {controls && <OrbitControls />}
+        {children}
+      </Canvas>
     </>
   );
 };
