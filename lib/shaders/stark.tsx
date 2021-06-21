@@ -1,4 +1,5 @@
 import glsl from 'glslify';
+import * as THREE from 'three';
 
 const StarkShader = {
   vertexShader: /* glsl */ `
@@ -21,6 +22,7 @@ precision highp float;
 uniform float aspect;
 uniform float time;
 uniform float radius;
+uniform sampler2D audio;
 uniform float s;
 varying vec2 vUv;
 
@@ -32,7 +34,8 @@ void main()
     vec2 position = vUv * 2. - 1.;
     position.x *= aspect;
 
-    float noise = snoise2(vec2(vUv.x*35., time/10.))/50.;
+    // float noise = snoise2(vec2(vUv.x*35., time/10.))/50.;
+    float noise = texture2D(audio, vec2(vUv.x, 0.0)).r;
 
     float p = vUv.y+noise+time/20.;
     float d = mod(p, s);
@@ -47,6 +50,9 @@ void main()
     aspect: { value: 0.0 },
     time: { value: 0.0 },
     s: { value: 0.04 },
+    audio: {
+      value: new THREE.DataTexture(new Uint8Array(), 0, 1),
+    },
   },
 };
 

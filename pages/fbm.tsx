@@ -7,7 +7,7 @@ import { shaders } from '../components/scenes';
 import { scaleMidi } from '../lib/midi';
 import { useStateUpdate, useStore } from '../lib/store';
 
-const shader = shaders['fbm'];
+const shader = shaders['stark'];
 
 const FbmContents = React.memo(function FbmContents() {
   const { viewport, size } = useThree();
