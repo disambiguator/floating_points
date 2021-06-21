@@ -95,7 +95,7 @@ export const useAudioUrl = (url: string, enabled = true) => {
   return audio;
 };
 
-export function useMicrophone(enabled: boolean) {
+export function useMicrophone(enabled = true) {
   const { camera } = useThree();
   const [audio, setAudio] = useState<Audio>();
   const [stream, setStream] = useState<MediaStream>();
