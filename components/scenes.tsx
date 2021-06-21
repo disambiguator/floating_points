@@ -1,6 +1,7 @@
 import DusenShader from '../lib/shaders/dusen';
 import FbmShader from '../lib/shaders/fbm';
 import MarbleShader from '../lib/shaders/marble';
+import StarkShader from '../lib/shaders/stark';
 import { barsConfig } from '../pages/bars';
 import { clothConfig } from '../pages/cloth';
 import { cubefieldConfig } from '../pages/cubefield';
@@ -13,6 +14,7 @@ export const shaders = {
   fbm: FbmShader,
   dusen: DusenShader,
   marble: MarbleShader,
+  stark: StarkShader,
 };
 
 export const scenes = () => ({
