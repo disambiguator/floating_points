@@ -26,23 +26,30 @@ uniform sampler2D audio;
 uniform float s;
 varying vec2 vUv;
 
+const float PI = 3.14156;
+
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
 #pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
 
-void main()
-{
-    vec2 position = vUv * 2. - 1.;
-    position.x *= aspect;
+vec3 blob(vec2 position) {
+  float noise = snoise2(vec2(position.x*15., 1.0))/10.;
+  // noise += texture2D(audio, vec2(position.x, 0.0)).r/15.;
 
-    float noise = snoise2(vec2(vUv.x*25., time/10.))/40.;
-    noise += texture2D(audio, vec2(vUv.x, 0.0)).r/15.;
+  float p = 1. - (position.y+sin(position.x*PI)/2.+noise);
+  p *= step(p,s*8.);
+  float d = mod(p, s);
 
-    float p = vUv.y+noise+time/20.;
-    float d = mod(p, s);
+  vec3 color = d < 0.003 ? vec3(0.) : hsv2rgb(vec3((p-d)*10., 1.0, 1.0));
 
-    vec3 color = d < 0.003 ? vec3(0.) : hsv2rgb(vec3((p-d)*10., 1.0, 1.0));
+  return color;
+}
 
-    gl_FragColor = vec4(color, 1.0);
+void main() {
+  vec2 position = vUv;
+  position.x *= aspect;
+
+  vec3 color = blob(position);
+  gl_FragColor = vec4(color, 1.0);
 }
     `,
 

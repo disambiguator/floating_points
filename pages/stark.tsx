@@ -61,7 +61,7 @@ export default function ShaderPage() {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
-        <FiberScene>
+        <FiberScene camera={{ position: [0, 0, 500] }}>
           <Shaders shader={shader} />
           <Perf />
         </FiberScene>
