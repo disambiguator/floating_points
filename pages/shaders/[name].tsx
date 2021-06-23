@@ -1,11 +1,11 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useRouter } from 'next/router';
+import { GetStaticProps } from 'next';
 import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
 import { ShaderMaterial, ShaderMaterialParameters } from 'three';
-import Page from '../components/page';
-import { FiberScene } from '../components/scene';
-import { shaders } from '../components/scenes';
+import Page from '../../components/page';
+import { FiberScene } from '../../components/scene';
+import { shaders } from '../../components/scenes';
 
 const Shaders = React.memo(function Shader({
   shader,
@@ -31,12 +31,23 @@ const Shaders = React.memo(function Shader({
   );
 });
 
-export default function ShaderPage() {
-  const { query } = useRouter();
-  const shaderName = query.name;
+export const getStaticProps: GetStaticProps = async (context) => {
+  const params = context.params as { name: string };
+  return {
+    props: params,
+  };
+};
 
+export async function getStaticPaths() {
+  return {
+    paths: Object.keys(shaders).map((b) => ({ params: { name: b } })),
+    fallback: false,
+  };
+}
+
+export default function ShaderPage({ name }: { name: string }) {
   // @ts-ignore
-  const shader = shaders[shaderName];
+  const shader = shaders[name];
 
   return (
     <Page>
