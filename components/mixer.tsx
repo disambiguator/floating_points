@@ -240,21 +240,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
 };
 
 const Mixer = () => {
-  // const router = useRouter();
   const env = useStore((state) => state.env);
-
-  // useEffect(() => {
-  //   const routerParams = router.query.params as string;
-  //   if (routerParams) {
-  //     const parsedParams = JSON.parse(routerParams) as Config<T>['params'];
-
-  //   }
-  // }, [router.query.params]);
-
-  // useEffect(() => {
-  //   throttledHistory(params);
-  // }, [params]);
-
   if (!env) return null;
 
   return (

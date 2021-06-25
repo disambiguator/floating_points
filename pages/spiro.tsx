@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
-import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import Mixer from '../components/mixer';
@@ -159,18 +158,7 @@ export const spiroConfig: Config<SpiroParams> = {
 };
 
 export default function SpiroPage() {
-  const router = useRouter();
-  const urlSeeds = router.query.seeds as string | undefined;
-
-  useStateUpdate({
-    env: {
-      ...spiroConfig,
-      params: {
-        ...spiroConfig.params,
-        seeds: urlSeeds ? JSON.parse(urlSeeds) : initPositions(),
-      },
-    },
-  });
+  useStateUpdate({ env: spiroConfig });
 
   return <Mixer />;
 }
