@@ -16,6 +16,15 @@ const artwork = [
     ),
   },
   {
+    name: 'Void',
+    path: '/void',
+    description: (
+      <p>
+        A music video and visualization for Bjorn Free - Void, from the Dawn EP.
+      </p>
+    ),
+  },
+  {
     name: 'Spirographs',
     path: '/spiro',
     description: (
