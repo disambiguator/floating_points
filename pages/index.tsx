@@ -31,6 +31,13 @@ const artwork = [
     ),
   },
   {
+    name: 'Glass',
+    path: 'glass',
+    description: (
+      <p>Glass shattering motion and intersection detection in p5.js</p>
+    ),
+  },
+  {
     name: 'Warp',
     path: 'bendy',
     description: (
