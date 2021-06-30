@@ -35,7 +35,7 @@ void main()
     position.x *= aspect;
 
     float noise = snoise2(vec2(vUv.x*25., time/10.))/40.;
-    noise += texture2D(audio, vec2(vUv.x, 0.0)).r/15.;
+    noise += texture2D(audio, vec2(vUv.x, 0.0)).r/10.;
 
     float p = vUv.y+noise+time/20.;
     float d = mod(p, s);

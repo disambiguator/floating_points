@@ -1,6 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
 import {
   DataTexture,
@@ -63,7 +62,6 @@ export default function ShaderPage() {
       <div style={{ height: '90vh', width: '90vh' }}>
         <FiberScene>
           <Shaders shader={shader} />
-          <Perf />
         </FiberScene>
       </div>
     </Page>

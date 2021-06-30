@@ -40,6 +40,15 @@ const artwork = [
     ),
   },
   {
+    name: 'Stark',
+    path: '/stark',
+    description: (
+      <p>
+        Audio reactive shader using microphone input as a texture. Inspired by Jen Stark.
+      </p>
+    ),
+  },
+  {
     name: 'Glass',
     path: '/glass',
     description: (
