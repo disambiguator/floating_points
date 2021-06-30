@@ -11,7 +11,7 @@ const Scatter = () => (
       <div className={styles.gallery}>
         {Object.keys(shaders).map((name) => (
           <div className={styles.galleryItem} key={name}>
-            <Link href={`/shaders/${name}`}>
+            <Link passHref href={`/shaders/${name}`}>
               <div
                 style={{
                   height: 'inherit',

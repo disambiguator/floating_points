@@ -3,6 +3,7 @@ module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   extends: [
     'eslint:recommended',
+    'next',
     'plugin:import/errors',
     'plugin:import/typescript',
     'plugin:react-hooks/recommended',

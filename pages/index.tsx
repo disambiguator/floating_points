@@ -53,7 +53,8 @@ const artwork = [
     path: '/stark',
     description: (
       <p>
-        Audio reactive shader using microphone input as a texture. Inspired by Jen Stark.
+        Audio reactive shader using microphone input as a texture. Inspired by
+        Jen Stark.
       </p>
     ),
   },
@@ -238,7 +239,7 @@ const Scatter = () => {
         <div className={styles.gallery}>
           {artwork.map((p) => (
             <div className={styles.galleryItem} key={p.name}>
-              <Link href={p.path}>
+              <Link href={p.path} passHref>
                 <video
                   loop
                   autoPlay={isMobile}
