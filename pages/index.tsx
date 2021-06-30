@@ -5,10 +5,19 @@ import { useIsMobile } from '../lib/mediaQueries';
 import styles from './index.module.scss';
 
 const artwork = [
-  // { name: 'Pixelsorting', path: '/pixel_sort' },
+  {
+    name: 'Shader Gallery',
+    path: '/shaders',
+    description: (
+      <p>
+        A collection of various GLSL shaders I have written for textures,
+        performance, and audio reactivity.
+      </p>
+    ),
+  },
   {
     name: 'Spirographs',
-    path: 'spiro',
+    path: '/spiro',
     description: (
       <p>
         Loosely based off a model of planetary motion, generative shapes and
@@ -21,7 +30,7 @@ const artwork = [
   },
   {
     name: 'Dusen',
-    path: 'dusen',
+    path: '/dusen',
     description: (
       <p>
         Seeing how much texture and vibrancy I can add with simple shapes and
@@ -32,14 +41,14 @@ const artwork = [
   },
   {
     name: 'Glass',
-    path: 'glass',
+    path: '/glass',
     description: (
       <p>Glass shattering motion and intersection detection in p5.js</p>
     ),
   },
   {
     name: 'Warp',
-    path: 'bendy',
+    path: '/bendy',
     description: (
       <p>
         A wormhole feedback effect with interactive mouse movements and canvas
@@ -49,12 +58,12 @@ const artwork = [
   },
   {
     name: 'Divide',
-    path: 'divide',
+    path: '/divide',
     description: <p>A soothing color tunnel, written in pure HTML canvas.</p>,
   },
   {
     name: 'Cubes',
-    path: 'cubes',
+    path: '/cubes',
     description: (
       <p>
         A quick experiment to explore perspective cameras. Click and drag to
