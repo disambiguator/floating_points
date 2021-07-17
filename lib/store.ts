@@ -16,9 +16,7 @@ export const useStateUpdate: SetState<State> = (update) => {
   }, [set, update]);
 };
 
-export type CustomControls = React.ReactNode;
-
-export type SceneContents<T> = React.ComponentType<{
+type SceneContents<T> = React.ComponentType<{
   config: T;
 }>;
 
