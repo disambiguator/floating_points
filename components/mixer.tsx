@@ -253,7 +253,7 @@ const Mixer = () => {
           // Only turn this on when exporting
           // preserveDrawingBuffer: true,
         }}
-        controls={env.name !== 'cubefield'}
+        controls={env.name !== 'cubefield' && env.name !== 'control'}
         gui
       >
         <Scene env={env} />
