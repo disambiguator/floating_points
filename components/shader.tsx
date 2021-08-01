@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
 import { ShaderMaterial, ShaderMaterialParameters } from 'three';
-import { FiberScene } from 'components/scene';
 import { shaders } from 'components/scenes';
 
 const Shaders = React.memo(function Shader({
@@ -9,10 +8,10 @@ const Shaders = React.memo(function Shader({
 }: {
   shader: ShaderMaterialParameters;
 }) {
-  const { viewport, size, clock } = useThree();
+  const { viewport, size } = useThree();
   const ref = useRef<ShaderMaterial>();
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     ref.current!.uniforms.time.value = clock.elapsedTime;
   });
 
@@ -29,14 +28,7 @@ const Shaders = React.memo(function Shader({
 });
 
 export default function Shader({ name }: { name: string }) {
-  // @ts-ignore
   const shader = shaders[name];
 
-  return shader ? (
-    <FiberScene>
-      <Shaders shader={shader} />
-    </FiberScene>
-  ) : (
-    <div>Invalid shader name</div>
-  );
+  return shader ? <Shaders shader={shader} /> : <div>Invalid shader name</div>;
 }

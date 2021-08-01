@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next';
 import React from 'react';
+import { FiberScene } from 'components/scene';
 import Shader from 'components/shader';
 import Page from '../../components/page';
 import { shaders } from '../../components/scenes';
@@ -22,7 +23,9 @@ export default function ShaderPage({ name }: { name: string }) {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
-        <Shader name={name} />
+        <FiberScene>
+          <Shader name={name} />
+        </FiberScene>
       </div>
     </Page>
   );

@@ -1,3 +1,4 @@
+import { ShaderMaterialParameters } from 'three';
 import DusenShader from '../lib/shaders/dusen';
 import FbmShader from '../lib/shaders/fbm';
 import MarbleShader from '../lib/shaders/marble';
@@ -10,7 +11,7 @@ import { spiroConfig } from '../pages/spiro';
 import { chaosConfig } from './geometric_chaos';
 import { sortConfig } from './sort';
 
-export const shaders = {
+export const shaders: Record<string, ShaderMaterialParameters> = {
   fbm: FbmShader,
   dusen: DusenShader,
   marble: MarbleShader,

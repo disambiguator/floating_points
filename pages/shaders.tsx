@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import Page from 'components/page';
+import { FiberScene } from 'components/scene';
 import { shaders } from 'components/scenes';
 import Shader from 'components/shader';
 import styles from './shaders.module.scss';
@@ -19,7 +20,9 @@ const Scatter = () => (
                   cursor: 'pointer',
                 }}
               >
-                <Shader name={name} />
+                <FiberScene>
+                  <Shader name={name} />
+                </FiberScene>
               </div>
             </Link>
             <Link href={`/shaders/${name}`}>
