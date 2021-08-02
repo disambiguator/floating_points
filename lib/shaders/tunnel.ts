@@ -102,13 +102,13 @@ const TunnelShader = {
         coord = coord * 2. - 1.;
         coord.x *= aspect;
 
+        if(numSides > 0.0) {
+          coord = kaleidoscope(coord, numSides);
+        }
+
         // Zoom multiplier
         if(zoom > 0.0) {
           coord = zoomFun(coord, zoomDamp, zoom);
-        }
-
-        if(numSides > 0.0) {
-          coord = kaleidoscope(coord, numSides);
         }
 
         // Rotate defined angle
