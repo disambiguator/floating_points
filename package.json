@@ -52,7 +52,7 @@
     "glsl-hsv2rgb": "^1.0.0",
     "leva": "^0.9.10",
     "lodash": "^4.17.20",
-    "next": "^11.0.0",
+    "next": "^11.1.0",
     "next-compose-plugins": "^2.2.1",
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
