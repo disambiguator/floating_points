@@ -35,7 +35,7 @@
     "eslint-config-next": "^11.0.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "glslify": "^7.1.1",
@@ -48,7 +48,7 @@
   "dependencies": {
     "@react-three/drei": "^7.3.1",
     "@react-three/fiber": "^7.0.1",
-    "@types/three": "^0.130.1",
+    "@types/three": "^0.131.1",
     "glsl-hsv2rgb": "^1.0.0",
     "leva": "^0.9.10",
     "lodash": "^4.17.20",
@@ -63,7 +63,7 @@
     "react-p5-wrapper": "^3.0.0",
     "react-responsive": "^8.2.0",
     "sass": "^1.32.13",
-    "three": "^0.131.1",
+    "three": "^0.132.2",
     "three-csg-ts": "^3.1.6",
     "three-stdlib": "^2.0.3",
     "zustand": "^3.2.0"
