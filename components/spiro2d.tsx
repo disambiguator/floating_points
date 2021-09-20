@@ -1,7 +1,7 @@
 import { times } from 'lodash';
 import p5 from 'p5';
 import React from 'react';
-import P5Wrapper from 'react-p5-wrapper';
+import { ReactP5Wrapper } from 'react-p5-wrapper';
 import Page from '../components/page';
 import { Dimensions } from '../lib/types';
 
@@ -116,7 +116,7 @@ const Spiro = ({ width, height }: Dimensions) => {
     // }
   };
 
-  return <P5Wrapper sketch={sketch} />;
+  return <ReactP5Wrapper sketch={sketch} />;
 };
 
 export default function Spiro2DPage() {

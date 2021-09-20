@@ -1,6 +1,6 @@
 import * as p5 from 'p5';
 import React from 'react';
-import P5Wrapper from 'react-p5-wrapper';
+import { ReactP5Wrapper } from 'react-p5-wrapper';
 import Page from './page';
 
 type Walker = {
@@ -84,7 +84,7 @@ const Bendy = () => {
     };
   };
 
-  return <P5Wrapper sketch={sketch} />;
+  return <ReactP5Wrapper sketch={sketch} />;
 };
 
 export default function WalkerPage() {
