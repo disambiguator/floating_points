@@ -218,6 +218,11 @@ const Scatter = () => {
 
   return (
     <div>
+      <style global jsx>{`
+        html {
+          background-color: black;
+        }
+      `}</style>
       <div className={styles.root}>
         <div className={styles.contents}>
           <h1>Paras Sanghavi</h1>
