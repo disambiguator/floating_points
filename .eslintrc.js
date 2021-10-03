@@ -4,7 +4,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'next',
-    'plugin:import/errors',
+    'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:react-hooks/recommended',
     'plugin:react/recommended', // Uses the recommended rules from @eslint-plugin-react

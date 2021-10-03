@@ -9,7 +9,7 @@
     "test": "tsc --incremental && npm run lint",
     "build": "next build",
     "watch": "tsc --watch",
-    "start": "vercel dev"
+    "start": "next dev"
   },
   "repository": {
     "type": "git",

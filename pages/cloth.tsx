@@ -5,8 +5,7 @@ import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
 import MixerPage from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
-import { useStore } from '../lib/store';
-import { useStateUpdate } from '../lib/store';
+import { useStateUpdate, useStore } from '../lib/store';
 
 const Cloth = React.memo(function Cloth() {
   const { lineWidth } = useControls({

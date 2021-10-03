@@ -7,8 +7,7 @@ import Mixer from '../components/mixer';
 import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
-import { useStateUpdate } from '../lib/store';
-import { useStore } from '../lib/store';
+import { useStateUpdate, useStore } from '../lib/store';
 
 const Effects = () => {
   const zoomThreshold = useStore((state) => state.zoomThreshold);
