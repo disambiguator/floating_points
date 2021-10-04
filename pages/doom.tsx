@@ -1,6 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import glsl from 'glslify';
-import { useControls } from 'leva';
 import React, { useRef } from 'react';
 import { DataTexture, RedFormat, ShaderMaterial } from 'three';
 import * as THREE from 'three';
@@ -30,7 +29,6 @@ uniform float aspect;
 uniform float time;
 uniform float radius;
 uniform sampler2D noise;
-uniform float s;
 varying vec2 vUv;
 
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
@@ -64,7 +62,6 @@ void main()
   uniforms: {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
-    s: { value: 0.04 },
     noise: {
       value: new THREE.DataTexture(new Uint8Array([0]), 0, 1, THREE.RedFormat),
     },
@@ -73,7 +70,6 @@ void main()
 const Shaders = React.memo(function Shader() {
   const { viewport, size } = useThree();
   const ref = useRef<ShaderMaterial>();
-  const { s } = useControls({ s: { value: 0.02, min: 0, max: 0.1 } });
   useFrame(({ clock }) => {
     ref.current!.uniforms.time.value = clock.elapsedTime;
   });
@@ -100,7 +96,6 @@ const Shaders = React.memo(function Shader() {
         ref={ref}
         args={[shader]}
         uniforms-aspect-value={viewport.aspect}
-        uniforms-s-value={s}
         uniforms-noise-value={
           new DataTexture(
             new Uint8Array(
