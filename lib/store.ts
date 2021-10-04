@@ -33,6 +33,7 @@ type Params = { [key in MidiParam]: number } & {
   color: boolean;
   audioEnabled: boolean;
   volumeScaler: number;
+  volumeThreshold: number;
   volumeControl: MidiParam | null;
 };
 
@@ -72,6 +73,7 @@ const useStore = create<State>((set) => ({
   bitcrush: 0,
   audioEnabled: false,
   volumeScaler: 1,
+  volumeThreshold: 0,
   volumeControl: null,
   env: null,
   set,

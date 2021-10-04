@@ -94,7 +94,6 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
   const setExportScene = useStore((state) => state.setExportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const set = useStore((state) => state.set);
-  const volumeScaler = useStore((state) => state.volumeScaler);
   const volumeControl = useStore((state) => state.volumeControl);
 
   const raycaster = new THREE.Raycaster();
@@ -106,12 +105,16 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
     useStore.setState({ ray: raycaster.ray });
 
     if (audio) {
+      const { volumeScaler, volumeThreshold } = useStore.getState();
       const spectrum = analyseSpectrum(audio);
       const { volume } = spectrum;
 
       if (volumeControl) {
         //@ts-ignore
-        set({ [volumeControl]: volume * volumeScaler });
+        set({
+          [volumeControl]:
+            volume * volumeScaler > volumeThreshold ? volume * volumeScaler : 0,
+        });
       }
 
       useStore.setState({ spectrum });
@@ -153,8 +156,15 @@ const onUserChange =
   };
 
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
-  const { color, audioEnabled, volumeScaler, volumeControl, set, ...rest } =
-    useMemo(() => useStore.getState(), []);
+  const {
+    color,
+    audioEnabled,
+    volumeScaler,
+    volumeControl,
+    volumeThreshold,
+    set,
+    ...rest
+  } = useMemo(() => useStore.getState(), []);
 
   useControls(() => ({
     ...Object.fromEntries(
@@ -195,6 +205,12 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
       value: volumeControl,
       options: [...MIDI_PARAMS, 'speed', 'lineWidth'],
       onChange: onUserChange((volumeControl) => set({ volumeControl })),
+    },
+    volumeThreshold: {
+      value: volumeThreshold,
+      min: 0,
+      max: 127,
+      onChange: onUserChange((newValue) => set({ volumeThreshold: newValue })),
     },
     Export: button(() => {
       useStore.getState().exportScene();
