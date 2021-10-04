@@ -153,21 +153,22 @@ const onUserChange =
   };
 
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
-  const {
-    color,
-    angle,
-    zoomThreshold,
-    noiseAmplitude,
-    trails,
-    kaleidoscope,
-    audioEnabled,
-    volumeScaler,
-    volumeControl,
-    bitcrush,
-    set,
-  } = useMemo(() => useStore.getState(), []);
+  const { color, audioEnabled, volumeScaler, volumeControl, set, ...rest } =
+    useMemo(() => useStore.getState(), []);
 
   useControls(() => ({
+    ...Object.fromEntries(
+      MIDI_PARAMS.map((v) => [
+        v,
+        {
+          value: rest[v],
+          min: 0,
+          max: 127,
+          // @ts-ignore
+          onChange: onUserChange((newValue) => set({ [v]: newValue })),
+        },
+      ]),
+    ),
     Contents: {
       value: name,
       options: Object.keys(scenes),
@@ -179,42 +180,6 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     Color: {
       value: color,
       onChange: onUserChange((color) => set({ color })),
-    },
-    Zoom: {
-      value: zoomThreshold,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((zoomThreshold) => set({ zoomThreshold })),
-    },
-    Amplitude: {
-      value: noiseAmplitude,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((noiseAmplitude) => set({ noiseAmplitude })),
-    },
-    Trails: {
-      value: trails,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((trails) => set({ trails })),
-    },
-    Kaleidoscope: {
-      value: kaleidoscope,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((kaleidoscope) => set({ kaleidoscope })),
-    },
-    Bitcrush: {
-      value: bitcrush,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((bitcrush) => set({ bitcrush })),
-    },
-    Angle: {
-      value: angle,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((angle) => set({ angle })),
     },
     'Microphone Audio': {
       value: audioEnabled,
