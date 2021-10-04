@@ -3,10 +3,9 @@ import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import Mixer from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
-import { Config, useStateUpdate, useStore } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -155,10 +154,5 @@ export const spiroConfig: Config<SpiroParams> = {
   Contents: SpiroContents,
   name: 'spiro' as const,
   params: { seeds: initPositions() },
+  initialParams: {},
 };
-
-export default function SpiroPage() {
-  useStateUpdate({ env: spiroConfig });
-
-  return <Mixer />;
-}

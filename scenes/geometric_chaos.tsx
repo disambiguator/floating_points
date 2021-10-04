@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
-import { useStore } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -142,8 +142,9 @@ export const Shapes = React.memo(function Shapes() {
   return <>{cubes}</>;
 });
 
-export const chaosConfig = {
+export const chaosConfig: Config = {
   name: 'chaos' as const,
   Contents: Shapes,
   params: {},
+  initialParams: {},
 };

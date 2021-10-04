@@ -26,7 +26,8 @@ const artwork = [
   },
   {
     name: 'Spirographs',
-    path: '/spiro',
+    path: '/scenes/spiro',
+    previewPath: '/spiro',
     description: (
       <p>
         Loosely based off a model of planetary motion, generative shapes and
@@ -39,7 +40,8 @@ const artwork = [
   },
   {
     name: 'Dusen',
-    path: '/dusen',
+    path: '/scenes/dusen',
+    previewPath: '/dusen',
     description: (
       <p>
         Seeing how much texture and vibrancy I can add with simple shapes and
@@ -254,7 +256,10 @@ const Scatter = () => {
                   //@ts-ignore
                   onMouseOut={(event) => event.target.pause()}
                 >
-                  <source src={assetUrl(`${p.path}.mp4`)} type="video/mp4" />
+                  <source
+                    src={assetUrl(`${p.previewPath || p.path}.mp4`)}
+                    type="video/mp4"
+                  />
                   Your browser does not support the video tag.
                 </video>
               </Link>

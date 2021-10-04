@@ -1,13 +1,11 @@
 import { Line } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { isEmpty } from 'lodash';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Line2 } from 'three-stdlib';
-import Mixer from '../components/mixer';
-import Page from '../components/page';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
-import { useStateUpdate, useStore } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 
 const Effects = () => {
   const zoomThreshold = useStore((state) => state.zoomThreshold);
@@ -95,27 +93,14 @@ const Bars = React.memo(function Bars() {
   );
 });
 
-export const barsConfig = {
+export const barsConfig: Config = {
   Contents: Bars,
   CustomEffects: Effects,
   name: 'bars' as const,
   params: {},
-};
-
-export default function BarsPage() {
-  useStateUpdate({
+  initialParams: {
     zoomThreshold: 2,
     trails: 125,
     audioEnabled: true,
-    env: barsConfig,
-  });
-  const [started, start] = useState(false);
-
-  return started ? (
-    <Mixer />
-  ) : (
-    <Page onClick={() => start(true)}>
-      <div>Click to start</div>
-    </Page>
-  );
-}
+  },
+};

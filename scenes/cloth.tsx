@@ -3,9 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
-import MixerPage from '../components/mixer';
 import { scaleMidi } from '../lib/midi';
-import { useStateUpdate, useStore } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 
 const Cloth = React.memo(function Cloth() {
   const { lineWidth } = useControls({
@@ -54,20 +53,14 @@ const Cloth = React.memo(function Cloth() {
   );
 });
 
-export const clothConfig = {
+export const clothConfig: Config = {
   name: 'cloth' as const,
   Contents: Cloth,
   params: {},
-};
-
-export default function BarsPage() {
-  useStateUpdate({
+  initialParams: {
     color: true,
     zoomThreshold: 57,
     noiseAmplitude: 100,
     trails: 127,
-    env: clothConfig,
-  });
-
-  return <MixerPage />;
-}
+  },
+};

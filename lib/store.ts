@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import * as THREE from 'three';
 import create, { SetState } from 'zustand';
 import { Spectrum } from './audio';
@@ -9,13 +8,6 @@ export type MidiParam =
   | 'zoomThreshold'
   | 'kaleidoscope';
 
-export const useStateUpdate: SetState<State> = (update) => {
-  const set = useStore((state) => state.set);
-  useEffect(() => {
-    set(update);
-  }, [set, update]);
-};
-
 type SceneContents<T> = React.ComponentType<{
   config: T;
 }>;
@@ -24,20 +16,16 @@ export type CustomEffectsType<T> = React.ComponentType<{
   params: T;
 }>;
 
-export type Config<T> = {
+export type Config<T = Record<string, never>> = {
   name: string;
   params: T;
+  initialParams: Partial<Params>;
   CustomEffects?: CustomEffectsType<T>;
   Contents: SceneContents<T>;
 };
 
-export type State = {
-  ray: THREE.Ray;
-  spectrum: Spectrum;
-  exportScene: () => void;
-  setExportScene: (arg0: () => void) => void;
+type Params = {
   color: boolean;
-  set: SetState<State>;
   zoomThreshold: number;
   noiseAmplitude: number;
   trails: number;
@@ -47,8 +35,19 @@ export type State = {
   audioEnabled: boolean;
   volumeScaler: number;
   volumeControl: MidiParam | null;
-  env: Config<any> | null;
 };
+
+export type State = Params & {
+  ray: THREE.Ray;
+  spectrum: Spectrum;
+  exportScene: () => void;
+  setExportScene: (arg0: () => void) => void;
+  set: SetState<State>;
+  env: Env<any> | null;
+};
+
+export type Env<T> = Omit<Config<T>, 'initialParams'>;
+
 const useStore = create<State>((set) => ({
   ray: new THREE.Ray(),
   spectrum: {

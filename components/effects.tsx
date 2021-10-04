@@ -137,7 +137,7 @@ export const Effects = <T,>({
 }: {
   name: Config<T>['name'];
   params: T;
-  CustomEffects?: CustomEffectsType<T>;
+  CustomEffects: CustomEffectsType<T> | undefined;
 }) => (
   <DreiEffects>
     <TunnelEffects />

@@ -2,8 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import React, { useRef } from 'react';
 import { ShaderMaterial, Vector3 } from 'three';
 import { scaleMidi } from '../lib/midi';
-import { useStateUpdate, useStore } from '../lib/store';
-import Mixer from './mixer';
+import { Config, useStore } from '../lib/store';
 
 type SortConfig = {
   sortMode: 'sort' | 'random';
@@ -116,20 +115,14 @@ export const Sort = ({ config }: { config: SortConfig }) => {
   );
 };
 
-export const sortConfig = {
+export const sortConfig: Config<SortConfig> = {
   name: 'sort' as const,
   Contents: Sort,
-  params: { sortMode: 'sort' as const },
-};
-
-export default function SortPage() {
-  useStateUpdate({
+  params: { sortMode: 'sort' },
+  initialParams: {
     color: true,
     zoomThreshold: 1,
     noiseAmplitude: 50,
     trails: 115,
-    env: sortConfig,
-  });
-
-  return <Mixer />;
-}
+  },
+};

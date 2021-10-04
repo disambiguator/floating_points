@@ -10,8 +10,8 @@ const Cube = ({
   rotation,
 }: {
   sideLength: number;
-  position?: [number, number, number];
-  rotation?: [number, number, number];
+  position: [number, number, number];
+  rotation: [number, number, number];
 }) => {
   const boxGeometry = useRef<THREE.BufferGeometry>();
   const colors = useMemo(() => {
@@ -90,7 +90,11 @@ const Cubes = () => {
         position={redPosition}
         rotation={[0, 0, rotation]}
       />
-      <Cube sideLength={greenLength} rotation={[0, rotation, 0]} />
+      <Cube
+        position={[0, 0, 0]}
+        sideLength={greenLength}
+        rotation={[0, rotation, 0]}
+      />
       <Cube
         sideLength={yellowLength}
         position={yellowPosition}

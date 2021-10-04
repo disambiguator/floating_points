@@ -2,12 +2,9 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
 import { ShaderMaterial } from 'three';
-import MixerPage from '../components/mixer';
-import { shaders } from '../components/scenes';
+import FbmShader from 'lib/shaders/fbm';
 import { scaleMidi } from '../lib/midi';
-import { useStateUpdate, useStore } from '../lib/store';
-
-const shader = shaders['fbm'];
+import { Config, useStore } from '../lib/store';
 
 const FbmContents = React.memo(function FbmContents() {
   const { viewport, size } = useThree();
@@ -24,7 +21,7 @@ const FbmContents = React.memo(function FbmContents() {
       <planeGeometry args={[size.width, size.height]} />
       <shaderMaterial
         ref={ref}
-        args={[shader]}
+        args={[FbmShader]}
         uniforms-aspect-value={viewport.aspect}
         // uniforms-G-value={aspect}
       />
@@ -33,14 +30,9 @@ const FbmContents = React.memo(function FbmContents() {
   );
 });
 
-export const fbmConfig = {
+export const fbmConfig: Config = {
   name: 'fbm',
   Contents: FbmContents,
   params: {},
+  initialParams: {},
 };
-
-export default function DusenPage() {
-  useStateUpdate({ env: fbmConfig });
-
-  return <MixerPage />;
-}

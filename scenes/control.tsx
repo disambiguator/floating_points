@@ -3,8 +3,7 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { CSG } from 'three-csg-ts';
-import MixerPage from '../components/mixer';
-import { useStateUpdate, useStore } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 
 type TunnelParams = {
   size: [number, number, number];
@@ -88,17 +87,11 @@ const Control = () => {
   );
 };
 
-export const controlConfig = {
+export const controlConfig: Config<Record<string, never>> = {
   name: 'control' as const,
   Contents: Control,
   params: {},
-};
-
-export default function ControlPage() {
-  useStateUpdate({
-    env: controlConfig,
+  initialParams: {
     audioEnabled: true,
-  });
-
-  return <MixerPage />;
-}
+  },
+};

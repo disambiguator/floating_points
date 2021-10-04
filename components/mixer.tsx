@@ -5,8 +5,9 @@ import { throttle } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
+import { PartialState } from 'zustand';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
-import { Config, MidiParam, useStore } from '../lib/store';
+import { Config, Env, MidiParam, State, useStore } from '../lib/store';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
@@ -81,7 +82,7 @@ const ControlPanel = () => {
   return null;
 };
 
-const Scene = <T,>({ env }: { env: Config<T> }) => {
+const Scene = <T,>({ env }: { env: Env<T> }) => {
   const { camera, mouse, gl } = useThree();
   const setExportScene = useStore((state) => state.setExportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
@@ -262,7 +263,14 @@ const Mixer = () => {
   );
 };
 
-export default function MixerPage() {
+export default function MixerPage({ name }: { name: sceneName }) {
+  const set = useStore((state) => state.set);
+  const { initialParams, ...env } = useMemo(() => scenes()[name], [name]);
+  useEffect(() => {
+    const update = { env, ...initialParams } as PartialState<State>;
+    set(update);
+  }, [set, initialParams, env]);
+
   return (
     <Page>
       <Mixer />

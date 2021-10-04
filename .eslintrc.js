@@ -25,6 +25,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'prefer-destructuring': 2,
     'react/prop-types': 'off',
+    'import/no-cycle': 2,
     'sort-imports': ['error', { ignoreDeclarationSort: true }],
     'import/order': [
       'error',
