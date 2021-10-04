@@ -163,10 +163,10 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   useControls(() => ({
     Contents: {
       value: name,
-      options: Object.keys(scenes()),
+      options: Object.keys(scenes),
       onChange: onUserChange((name: sceneName) => {
         if (name !== useStore.getState().env?.name)
-          set({ env: { ...scenes()[name] } });
+          set({ env: { ...scenes[name] } });
       }),
     },
     Color: {
@@ -265,7 +265,7 @@ const Mixer = () => {
 
 export default function MixerPage({ name }: { name: sceneName }) {
   const set = useStore((state) => state.set);
-  const { initialParams, ...env } = useMemo(() => scenes()[name], [name]);
+  const { initialParams, ...env } = useMemo(() => scenes[name], [name]);
   useEffect(() => {
     const update = { env, ...initialParams } as PartialState<State>;
     set(update);

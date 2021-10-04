@@ -20,7 +20,7 @@ export const shaders: Record<string, ShaderMaterialParameters> = {
   stark: StarkShader,
 };
 
-export const scenes = () => ({
+export const scenes = {
   spiro: spiroConfig,
   bars: barsConfig,
   dusen: dusenConfig,
@@ -30,6 +30,6 @@ export const scenes = () => ({
   cloth: clothConfig,
   fbm: fbmConfig,
   sort: sortConfig,
-});
+};
 
-export type sceneName = keyof ReturnType<typeof scenes>;
+export type sceneName = keyof typeof scenes;
