@@ -2,11 +2,16 @@ import * as THREE from 'three';
 import create, { SetState } from 'zustand';
 import { Spectrum } from './audio';
 
-export type MidiParam =
-  | 'noiseAmplitude'
-  | 'trails'
-  | 'zoomThreshold'
-  | 'kaleidoscope';
+export const MIDI_PARAMS = [
+  'noiseAmplitude',
+  'trails',
+  'zoomThreshold',
+  'bitcrush',
+  'angle',
+  'kaleidoscope',
+] as const;
+
+export type MidiParam = typeof MIDI_PARAMS[number];
 
 type SceneContents<T> = React.ComponentType<{
   config: T;
@@ -24,14 +29,8 @@ export type Config<T = Record<string, never>> = {
   Contents: SceneContents<T>;
 };
 
-type Params = {
+type Params = { [key in MidiParam]: number } & {
   color: boolean;
-  zoomThreshold: number;
-  noiseAmplitude: number;
-  trails: number;
-  kaleidoscope: number;
-  bitcrush: number;
-  angle: number;
   audioEnabled: boolean;
   volumeScaler: number;
   volumeControl: MidiParam | null;

@@ -6,8 +6,15 @@ import React, { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { PartialState } from 'zustand';
+import {
+  Config,
+  Env,
+  MIDI_PARAMS,
+  MidiParam,
+  State,
+  useStore,
+} from 'lib/store';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
-import { Config, Env, MidiParam, State, useStore } from '../lib/store';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
@@ -221,14 +228,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     },
     'Volume Control': {
       value: volumeControl,
-      options: [
-        'noiseAmplitude',
-        'trails',
-        'zoomThreshold',
-        'kaleidoscope',
-        'speed',
-        'lineWidth',
-      ],
+      options: [...MIDI_PARAMS, 'speed', 'lineWidth'],
       onChange: onUserChange((volumeControl) => set({ volumeControl })),
     },
     Export: button(() => {
