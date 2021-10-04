@@ -12,7 +12,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export async function getStaticPaths() {
   return {
-    paths: Object.keys(scenes()).map((b) => ({ params: { name: b } })),
+    paths: Object.keys(scenes())
+      .filter((name) => name !== 'bars')
+      .map((name) => ({ params: { name } })),
     fallback: false,
   };
 }
