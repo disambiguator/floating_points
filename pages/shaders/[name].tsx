@@ -1,30 +1,35 @@
 import { GetStaticProps } from 'next';
 import React from 'react';
+import { ShaderMaterialParameters } from 'three';
 import { FiberScene } from 'components/scene';
 import Shader from 'components/shader';
 import Page from '../../components/page';
 import { shaders } from '../../components/scenes';
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const params = context.params as { name: string };
+  const { name } = context.params as { name: string };
   return {
-    props: params,
+    props: { shader: shaders[name] },
   };
 };
 
 export async function getStaticPaths() {
   return {
-    paths: Object.keys(shaders).map((b) => ({ params: { name: b } })),
+    paths: Object.keys(shaders).map((name) => ({ params: { name } })),
     fallback: false,
   };
 }
 
-export default function ShaderPage({ name }: { name: string }) {
+export default function ShaderPage({
+  shader,
+}: {
+  shader: ShaderMaterialParameters;
+}) {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
         <FiberScene>
-          <Shader name={name} />
+          <Shader shader={shader} />
         </FiberScene>
       </div>
     </Page>

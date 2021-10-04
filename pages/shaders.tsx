@@ -10,7 +10,7 @@ const Scatter = () => (
   <Page>
     <div className={styles.root}>
       <div className={styles.gallery}>
-        {Object.keys(shaders).map((name) => (
+        {Object.entries(shaders).map(([name, shader]) => (
           <div className={styles.galleryItem} key={name}>
             <Link passHref href={`/shaders/${name}`}>
               <div
@@ -21,7 +21,7 @@ const Scatter = () => (
                 }}
               >
                 <FiberScene>
-                  <Shader name={name} />
+                  <Shader shader={shader} />
                 </FiberScene>
               </div>
             </Link>

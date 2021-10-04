@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
 import { ShaderMaterial, ShaderMaterialParameters } from 'three';
-import { shaders } from 'components/scenes';
 
 const Shaders = React.memo(function Shader({
   shader,
@@ -27,8 +26,10 @@ const Shaders = React.memo(function Shader({
   );
 });
 
-export default function Shader({ name }: { name: string }) {
-  const shader = shaders[name];
-
-  return shader ? <Shaders shader={shader} /> : <div>Invalid shader name</div>;
+export default function Shader({
+  shader,
+}: {
+  shader: ShaderMaterialParameters;
+}) {
+  return <Shaders shader={shader} />;
 }
