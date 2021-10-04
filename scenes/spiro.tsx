@@ -72,8 +72,6 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
           env: { ...env, params: { ...env.params, seeds: newSeeds } },
         };
       });
-      const url = `/spiro?seeds=${JSON.stringify(newSeeds)}`;
-      window.history.pushState('', '', url);
     }),
   });
 
