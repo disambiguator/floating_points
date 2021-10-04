@@ -25,6 +25,7 @@ export default function ShaderPage({ name }: { name: string }) {
       <div style={{ height: '90vh', width: '90vh' }}>
         <FiberScene>
           <Shader shader={shaders[name]} />
+          <pointLight />
         </FiberScene>
       </div>
     </Page>

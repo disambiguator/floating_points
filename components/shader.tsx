@@ -16,8 +16,8 @@ const Shaders = React.memo(function Shader({
   });
 
   return (
-    <mesh position={[0, 0, -215]}>
-      <planeGeometry args={[size.width, size.height]} />
+    <mesh>
+      <planeGeometry args={[size.width, size.height, 400, 400]} />
       <shaderMaterial
         ref={ref}
         args={[shader]}

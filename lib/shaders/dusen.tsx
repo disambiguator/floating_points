@@ -1,26 +1,13 @@
 const DusenShader = {
   vertexShader: /* glsl */ `
-    varying vec2 vUv;
-
-      void main() {
-
-      vUv = uv;
-      gl_Position = projectionMatrix *
-        modelViewMatrix *
-        vec4(position,1.0);
-      }
-  `,
-
-  fragmentShader: /* glsl */ `
   #ifdef GL_ES
   precision highp float;
   #endif
 
+  varying vec4 vColor;
   uniform float aspect;
   uniform float time;
   uniform float radius;
-
-  varying vec2 vUv;
 
   float circ(vec2 p, float radius) {
       return step(length(p - 0.5), radius);
@@ -56,17 +43,17 @@ const DusenShader = {
       return blendOverlay(c1, c2);
   }
 
-  vec3 shapes(vec2 position, vec3 color) {
-      position = mod(position, distanceBetween);
-      float inCircle = circ(position, radius);
+  vec3 shapes(vec2 pos, vec3 color) {
+      pos = mod(pos, distanceBetween);
+      float inCircle = circ(pos, radius);
 
       return color * inCircle;
   }
 
-  void main()
-  {
-      vec2 position = vUv * 2. - 1.;
-      position.x *= aspect;
+  void main() {
+
+    vec2 pos = uv * 2. - 1.;
+    pos.x *= aspect;
 
       float drift =  mod(time/5., distanceBetween);
 
@@ -75,19 +62,37 @@ const DusenShader = {
       vec3 col3 = cosPalette(0.1,vec3(0.2),vec3(0.1),vec3(1),vec3(time*0.2,time*0.4,time*.3));
       vec3 col4 = cosPalette(0.2,vec3(0.6),vec3(0.3),vec3(1),vec3(time*0.4,time*0.2,time*.5));
 
-      vec3 shape = shapes(vec2(position.x + drift,                          position.y + distanceBetween/4.), vec3(.2, .62, 1.0));
-      vec3 shape2 = shapes(vec2(position.x + distanceBetween/3. - 2.*drift, position.y), col);
-      vec3 shape3 = shapes(vec2(position.x - drift,                         position.y + distanceBetween/2.), col3);
-      vec3 shape4 = shapes(vec2(position.x + 2.*drift,                      position.y + 3.*distanceBetween/4.), col2);
+      vec3 shape = shapes(vec2(pos.x + drift,                          pos.y + distanceBetween/4.), vec3(.2, .62, 1.0));
+      vec3 shape2 = shapes(vec2(pos.x + distanceBetween/3. - 2.*drift, pos.y), col);
+      vec3 shape3 = shapes(vec2(pos.x - drift,                         pos.y + distanceBetween/2.), col3);
+      vec3 shape4 = shapes(vec2(pos.x + 2.*drift,                      pos.y + 3.*distanceBetween/4.), col2);
 
-      gl_FragColor = vec4(blendColors(blendColors(blendColors(shape, shape2), shape3), shape4), 1.0);
+      vColor = vec4(blendColors(blendColors(blendColors(shape, shape2), shape3), shape4), 1.0);
+
+      vec3 p = position;
+      p.z += vColor.r * 400.;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(p,1.0);
+}
+
+  `,
+
+  fragmentShader: /* glsl */ `
+  #ifdef GL_ES
+  precision highp float;
+  #endif
+
+  varying vec4 vColor;
+
+  void main()
+  {
+      gl_FragColor = vColor;
   }
       `,
 
   uniforms: {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
-    radius: { value: 0.15 },
+    radius: { value: 0.2 },
   },
 };
 
