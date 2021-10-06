@@ -1,6 +1,5 @@
 import { GetStaticProps } from 'next';
 import React from 'react';
-import { ShaderMaterialParameters } from 'three';
 import { FiberScene } from 'components/scene';
 import Shader from 'components/shader';
 import Page from '../../components/page';
@@ -9,7 +8,7 @@ import { shaders } from '../../components/scenes';
 export const getStaticProps: GetStaticProps = async (context) => {
   const { name } = context.params as { name: string };
   return {
-    props: { shader: shaders[name] },
+    props: { name },
   };
 };
 
@@ -20,16 +19,12 @@ export async function getStaticPaths() {
   };
 }
 
-export default function ShaderPage({
-  shader,
-}: {
-  shader: ShaderMaterialParameters;
-}) {
+export default function ShaderPage({ name }: { name: string }) {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
         <FiberScene>
-          <Shader shader={shader} />
+          <Shader shader={shaders[name]} />
         </FiberScene>
       </div>
     </Page>
