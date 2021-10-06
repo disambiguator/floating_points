@@ -22,12 +22,12 @@ export async function getStaticPaths() {
 export default function ShaderPage({ name }: { name: string }) {
   return (
     <Page>
-      <div style={{ height: '90vh', width: '90vh' }}>
-        <FiberScene>
-          <Shader shader={shaders[name]} />
-          <pointLight />
-        </FiberScene>
-      </div>
+      {/* <div style={{ height: '90vh', width: '90vh' }}> */}
+      <FiberScene controls camera={{ far: 10000, position: [0, 0, 300] }}>
+        <pointLight castShadow position={[0, 10, 50]} />
+        <Shader shader={shaders[name]} />
+      </FiberScene>
+      {/* </div> */}
     </Page>
   );
 }

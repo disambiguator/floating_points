@@ -1,13 +1,10 @@
 const DusenShader = {
   vertexShader: /* glsl */ `
-  #ifdef GL_ES
-  precision highp float;
-  #endif
-
   varying vec4 vColor;
   uniform float aspect;
   uniform float time;
   uniform float radius;
+  uniform float depth;
 
   float circ(vec2 p, float radius) {
       return step(length(p - 0.5), radius);
@@ -70,7 +67,7 @@ const DusenShader = {
       vColor = vec4(blendColors(blendColors(blendColors(shape, shape2), shape3), shape4), 1.0);
 
       vec3 p = position;
-      p.z += vColor.r * 400.;
+      p.z += vColor.r * depth;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(p,1.0);
 }
 
@@ -93,6 +90,7 @@ const DusenShader = {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
     radius: { value: 0.2 },
+    depth: { value: 0.2 },
   },
 };
 

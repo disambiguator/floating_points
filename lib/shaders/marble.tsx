@@ -42,7 +42,7 @@ const MarbleShader = {
       vColor = vec4(color, 1.0);
 
     vec3 p = position;
-    p.z += vColor.r * 100.;
+    p.z += vColor.r * 1000.;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(p,1.0);
     }
 `,
