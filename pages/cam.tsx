@@ -110,7 +110,7 @@ export default function ShaderPage() {
   return (
     <Page>
       <div style={{ height: '90%', width: '90%' }}>
-        <FiberScene controls>
+        <FiberScene controls camera={{ position: [0, 0, 700], far: 10000 }}>
           <Cam video={videoRef} />
         </FiberScene>
       </div>
