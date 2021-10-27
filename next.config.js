@@ -16,7 +16,6 @@ const nextConfig = {
     };
     return config;
   },
-  target: 'serverless',
   typescript: {
     ignoreDevErrors: true,
   },
