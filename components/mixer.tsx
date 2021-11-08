@@ -1,11 +1,13 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { button, useControls } from 'leva';
+import { Leva, button, useControls } from 'leva';
 import { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import { throttle } from 'lodash';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import WebMidi from 'webmidi';
 import { PartialState } from 'zustand';
+import { useIsMobile } from 'lib/mediaQueries';
 import {
   Config,
   Env,
@@ -36,8 +38,16 @@ const MAPPINGS: Record<string, Record<number, MidiParam>> = {
 };
 
 export const Controls = () => {
+  const isMobile = useIsMobile();
   const set = useStore((state) => state.set);
   const audioEnabled = useStore((state) => state.audioEnabled);
+  const [poppedOut, setPoppedOut] = useState(false);
+  const popOut = useCallback(() => {
+    setPoppedOut(true);
+  }, []);
+  const popIn = useCallback(() => {
+    setPoppedOut(false);
+  }, []);
 
   useEffect(() => {
     WebMidi.enable(() => {
@@ -65,7 +75,34 @@ export const Controls = () => {
     };
   }, [set]);
 
-  return audioEnabled ? <ControlPanel /> : null;
+  return (
+    <>
+      {poppedOut ? (
+        <NewWindow onUnload={popIn}>
+          <Leva hideCopyButton fill flat titleBar={false} />
+        </NewWindow>
+      ) : (
+        <>
+          <Leva
+            hideCopyButton
+            collapsed={isMobile}
+            fill={isMobile}
+            titleBar={{ title: 'Controls', filter: false }}
+          />
+          {!isMobile && <PopOutControls popOut={popOut} />}
+        </>
+      )}
+      {audioEnabled ? <ControlPanel /> : null}
+    </>
+  );
+};
+
+const PopOutControls = ({ popOut }: { popOut: () => void }) => {
+  useControls({
+    'Pop Out': button(popOut),
+  });
+
+  return null;
 };
 
 const ControlPanel = () => {
@@ -235,7 +272,6 @@ const Mixer = () => {
           // preserveDrawingBuffer: true,
         }}
         controls={env.name !== 'cubefield' && env.name !== 'control'}
-        gui
       >
         <Scene env={env} />
         <GuiControls name={env.name} />
