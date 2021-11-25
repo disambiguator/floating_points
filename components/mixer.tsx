@@ -5,41 +5,17 @@ import { throttle } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
-import WebMidi from 'webmidi';
 import { PartialState } from 'zustand';
 import { useIsMobile } from 'lib/mediaQueries';
-import {
-  Config,
-  Env,
-  MIDI_PARAMS,
-  MidiParam,
-  State,
-  useStore,
-} from 'lib/store';
+import { Config, Env, MIDI_PARAMS, State, useStore } from 'lib/store';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { sceneName, scenes } from './scenes';
 
-const MAPPINGS: Record<string, Record<number, MidiParam>> = {
-  'Nocturn Keyboard': {
-    7: 'noiseAmplitude',
-    10: 'trails',
-    74: 'zoomThreshold',
-    71: 'kaleidoscope',
-  },
-  'Akai Pro AFX': {
-    1: 'noiseAmplitude',
-    2: 'trails',
-    3: 'zoomThreshold',
-    4: 'kaleidoscope',
-  },
-};
-
 export const Controls = () => {
   const isMobile = useIsMobile();
-  const set = useStore((state) => state.set);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const [poppedOut, setPoppedOut] = useState(false);
   const popOut = useCallback(() => {
@@ -48,32 +24,6 @@ export const Controls = () => {
   const popIn = useCallback(() => {
     setPoppedOut(false);
   }, []);
-
-  useEffect(() => {
-    WebMidi.enable(() => {
-      WebMidi.inputs.forEach((input) => {
-        const mapping = MAPPINGS[input.name];
-        if (!mapping) return;
-
-        input.addListener('controlchange', 'all', (e) => {
-          const param = mapping[e.controller.number];
-          if (param) {
-            // @ts-ignore
-            set({ [param]: e.value });
-          } else {
-            console.log(e);
-          }
-        });
-      });
-    });
-
-    return () => {
-      WebMidi.inputs.forEach((input) => {
-        input.removeListener();
-      });
-      if (WebMidi.enabled) WebMidi.disable();
-    };
-  }, [set]);
 
   return (
     <>
