@@ -7,7 +7,14 @@ import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { PartialState } from 'zustand';
 import { useIsMobile } from 'lib/mediaQueries';
-import { Config, Env, MIDI_PARAMS, State, useStore } from 'lib/store';
+import {
+  Config,
+  Env,
+  MIDI_PARAMS,
+  State,
+  spectrumSelector,
+  useStore,
+} from 'lib/store';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { Effects } from './effects';
 import Page from './page';
@@ -66,10 +73,10 @@ const ControlPanel = () => {
 
   useEffect(() => {
     return useStore.subscribe(
+      spectrumSelector,
       ({ volume, subBass, bass, midrange, treble }: Spectrum) => {
         set({ volume, subBass, bass, midrange, treble });
       },
-      (state) => state.spectrum,
     );
   }, [set]);
 
@@ -153,7 +160,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     ...rest
   } = useMemo(() => useStore.getState(), []);
 
-  useControls(() => ({
+  useControls({
     ...Object.fromEntries(
       MIDI_PARAMS.map((v) => [
         v,
@@ -202,7 +209,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     Export: button(() => {
       useStore.getState().exportScene();
     }),
-  }));
+  });
 
   return null;
 };

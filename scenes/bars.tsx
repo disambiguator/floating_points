@@ -5,11 +5,11 @@ import React, { useRef } from 'react';
 import { Line2 } from 'three-stdlib';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
-import { Config, useStore } from '../lib/store';
+import { Config, trailsSelector, useStore } from '../lib/store';
 
 const Effects = () => {
   const zoomThreshold = useStore((state) => state.zoomThreshold);
-  const trails = useStore((state) => state.trails);
+  const trails = useStore(trailsSelector);
 
   return (
     <afterimagePass

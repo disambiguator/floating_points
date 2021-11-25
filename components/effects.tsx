@@ -12,7 +12,16 @@ import { AfterimagePass } from 'three-stdlib';
 import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import { Config, CustomEffectsType, State, useStore } from '../lib/store';
+import {
+  Config,
+  CustomEffectsType,
+  State,
+  angleSelector,
+  bitcrushSelector,
+  kaleidoscopeSelector,
+  trailsSelector,
+  useStore,
+} from '../lib/store';
 
 extend({ AfterimagePass });
 
@@ -31,58 +40,71 @@ declare global {
 
 const TunnelEffects = () => {
   const afterimagePassRef = useRef<AfterimagePass>();
-  const { mouse, clock, viewport } = useThree();
-  const { size } = useThree();
-  const { xSpeed, ySpeed } = useControls({
-    xSpeed: { value: 64, min: 0, max: 127, label: 'X Speed' },
-    ySpeed: { value: 64, min: 0, max: 127, label: 'Y Speed' },
-  });
-
-  useEffect(() => {
-    const pass = afterimagePassRef.current!;
-
-    const updateZoom = (trails: number) => {
-      pass.uniforms.damp.value = scaleMidi(trails, 0.8, 1);
-      pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
-    };
-
-    const zoomStateSelector = (state: State) => state.trails;
-
-    updateZoom(zoomStateSelector(useStore.getState()));
-
-    return useStore.subscribe(updateZoom, zoomStateSelector);
-  }, []);
-
-  useEffect(() => {
-    return useStore.subscribe(
-      (kaleidoscope: number) => {
-        afterimagePassRef.current!.uniforms.numSides.value = kaleidoscope;
-      },
-      (state) => state.kaleidoscope,
-    );
-  }, []);
-
-  useEffect(() => {
-    return useStore.subscribe(
-      (bitcrush: number) => {
-        afterimagePassRef.current!.uniforms.bitcrush.value = bitcrush;
-      },
-      (state) => state.bitcrush,
-    );
-  }, []);
-
-  useEffect(() => {
-    return useStore.subscribe(
-      (angle: number) => {
-        afterimagePassRef.current!.uniforms.angle.value = scaleMidi(
-          angle,
-          -Math.PI / 10,
-          Math.PI / 10,
+  const viewport = useThree((three) => three.viewport);
+  const size = useThree((three) => three.size);
+  useControls(() => ({
+    xSpeed: {
+      value: 64,
+      min: 0,
+      max: 127,
+      label: 'X Speed',
+      onChange: (xSpeed) => {
+        afterimagePassRef.current!.uniforms.xspeed.value = scaleMidi(
+          xSpeed,
+          -1,
+          1,
           true,
         );
       },
-      (state) => state.angle,
-    );
+    },
+    ySpeed: {
+      value: 64,
+      min: 0,
+      max: 127,
+      label: 'Y Speed',
+      onChange: (ySpeed) => {
+        afterimagePassRef.current!.uniforms.yspeed.value = scaleMidi(
+          ySpeed,
+          -1,
+          1,
+          true,
+        );
+      },
+    },
+  }));
+
+  useEffect(() => {
+    const updateZoom = (trails: number) => {
+      const pass = afterimagePassRef.current!;
+      pass.uniforms.damp.value = scaleMidi(trails, 0.8, 1);
+      pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
+    };
+    updateZoom(trailsSelector(useStore.getState()));
+
+    return useStore.subscribe(trailsSelector, updateZoom);
+  }, []);
+
+  useEffect(() => {
+    return useStore.subscribe(kaleidoscopeSelector, (kaleidoscope: number) => {
+      afterimagePassRef.current!.uniforms.numSides.value = kaleidoscope;
+    });
+  }, []);
+
+  useEffect(() => {
+    return useStore.subscribe(bitcrushSelector, (bitcrush: number) => {
+      afterimagePassRef.current!.uniforms.bitcrush.value = bitcrush;
+    });
+  }, []);
+
+  useEffect(() => {
+    return useStore.subscribe(angleSelector, (angle: number) => {
+      afterimagePassRef.current!.uniforms.angle.value = scaleMidi(
+        angle,
+        -Math.PI / 10,
+        Math.PI / 10,
+        true,
+      );
+    });
   }, []);
 
   useEffect(() => {
@@ -102,27 +124,24 @@ const TunnelEffects = () => {
 
     updateThreshold(zoomStateSelector(useStore.getState()));
 
-    return useStore.subscribe(updateThreshold, zoomStateSelector, shallow);
+    return useStore.subscribe(zoomStateSelector, updateThreshold, {
+      equalityFn: shallow,
+    });
   }, []);
 
-  useFrame(() => {
+  useFrame(({ mouse, clock }) => {
     const uniforms = afterimagePassRef.current!
       .uniforms as typeof TunnelShader['uniforms'];
     uniforms.mouse.value = new Vector2(mouse.x * viewport.aspect, mouse.y);
     uniforms.time.value = clock.getElapsedTime();
   });
 
-  const { bitcrush } = useStore.getState();
-
   return (
     <afterimagePass
       ref={afterimagePassRef}
       attachArray="passes"
       args={[0.96, TunnelShader]}
-      uniforms-xspeed-value={scaleMidi(xSpeed, -1, 1, true)}
       uniforms-aspect-value={viewport.aspect}
-      uniforms-yspeed-value={scaleMidi(ySpeed, -1, 1, true)}
-      uniforms-bitcrush-value={bitcrush}
       uniforms-resolution-value={new Vector2(
         size.width,
         size.height,
