@@ -71,6 +71,39 @@ const TunnelEffects = () => {
         );
       },
     },
+    trailNoiseAmplitude: {
+      value: 0,
+      min: 0,
+      max: 127,
+      label: 'Trail Noise Amplitude',
+      onChange: (v) => {
+        afterimagePassRef.current!.uniforms.trailNoiseAmplitude.value =
+          scaleMidi(v, 0, 0.1);
+      },
+    },
+    trailNoiseFrequency: {
+      value: 0,
+      min: 0,
+      max: 127,
+      label: 'Trail Noise Frequency',
+      onChange: (v) => {
+        afterimagePassRef.current!.uniforms.trailNoiseFrequency.value =
+          scaleMidi(v, 0, 50);
+      },
+    },
+    trailNoiseTime: {
+      value: 0,
+      min: 0,
+      max: 127,
+      label: 'Trail Noise Time',
+      onChange: (v) => {
+        afterimagePassRef.current!.uniforms.trailNoiseTime.value = scaleMidi(
+          v,
+          0,
+          1,
+        );
+      },
+    },
   }));
 
   useEffect(() => {

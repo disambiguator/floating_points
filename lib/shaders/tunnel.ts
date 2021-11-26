@@ -6,6 +6,9 @@ const TunnelShader = {
     damp: { value: 0.96 },
     xspeed: { value: 0.01 },
     yspeed: { value: 0.01 },
+    trailNoiseAmplitude: { value: 0 },
+    trailNoiseFrequency: { value: 0 },
+    trailNoiseTime: { value: 0 },
     time: { value: 0 },
     tOld: { value: null },
     tNew: { value: null },
@@ -40,6 +43,9 @@ const TunnelShader = {
       uniform float bitcrush;
       uniform float xspeed;
       uniform float yspeed;
+      uniform float trailNoiseTime;
+      uniform float trailNoiseFrequency;
+      uniform float trailNoiseAmplitude;
       uniform float angle;
       uniform vec2 mouse;
       uniform vec2 resolution;
@@ -56,6 +62,7 @@ const TunnelShader = {
 
       #pragma glslify: kaleidoscope = require(./kaleidoscope.glsl)
       #pragma glslify: zoomFun = require(./zoom.glsl)
+      #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 
       float blendOverlay(float base, float blend) {
          return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
@@ -89,8 +96,6 @@ const TunnelShader = {
       }
 
       void main() {
-        vec2 rotation = vec2(sin(angle), cos(angle));
-
         vec2 coord = vUv;
 
         if(bitcrush > 0.0) {
@@ -112,6 +117,7 @@ const TunnelShader = {
         }
 
         // Rotate defined angle
+        vec2 rotation = vec2(sin(angle), cos(angle));
         coord.x = coord.x * rotation.y + coord.y * rotation.x;
         coord.y = coord.y * rotation.y - coord.x * rotation.x;
 
@@ -123,6 +129,14 @@ const TunnelShader = {
         // Get old frame (in 0 to 1 coordinate system)
         coord.x /= aspect;
         coord = (coord + 1.)/2.;
+
+        if(trailNoiseAmplitude > 0. && trailNoiseFrequency > 0.) {
+          coord += trailNoiseAmplitude * vec2(
+            snoise3(trailNoiseFrequency * vec3(coord.x * aspect, coord.y, 1234. + time/10.)),
+            snoise3(trailNoiseFrequency * vec3(coord.x * aspect, coord.y, time/10.))
+          );
+        }
+
         vec4 texelNew = texture2D(tNew, coord);
         vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
 
