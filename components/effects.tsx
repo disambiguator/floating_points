@@ -39,7 +39,7 @@ declare global {
 /* eslint-enable @typescript-eslint/no-namespace */
 
 const TunnelEffects = () => {
-  const afterimagePassRef = useRef<AfterimagePass>();
+  const ref = useRef<AfterimagePass>();
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   useControls(() => ({
@@ -49,12 +49,7 @@ const TunnelEffects = () => {
       max: 127,
       label: 'X Speed',
       onChange: (xSpeed) => {
-        afterimagePassRef.current!.uniforms.xspeed.value = scaleMidi(
-          xSpeed,
-          -1,
-          1,
-          true,
-        );
+        ref.current!.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
       },
     },
     ySpeed: {
@@ -63,12 +58,7 @@ const TunnelEffects = () => {
       max: 127,
       label: 'Y Speed',
       onChange: (ySpeed) => {
-        afterimagePassRef.current!.uniforms.yspeed.value = scaleMidi(
-          ySpeed,
-          -1,
-          1,
-          true,
-        );
+        ref.current!.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
       },
     },
     trailNoiseAmplitude: {
@@ -77,8 +67,7 @@ const TunnelEffects = () => {
       max: 127,
       label: 'Trail Noise Amplitude',
       onChange: (v) => {
-        afterimagePassRef.current!.uniforms.trailNoiseAmplitude.value =
-          scaleMidi(v, 0, 0.1);
+        ref.current!.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
       },
     },
     trailNoiseFrequency: {
@@ -87,8 +76,7 @@ const TunnelEffects = () => {
       max: 127,
       label: 'Trail Noise Frequency',
       onChange: (v) => {
-        afterimagePassRef.current!.uniforms.trailNoiseFrequency.value =
-          scaleMidi(v, 0, 50);
+        ref.current!.uniforms.trailNoiseFrequency.value = scaleMidi(v, 0, 50);
       },
     },
     trailNoiseTime: {
@@ -97,18 +85,14 @@ const TunnelEffects = () => {
       max: 127,
       label: 'Trail Noise Time',
       onChange: (v) => {
-        afterimagePassRef.current!.uniforms.trailNoiseTime.value = scaleMidi(
-          v,
-          0,
-          1,
-        );
+        ref.current!.uniforms.trailNoiseTime.value = scaleMidi(v, 0, 1);
       },
     },
   }));
 
   useEffect(() => {
     const updateZoom = (trails: number) => {
-      const pass = afterimagePassRef.current!;
+      const pass = ref.current!;
       pass.uniforms.damp.value = scaleMidi(trails, 0.8, 1);
       pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
     };
@@ -117,21 +101,23 @@ const TunnelEffects = () => {
     return useStore.subscribe(trailsSelector, updateZoom);
   }, []);
 
-  useEffect(() => {
-    return useStore.subscribe(kaleidoscopeSelector, (kaleidoscope: number) => {
-      afterimagePassRef.current!.uniforms.numSides.value = kaleidoscope;
-    });
-  }, []);
+  useEffect(
+    () =>
+      useStore.subscribe(kaleidoscopeSelector, (kaleidoscope: number) => {
+        ref.current!.uniforms.numSides.value = kaleidoscope;
+      }),
+    [],
+  );
 
   useEffect(() => {
     return useStore.subscribe(bitcrushSelector, (bitcrush: number) => {
-      afterimagePassRef.current!.uniforms.bitcrush.value = bitcrush;
+      ref.current!.uniforms.bitcrush.value = bitcrush;
     });
   }, []);
 
   useEffect(() => {
     return useStore.subscribe(angleSelector, (angle: number) => {
-      afterimagePassRef.current!.uniforms.angle.value = scaleMidi(
+      ref.current!.uniforms.angle.value = scaleMidi(
         angle,
         -Math.PI / 10,
         Math.PI / 10,
@@ -142,10 +128,7 @@ const TunnelEffects = () => {
 
   useEffect(() => {
     const updateThreshold = ([zoomThreshold, name]: [number, string]) => {
-      afterimagePassRef.current!.uniforms.zoom.value = [
-        'bars',
-        'cloth',
-      ].includes(name)
+      ref.current!.uniforms.zoom.value = ['bars', 'cloth'].includes(name)
         ? 0
         : scaleMidi(zoomThreshold, 0, 0.3);
     };
@@ -163,15 +146,14 @@ const TunnelEffects = () => {
   }, []);
 
   useFrame(({ mouse, clock }) => {
-    const uniforms = afterimagePassRef.current!
-      .uniforms as typeof TunnelShader['uniforms'];
+    const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];
     uniforms.mouse.value = new Vector2(mouse.x * viewport.aspect, mouse.y);
     uniforms.time.value = clock.getElapsedTime();
   });
 
   return (
     <afterimagePass
-      ref={afterimagePassRef}
+      ref={ref}
       attachArray="passes"
       args={[0.96, TunnelShader]}
       uniforms-aspect-value={viewport.aspect}
