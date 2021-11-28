@@ -42,6 +42,7 @@ const TunnelEffects = () => {
   const ref = useRef<AfterimagePass>();
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
+  const trailNoiseTimeRef = useRef(0);
   useControls(() => ({
     xSpeed: {
       value: 64,
@@ -85,7 +86,7 @@ const TunnelEffects = () => {
       max: 127,
       label: 'Trail Noise Time',
       onChange: (v) => {
-        ref.current!.uniforms.trailNoiseTime.value = scaleMidi(v, 0, 1);
+        trailNoiseTimeRef.current = scaleMidi(v, 0, 2);
       },
     },
   }));
@@ -145,10 +146,10 @@ const TunnelEffects = () => {
     });
   }, []);
 
-  useFrame(({ mouse, clock }) => {
+  useFrame(({ mouse }, delta) => {
     const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];
     uniforms.mouse.value = new Vector2(mouse.x * viewport.aspect, mouse.y);
-    uniforms.time.value = clock.getElapsedTime();
+    uniforms.time.value += delta * trailNoiseTimeRef.current;
   });
 
   return (

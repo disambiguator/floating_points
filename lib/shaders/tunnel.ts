@@ -8,7 +8,6 @@ const TunnelShader = {
     yspeed: { value: 0.01 },
     trailNoiseAmplitude: { value: 0 },
     trailNoiseFrequency: { value: 0 },
-    trailNoiseTime: { value: 0 },
     time: { value: 0 },
     tOld: { value: null },
     tNew: { value: null },
@@ -43,7 +42,6 @@ const TunnelShader = {
       uniform float bitcrush;
       uniform float xspeed;
       uniform float yspeed;
-      uniform float trailNoiseTime;
       uniform float trailNoiseFrequency;
       uniform float trailNoiseAmplitude;
       uniform float angle;
