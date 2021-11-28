@@ -11,7 +11,6 @@ import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
 import { fbmConfig } from 'scenes/fbm';
 import { chaosConfig } from 'scenes/geometric_chaos';
-import { sortConfig } from 'scenes/sort';
 import { spiroConfig } from 'scenes/spiro';
 
 export const shaders: Record<string, ShaderMaterialParameters> = {
@@ -31,7 +30,6 @@ export const scenes = {
   cloth: clothConfig,
   fbm: fbmConfig,
   marble: marbleConfig,
-  sort: sortConfig,
 };
 
 export type sceneName = keyof typeof scenes;
