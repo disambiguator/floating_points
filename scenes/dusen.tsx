@@ -6,11 +6,12 @@ import DusenShader from '../lib/shaders/dusen';
 import { Config, useStore } from '../lib/store';
 
 const Dusen = React.memo(function Dusen() {
-  const { viewport, size, clock } = useThree();
+  const viewport = useThree((t) => t.viewport);
+  const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
   const noiseAmplitude = useStore((state) => state.noiseAmplitude);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;
   });
 

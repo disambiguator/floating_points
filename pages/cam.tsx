@@ -64,7 +64,7 @@ const Cam = React.memo(function Shader({
 }: {
   video: HTMLVideoElement | null;
 }) {
-  const { size } = useThree();
+  const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
   const { depth } = useControls({ depth: { value: 30, min: 0, max: 500 } });
 
@@ -81,9 +81,6 @@ const Cam = React.memo(function Shader({
         });
     }
   }, [video]);
-
-  //   useFrame(() => {
-  //   });
 
   return (
     <mesh>

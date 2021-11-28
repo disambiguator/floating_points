@@ -68,7 +68,8 @@ void main()
   },
 };
 const Shaders = React.memo(function Shader() {
-  const { viewport, size } = useThree();
+  const viewport = useThree((t) => t.viewport);
+  const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
   useFrame(({ clock }) => {
     ref.current!.uniforms.time.value = clock.elapsedTime;

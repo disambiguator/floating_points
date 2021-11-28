@@ -74,14 +74,15 @@ void main() {
 };
 
 const Dusen = function Dusen() {
-  const { viewport, size, invalidate, clock } = useThree();
+  const viewport = useThree((t) => t.viewport);
+  const size = useThree((t) => t.size);
   const ref = useRef<THREE.ShaderMaterial>();
   const zoomState = useRef({
     mouse: { clientX: 0, clientY: 0 },
     zooming: false,
   });
 
-  useFrame(() => {
+  useFrame(({ invalidate, clock }) => {
     const { zooming, mouse } = zoomState.current;
     if (!zooming) {
       invalidate();

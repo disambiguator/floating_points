@@ -1,4 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -75,7 +75,6 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
     }),
   });
 
-  const { clock } = useThree();
   const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
   const displacement = useMemo(() => {
@@ -94,7 +93,7 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
     if (seeds) positions.current = seeds;
   }, [seeds]);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     positions.current = positions.current.map((p) => ({
       ...p,
       arc: p.arc + p.speed * renderSpeed,
@@ -139,11 +138,7 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
           itemSize={3}
         />
       </bufferGeometry>
-      <shaderMaterial
-        ref={shaderMaterialRef}
-        args={[SpiroShader]}
-        uniforms-time-value={clock.elapsedTime}
-      />
+      <shaderMaterial ref={shaderMaterialRef} args={[SpiroShader]} />
     </line>
   );
 };

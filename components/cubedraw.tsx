@@ -13,8 +13,7 @@ export type BoxData = {
 };
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
-  const { clock } = useThree();
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const mesh = meshRef.current!;
     const factor = Math.sin(creationTime + clock.elapsedTime / 3);
     mesh.scale.set(factor, factor, factor);
@@ -36,7 +35,7 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 
 const CubeDraw = () => {
   const [boxes, setBoxes] = useState<JSX.Element[]>([]);
-  const { clock } = useThree();
+  const clock = useThree((t) => t.clock);
   const addCube = (e: ThreeEvent<PointerEvent>) => {
     const intersection = e.intersections[0].point.toArray() as [
       number,

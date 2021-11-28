@@ -334,7 +334,7 @@ const Boxes = () => {
 };
 
 const HTTF = () => {
-  const { scene } = useThree();
+  const scene = useThree((t) => t.scene);
 
   useEffect(() => {
     scene.background = new THREE.Color(0x7ec0ee);

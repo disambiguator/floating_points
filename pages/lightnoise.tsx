@@ -8,7 +8,7 @@ import { FiberScene } from 'components/scene';
 
 function CustomMaterial() {
   const ref = useRef<GenericMaterial>();
-  const { viewport } = useThree();
+  const viewport = useThree((t) => t.viewport);
   const { depth } = useControls({
     depth: { value: 100, min: 0, max: 1000 },
   });
@@ -72,7 +72,7 @@ function CustomMaterial() {
 }
 
 function Scene() {
-  const { size } = useThree();
+  const size = useThree((t) => t.size);
   const lightRef = useRef<THREE.PointLight>();
 
   useFrame(({ clock }) => {

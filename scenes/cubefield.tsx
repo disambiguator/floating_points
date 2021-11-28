@@ -1,4 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
 import { BoxData } from '../components/cubedraw';
@@ -6,8 +6,7 @@ import { Config } from '../lib/store';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
-  const { clock } = useThree();
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const mesh = meshRef.current!;
     if (!mesh) return;
 
@@ -25,9 +24,8 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 
 export const CubeField = () => {
   const [boxes, setBoxes] = useState<JSX.Element[]>([]);
-  const { clock, camera } = useThree();
 
-  useFrame(() => {
+  useFrame(({ clock, camera }) => {
     camera.translateOnAxis(new THREE.Vector3(0, 0, -1), 10);
     const newBoxes = [...boxes];
     const x = 200 * Math.cos((3 * clock.elapsedTime) % (Math.PI * 2));

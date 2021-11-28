@@ -7,7 +7,8 @@ import { scaleMidi } from '../lib/midi';
 import { Config, useStore } from '../lib/store';
 
 const FbmContents = React.memo(function FbmContents() {
-  const { viewport, size } = useThree();
+  const viewport = useThree((t) => t.viewport);
+  const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
 
   useFrame(() => {

@@ -1,5 +1,5 @@
 import { Line } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { isEmpty } from 'lodash';
 import React, { useRef } from 'react';
 import { Line2 } from 'three-stdlib';
@@ -68,9 +68,8 @@ const BarsShader = {
 
 const color = 'cyan';
 const Bars = React.memo(function Bars() {
-  const { size } = useThree();
   const lineRef = useRef<Line2>(null);
-  useFrame(() => {
+  useFrame(({ size }) => {
     const { geometry } = lineRef.current!;
     const { frequencyData } = useStore.getState().spectrum;
     if (isEmpty(frequencyData)) return;

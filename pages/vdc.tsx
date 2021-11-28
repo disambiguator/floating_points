@@ -1,4 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import Page from '../components/page';
@@ -61,8 +61,6 @@ const VDC = () => {
   const floorShaderRef = useRef<THREE.ShaderMaterial>();
   const wallMaterialRef = useRef<THREE.MeshBasicMaterial>();
 
-  const { clock } = useThree();
-
   useEffect(() => {
     const floorMesh = floorMeshRef.current!;
     floorMesh.rotation.x -= Math.PI / 2;
@@ -71,7 +69,7 @@ const VDC = () => {
     wallMesh.rotation.y -= Math.PI / 2;
   }, []);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const floorShader = floorShaderRef.current!;
     floorShader.uniforms.time.value = clock.elapsedTime;
 

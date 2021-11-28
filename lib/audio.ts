@@ -66,7 +66,7 @@ export const analyseSpectrum = (audio: Audio): Spectrum => {
 };
 
 export const useAudioUrl = (url: string, enabled = true) => {
-  const { camera } = useThree();
+  const camera = useThree((t) => t.camera);
   const [audio, setAudio] = useState<Audio>();
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export const useAudioUrl = (url: string, enabled = true) => {
 };
 
 export function useMicrophone(enabled = true) {
-  const { camera } = useThree();
+  const camera = useThree((t) => t.camera);
   const [audio, setAudio] = useState<Audio>();
   const [stream, setStream] = useState<MediaStream>();
 

@@ -17,12 +17,13 @@ const Shaders = React.memo(function Shader({
 }: {
   shader: ShaderMaterialParameters;
 }) {
-  const { viewport, size, clock } = useThree();
+  const viewport = useThree((t) => t.viewport);
+  const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
   const audio = useMicrophone();
   const { s } = useControls({ s: { value: 0.02, min: 0, max: 0.1 } });
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     if (!audio) return;
     if (!ref.current) return;
 

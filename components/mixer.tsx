@@ -84,7 +84,7 @@ const ControlPanel = () => {
 };
 
 const Scene = <T,>({ env }: { env: Env<T> }) => {
-  const { camera, mouse, gl } = useThree();
+  const gl = useThree((t) => t.gl);
   const setExportScene = useStore((state) => state.setExportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const set = useStore((state) => state.set);
@@ -94,7 +94,7 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
 
   const audio = useMicrophone(audioEnabled);
 
-  useFrame(() => {
+  useFrame(({ camera, mouse }) => {
     raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
     useStore.setState({ ray: raycaster.ray });
 
