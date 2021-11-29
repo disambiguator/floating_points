@@ -249,6 +249,12 @@ export default function MixerPage({ name }: { name: sceneName }) {
 
   return (
     <Page>
+      <video
+        id="webcam"
+        style={{ display: 'none' }}
+        autoPlay
+        playsInline
+      ></video>
       <Mixer />
     </Page>
   );

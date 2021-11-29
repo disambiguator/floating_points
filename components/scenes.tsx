@@ -13,6 +13,7 @@ import { fbmConfig } from 'scenes/fbm';
 import { chaosConfig } from 'scenes/geometric_chaos';
 import { marbleConfig } from 'scenes/marble';
 import { spiroConfig } from 'scenes/spiro';
+import { webcamConfig } from 'scenes/webcam';
 
 export const shaders: Record<string, ShaderMaterialParameters> = {
   fbm: FbmShader,
@@ -31,6 +32,7 @@ export const scenes: Record<string, Config> = {
   cloth: clothConfig,
   fbm: fbmConfig,
   marble: marbleConfig,
+  webcam: webcamConfig,
 };
 
 export type sceneName = keyof typeof scenes;

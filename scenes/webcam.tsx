@@ -1,10 +1,7 @@
-import { useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect, useRef, useState } from 'react';
-import { ShaderMaterial } from 'three';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import Page from '../components/page';
-import { FiberScene } from '../components/scene';
+import { Config } from '../lib/store';
 
 const WebcamShader = {
   vertexShader: /* glsl */ `
@@ -59,39 +56,31 @@ void main()
   },
 };
 
-const Cam = React.memo(function Shader({
-  video,
-}: {
-  video: HTMLVideoElement | null;
-}) {
-  const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>();
+const Webcam = React.memo(function Shader() {
+  const ref = useRef<THREE.ShaderMaterial>();
   const { depth } = useControls({ depth: { value: 30, min: 0, max: 500 } });
+  const video: HTMLVideoElement = document.getElementById(
+    'webcam',
+  ) as HTMLVideoElement;
 
   useEffect(() => {
-    if (video) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: false })
-        .then(function (stream) {
-          video.srcObject = stream;
-          video.play();
-        })
-        .catch(function (err) {
-          console.log('An error occured! ' + err);
-        });
-    }
+    navigator.mediaDevices
+      .getUserMedia({
+        video: { width: 1280, height: 720, facingMode: 'user' },
+        audio: false,
+      })
+      .then(function (stream) {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(function (err) {
+        console.log('An error occured! ' + err);
+      });
   }, [video]);
 
   return (
     <mesh>
-      <planeGeometry
-        args={[
-          Math.min(size.width, size.height),
-          Math.min(size.width, size.height),
-          200,
-          200,
-        ]}
-      />
+      <planeGeometry args={[1280, 720, 1280, 720]} />
       <shaderMaterial
         ref={ref}
         args={[WebcamShader]}
@@ -102,25 +91,8 @@ const Cam = React.memo(function Shader({
   );
 });
 
-export default function ShaderPage() {
-  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
-  return (
-    <Page>
-      <div style={{ height: '90%', width: '90%' }}>
-        <FiberScene controls camera={{ position: [0, 0, 700], far: 10000 }}>
-          <Cam video={videoRef} />
-        </FiberScene>
-      </div>
-      <div
-        style={{
-          visibility: 'hidden',
-          position: 'absolute',
-          height: '500px',
-          width: '500px',
-        }}
-      >
-        <video ref={setVideoRef} />
-      </div>
-    </Page>
-  );
-}
+export const webcamConfig: Config = {
+  name: 'webcam',
+  Contents: Webcam,
+  params: {},
+};
