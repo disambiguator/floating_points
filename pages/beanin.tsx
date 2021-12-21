@@ -1,4 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
+import { ThreeEvent } from '@react-three/fiber/dist/declarations/src/core/events';
 import React, { useRef } from 'react';
 import * as THREE from 'three';
 import Page from '../components/page';
@@ -93,8 +94,8 @@ const Dusen = function Dusen() {
     zoom(mouse);
   });
 
-  const onMouseMove = (e: { clientX: number; clientY: number }) => {
-    zoomState.current.mouse = e;
+  const onMouseMove = ({ nativeEvent }: ThreeEvent<PointerEvent>) => {
+    zoomState.current.mouse = nativeEvent;
   };
 
   const startZoom = () => {
