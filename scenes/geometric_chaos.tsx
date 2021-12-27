@@ -18,14 +18,6 @@ const Shader = {
 
     varying vec3 vPosition;
 
-    float computeDistance(vec3 mouseOrigin, vec3 mouseDirection, vec3 vertexPosition) {
-      vec3 d = normalize(mouseDirection);
-      vec3 v = vertexPosition - mouseOrigin;
-      float t = dot(v, d);
-      vec3 P = mouseOrigin + t * d;
-      return distance(P, vertexPosition);
-    }
-
     void main() {
 
     vPosition = position;
