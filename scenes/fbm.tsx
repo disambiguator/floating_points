@@ -1,5 +1,4 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { Perf } from 'r3f-perf';
 import React, { useRef } from 'react';
 import { ShaderMaterial } from 'three';
 import FbmShader from 'lib/shaders/fbm';
@@ -26,7 +25,6 @@ const FbmContents = React.memo(function FbmContents() {
         uniforms-aspect-value={viewport.aspect}
         // uniforms-G-value={aspect}
       />
-      <Perf />
     </mesh>
   );
 });
