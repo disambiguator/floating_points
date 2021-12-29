@@ -174,7 +174,7 @@ export const Effects = <T,>({
   params: T;
   CustomEffects: CustomEffectsType<T> | undefined;
 }) => (
-  <DreiEffects>
+  <DreiEffects disableGamma>
     <TunnelEffects />
     {CustomEffects && <CustomEffects params={params} />}
   </DreiEffects>

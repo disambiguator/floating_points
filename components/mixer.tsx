@@ -223,6 +223,8 @@ const Mixer = () => {
       <Controls />
       <FiberScene
         camera={{ far: 10000, position: [0, 0, 300] }}
+        linear
+        flat
         gl={{
           antialias: true,
           // Only turn this on when exporting
