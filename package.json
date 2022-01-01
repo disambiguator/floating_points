@@ -51,6 +51,7 @@
     "@react-three/fiber": "^7.0.1",
     "@types/three": "^0.135.0",
     "component-material": "^1.0.7",
+    "glsl-blend": "^1.0.3",
     "glsl-hsv2rgb": "^1.0.0",
     "leva": "^0.9.10",
     "lodash": "^4.17.20",

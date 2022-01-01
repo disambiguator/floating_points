@@ -94,7 +94,8 @@ const TunnelEffects = () => {
   useEffect(() => {
     const updateZoom = (trails: number) => {
       const pass = ref.current!;
-      pass.uniforms.damp.value = scaleMidi(trails, 0.8, 1);
+      pass.uniforms.damp.value =
+        trails == 0 ? trails : scaleMidi(trails, 0.9, 1);
       pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
     };
     updateZoom(trailsSelector(useStore.getState()));

@@ -61,27 +61,15 @@ const TunnelShader = {
       #pragma glslify: kaleidoscope = require(./kaleidoscope.glsl)
       #pragma glslify: zoomFun = require(./zoom.glsl)
       #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
-
-      float blendOverlay(float base, float blend) {
-         return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
-      }
-
-      vec4 blendOverlay(vec4 base, vec4 blend) {
-        return vec4(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b), 1.);
-      }
-
-      vec3 blendDifference(vec3 base, vec3 blend) {
-      return abs(base-blend);
-  }
-
-  vec3 blendDifference(vec3 base, vec3 blend, float opacity) {
-      return (blendDifference(base, blend) * opacity + base * (1.0 - opacity));
-  }
+      #pragma glslify: blend = require(glsl-blend/all)
 
       vec4 colorBlend(in vec4 colorNew, in vec4 colorOld) {
-        vec4 color;
+        // color = mix(colorNew, colorOld, 0.5);
 
-        color = mix(colorNew, colorOld, 0.5);
+        // See all blend modes: https://github.com/jamieowen/glsl-blend/blob/master/modes.js
+        // LIGHTEN = 11
+        // NEGATION = 16
+        vec3 color = blend(16, colorOld.rgb, colorNew.rgb);
 
         // Modulus mixing, gets cool ink splatter effects
         //color = mod(colorNew + colorOld, 1.0);
@@ -90,7 +78,7 @@ const TunnelShader = {
         // Creat flashing effects but a bit rough
         // color = vec4(blendDifference(colorOld.rgb, colorNew.rgb, 1.0), 1.0);
 
-        return color;
+        return vec4(color,1.0);
       }
 
       void main() {
@@ -136,9 +124,9 @@ const TunnelShader = {
         }
 
         vec4 texelNew = texture2D(tNew, coord);
-        vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
+        vec4 texelOld = texture2D(tOld, coord) * damp;
 
-        gl_FragColor = length(texelNew) > 0. ? colorBlend(texelNew, texelOld) : texelOld;
+        gl_FragColor = colorBlend(texelNew, texelOld);
       }
     `,
 };
