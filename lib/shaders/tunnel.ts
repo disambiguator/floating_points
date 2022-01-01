@@ -69,7 +69,7 @@ const TunnelShader = {
         // See all blend modes: https://github.com/jamieowen/glsl-blend/blob/master/modes.js
         // LIGHTEN = 11
         // NEGATION = 16
-        vec3 color = blend(16, colorOld.rgb, colorNew.rgb);
+        vec3 color = blend(11, colorOld.rgb, colorNew.rgb);
 
         // Modulus mixing, gets cool ink splatter effects
         //color = mod(colorNew + colorOld, 1.0);
