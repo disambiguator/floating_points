@@ -3,6 +3,7 @@ import DusenShader from 'lib/shaders/dusen';
 import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
 import StarkShader from 'lib/shaders/stark';
+import { marbleConfig } from 'pages/marble';
 import { barsConfig } from 'scenes/bars';
 import { clothConfig } from 'scenes/cloth';
 import { controlConfig } from 'scenes/control';
@@ -29,6 +30,7 @@ export const scenes = {
   chaos: chaosConfig,
   cloth: clothConfig,
   fbm: fbmConfig,
+  marble: marbleConfig,
   sort: sortConfig,
 };
 
