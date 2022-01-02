@@ -4,7 +4,6 @@ import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
 import StarkShader from 'lib/shaders/stark';
 import { Config } from 'lib/store';
-import { marbleConfig } from 'pages/marble';
 import { barsConfig } from 'scenes/bars';
 import { clothConfig } from 'scenes/cloth';
 import { controlConfig } from 'scenes/control';
@@ -12,6 +11,7 @@ import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
 import { fbmConfig } from 'scenes/fbm';
 import { chaosConfig } from 'scenes/geometric_chaos';
+import { marbleConfig } from 'scenes/marble';
 import { spiroConfig } from 'scenes/spiro';
 
 export const shaders: Record<string, ShaderMaterialParameters> = {
