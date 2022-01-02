@@ -241,7 +241,7 @@ const Mixer = () => {
 
 export default function MixerPage({ name }: { name: sceneName }) {
   const set = useStore((state) => state.set);
-  const { initialParams, ...env } = useMemo(() => scenes[name], [name]);
+  const { initialParams = {}, ...env } = useMemo(() => scenes[name], [name]);
   useEffect(() => {
     const update = { env, ...initialParams } as PartialState<State>;
     set(update);

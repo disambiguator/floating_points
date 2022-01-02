@@ -147,5 +147,4 @@ export const spiroConfig: Config<SpiroParams> = {
   Contents: SpiroContents,
   name: 'spiro' as const,
   params: { seeds: initPositions() },
-  initialParams: {},
 };

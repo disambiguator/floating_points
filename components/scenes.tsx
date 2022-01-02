@@ -3,6 +3,7 @@ import DusenShader from 'lib/shaders/dusen';
 import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
 import StarkShader from 'lib/shaders/stark';
+import { Config } from 'lib/store';
 import { marbleConfig } from 'pages/marble';
 import { barsConfig } from 'scenes/bars';
 import { clothConfig } from 'scenes/cloth';
@@ -20,7 +21,7 @@ export const shaders: Record<string, ShaderMaterialParameters> = {
   stark: StarkShader,
 };
 
-export const scenes = {
+export const scenes: Record<string, Config> = {
   spiro: spiroConfig,
   bars: barsConfig,
   dusen: dusenConfig,

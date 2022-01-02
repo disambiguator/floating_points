@@ -25,10 +25,10 @@ export type CustomEffectsType<T> = React.ComponentType<{
   params: T;
 }>;
 
-export type Config<T = Record<string, never>> = {
+export type Config<T = Record<string, any>> = {
   name: string;
   params: T;
-  initialParams: Partial<Params>;
+  initialParams?: Partial<Params>;
   CustomEffects?: CustomEffectsType<T>;
   Contents: SceneContents<T>;
 };

@@ -33,5 +33,4 @@ export const fbmConfig: Config = {
   name: 'fbm',
   Contents: FbmContents,
   params: {},
-  initialParams: {},
 };

@@ -60,5 +60,4 @@ export const cubefieldConfig: Config = {
   name: 'cubefield' as const,
   Contents: CubeField,
   params: {},
-  initialParams: {},
 };

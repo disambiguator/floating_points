@@ -87,7 +87,7 @@ const Control = () => {
   );
 };
 
-export const controlConfig: Config<Record<string, never>> = {
+export const controlConfig: Config = {
   name: 'control' as const,
   Contents: Control,
   params: {},

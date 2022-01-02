@@ -145,5 +145,4 @@ export const chaosConfig: Config = {
   name: 'chaos' as const,
   Contents: Shapes,
   params: {},
-  initialParams: {},
 };
