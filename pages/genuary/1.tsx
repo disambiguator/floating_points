@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import glsl from 'glslify';
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
+import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 
@@ -93,7 +94,7 @@ const KaleidoscopeShader = {
 };
 
 export const Shapes = React.memo(function Shapes() {
-  const controlsRef = useRef<typeof OrbitControls>();
+  const controlsRef = useRef<OrbitControlsImpl>(null);
   const materialRef = useRef<THREE.ShaderMaterial>();
   useFrame(({ clock }) => {
     const controls = controlsRef.current!;
