@@ -1,4 +1,4 @@
-import { Effects, Instance, Instances } from '@react-three/drei';
+import { Effects, Instance, Instances, OrbitControls } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import glsl from 'glslify';
 import React, { useMemo, useRef } from 'react';
@@ -93,10 +93,12 @@ const KaleidoscopeShader = {
 };
 
 export const Shapes = React.memo(function Shapes() {
+  const controlsRef = useRef<typeof OrbitControls>();
   const materialRef = useRef<THREE.ShaderMaterial>();
-  useFrame(({ camera }) => {
-    camera.translateX(-0.5);
-    console.log(camera.position);
+  useFrame(({ clock }) => {
+    const controls = controlsRef.current!;
+    controls.setAzimuthalAngle(clock.elapsedTime * 1);
+    controls.setPolarAngle(clock.elapsedTime * 0.3);
   });
 
   const cubes = useMemo(() => {
@@ -109,7 +111,8 @@ export const Shapes = React.memo(function Shapes() {
 
   return (
     <>
-      <Instances>
+      <OrbitControls ref={controlsRef} />
+      <Instances position={[-30, -30, -30]}>
         <boxGeometry args={[15, 15, 15]} />
         <shaderMaterial args={[Shader]} ref={materialRef} />
         {cubes}
@@ -125,7 +128,7 @@ export default function Scene() {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
-        <FiberScene camera={{ far: 10000, position: [500, 0, 0] }} controls>
+        <FiberScene camera={{ far: 10000, position: [0, 0, 500] }}>
           <Shapes />
         </FiberScene>
       </div>
