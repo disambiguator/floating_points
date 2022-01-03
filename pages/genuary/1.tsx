@@ -98,7 +98,7 @@ export const Shapes = React.memo(function Shapes() {
   const materialRef = useRef<THREE.ShaderMaterial>();
   useFrame(({ clock }) => {
     const controls = controlsRef.current!;
-    controls.setAzimuthalAngle(clock.elapsedTime * 1);
+    controls.setAzimuthalAngle(clock.elapsedTime * 0.6);
     controls.setPolarAngle(clock.elapsedTime * 0.3);
   });
 
@@ -129,7 +129,7 @@ export default function Scene() {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
-        <FiberScene camera={{ far: 10000, position: [0, 0, 500] }}>
+        <FiberScene camera={{ far: 10000, position: [0, 0, 300] }}>
           <Shapes />
         </FiberScene>
       </div>
