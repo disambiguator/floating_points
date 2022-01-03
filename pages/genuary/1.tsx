@@ -1,5 +1,5 @@
 import { Effects, Instance, Instances } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import glsl from 'glslify';
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
@@ -53,7 +53,6 @@ const BoxInstance = () => {
 
 const KaleidoscopeShader = {
   uniforms: {
-    aspect: { value: 0 },
     tDiffuse: { value: null },
   },
   vertexShader: `
@@ -82,12 +81,10 @@ const KaleidoscopeShader = {
 
           // Shift to -1 to 1 coordinate system
           coord = coord * 2. - 1.;
-          coord.x *= aspect;
 
           coord = kaleidoscope(coord, 2.);
 
           // Get old frame (in 0 to 1 coordinate system)
-          coord.x /= aspect;
           coord = (coord + 1.)/2.;
 
           gl_FragColor = texture2D(tDiffuse, coord);
@@ -96,7 +93,6 @@ const KaleidoscopeShader = {
 };
 
 export const Shapes = React.memo(function Shapes() {
-  const aspect = useThree((t) => t.viewport.aspect);
   const materialRef = useRef<THREE.ShaderMaterial>();
   useFrame(({ camera }) => {
     camera.translateX(-0.5);
@@ -119,11 +115,7 @@ export const Shapes = React.memo(function Shapes() {
         {cubes}
       </Instances>
       <Effects>
-        <shaderPass
-          attachArray="passes"
-          args={[KaleidoscopeShader]}
-          uniforms-aspect-value={aspect}
-        />
+        <shaderPass attachArray="passes" args={[KaleidoscopeShader]} />
       </Effects>
     </>
   );
@@ -132,9 +124,11 @@ export const Shapes = React.memo(function Shapes() {
 export default function Scene() {
   return (
     <Page>
-      <FiberScene camera={{ far: 10000, position: [500, 0, 0] }} controls>
-        <Shapes />
-      </FiberScene>
+      <div style={{ height: '90vh', width: '90vh' }}>
+        <FiberScene camera={{ far: 10000, position: [500, 0, 0] }} controls>
+          <Shapes />
+        </FiberScene>
+      </div>
     </Page>
   );
 }
