@@ -1,7 +1,7 @@
 import * as p5 from 'p5';
 import React from 'react';
-import Page from 'components/page';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
+import Page from 'components/page';
 
 type Walker = {
   x: number;
