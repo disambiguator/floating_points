@@ -2,7 +2,7 @@
 const plugins = require('next-compose-plugins');
 
 const nextConfig = {
-  webpack(config) {
+  webpack(config, { isServer }) {
     config.module.rules.push(
       { test: /react-spring/, sideEffects: true }, // prevent vercel to crash when deploy
       {
@@ -14,6 +14,12 @@ const nextConfig = {
     config.watchOptions = {
       ignored: ['**/.git/**', '**/.next/**', '**node_modules/**'],
     };
+
+    // Fixes npm packages that depend on `fs` module
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+    }
+
     return config;
   },
   typescript: {
