@@ -51,6 +51,7 @@
     "@react-three/drei": "^8.3.1",
     "@react-three/fiber": "^7.0.1",
     "@types/three": "^0.137.0",
+    "canvas-capture": "^1.1.11",
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
     "glsl-hsv2rgb": "^1.0.0",
