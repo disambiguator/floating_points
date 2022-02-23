@@ -1,9 +1,10 @@
+import { Instance, Instances } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
 import { Config, useStore } from '../lib/store';
-const renderSpeed = 1000;
+const numCubes = 1000;
 
 const Shader = {
   vertexShader: `
@@ -20,12 +21,13 @@ const Shader = {
 
     void main() {
 
-    vPosition = position;
+    vPosition = (vec4(position,1.) * instanceMatrix).xyz;
 
     vec3 newPosition = position + amplitude * displacement * 100.0 * direction;
 
     gl_Position = projectionMatrix *
       modelViewMatrix *
+      instanceMatrix *
       vec4(newPosition,1.0);
     }
 `,
@@ -85,7 +87,7 @@ const Box = ({
       <boxBufferGeometry args={[15, 15, 15]} ref={geometryRef}>
         <bufferAttribute
           attachObject={['attributes', 'displacement']}
-          count={renderSpeed}
+          count={numCubes}
           array={displacement}
           itemSize={1}
         />
@@ -98,8 +100,8 @@ const Box = ({
 export const Shapes = React.memo(function Shapes() {
   const materialRef = useRef<THREE.ShaderMaterial>();
   const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
+    const d = new Float32Array(numCubes);
+    for (let i = 0; i < numCubes; i++) {
       d[i] = Math.random() * 5;
     }
     return d;
@@ -133,8 +135,76 @@ export const Shapes = React.memo(function Shapes() {
   return <>{cubes}</>;
 });
 
+const BoxInstance = () => {
+  // const rotation: [number, number, number] = [
+  //   (Math.PI / 64) * Math.random() * 100,
+  //   (Math.PI / 64) * Math.random() * 100,
+  //   (Math.PI / 64) * Math.random() * 100,
+  // ];
+  const rotation = undefined;
+
+  const position: [number, number, number] = [
+    Math.random() * 300,
+    Math.random() * 300,
+    Math.random() * 300,
+  ];
+
+  return <Instance position={position} rotation={rotation} />;
+  {
+    /* <bufferAttribute
+          attachObject={['attributes', 'displacement']}
+          count={numCubes}
+          array={displacement}
+          itemSize={1}
+        /> */
+  }
+};
+
+export const Shapes2 = React.memo(function Shapes() {
+  const materialRef = useRef<THREE.ShaderMaterial>();
+  // const displacement = useMemo(() => {
+  //   const d = new Float32Array(numCubes);
+  //   for (let i = 0; i < numCubes; i++) {
+  //     d[i] = Math.random() * 5;
+  //   }
+  //   return d;
+  // }, []);
+
+  useFrame(({ camera }) => {
+    // camera.translateX(-0.5);
+    // const { ray, noiseAmplitude } = useStore.getState();
+    // const amplitude = noiseAmplitude * 1000;
+    // const material = materialRef.current!;
+    // material.uniforms.origin.value = ray.origin;
+    // material.uniforms.direction.value = ray.direction;
+    // material.uniforms.amplitude.value = scaleMidi(amplitude, 0, 0.0005);
+  });
+
+  const cubes = useMemo(
+    () =>
+      Array(numCubes)
+        .fill(undefined)
+        .map((_value, i) => (
+          <BoxInstance key={i} /> // displacement={displacement} />
+        )),
+    [],
+  );
+
+  return (
+    <>
+      <pointLight position={[10, 10, 100]} />
+      <Instances>
+        <boxGeometry args={[15, 15, 15]} />
+        <shaderMaterial args={[Shader]} ref={materialRef} />
+        {/* <meshStandardMaterial /> */}
+        {cubes}
+      </Instances>
+    </>
+  );
+});
+
 export const chaosConfig: Config = {
   name: 'chaos' as const,
-  Contents: Shapes,
+  Contents: Shapes2,
   params: {},
 };
