@@ -60,7 +60,7 @@
     "next-compose-plugins": "^2.2.1",
     "open-simplex-noise": "^2.4.0-pre4",
     "p5": "^1.1.9",
-    "r3f-perf": "^4.8.1",
+    "r3f-perf": "^5.4.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-ga": "^3.3.0",
@@ -68,7 +68,7 @@
     "react-p5-wrapper": "^3.0.1",
     "react-responsive": "^8.2.0",
     "sass": "^1.32.13",
-    "three": "^0.137.5",
+    "three": "^0.138.2",
     "three-csg-ts": "^3.1.6",
     "three-stdlib": "^2.0.3",
     "zustand": "^3.2.0"
