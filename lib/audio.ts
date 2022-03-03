@@ -90,7 +90,7 @@ export const useAudioUrl = (url: string, enabled = true) => {
       camera?.children && camera.remove(listener);
       sound.source && sound.stop();
     };
-  }, [enabled]);
+  }, [enabled, camera, url]);
 
   return audio;
 };
@@ -129,7 +129,7 @@ export function useMicrophone(enabled = true) {
           });
       }
     }
-  }, [enabled]);
+  }, [camera, enabled]);
 
   return audio;
 }
