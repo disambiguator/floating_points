@@ -49,7 +49,7 @@ export const Controls = () => {
           {!isMobile && <PopOutControls popOut={popOut} />}
         </>
       )}
-      {audioEnabled ? <ControlPanel /> : null}
+      {audioEnabled ? <SpectrumVisualizer /> : null}
     </>
   );
 };
@@ -62,7 +62,7 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
   return null;
 };
 
-const ControlPanel = () => {
+const SpectrumVisualizer = () => {
   const [_values, set] = useControls(() => ({
     volume: { value: 0, min: 0, max: 127 },
     subBass: { value: 0, min: 0, max: 127 },
@@ -137,11 +137,6 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
     </>
   );
 };
-
-const _throttledHistory = throttle((params) => {
-  const url = `/mixer?params=${JSON.stringify(params)}`;
-  window.history.pushState('', '', url);
-}, 1000);
 
 const onUserChange =
   (onChange: OnChangeHandler): OnChangeHandler =>
