@@ -1,10 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
-import create, { GetState, SetState } from 'zustand';
-import {
-  StoreApiWithSubscribeWithSelector,
-  subscribeWithSelector,
-} from 'zustand/middleware';
+import create, { GetState, Mutate, SetState, StoreApi } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { Spectrum } from './audio';
 
 export const MIDI_PARAMS = [
@@ -64,7 +61,7 @@ const useStore = create<
   State,
   SetState<State>,
   GetState<State>,
-  StoreApiWithSubscribeWithSelector<State>
+  Mutate<StoreApi<State>, [['zustand/subscribeWithSelector', never]]>
 >(
   subscribeWithSelector(
     (set): State => ({
