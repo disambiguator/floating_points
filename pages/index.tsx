@@ -229,17 +229,17 @@ const Scatter = () => {
         <div className={styles.contents}>
           <h1>Paras Sanghavi</h1>
           <div className={styles.subheading}>
-            web developer and generative artist in San Francisco, CA.
+            web developer and generative artist based in San Francisco.
           </div>
           <div>
             {'contact me: '}
             <a href="mailto:paras@disambiguo.us">email</a>
             {' | '}
-            <a href="https://matrix.to/#/@paras:disambiguo.us">matrix</a>
-            {' | '}
-            <a href="https://linkedin.com/in/psanghavi">linkedin</a>
+            <a href="https://www.instagram.com/disambiguator/">instagram</a>
             {' | '}
             <a href="https://github.com/disambiguator">github</a>
+            {' | '}
+            <a href="https://linkedin.com/in/psanghavi">linkedin</a>
           </div>
         </div>
 
