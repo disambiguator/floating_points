@@ -3,6 +3,7 @@ import Material, { GenericMaterial } from 'component-material';
 import glsl from 'glslify';
 import { useControls } from 'leva';
 import React, { useRef } from 'react';
+import { PointLight } from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 
@@ -73,7 +74,7 @@ function CustomMaterial() {
 
 function Scene() {
   const size = useThree((t) => t.size);
-  const lightRef = useRef<THREE.PointLight>();
+  const lightRef = useRef<PointLight>();
 
   useFrame(({ clock }) => {
     lightRef.current!.position.y = Math.sin(clock.elapsedTime) * 100;

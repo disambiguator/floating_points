@@ -22,7 +22,7 @@ const Eclipse = React.memo(function Shader() {
     const i = points.length;
     if (points.length < pointsPerRow * pointsPerRow) {
       const row = Math.floor(i / pointsPerRow);
-      const forward = row % 2 == 0;
+      const forward = row % 2 === 0;
       const x = forward ? i % pointsPerRow : pointsPerRow - (i % pointsPerRow);
       const y = ((noise(x / 8, row / 8) + 1) * 20) / 2;
       const newPoint: [number, number, number] = [

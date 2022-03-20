@@ -63,7 +63,6 @@ const Eclipse = React.memo(function Shader() {
   const timeRef = useRef(0);
   useFrame(({ clock }) => {
     if (clock.elapsedTime > 2 && timeRef.current > 30) {
-      console.log('new person');
       setPeople([
         ...people,
         <Person timeOffset={clock.elapsedTime} key={people.length} />,

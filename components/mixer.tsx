@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
 import { OnChangeHandler } from 'leva/dist/declarations/src/types';
-import { throttle } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
@@ -20,6 +19,35 @@ import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { sceneName, scenes } from './scenes';
+
+const PopOutControls = ({ popOut }: { popOut: () => void }) => {
+  useControls({
+    'Pop Out': button(popOut),
+  });
+
+  return null;
+};
+
+const SpectrumVisualizer = () => {
+  const [, set] = useControls(() => ({
+    volume: { value: 0, min: 0, max: 127 },
+    subBass: { value: 0, min: 0, max: 127 },
+    bass: { value: 0, min: 0, max: 127 },
+    midrange: { value: 0, min: 0, max: 127 },
+    treble: { value: 0, min: 0, max: 127 },
+  }));
+
+  useEffect(() => {
+    return useStore.subscribe(
+      spectrumSelector,
+      ({ volume, subBass, bass, midrange, treble }: Spectrum) => {
+        set({ volume, subBass, bass, midrange, treble });
+      },
+    );
+  }, [set]);
+
+  return null;
+};
 
 export const Controls = () => {
   const isMobile = useIsMobile();
@@ -52,35 +80,6 @@ export const Controls = () => {
       {audioEnabled ? <SpectrumVisualizer /> : null}
     </>
   );
-};
-
-const PopOutControls = ({ popOut }: { popOut: () => void }) => {
-  useControls({
-    'Pop Out': button(popOut),
-  });
-
-  return null;
-};
-
-const SpectrumVisualizer = () => {
-  const [_values, set] = useControls(() => ({
-    volume: { value: 0, min: 0, max: 127 },
-    subBass: { value: 0, min: 0, max: 127 },
-    bass: { value: 0, min: 0, max: 127 },
-    midrange: { value: 0, min: 0, max: 127 },
-    treble: { value: 0, min: 0, max: 127 },
-  }));
-
-  useEffect(() => {
-    return useStore.subscribe(
-      spectrumSelector,
-      ({ volume, subBass, bass, midrange, treble }: Spectrum) => {
-        set({ volume, subBass, bass, midrange, treble });
-      },
-    );
-  }, [set]);
-
-  return null;
 };
 
 const Scene = <T,>({ env }: { env: Env<T> }) => {

@@ -97,7 +97,8 @@ const Quad = () => {
         video.play();
       })
       .catch(function (err) {
-        console.log('An error occured! ' + err);
+        // eslint-disable-next-line no-console
+        console.error(`An error occured! ${err}`);
       });
   }, [video]);
 

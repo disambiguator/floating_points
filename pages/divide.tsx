@@ -28,7 +28,7 @@ const Divide = () => {
       bottomX = Math.random() * 800;
 
       ctx.beginPath();
-      ctx.strokeStyle = '#' + (((1 << 24) * Math.random()) | 0).toString(16);
+      ctx.strokeStyle = `#${(((1 << 24) * Math.random()) | 0).toString(16)}`;
       ctx.moveTo(topX, 0);
       ctx.lineTo(bottomX, 800);
       ctx.stroke();

@@ -42,8 +42,6 @@ const Vertices = () => {
         .replace(token, customTransform)
         .replace(token2, customGlsl);
 
-      console.log(shader.fragmentShader);
-
       shaderRef.current = shader;
     };
   }, []);

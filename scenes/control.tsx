@@ -48,7 +48,7 @@ const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
     if (audioEnabled) {
       const { frequencyData } = spectrum;
       if (isEmpty(frequencyData)) return;
-      mesh.rotation.z += Math.pow(frequencyData[params.index] / 700, 2);
+      mesh.rotation.z += (frequencyData[params.index] / 700) ** 2;
       material.color.setHSL(h, frequencyData[params.index] / 10, l);
     }
   });

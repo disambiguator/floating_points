@@ -107,6 +107,10 @@ const Dither = {
 
 export const Shapes = React.memo(function Shapes() {
   const gl = useThree((t) => t.gl);
+  const controlsRef = useRef<OrbitControlsImpl>(null);
+  const materialRef = useRef<ShaderPass>();
+  const groupRef = useRef<THREE.Group>();
+
   useEffect(() => {
     gl.setPixelRatio(0.4);
   }, [gl]);
@@ -120,10 +124,6 @@ export const Shapes = React.memo(function Shapes() {
   const { threshold } = useControls({
     threshold: { value: 0, min: -0.5, max: 0.5 },
   });
-
-  const controlsRef = useRef<OrbitControlsImpl>(null);
-  const materialRef = useRef<ShaderPass>();
-  const groupRef = useRef<THREE.Group>();
 
   return (
     <>

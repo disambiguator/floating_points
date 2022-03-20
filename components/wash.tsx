@@ -41,7 +41,7 @@ const Scatter = ({ width, height }: Dimensions) => {
     }
 
     ctx.beginPath();
-    ctx.strokeStyle = '#' + (((1 << 24) * Math.random()) | 0).toString(16);
+    ctx.strokeStyle = `#${(((1 << 24) * Math.random()) | 0).toString(16)}`;
     ctx.moveTo(points[0].x, points[0].y);
     ctx.lineTo(points[1].x, points[1].y);
     ctx.stroke();

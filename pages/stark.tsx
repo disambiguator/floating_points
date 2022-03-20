@@ -56,7 +56,7 @@ const Shaders = React.memo(function Shader({
 });
 
 export default function ShaderPage() {
-  const shader = shaders['stark'];
+  const shader = shaders.stark;
 
   return (
     <Page>

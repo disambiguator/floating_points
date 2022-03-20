@@ -120,14 +120,12 @@ export function useMicrophone(enabled = true) {
           setAudio({ analyser, listener });
           setStream(stream);
         });
-    } else {
-      if (audio) {
-        camera.remove(audio.listener);
-        stream &&
-          stream.getTracks().forEach(function (track) {
-            track.stop();
-          });
-      }
+    } else if (audio) {
+      camera.remove(audio.listener);
+      stream &&
+        stream.getTracks().forEach(function (track) {
+          track.stop();
+        });
     }
   }, [camera, enabled]);
 

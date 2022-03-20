@@ -7,20 +7,6 @@ import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
 import { Config, trailsSelector, useStore } from '../lib/store';
 
-const Effects = () => {
-  const zoomThreshold = useStore((state) => state.zoomThreshold);
-  const trails = useStore(trailsSelector);
-
-  return (
-    <afterimagePass
-      attachArray="passes"
-      args={[scaleMidi(trails, 0, 1), BarsShader]}
-      uniforms-damp-value={scaleMidi(trails, 0, 1)}
-      uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
-    />
-  );
-};
-
 const BarsShader = {
   uniforms: {
     damp: { value: 0.96 },
@@ -64,6 +50,20 @@ const BarsShader = {
     	gl_FragColor = max(texelNew, texelOld);
     }
   `,
+};
+
+const Effects = () => {
+  const zoomThreshold = useStore((state) => state.zoomThreshold);
+  const trails = useStore(trailsSelector);
+
+  return (
+    <afterimagePass
+      attachArray="passes"
+      args={[scaleMidi(trails, 0, 1), BarsShader]}
+      uniforms-damp-value={scaleMidi(trails, 0, 1)}
+      uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
+    />
+  );
 };
 
 const color = 'cyan';

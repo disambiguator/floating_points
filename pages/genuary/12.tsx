@@ -17,6 +17,21 @@ const Bendy = () => {
     const height = p.windowHeight;
     const squares: Square[] = [];
 
+    const newSquare = (): Square => {
+      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(
+        16,
+      )}`;
+      const square = {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: 0,
+        growing: true,
+        id: Math.random(),
+        color: randomColor,
+      };
+      return square;
+    };
+
     p.setup = () => {
       p.createCanvas(width, height);
       p.background('#f4f0db');
@@ -30,20 +45,6 @@ const Bendy = () => {
       squares.push(newSquare());
       squares.push(newSquare());
       squares.push(newSquare());
-    };
-
-    const newSquare = (): Square => {
-      const randomColor =
-        '#' + Math.floor(Math.random() * 16777215).toString(16);
-      const square = {
-        x: Math.random() * width,
-        y: Math.random() * height,
-        size: 0,
-        growing: true,
-        id: Math.random(),
-        color: randomColor,
-      };
-      return square;
     };
 
     const rectRect = (
@@ -95,7 +96,6 @@ const Bendy = () => {
         }
 
         s.size++;
-        console.log(s.color);
         p.fill(s.color);
         p.rect(s.x - s.size / 2, s.y - s.size / 2, s.size, s.size);
       });

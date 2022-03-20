@@ -63,7 +63,7 @@ void main()
   uniforms: {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
-    G: { value: Math.pow(2, -0.707) },
+    G: { value: 2 ** -0.707 },
   },
 };
 

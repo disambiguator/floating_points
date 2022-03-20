@@ -58,6 +58,26 @@ const Bendy = () => {
       return false;
     }
 
+    const addPoint = (x: number, y: number) => {
+      p.frameRate(60);
+
+      // const points = 3 + Math.floor(Math.random() * 5);
+      // const offset = Math.random() * 360;
+
+      const points = 3 + Math.floor(Math.random() * 3);
+      const offset = Math.random() * 360;
+
+      for (let i = 0; i < points; i++) {
+        cracks.push({
+          originX: x,
+          originY: y,
+          x,
+          y,
+          angle: p.radians((i * 360) / points + offset),
+        });
+      }
+    };
+
     p.setup = () => {
       p.createCanvas(width, height);
       p.frameRate(60);
@@ -79,7 +99,6 @@ const Bendy = () => {
 
       if (activeCracks.length === 0) {
         p.frameRate(0);
-        console.log('goodbye');
         return;
       }
 
@@ -108,26 +127,6 @@ const Bendy = () => {
         crack.x = newX;
         crack.y = newY;
       });
-    };
-
-    const addPoint = (x: number, y: number) => {
-      p.frameRate(60);
-
-      // const points = 3 + Math.floor(Math.random() * 5);
-      // const offset = Math.random() * 360;
-
-      const points = 3 + Math.floor(Math.random() * 3);
-      const offset = Math.random() * 360;
-
-      for (let i = 0; i < points; i++) {
-        cracks.push({
-          originX: x,
-          originY: y,
-          x,
-          y,
-          angle: p.radians((i * 360) / points + offset),
-        });
-      }
     };
 
     p.mouseClicked = () => {

@@ -107,7 +107,7 @@ const Stars = React.memo(function Stars() {
 
     if (time > bassStartTime) {
       const { volume } = useStore.getState().spectrum;
-      const size = 20 + Math.pow(volume / 4, 2);
+      const size = 20 + (volume / 4) ** 2;
       materialRef.current!.uniforms.size.value = size;
     }
 

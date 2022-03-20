@@ -83,6 +83,27 @@ const Dusen = function Dusen() {
     zooming: false,
   });
 
+  const zoom = (mouse: { clientX: number; clientY: number }) => {
+    const { uniforms } = ref.current!;
+
+    const bounds = uniforms.bounds.value as THREE.Vector2;
+    const normalizedCoords = new THREE.Vector2(
+      ((mouse.clientX / window.innerWidth) * 2 - 1) * viewport.aspect,
+      ((window.innerHeight - mouse.clientY) / window.innerHeight) * 2 - 1,
+    );
+
+    const mandelbrotCoord = normalizedCoords
+      .clone()
+      .divideScalar(uniforms.zoom.value as number)
+      .sub(bounds);
+
+    uniforms.zoom.value *= 1.01;
+
+    uniforms.bounds.value = normalizedCoords
+      .divideScalar(uniforms.zoom.value as number)
+      .sub(mandelbrotCoord);
+  };
+
   useFrame(({ invalidate, clock }) => {
     const { zooming, mouse } = zoomState.current;
     if (!zooming) {
@@ -104,27 +125,6 @@ const Dusen = function Dusen() {
 
   const stopZoom = () => {
     zoomState.current.zooming = false;
-  };
-
-  const zoom = (mouse: { clientX: number; clientY: number }) => {
-    const { uniforms } = ref.current!;
-
-    const bounds = uniforms.bounds.value as THREE.Vector2;
-    const normalizedCoords = new THREE.Vector2(
-      ((mouse.clientX / window.innerWidth) * 2 - 1) * viewport.aspect,
-      ((window.innerHeight - mouse.clientY) / window.innerHeight) * 2 - 1,
-    );
-
-    const mandelbrotCoord = normalizedCoords
-      .clone()
-      .divideScalar(uniforms.zoom.value as number)
-      .sub(bounds);
-
-    uniforms.zoom.value *= 1.01;
-
-    uniforms.bounds.value = normalizedCoords
-      .divideScalar(uniforms.zoom.value as number)
-      .sub(mandelbrotCoord);
   };
 
   return (

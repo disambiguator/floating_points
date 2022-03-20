@@ -44,6 +44,7 @@ export const useMidiController = () => {
             // @ts-ignore
             set({ [param]: e.value });
           } else {
+            // eslint-disable-next-line no-console
             console.log(e);
           }
         });

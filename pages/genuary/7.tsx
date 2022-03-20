@@ -42,7 +42,7 @@ const generateLine = (index: number) => {
     squares[(index + 2) % 5] = '🟨';
     squares[(index + 3) % 5] = '🟩';
   } else if (index < noiseStart) {
-    squares = squares.map((_, i) => ((index + i) % 2 == 0 ? '🟩' : '🟨'));
+    squares = squares.map((_, i) => ((index + i) % 2 === 0 ? '🟩' : '🟨'));
   } else {
     squares = noiseEmoji(index);
   }
@@ -82,7 +82,7 @@ function Wordle({ height }: { height: number; width: number }) {
     const i = lineIndex.current++;
 
     if (i < 6) return;
-    if (i == 6) {
+    if (i === 6) {
       setLines([
         <div key={0}>{generateLine(0)}</div>,
         <div key={1}>{generateLine(1)}</div>,
@@ -94,7 +94,7 @@ function Wordle({ height }: { height: number; width: number }) {
       return;
     }
     if (i > 6 && i < 12) return;
-    if (i == 12) {
+    if (i === 12) {
       setLines((lines) => [
         ...lines,
         <div key={6}>{generateLine(6)}</div>,

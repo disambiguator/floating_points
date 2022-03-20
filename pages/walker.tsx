@@ -46,7 +46,6 @@ const Bendy = () => {
     p.draw = () => {
       if (walkers.length === 0) {
         p.frameRate(0);
-        console.log('goodbye');
         return;
       }
 
@@ -65,7 +64,6 @@ const Bendy = () => {
         while (hasVisited(newX, newY)) {
           tries++;
           if (tries > 100) {
-            console.log('walker gave up');
             w.x = Math.random() * width;
             w.y = Math.random() * height;
             return;

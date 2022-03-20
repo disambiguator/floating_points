@@ -45,10 +45,11 @@ const Bendy = () => {
 
         const overlap = 0.2;
 
+        const x = i;
         sections.forEach((s, index) => {
           p.stroke(s);
 
-          const initial = noise(j / 8, i) * (-1 ^ index % 2);
+          const initial = noise(j / 8, x) * (-1 ^ index % 2);
           // const initial = noise(j / 8, 0) + i * (-1 ^ index % 2);
           // const initial = noise(j / 8, 0) + i * (-1) ** (index % 2);
           // const initial = noise(j / 8, i) + i * (-1) ** (index % 2);
@@ -68,7 +69,6 @@ const Bendy = () => {
     };
 
     p.mouseClicked = () => {
-      console.log(p.frameRate());
       if (p.frameRate() > 0) {
         p.frameRate(0);
       } else {

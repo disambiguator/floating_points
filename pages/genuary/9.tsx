@@ -11,6 +11,8 @@ import * as THREE from 'three';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
 
+const size = 25;
+
 const Electron = React.memo(function Electron(props: {
   position: THREE.Vector3;
   direction: THREE.Vector3;
@@ -56,7 +58,6 @@ const Electron = React.memo(function Electron(props: {
     </Box>
   );
 });
-const size = 25;
 
 const randomPosition = (): {
   position: THREE.Vector3;
