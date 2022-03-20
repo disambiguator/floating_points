@@ -1,11 +1,12 @@
 import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { useControls } from 'leva';
 import { isEmpty } from 'lodash';
 import React, { useRef } from 'react';
-import { Line2 } from 'three-stdlib';
+import { AfterimagePass, Line2 } from 'three-stdlib';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
-import { Config, trailsSelector, useStore } from '../lib/store';
+import { Config, useStore } from '../lib/store';
 
 const BarsShader = {
   uniforms: {
@@ -53,22 +54,42 @@ const BarsShader = {
 };
 
 const Effects = () => {
-  const zoomThreshold = useStore((state) => state.zoomThreshold);
-  const trails = useStore(trailsSelector);
+  const ref = useRef<AfterimagePass>();
+
+  useControls('bars', {
+    damp: {
+      value: 10,
+      min: 0,
+      max: 127,
+      onChange: (damp) => {
+        const pass = ref.current!;
+        pass.uniforms.damp.value = scaleMidi(damp, 0, 1);
+      },
+    },
+    zoom: {
+      value: 10,
+      min: 0,
+      max: 127,
+      onChange: (damp) => {
+        const pass = ref.current!;
+        pass.uniforms.zoom.value = scaleMidi(damp, 0, 0.3);
+      },
+    },
+  });
 
   return (
-    <afterimagePass
-      attachArray="passes"
-      args={[scaleMidi(trails, 0, 1), BarsShader]}
-      uniforms-damp-value={scaleMidi(trails, 0, 1)}
-      uniforms-zoom-value={scaleMidi(zoomThreshold, 0, 0.3)}
-    />
+    <afterimagePass ref={ref} attachArray="passes" args={[0.96, BarsShader]} />
   );
 };
 
 const color = 'cyan';
 const Bars = React.memo(function Bars() {
   const lineRef = useRef<Line2>(null);
+
+  const { lineWidth } = useControls('bars', {
+    lineWidth: { value: 10, min: 0, max: 127 },
+  });
+
   useFrame(({ size }) => {
     const { geometry } = lineRef.current!;
     const { frequencyData } = useStore.getState().spectrum;
@@ -86,7 +107,7 @@ const Bars = React.memo(function Bars() {
       position={[0, -800, -1000]}
       ref={lineRef}
       color={color}
-      linewidth={10}
+      linewidth={lineWidth}
       points={new Array(SAMPLE_LENGTH * 3).fill(0)}
     />
   );
@@ -95,11 +116,9 @@ const Bars = React.memo(function Bars() {
 export const barsConfig: Config = {
   Contents: Bars,
   CustomEffects: Effects,
-  name: 'bars' as const,
+  name: 'bars',
   params: {},
   initialParams: {
-    zoomThreshold: 2,
-    trails: 125,
     audioEnabled: true,
   },
 };

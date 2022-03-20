@@ -6,7 +6,6 @@ import { Spectrum } from './audio';
 
 export const MIDI_PARAMS = [
   'noiseAmplitude',
-  'trails',
   'zoomThreshold',
   'bitcrush',
   'angle',
@@ -50,7 +49,6 @@ export type State = Params & {
   env: Env<any> | null;
 };
 
-export const trailsSelector = (state: State) => state.trails;
 export const kaleidoscopeSelector = (state: State) => state.kaleidoscope;
 export const bitcrushSelector = (state: State) => state.bitcrush;
 export const angleSelector = (state: State) => state.angle;
@@ -84,7 +82,6 @@ const useStore = create<
       color: false,
       zoomThreshold: 0,
       noiseAmplitude: 0,
-      trails: 0,
       kaleidoscope: 0,
       angle: 64,
       bitcrush: 0,

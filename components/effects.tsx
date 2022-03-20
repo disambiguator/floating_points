@@ -5,7 +5,7 @@ import {
   useFrame,
   useThree,
 } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { folder, useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
 import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
@@ -19,7 +19,6 @@ import {
   angleSelector,
   bitcrushSelector,
   kaleidoscopeSelector,
-  trailsSelector,
   useStore,
 } from '../lib/store';
 
@@ -44,64 +43,73 @@ const TunnelEffects = () => {
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
   useControls(() => ({
-    xSpeed: {
-      value: 64,
-      min: 0,
-      max: 127,
-      label: 'X Speed',
-      onChange: (xSpeed) => {
-        ref.current!.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
+    postprocessing: folder({
+      trails: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (trails) => {
+          const pass = ref.current!;
+
+          pass.uniforms.damp.value =
+            trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
+          pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
+        },
       },
-    },
-    ySpeed: {
-      value: 64,
-      min: 0,
-      max: 127,
-      label: 'Y Speed',
-      onChange: (ySpeed) => {
-        ref.current!.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
+      xSpeed: {
+        value: 64,
+        min: 0,
+        max: 127,
+        label: 'X Speed',
+        onChange: (xSpeed) => {
+          ref.current!.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
+        },
       },
-    },
-    trailNoiseAmplitude: {
-      value: 0,
-      min: 0,
-      max: 127,
-      label: 'Trail Noise Amplitude',
-      onChange: (v) => {
-        ref.current!.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
+      ySpeed: {
+        value: 64,
+        min: 0,
+        max: 127,
+        label: 'Y Speed',
+        onChange: (ySpeed) => {
+          ref.current!.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
+        },
       },
-    },
-    trailNoiseFrequency: {
-      value: 0,
-      min: 0,
-      max: 127,
-      label: 'Trail Noise Frequency',
-      onChange: (v) => {
-        ref.current!.uniforms.trailNoiseFrequency.value = scaleMidi(v, 0, 50);
-      },
-    },
-    trailNoiseTime: {
-      value: 0,
-      min: 0,
-      max: 127,
-      label: 'Trail Noise Time',
-      onChange: (v) => {
-        trailNoiseTimeRef.current = scaleMidi(v, 0, 2);
-      },
-    },
+      trailNoise: folder({
+        amplitude: {
+          value: 0,
+          min: 0,
+          max: 127,
+          onChange: (v) => {
+            ref.current!.uniforms.trailNoiseAmplitude.value = scaleMidi(
+              v,
+              0,
+              0.1,
+            );
+          },
+        },
+        frequency: {
+          value: 0,
+          min: 0,
+          max: 127,
+          onChange: (v) => {
+            ref.current!.uniforms.trailNoiseFrequency.value = scaleMidi(
+              v,
+              0,
+              50,
+            );
+          },
+        },
+        time: {
+          value: 0,
+          min: 0,
+          max: 127,
+          onChange: (v) => {
+            trailNoiseTimeRef.current = scaleMidi(v, 0, 2);
+          },
+        },
+      }),
+    }),
   }));
-
-  useEffect(() => {
-    const updateZoom = (trails: number) => {
-      const pass = ref.current!;
-      pass.uniforms.damp.value =
-        trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
-      pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
-    };
-    updateZoom(trailsSelector(useStore.getState()));
-
-    return useStore.subscribe(trailsSelector, updateZoom);
-  }, []);
 
   useEffect(
     () =>
@@ -130,7 +138,7 @@ const TunnelEffects = () => {
 
   useEffect(() => {
     const updateThreshold = ([zoomThreshold, name]: [number, string]) => {
-      ref.current!.uniforms.zoom.value = ['bars', 'cloth'].includes(name)
+      ref.current!.uniforms.zoom.value = ['cloth'].includes(name)
         ? 0
         : scaleMidi(zoomThreshold, 0, 0.3);
     };

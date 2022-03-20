@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { Leva, button, useControls } from 'leva';
+import { Leva, button, folder, useControls } from 'leva';
 import { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
@@ -30,11 +30,13 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
 
 const SpectrumVisualizer = () => {
   const [, set] = useControls(() => ({
-    volume: { value: 0, min: 0, max: 127 },
-    subBass: { value: 0, min: 0, max: 127 },
-    bass: { value: 0, min: 0, max: 127 },
-    midrange: { value: 0, min: 0, max: 127 },
-    treble: { value: 0, min: 0, max: 127 },
+    spectrum: folder({
+      volume: { value: 0, min: 0, max: 127 },
+      subBass: { value: 0, min: 0, max: 127 },
+      bass: { value: 0, min: 0, max: 127 },
+      midrange: { value: 0, min: 0, max: 127 },
+      treble: { value: 0, min: 0, max: 127 },
+    }),
   }));
 
   useEffect(() => {
@@ -155,6 +157,14 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   } = useMemo(() => useStore.getState(), []);
 
   useControls({
+    Contents: {
+      value: name,
+      options: Object.keys(scenes),
+      onChange: onUserChange((name: sceneName) => {
+        if (name !== useStore.getState().env?.name)
+          set({ env: { ...scenes[name] } });
+      }),
+    },
     ...Object.fromEntries(
       MIDI_PARAMS.map((v) => [
         v,
@@ -167,14 +177,6 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
         },
       ]),
     ),
-    Contents: {
-      value: name,
-      options: Object.keys(scenes),
-      onChange: onUserChange((name: sceneName) => {
-        if (name !== useStore.getState().env?.name)
-          set({ env: { ...scenes[name] } });
-      }),
-    },
     Color: {
       value: color,
       onChange: onUserChange((color) => set({ color })),

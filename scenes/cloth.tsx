@@ -61,6 +61,5 @@ export const clothConfig: Config = {
     color: true,
     zoomThreshold: 57,
     noiseAmplitude: 100,
-    trails: 127,
   },
 };
