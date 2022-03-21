@@ -88,7 +88,7 @@ const Control = () => {
 };
 
 export const controlConfig: Config = {
-  name: 'control' as const,
+  name: 'control',
   Contents: Control,
   params: {},
   initialParams: {

@@ -18,7 +18,6 @@ import {
   State,
   angleSelector,
   bitcrushSelector,
-  kaleidoscopeSelector,
   useStore,
 } from '../lib/store';
 
@@ -74,6 +73,14 @@ const TunnelEffects = () => {
           ref.current!.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
         },
       },
+      kaleidoscope: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (kaleidoscope) => {
+          ref.current!.uniforms.numSides.value = kaleidoscope;
+        },
+      },
       trailNoise: folder({
         amplitude: {
           value: 0,
@@ -110,14 +117,6 @@ const TunnelEffects = () => {
       }),
     }),
   }));
-
-  useEffect(
-    () =>
-      useStore.subscribe(kaleidoscopeSelector, (kaleidoscope: number) => {
-        ref.current!.uniforms.numSides.value = kaleidoscope;
-      }),
-    [],
-  );
 
   useEffect(() => {
     return useStore.subscribe(bitcrushSelector, (bitcrush: number) => {

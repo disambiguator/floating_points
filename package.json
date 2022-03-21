@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint_d . --ext=ts,tsx",
     "lint-fix": "eslint_d . --ext=ts,tsx --fix",
-    "test": "tsc --incremental && npm run lint",
+    "test": "tsc && npm run lint",
     "build": "next build",
     "watch": "tsc --watch",
     "start": "next dev"

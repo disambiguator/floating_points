@@ -7,7 +7,6 @@ const Dusen = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
-  // const noiseAmplitude = useStore((state) => state.noiseAmplitude);
 
   useFrame(({ clock }) => {
     if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;
@@ -26,7 +25,7 @@ const Dusen = React.memo(function Dusen() {
 });
 
 export const marbleConfig = {
-  name: 'marble' as const,
+  name: 'marble',
   Contents: Dusen,
   params: {},
 };

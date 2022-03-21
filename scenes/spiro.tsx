@@ -62,8 +62,9 @@ interface SpiroParams {
 }
 export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   const set = useStore((state) => state.set);
+  const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
 
-  useControls({
+  useControls('spiro', {
     'New Positions': button(() => {
       const newSeeds = initPositions();
       set((state) => {
@@ -73,9 +74,17 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
         };
       });
     }),
+    distort: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (v) => {
+        const shaderMaterial = shaderMaterialRef.current!;
+        shaderMaterial.uniforms.amplitude.value = scaleMidi(v, 0, 0.0005);
+      },
+    },
   });
 
-  const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
   const displacement = useMemo(() => {
     const d = new Float32Array(renderSpeed);
@@ -100,7 +109,7 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
       phi: p.phi + p.phiSpeed * renderSpeed,
     }));
 
-    const { ray, color, noiseAmplitude } = useStore.getState();
+    const { ray, color } = useStore.getState();
 
     const shaderMaterial = shaderMaterialRef.current;
     if (shaderMaterial) {
@@ -108,11 +117,6 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
       shaderMaterial.uniforms.direction.value = ray.direction;
       shaderMaterial.uniforms.time.value = clock.elapsedTime;
       shaderMaterial.uniforms.color.value = color;
-      shaderMaterial.uniforms.amplitude.value = scaleMidi(
-        noiseAmplitude,
-        0,
-        0.0005,
-      );
     }
 
     const positionAttribute = positionAttributeRef.current;
@@ -145,6 +149,6 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
 
 export const spiroConfig: Config<SpiroParams> = {
   Contents: SpiroContents,
-  name: 'spiro' as const,
+  name: 'spiro',
   params: { seeds: initPositions() },
 };

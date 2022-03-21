@@ -16,14 +16,10 @@ export const scaleMidi = (
 
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
   'Nocturn Keyboard': {
-    7: 'noiseAmplitude',
     74: 'zoomThreshold',
-    71: 'kaleidoscope',
   },
   'Akai Pro AFX': {
-    1: 'noiseAmplitude',
     3: 'zoomThreshold',
-    4: 'kaleidoscope',
   },
 };
 

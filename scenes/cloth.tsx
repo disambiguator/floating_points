@@ -7,14 +7,23 @@ import { scaleMidi } from '../lib/midi';
 import { Config, useStore } from '../lib/store';
 
 const Cloth = React.memo(function Cloth() {
-  const { lineWidth } = useControls({
+  const amplitude = useRef(100);
+  const { lineWidth } = useControls('cloth', {
     lineWidth: { value: 46, min: 0, max: 127, label: 'Line width' },
+    amplitude: {
+      value: 46,
+      min: 0,
+      max: 127,
+      onChange: (v) => {
+        amplitude.current = scaleMidi(v, 1, 500);
+      },
+    },
   });
   const lineRef = useRef<typeof Line>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
 
   useFrame(({ clock, size }) => {
-    const { color, zoomThreshold, noiseAmplitude } = useStore.getState();
+    const { color, zoomThreshold } = useStore.getState();
     const length = Math.floor(scaleMidi(zoomThreshold, 1, 2000));
 
     const line = lineRef.current;
@@ -22,13 +31,12 @@ const Cloth = React.memo(function Cloth() {
 
     // @ts-ignore
     const { geometry, material } = line;
-    const amplitude = scaleMidi(noiseAmplitude, 1, 500);
     geometry.setPositions(
       new Array(length)
         .fill(undefined)
         .flatMap((f, i) => [
           ((i * size.width) / length - size.width / 2) * 2,
-          noise2D(i * 0.01, clock.elapsedTime) * amplitude,
+          noise2D(i * 0.01, clock.elapsedTime) * amplitude.current,
           0,
         ]),
     );
@@ -54,12 +62,11 @@ const Cloth = React.memo(function Cloth() {
 });
 
 export const clothConfig: Config = {
-  name: 'cloth' as const,
+  name: 'cloth',
   Contents: Cloth,
   params: {},
   initialParams: {
     color: true,
     zoomThreshold: 57,
-    noiseAmplitude: 100,
   },
 };

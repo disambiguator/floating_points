@@ -4,13 +4,7 @@ import create, { GetState, Mutate, SetState, StoreApi } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { Spectrum } from './audio';
 
-export const MIDI_PARAMS = [
-  'noiseAmplitude',
-  'zoomThreshold',
-  'bitcrush',
-  'angle',
-  'kaleidoscope',
-] as const;
+export const MIDI_PARAMS = ['zoomThreshold', 'bitcrush', 'angle'] as const;
 
 export type MidiParam = typeof MIDI_PARAMS[number];
 
@@ -49,7 +43,6 @@ export type State = Params & {
   env: Env<any> | null;
 };
 
-export const kaleidoscopeSelector = (state: State) => state.kaleidoscope;
 export const bitcrushSelector = (state: State) => state.bitcrush;
 export const angleSelector = (state: State) => state.angle;
 export const spectrumSelector = (state: State) => state.spectrum;
@@ -81,8 +74,6 @@ const useStore = create<
       },
       color: false,
       zoomThreshold: 0,
-      noiseAmplitude: 0,
-      kaleidoscope: 0,
       angle: 64,
       bitcrush: 0,
       audioEnabled: false,

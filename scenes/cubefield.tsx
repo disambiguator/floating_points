@@ -57,7 +57,7 @@ export const CubeField = () => {
 };
 
 export const cubefieldConfig: Config = {
-  name: 'cubefield' as const,
+  name: 'cubefield',
   Contents: CubeField,
   params: {},
 };

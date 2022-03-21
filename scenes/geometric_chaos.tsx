@@ -1,4 +1,5 @@
 import { useFrame } from '@react-three/fiber';
+import { useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
@@ -109,15 +110,28 @@ export const Shapes = React.memo(function Shapes() {
     return <shaderMaterial args={[Shader]} ref={materialRef} />;
   }, []);
 
+  useControls('chaos', {
+    warp: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (v) => {
+        materialRef.current!.uniforms.amplitude.value = scaleMidi(
+          v * 1000,
+          0,
+          0.0005,
+        );
+      },
+    },
+  });
+
   useFrame(({ camera }) => {
     camera.translateX(-0.5);
-    const { ray, noiseAmplitude } = useStore.getState();
-    const amplitude = noiseAmplitude * 1000;
+    const { ray } = useStore.getState();
 
     const material = materialRef.current!;
     material.uniforms.origin.value = ray.origin;
     material.uniforms.direction.value = ray.direction;
-    material.uniforms.amplitude.value = scaleMidi(amplitude, 0, 0.0005);
   });
 
   const cubes = useMemo(
@@ -134,7 +148,7 @@ export const Shapes = React.memo(function Shapes() {
 });
 
 export const chaosConfig: Config = {
-  name: 'chaos' as const,
+  name: 'chaos',
   Contents: Shapes,
   params: {},
 };
