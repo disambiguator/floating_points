@@ -6,20 +6,12 @@ import {
   useThree,
 } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
-import shallow from 'zustand/shallow';
 import { scaleMidi } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import {
-  Config,
-  CustomEffectsType,
-  State,
-  angleSelector,
-  bitcrushSelector,
-  useStore,
-} from '../lib/store';
+import { Config, CustomEffectsType } from '../lib/store';
 
 extend({ AfterimagePass });
 
@@ -59,7 +51,6 @@ const TunnelEffects = () => {
         value: 64,
         min: 0,
         max: 127,
-        label: 'X Speed',
         onChange: (xSpeed) => {
           ref.current!.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
         },
@@ -68,9 +59,21 @@ const TunnelEffects = () => {
         value: 64,
         min: 0,
         max: 127,
-        label: 'Y Speed',
         onChange: (ySpeed) => {
           ref.current!.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
+        },
+      },
+      angle: {
+        value: 64,
+        min: 0,
+        max: 127,
+        onChange: (v) => {
+          ref.current!.uniforms.angle.value = scaleMidi(
+            v,
+            -Math.PI / 10,
+            Math.PI / 10,
+            true,
+          );
         },
       },
       kaleidoscope: {
@@ -79,6 +82,22 @@ const TunnelEffects = () => {
         max: 127,
         onChange: (kaleidoscope) => {
           ref.current!.uniforms.numSides.value = kaleidoscope;
+        },
+      },
+      bitcrush: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (v) => {
+          ref.current!.uniforms.bitcrush.value = v;
+        },
+      },
+      zoom: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (zoom) => {
+          ref.current!.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
         },
       },
       trailNoise: folder({
@@ -117,42 +136,6 @@ const TunnelEffects = () => {
       }),
     }),
   }));
-
-  useEffect(() => {
-    return useStore.subscribe(bitcrushSelector, (bitcrush: number) => {
-      ref.current!.uniforms.bitcrush.value = bitcrush;
-    });
-  }, []);
-
-  useEffect(() => {
-    return useStore.subscribe(angleSelector, (angle: number) => {
-      ref.current!.uniforms.angle.value = scaleMidi(
-        angle,
-        -Math.PI / 10,
-        Math.PI / 10,
-        true,
-      );
-    });
-  }, []);
-
-  useEffect(() => {
-    const updateThreshold = ([zoomThreshold, name]: [number, string]) => {
-      ref.current!.uniforms.zoom.value = ['cloth'].includes(name)
-        ? 0
-        : scaleMidi(zoomThreshold, 0, 0.3);
-    };
-
-    const zoomStateSelector = (state: State): [number, string] => [
-      state.zoomThreshold,
-      state.env!.name,
-    ];
-
-    updateThreshold(zoomStateSelector(useStore.getState()));
-
-    return useStore.subscribe(zoomStateSelector, updateThreshold, {
-      equalityFn: shallow,
-    });
-  }, []);
 
   useFrame(({ mouse }, delta) => {
     const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];

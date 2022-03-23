@@ -4,7 +4,7 @@ import create, { GetState, Mutate, SetState, StoreApi } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { Spectrum } from './audio';
 
-export const MIDI_PARAMS = ['zoomThreshold', 'bitcrush', 'angle'] as const;
+export const MIDI_PARAMS = [] as const;
 
 export type MidiParam = typeof MIDI_PARAMS[number];
 
@@ -43,8 +43,6 @@ export type State = Params & {
   env: Env<any> | null;
 };
 
-export const bitcrushSelector = (state: State) => state.bitcrush;
-export const angleSelector = (state: State) => state.angle;
 export const spectrumSelector = (state: State) => state.spectrum;
 
 // TODO: Some weird typing issues popped up with recent Zustand changes. Try to get rid of some type casts later.
@@ -73,9 +71,6 @@ const useStore = create<
         set({ exportScene });
       },
       color: false,
-      zoomThreshold: 0,
-      angle: 64,
-      bitcrush: 0,
       audioEnabled: false,
       volumeScaler: 1,
       volumeThreshold: 0,

@@ -14,13 +14,10 @@ export const scaleMidi = (
   return min + (midi * (max - min)) / 127;
 };
 
+// I guess I can bring this back one day
 const MAPPINGS: Record<string, Record<number, MidiParam>> = {
-  'Nocturn Keyboard': {
-    74: 'zoomThreshold',
-  },
-  'Akai Pro AFX': {
-    3: 'zoomThreshold',
-  },
+  'Nocturn Keyboard': {},
+  'Akai Pro AFX': {},
 };
 
 export const useMidiController = () => {
