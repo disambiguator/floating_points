@@ -5,15 +5,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { PartialState } from 'zustand';
+import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import {
-  Config,
-  Env,
-  MIDI_PARAMS,
-  State,
-  spectrumSelector,
-  useStore,
-} from 'lib/store';
+import { Config, Env, State, spectrumSelector, useStore } from 'lib/store';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { Effects } from './effects';
 import Page from './page';
@@ -30,12 +24,14 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
 
 const SpectrumVisualizer = () => {
   const [, set] = useControls(() => ({
-    spectrum: folder({
-      volume: { value: 0, min: 0, max: 127 },
-      subBass: { value: 0, min: 0, max: 127 },
-      bass: { value: 0, min: 0, max: 127 },
-      midrange: { value: 0, min: 0, max: 127 },
-      treble: { value: 0, min: 0, max: 127 },
+    audio: folder({
+      spectrum: folder({
+        volume: { value: 0, min: 0, max: 127 },
+        subBass: { value: 0, min: 0, max: 127 },
+        bass: { value: 0, min: 0, max: 127 },
+        midrange: { value: 0, min: 0, max: 127 },
+        treble: { value: 0, min: 0, max: 127 },
+      }),
     }),
   }));
 
@@ -88,11 +84,23 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
   const gl = useThree((t) => t.gl);
   const setExportScene = useStore((state) => state.setExportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
-  const set = useStore((state) => state.set);
-  const volumeControl = useStore((state) => state.volumeControl);
-
+  const [volumeScaler, setVolumeScaler] = useRefState(1);
+  const [volumeThreshold, setVolumeThreshold] = useRefState(1);
   const raycaster = new THREE.Raycaster();
-
+  useControls('audio', {
+    scale: {
+      value: 1,
+      min: 0,
+      max: 10,
+      onChange: setVolumeScaler,
+    },
+    threshold: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: setVolumeThreshold,
+    },
+  });
   const audio = useMicrophone(audioEnabled);
 
   useFrame(({ camera, mouse }) => {
@@ -100,19 +108,13 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
     useStore.setState({ ray: raycaster.ray });
 
     if (audio) {
-      const { volumeScaler, volumeThreshold } = useStore.getState();
       const spectrum = analyseSpectrum(audio);
       const { volume } = spectrum;
-
-      if (volumeControl) {
-        //@ts-ignore
-        set({
-          [volumeControl]:
-            volume * volumeScaler > volumeThreshold ? volume * volumeScaler : 0,
-        });
-      }
-
-      useStore.setState({ spectrum });
+      const volumeControl =
+        volume * volumeScaler.current > volumeThreshold.current
+          ? volume * volumeScaler.current
+          : 0;
+      useStore.setState({ spectrum, volumeControl });
     }
   });
   useEffect(() => {
@@ -146,15 +148,7 @@ const onUserChange =
   };
 
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
-  const {
-    color,
-    audioEnabled,
-    volumeScaler,
-    volumeControl,
-    volumeThreshold,
-    set,
-    ...rest
-  } = useMemo(() => useStore.getState(), []);
+  const { color, audioEnabled, set } = useMemo(() => useStore.getState(), []);
 
   useControls({
     Contents: {
@@ -165,43 +159,16 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
           set({ env: { ...scenes[name] } });
       }),
     },
-    ...Object.fromEntries(
-      MIDI_PARAMS.map((v) => [
-        v,
-        {
-          value: rest[v],
-          min: 0,
-          max: 127,
-          // @ts-ignore
-          onChange: onUserChange((newValue) => set({ [v]: newValue })),
-        },
-      ]),
-    ),
     Color: {
       value: color,
       onChange: onUserChange((color) => set({ color })),
     },
-    'Microphone Audio': {
-      value: audioEnabled,
-      onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
-    },
-    Scale: {
-      value: volumeScaler,
-      min: 0,
-      max: 2,
-      onChange: onUserChange((volumeScaler) => set({ volumeScaler })),
-    },
-    'Volume Control': {
-      value: volumeControl,
-      options: [...MIDI_PARAMS, 'speed', 'lineWidth'],
-      onChange: onUserChange((volumeControl) => set({ volumeControl })),
-    },
-    volumeThreshold: {
-      value: volumeThreshold,
-      min: 0,
-      max: 127,
-      onChange: onUserChange((newValue) => set({ volumeThreshold: newValue })),
-    },
+    audio: folder({
+      enabled: {
+        value: audioEnabled,
+        onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
+      },
+    }),
     Export: button(() => {
       useStore.getState().exportScene();
     }),

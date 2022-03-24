@@ -3,12 +3,13 @@ import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
+import { useRefState } from 'lib/hooks';
 import { scaleMidi } from '../lib/midi';
-import { Config, useStore } from '../lib/store';
+import { Config, useSpectrum, useStore } from '../lib/store';
 
 const length = 300;
 const Cloth = React.memo(function Cloth() {
-  const amplitude = useRef(100);
+  const [amplitude, setAmplitude] = useRefState(100);
   const frequency = useRef(100);
   const { lineWidth } = useControls('cloth', {
     lineWidth: { value: 46, min: 0, max: 127, label: 'Line width' },
@@ -31,6 +32,7 @@ const Cloth = React.memo(function Cloth() {
   });
   const lineRef = useRef<typeof Line>(null);
   const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
+  useSpectrum({ amplitude: setAmplitude });
 
   useFrame(({ clock, size }) => {
     const line = lineRef.current;

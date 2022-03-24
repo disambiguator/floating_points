@@ -1,4 +1,5 @@
-import React from 'react';
+import { useControls } from 'leva';
+import React, { useEffect } from 'react';
 import * as THREE from 'three';
 import create, { GetState, Mutate, SetState, StoreApi } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
@@ -19,9 +20,7 @@ export type CustomEffectsType<T> = React.ComponentType<{
 type Params = { [key in MidiParam]: number } & {
   color: boolean;
   audioEnabled: boolean;
-  volumeScaler: number;
-  volumeThreshold: number;
-  volumeControl: MidiParam | null;
+  volumeControl: number;
 };
 
 export type Config<T = Record<string, any>> = {
@@ -46,7 +45,7 @@ export type State = Params & {
 export const spectrumSelector = (state: State) => state.spectrum;
 
 // TODO: Some weird typing issues popped up with recent Zustand changes. Try to get rid of some type casts later.
-const useStore = create<
+export const useStore = create<
   State,
   SetState<State>,
   GetState<State>,
@@ -72,13 +71,21 @@ const useStore = create<
       },
       color: false,
       audioEnabled: false,
-      volumeScaler: 1,
-      volumeThreshold: 0,
-      volumeControl: null,
+      volumeControl: 0,
       env: null,
       set,
     }),
   ),
 );
 
-export { useStore };
+export const useSpectrum = (values: Record<string, (n: number) => void>) => {
+  const audioEnabled = useStore((state) => state.audioEnabled);
+
+  const { volume } = useControls('audio', {
+    volume: { value: null, options: Object.keys(values) },
+  });
+  return useEffect(() => {
+    if (audioEnabled && volume)
+      return useStore.subscribe((state) => state.volumeControl, values[volume]);
+  }, [volume, values, audioEnabled]);
+};
