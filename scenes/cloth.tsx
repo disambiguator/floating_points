@@ -5,12 +5,13 @@ import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
 import { useRefState } from 'lib/hooks';
 import { scaleMidi } from '../lib/midi';
-import { Config, useSpectrum, useStore } from '../lib/store';
+import { Config, useSpectrum } from '../lib/store';
 
 const length = 300;
 const Cloth = React.memo(function Cloth() {
   const [amplitude, setAmplitude] = useRefState(100);
-  const frequency = useRef(100);
+  const [freezeColor, setFreezeColor] = useRefState(false);
+  const [frequency, setFrequency] = useRefState(100);
   const { lineWidth } = useControls('cloth', {
     lineWidth: { value: 46, min: 0, max: 127, label: 'Line width' },
     amplitude: {
@@ -18,7 +19,7 @@ const Cloth = React.memo(function Cloth() {
       min: 0,
       max: 127,
       onChange: (v) => {
-        amplitude.current = scaleMidi(v, 1, 500);
+        setAmplitude(scaleMidi(v, 1, 500));
       },
     },
     frequency: {
@@ -26,8 +27,12 @@ const Cloth = React.memo(function Cloth() {
       min: 0,
       max: 127,
       onChange: (v) => {
-        frequency.current = scaleMidi(v, 0, 0.2);
+        setFrequency(scaleMidi(v, 0, 0.2));
       },
+    },
+    freezeColor: {
+      value: false,
+      onChange: setFreezeColor,
     },
   });
   const lineRef = useRef<typeof Line>(null);
@@ -50,8 +55,7 @@ const Cloth = React.memo(function Cloth() {
         ]),
     );
 
-    const { color } = useStore.getState();
-    if (color) {
+    if (!freezeColor.current) {
       material!.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.2);
     }
   });
@@ -75,7 +79,4 @@ export const clothConfig: Config = {
   name: 'cloth',
   Contents: Cloth,
   params: {},
-  initialParams: {
-    color: true,
-  },
 };

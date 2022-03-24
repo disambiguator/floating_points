@@ -82,24 +82,32 @@ export const Controls = () => {
 
 const Scene = <T,>({ env }: { env: Env<T> }) => {
   const gl = useThree((t) => t.gl);
-  const setExportScene = useStore((state) => state.setExportScene);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const [volumeScaler, setVolumeScaler] = useRefState(1);
   const [volumeThreshold, setVolumeThreshold] = useRefState(1);
+  const [exportScene, setExportScene] = useRefState(() => {
+    // eslint-disable-next-line no-alert
+    window.alert('Not instantiated yet');
+  });
   const raycaster = new THREE.Raycaster();
-  useControls('audio', {
-    scale: {
-      value: 1,
-      min: 0,
-      max: 10,
-      onChange: setVolumeScaler,
-    },
-    threshold: {
-      value: 0,
-      min: 0,
-      max: 127,
-      onChange: setVolumeThreshold,
-    },
+  useControls({
+    audio: folder({
+      scale: {
+        value: 1,
+        min: 0,
+        max: 10,
+        onChange: setVolumeScaler,
+      },
+      threshold: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: setVolumeThreshold,
+      },
+    }),
+    Export: button(() => {
+      exportScene.current();
+    }),
   });
   const audio = useMicrophone(audioEnabled);
 
@@ -148,7 +156,7 @@ const onUserChange =
   };
 
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
-  const { color, audioEnabled, set } = useMemo(() => useStore.getState(), []);
+  const { audioEnabled, set } = useMemo(() => useStore.getState(), []);
 
   useControls({
     Contents: {
@@ -159,18 +167,11 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
           set({ env: { ...scenes[name] } });
       }),
     },
-    Color: {
-      value: color,
-      onChange: onUserChange((color) => set({ color })),
-    },
     audio: folder({
       enabled: {
         value: audioEnabled,
         onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
       },
-    }),
-    Export: button(() => {
-      useStore.getState().exportScene();
     }),
   });
 

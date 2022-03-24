@@ -83,6 +83,12 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
         shaderMaterial.uniforms.amplitude.value = scaleMidi(v, 0, 0.0005);
       },
     },
+    color: {
+      value: false,
+      onChange: (v) => {
+        shaderMaterialRef.current!.uniforms.color.value = v;
+      },
+    },
   });
 
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
@@ -109,14 +115,13 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
       phi: p.phi + p.phiSpeed * renderSpeed,
     }));
 
-    const { ray, color } = useStore.getState();
+    const { ray } = useStore.getState();
 
     const shaderMaterial = shaderMaterialRef.current;
     if (shaderMaterial) {
       shaderMaterial.uniforms.origin.value = ray.origin;
       shaderMaterial.uniforms.direction.value = ray.direction;
       shaderMaterial.uniforms.time.value = clock.elapsedTime;
-      shaderMaterial.uniforms.color.value = color;
     }
 
     const positionAttribute = positionAttributeRef.current;

@@ -18,7 +18,6 @@ export type CustomEffectsType<T> = React.ComponentType<{
 }>;
 
 type Params = { [key in MidiParam]: number } & {
-  color: boolean;
   audioEnabled: boolean;
   volumeControl: number;
 };
@@ -36,8 +35,6 @@ export type Env<T> = Omit<Config<T>, 'initialParams'>;
 export type State = Params & {
   ray: THREE.Ray;
   spectrum: Spectrum;
-  exportScene: () => void;
-  setExportScene: (arg0: () => void) => void;
   set: SetState<State>;
   env: Env<any> | null;
 };
@@ -62,14 +59,6 @@ export const useStore = create<
         treble: 0,
         frequencyData: [],
       },
-      exportScene: () => {
-        // eslint-disable-next-line no-alert
-        window.alert('Not instantiated yet');
-      },
-      setExportScene: (exportScene: () => void) => {
-        set({ exportScene });
-      },
-      color: false,
       audioEnabled: false,
       volumeControl: 0,
       env: null,
