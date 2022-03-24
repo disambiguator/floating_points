@@ -64,7 +64,7 @@ const TunnelShader = {
       #pragma glslify: blend = require(glsl-blend/all)
 
       vec4 colorBlend(in vec4 colorNew, in vec4 colorOld) {
-        // color = mix(colorNew, colorOld, 0.5);
+        if(colorNew.a > 0.99) return colorNew;
 
         // See all blend modes: https://github.com/jamieowen/glsl-blend/blob/master/modes.js
         // LIGHTEN = 11
@@ -124,7 +124,7 @@ const TunnelShader = {
         }
 
         vec4 texelNew = texture2D(tNew, coord);
-        vec4 texelOld = texture2D(tOld, coord) * damp;
+        vec4 texelOld = texture2D(tOld, coord) - (1. - damp);
 
         gl_FragColor = colorBlend(texelNew, texelOld);
       }
