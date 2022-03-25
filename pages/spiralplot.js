@@ -55,7 +55,7 @@ class Spiral extends React.Component {
   drawLine = (points1, points2) => {
     const [x1, y1] = points1;
     let [x2, y2] = points2;
-    const l = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    const l = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
     x2 = x1 + ((l + delta) * (x2 - x1)) / l;
     y2 = y1 + ((l + delta) * (y2 - y1)) / l;
@@ -91,9 +91,10 @@ class Spiral extends React.Component {
     }
 
     for (let x = 0; x < 1000; x++) {
+      const oldCoords = coords;
       coords = [...Array(sides).keys()].map((y) => {
         this.ctx.strokeStyle = colors[(y - 1 + sides) % sides];
-        return this.drawLine(coords[(y - 1 + sides) % sides], coords[y]);
+        return this.drawLine(oldCoords[(y - 1 + sides) % sides], oldCoords[y]);
       });
     }
 

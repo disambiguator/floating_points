@@ -4,7 +4,7 @@
   "description": "my graphics experiments",
   "main": ".eslintrc.js",
   "scripts": {
-    "lint": "eslint_d . --ext=ts,tsx",
+    "lint": "eslint_d . --ext=ts,tsx,js,jsx",
     "lint-fix": "eslint_d . --ext=ts,tsx --fix",
     "test": "tsc && npm run lint",
     "build": "next build",
