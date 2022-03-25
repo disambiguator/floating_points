@@ -19,7 +19,6 @@ export type CustomEffectsType<T> = React.ComponentType<{
 
 type Params = { [key in MidiParam]: number } & {
   audioEnabled: boolean;
-  volumeControl: number;
 };
 
 export type Config<T = Record<string, any>> = {
@@ -60,7 +59,6 @@ export const useStore = create<
         frequencyData: [],
       },
       audioEnabled: false,
-      volumeControl: 0,
       env: null,
       set,
     }),
@@ -75,6 +73,9 @@ export const useSpectrum = (values: Record<string, (n: number) => void>) => {
   });
   return useEffect(() => {
     if (audioEnabled && volume)
-      return useStore.subscribe((state) => state.volumeControl, values[volume]);
+      return useStore.subscribe(
+        (state) => state.spectrum.volume,
+        values[volume],
+      );
   }, [volume, values, audioEnabled]);
 };

@@ -92,18 +92,8 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
   const raycaster = new THREE.Raycaster();
   useControls({
     audio: folder({
-      scale: {
-        value: 1,
-        min: 0,
-        max: 10,
-        onChange: setVolumeScaler,
-      },
-      threshold: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: setVolumeThreshold,
-      },
+      scale: { value: 1, min: 0, max: 10, onChange: setVolumeScaler },
+      threshold: { value: 0, min: 0, max: 127, onChange: setVolumeThreshold },
     }),
     Export: button(() => {
       exportScene.current();
@@ -116,13 +106,13 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
     useStore.setState({ ray: raycaster.ray });
 
     if (audio) {
-      const spectrum = analyseSpectrum(audio);
-      const { volume } = spectrum;
-      const volumeControl =
-        volume * volumeScaler.current > volumeThreshold.current
-          ? volume * volumeScaler.current
-          : 0;
-      useStore.setState({ spectrum, volumeControl });
+      useStore.setState({
+        spectrum: analyseSpectrum(
+          audio,
+          volumeThreshold.current,
+          volumeScaler.current,
+        ),
+      });
     }
   });
   useEffect(() => {

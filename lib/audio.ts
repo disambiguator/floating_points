@@ -18,7 +18,11 @@ export interface Spectrum {
 }
 
 export const SAMPLE_LENGTH = 512;
-export const analyseSpectrum = (audio: Audio): Spectrum => {
+export const analyseSpectrum = (
+  audio: Audio,
+  threshold = 0,
+  scale = 1,
+): Spectrum => {
   const { analyser } = audio;
   const subBass: number[] = [];
   const bass: number[] = [];
@@ -32,7 +36,7 @@ export const analyseSpectrum = (audio: Audio): Spectrum => {
   for (let i = 0; i < analyserData.length; i++) {
     const frequency = (i * audio.listener.context.sampleRate) / fftSize;
 
-    const value = analyserData[i];
+    const value = (analyserData[i] > threshold ? analyserData[i] : 0) * scale;
 
     if (frequency >= 20 && frequency <= 60) {
       subBass.push(value);
