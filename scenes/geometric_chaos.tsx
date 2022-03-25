@@ -1,9 +1,9 @@
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
-import { Config, useStore } from '../lib/store';
+import { Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = {
@@ -96,33 +96,30 @@ const Box = ({
   );
 };
 
+const displacement = new Float32Array(renderSpeed);
+for (let i = 0; i < renderSpeed; i++) {
+  displacement[i] = Math.random() * 5;
+}
+
 export const Shapes = React.memo(function Shapes() {
   const materialRef = useRef<THREE.ShaderMaterial>();
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
+
+  const setAmplitude = useCallback((v) => {
+    materialRef.current!.uniforms.amplitude.value = scaleMidi(
+      v * 1000,
+      0,
+      0.0005,
+    );
   }, []);
 
   const material = useMemo(() => {
     return <shaderMaterial args={[Shader]} ref={materialRef} />;
   }, []);
 
+  useSpectrum({ amplitude: setAmplitude });
+
   useControls('chaos', {
-    warp: {
-      value: 0,
-      min: 0,
-      max: 127,
-      onChange: (v) => {
-        materialRef.current!.uniforms.amplitude.value = scaleMidi(
-          v * 1000,
-          0,
-          0.0005,
-        );
-      },
-    },
+    warp: { value: 0, min: 0, max: 127, onChange: setAmplitude },
   });
 
   useFrame(({ camera }) => {

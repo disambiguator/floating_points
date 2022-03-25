@@ -1,11 +1,11 @@
 import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
-import { Config, useStore } from '../lib/store';
+import { Config, useSpectrum, useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -64,6 +64,16 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   const set = useStore((state) => state.set);
   const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
 
+  const setDistort = useCallback((v) => {
+    shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
+      v,
+      0,
+      0.0005,
+    );
+  }, []);
+
+  useSpectrum({ distort: setDistort });
+
   useControls('spiro', {
     'New Positions': button(() => {
       const newSeeds = initPositions();
@@ -74,15 +84,7 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
         };
       });
     }),
-    distort: {
-      value: 0,
-      min: 0,
-      max: 127,
-      onChange: (v) => {
-        const shaderMaterial = shaderMaterialRef.current!;
-        shaderMaterial.uniforms.amplitude.value = scaleMidi(v, 0, 0.0005);
-      },
-    },
+    distort: { value: 0, min: 0, max: 127, setDistort },
     color: {
       value: false,
       onChange: (v) => {
