@@ -138,7 +138,7 @@ export const Shapes = React.memo(function Shapes() {
         .map((_value, i) => (
           <Box key={i} displacement={displacement} material={material} />
         )),
-    [displacement, material],
+    [material],
   );
 
   return <>{cubes}</>;
