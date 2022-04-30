@@ -1,4 +1,3 @@
-/* eslint-disable import/no-named-as-default-member */
 import ReactGA from 'react-ga';
 
 interface Event {

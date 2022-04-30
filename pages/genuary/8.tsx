@@ -54,6 +54,7 @@ const Eclipse = React.memo(function Shader() {
           points={points.length > 0 ? transformedPoints : [[0, 0, 0]]}
           color={'purple'}
           lineWidth={3}
+          alphaWrite={undefined} // IDK why i need this
         />
       </group>
     </>
