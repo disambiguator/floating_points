@@ -13,8 +13,8 @@ export default function HydraApp() {
   const [color2, setColor2] = useRefState({ r: 48, g: 11, b: 140 });
   useControls({
     color: { value: { r: 248, g: 214, b: 40 }, onChange: setColor },
-    color2: { value: { r: 248, g: 214, b: 40 }, onChange: setColor2 },
-    frequency: { value: 4, min: 0, max: 100, onChange: setFrequency },
+    color2: { value: { r: 28, g: 31, b: 40 }, onChange: setColor2 },
+    kaleid: { value: 4, min: 0, max: 100, onChange: setFrequency },
     scale: { value: 4, min: 0, max: 100, onChange: setScale },
   });
   const hydra = useHydra();
@@ -46,10 +46,11 @@ export default function HydraApp() {
             ),
           ),
       )
+      .kaleid(() => frequency.current)
       .out(o0);
 
     loop.start();
     render();
-  }, [frequency, color, hydra, scale]);
+  }, [frequency, color, color2, hydra, scale]);
   return null;
 }
