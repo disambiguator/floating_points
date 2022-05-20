@@ -1,10 +1,8 @@
-import { Hydra, generators } from 'hydra-ts';
+import { generators } from 'hydra-ts';
 import { useControls } from 'leva';
 import { useEffect } from 'react';
 import { useRefState } from 'lib/hooks';
 import useHydra from 'lib/hydra';
-
-const { src, osc, gradient, shape, voronoi, solid, noise } = generators;
 
 export default function HydraApp() {
   const [frequency, setFrequency] = useRefState(4);
@@ -19,6 +17,9 @@ export default function HydraApp() {
   });
   const hydra = useHydra();
   useEffect(() => {
+    /* eslint-disable @typescript-eslint/no-unused-vars  */
+    /* eslint-disable no-unused-vars */
+    const { src, osc, gradient, shape, voronoi, solid, noise } = generators;
     const {
       sources: [s0, s1, s2, s3],
       outputs: [o0, o1, o2, o3],
@@ -26,6 +27,8 @@ export default function HydraApp() {
       loop,
       render,
     } = hydra;
+    /* eslint-enable no-unused-vars */
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     noise(() => scale.current)
       .mult(
