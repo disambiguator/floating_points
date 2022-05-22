@@ -131,6 +131,8 @@ export function useMicrophone(enabled = true) {
           track.stop();
         });
     }
+    // TODO fix
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera, enabled]);
 
   return audio;

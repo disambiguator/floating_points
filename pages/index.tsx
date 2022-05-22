@@ -216,6 +216,8 @@ const Scatter = () => {
       clearInterval(animateInterval);
       window.removeEventListener('resize', updateDimensions);
     };
+    // TODO - fix, IDK
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

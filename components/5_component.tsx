@@ -134,6 +134,7 @@ const Scatter = () => {
     return () => {
       clearInterval(animateInterval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
