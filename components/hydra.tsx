@@ -30,7 +30,7 @@ export default function HydraApp() {
     /* eslint-enable no-unused-vars */
     /* eslint-enable @typescript-eslint/no-unused-vars */
 
-    noise(() => scale.current)
+    (noise(() => scale.current) as any)
       .mult(
         solid(
           () => color.current.r / 255,
@@ -40,7 +40,8 @@ export default function HydraApp() {
       )
       .add(
         noise(() => scale.current)
-          .invert()
+        // @ts-ignore
+        .invert()
           .mult(
             solid(
               () => color2.current.r / 255,
