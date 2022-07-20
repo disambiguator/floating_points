@@ -1,6 +1,7 @@
-import { Hydra } from 'hydra-ts';
 import { useEffect, useMemo } from 'react';
 import REGL from 'regl';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { Hydra } = require('hydra-ts');
 
 export default function useHydra() {
   const regl = useMemo(() => REGL(), []);

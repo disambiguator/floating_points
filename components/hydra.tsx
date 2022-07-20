@@ -1,8 +1,9 @@
-import { generators } from 'hydra-ts';
 import { useControls } from 'leva';
 import { useEffect } from 'react';
 import { useRefState } from 'lib/hooks';
 import useHydra from 'lib/hydra';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { generators } = require('hydra-ts');
 
 export default function HydraApp() {
   const [frequency, setFrequency] = useRefState(4);
@@ -40,8 +41,7 @@ export default function HydraApp() {
       )
       .add(
         noise(() => scale.current)
-        // @ts-ignore
-        .invert()
+          .invert()
           .mult(
             solid(
               () => color2.current.r / 255,
