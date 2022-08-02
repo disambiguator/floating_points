@@ -1,9 +1,9 @@
 import defaultForwardUV from './defaultForwardUV.vert';
-import marbleVert from './marble.vert';
+import fragmentShader from './marble.frag';
 
 const MarbleShader = {
   vertexShader: defaultForwardUV,
-  fragmentShader: marbleVert,
+  fragmentShader,
   uniforms: {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
