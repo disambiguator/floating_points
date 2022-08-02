@@ -1,8 +1,8 @@
 import { useFrame } from '@react-three/fiber';
-import glsl from 'glslify';
 import { Perf } from 'r3f-perf';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import customGlsl from 'lib/shaders/vertexTunnel.glsl';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 
@@ -32,12 +32,6 @@ const Vertices = () => {
           `;
 
       const token2 = '#include <common>';
-      const customGlsl = glsl`
-      #include <common>
-      #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
-      uniform float time;
-
-      `;
       shader.vertexShader = shader.vertexShader
         .replace(token, customTransform)
         .replace(token2, customGlsl);

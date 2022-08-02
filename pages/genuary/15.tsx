@@ -1,27 +1,19 @@
 import { useFrame } from '@react-three/fiber';
-import glsl from 'glslify';
 import React, { useRef } from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
+import shaderChunk from './15.glsl';
 
 function buildTwistMaterial() {
   const material = new THREE.MeshNormalMaterial();
   material.onBeforeCompile = function (shader) {
     shader.uniforms.time = { value: 0 };
 
-    shader.vertexShader =
-      glsl`
-    #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
-    uniform float time;
-
-    float noise(vec2 pos) {
-        return snoise2(pos.xy/20.) * 10.;
-    }
-    ` + shader.vertexShader;
+    shader.vertexShader = shaderChunk + shader.vertexShader;
     shader.vertexShader = shader.vertexShader.replace(
       '#include <begin_vertex>',
-      glsl`
+      `
         vec3 transformed = position;
         transformed.z = noise(position.xy);
         vNormal = normalize(
