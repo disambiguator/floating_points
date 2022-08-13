@@ -1,7 +1,8 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ShaderMaterial } from 'three';
+import { INITIAL_CAMERA_STATE } from 'components/config';
 import { scaleMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
 import { Config, useSpectrum } from '../lib/store';
@@ -11,6 +12,7 @@ const Dusen = React.memo(function Dusen() {
   const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
   const [radius, setRadius] = useState(0);
+  const camera = useThree((t) => t.camera);
   useControls('dusen', {
     radius: {
       value: 27,
@@ -20,6 +22,13 @@ const Dusen = React.memo(function Dusen() {
     },
   });
   useSpectrum({ radius: setRadius });
+
+  useEffect(() => {
+    // Reset camera position to original
+    // This is not super generic yet, and it should be if we re-use this.
+    camera.far = INITIAL_CAMERA_STATE.far;
+    camera.position.set(...INITIAL_CAMERA_STATE.position);
+  }, [camera]);
 
   useFrame(({ clock }) => {
     if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;

@@ -8,6 +8,7 @@ import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
 import { Config, Env, spectrumSelector, useStore } from 'lib/store';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
@@ -175,7 +176,7 @@ const Mixer = () => {
     <>
       <Controls />
       <FiberScene
-        camera={{ far: 10000, position: [0, 0, 300] }}
+        camera={INITIAL_CAMERA_STATE}
         linear
         flat
         gl={{
