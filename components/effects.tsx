@@ -6,10 +6,10 @@ import {
   useThree,
 } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
-import { scaleMidi } from '../lib/midi';
+import { scaleMidi, useMidiController } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { Config, CustomEffectsType } from '../lib/store';
 
@@ -33,7 +33,7 @@ const TunnelEffects = () => {
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
-  useControls(() => ({
+  const [, setControl] = useControls(() => ({
     postprocessing: folder({
       trails: {
         value: 0,
@@ -136,6 +136,18 @@ const TunnelEffects = () => {
       }),
     }),
   }));
+
+  const midiMapping = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries({ 1: 'trails' }).map(([key, param]) => [
+        key,
+        (value: number) => {
+          setControl({ [param]: value });
+        },
+      ]),
+    );
+  }, [setControl]);
+  useMidiController(midiMapping);
 
   useFrame(({ mouse }, delta) => {
     const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];

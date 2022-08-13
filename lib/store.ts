@@ -5,10 +5,6 @@ import create, { GetState, Mutate, SetState, StoreApi } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { Spectrum } from './audio';
 
-export const MIDI_PARAMS = [] as const;
-
-export type MidiParam = typeof MIDI_PARAMS[number];
-
 type SceneContents<T> = React.ComponentType<{
   config: T;
 }>;
@@ -17,7 +13,7 @@ export type CustomEffectsType<T> = React.ComponentType<{
   params: T;
 }>;
 
-type Params = { [key in MidiParam]: number } & {
+type Params = {
   audioEnabled: boolean;
 };
 

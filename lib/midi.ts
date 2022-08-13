@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import webmidi from 'webmidi';
-import { MidiParam, useStore } from './store';
+import { WebMidi } from 'webmidi';
 
 export const scaleMidi = (
   midi: number,
@@ -15,25 +14,27 @@ export const scaleMidi = (
 };
 
 // I guess I can bring this back one day
-const MAPPINGS: Record<string, Record<number, MidiParam>> = {
+const MAPPINGS: Record<string, Record<number, number>> = {
   'Nocturn Keyboard': {},
-  'Akai Pro AFX': {},
+  'Akai Pro AFX': {
+    1: 1,
+  },
 };
 
-export const useMidiController = () => {
-  const set = useStore((state) => state.set);
-
+export const useMidiController = (
+  config: Record<string, (midiVal: number) => void>,
+) => {
   useEffect(() => {
-    webmidi.enable(() => {
-      webmidi.inputs.forEach((input) => {
-        const mapping = MAPPINGS[input.name];
-        if (!mapping) return;
+    WebMidi.enable().then(() => {
+      Object.entries(MAPPINGS).forEach(([name, mapping]) => {
+        const input = WebMidi.getInputByName(name);
+        if (!input) return;
 
-        input.addListener('controlchange', 'all', (e) => {
+        input.addListener('controlchange', (e) => {
           const param = mapping[e.controller.number];
-          if (param) {
-            // @ts-ignore
-            set({ [param]: e.value });
+          if (param && config[param]) {
+            // @ts-expect-error - have not handled when this is not a number
+            config[param](e.value * 127);
           } else {
             // eslint-disable-next-line no-console
             console.log(e);
@@ -43,10 +44,7 @@ export const useMidiController = () => {
     });
 
     return () => {
-      webmidi.inputs.forEach((input) => {
-        input.removeListener();
-      });
-      if (webmidi.enabled) webmidi.disable();
+      if (WebMidi.enabled) WebMidi.disable();
     };
-  }, [set]);
+  }, [config]);
 };
