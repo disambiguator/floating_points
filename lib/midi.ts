@@ -37,7 +37,7 @@ export const useMidiController = (
             config[param](e.value * 127);
           } else {
             // eslint-disable-next-line no-console
-            console.log(e);
+            console.log('Nothing registered for', e.controller.number, e.value);
           }
         });
       });

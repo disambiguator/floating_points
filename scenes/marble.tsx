@@ -2,6 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
 import type { ShaderMaterial } from 'three';
 import shader from 'lib/shaders/marble';
+import type { Config } from 'lib/store';
 
 const Dusen = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
@@ -24,7 +25,7 @@ const Dusen = React.memo(function Dusen() {
   );
 });
 
-export const marbleConfig = {
+export const marbleConfig: Config = {
   name: 'marble',
   Contents: Dusen,
   params: {},

@@ -14,6 +14,7 @@ import Page from './page';
 import { FiberScene } from './scene';
 import { type sceneName, scenes } from './scenes';
 
+// In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
   useControls({
     'Pop Out': button(popOut),
