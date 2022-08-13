@@ -1,7 +1,7 @@
 import { useControls } from 'leva';
 import React, { useEffect } from 'react';
 import * as THREE from 'three';
-import create, { GetState, Mutate, SetState, StoreApi } from 'zustand';
+import create, { StoreApi } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { Spectrum } from './audio';
 
@@ -30,35 +30,27 @@ export type Env<T> = Omit<Config<T>, 'initialParams'>;
 export type State = Params & {
   ray: THREE.Ray;
   spectrum: Spectrum;
-  set: SetState<State>;
+  set: StoreApi<State>['setState'];
   env: Env<any> | null;
 };
 
 export const spectrumSelector = (state: State) => state.spectrum;
 
-// TODO: Some weird typing issues popped up with recent Zustand changes. Try to get rid of some type casts later.
-export const useStore = create<
-  State,
-  SetState<State>,
-  GetState<State>,
-  Mutate<StoreApi<State>, [['zustand/subscribeWithSelector', never]]>
->(
-  subscribeWithSelector(
-    (set): State => ({
-      ray: new THREE.Ray(),
-      spectrum: {
-        volume: 0,
-        subBass: 0,
-        bass: 0,
-        midrange: 0,
-        treble: 0,
-        frequencyData: [],
-      },
-      audioEnabled: false,
-      env: null,
-      set,
-    }),
-  ),
+export const useStore = create<State>()(
+  subscribeWithSelector((set) => ({
+    ray: new THREE.Ray(),
+    spectrum: {
+      volume: 0,
+      subBass: 0,
+      bass: 0,
+      midrange: 0,
+      treble: 0,
+      frequencyData: [],
+    },
+    audioEnabled: false,
+    env: null,
+    set,
+  })),
 );
 
 export const useSpectrum = (values: Record<string, (n: number) => void>) => {

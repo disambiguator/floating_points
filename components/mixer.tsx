@@ -4,10 +4,9 @@ import { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
-import { PartialState } from 'zustand';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import { Config, Env, State, spectrumSelector, useStore } from 'lib/store';
+import { Config, Env, spectrumSelector, useStore } from 'lib/store';
 import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { Effects } from './effects';
 import Page from './page';
@@ -197,8 +196,7 @@ export default function MixerPage({ name }: { name: sceneName }) {
   const set = useStore((state) => state.set);
   const { initialParams = {}, ...env } = useMemo(() => scenes[name], [name]);
   useEffect(() => {
-    const update = { env, ...initialParams } as PartialState<State>;
-    set(update);
+    set({ env, ...initialParams });
   }, [set, initialParams, env]);
 
   return (
