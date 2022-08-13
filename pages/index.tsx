@@ -253,9 +253,9 @@ const Scatter = () => {
                   loop
                   autoPlay={isMobile}
                   style={{ cursor: 'pointer' }}
-                  //@ts-ignore
+                  //@ts-expect-error - not recognized as video
                   onMouseOver={(event) => event.target.play()}
-                  //@ts-ignore
+                  //@ts-expect-error - not recognized as video
                   onMouseOut={(event) => event.target.pause()}
                 >
                   <source

@@ -30,7 +30,7 @@ function CustomMaterial() {
       varyings={{
         vColor: { type: 'vec3' },
       }}
-      // @ts-ignore
+      // @ts-expect-error - weird typing here
       aspect={viewport.aspect}
       depth={depth}
     >

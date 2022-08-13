@@ -115,8 +115,9 @@ export function useMicrophone(enabled = true) {
           const audio = new THREE.Audio(listener);
 
           const { context } = listener;
-          const source = context.createMediaStreamSource(stream);
-          // @ts-ignore
+          const source = context.createMediaStreamSource(
+            stream,
+          ) as unknown as AudioBufferSourceNode;
           audio.setNodeSource(source);
           listener.gain.disconnect();
 
