@@ -2,10 +2,10 @@ import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
+import type * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
-import { Config, useSpectrum, useStore } from '../lib/store';
+import { type Config, useSpectrum, useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;

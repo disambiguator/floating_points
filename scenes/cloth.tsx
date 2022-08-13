@@ -3,10 +3,10 @@ import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef } from 'react';
-import { Line2 } from 'three-stdlib';
+import type { Line2 } from 'three-stdlib';
 import { useRefState } from 'lib/hooks';
 import { scaleMidi } from '../lib/midi';
-import { Config, useSpectrum } from '../lib/store';
+import { type Config, useSpectrum } from '../lib/store';
 
 const length = 300;
 const Cloth = React.memo(function Cloth() {

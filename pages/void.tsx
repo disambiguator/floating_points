@@ -4,11 +4,16 @@ import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import create, { SetState } from 'zustand';
+import create, { type StoreApi } from 'zustand';
+import {
+  type Audio,
+  type Spectrum,
+  analyseSpectrum,
+  useAudioUrl,
+} from 'lib/audio';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import assetUrl from '../lib/assetUrl';
-import { Audio, Spectrum, analyseSpectrum, useAudioUrl } from '../lib/audio';
 import styles from './void.module.scss';
 
 // 0 - stars: no rotation or freq response
@@ -26,7 +31,7 @@ const stringsStartTime = 67; // start rotating stars
 type State = {
   spectrum: Spectrum;
   audio: Audio | undefined;
-  setState: SetState<State>;
+  setState: StoreApi<State>['setState'];
 };
 const useStore = create<State>((set) => ({
   spectrum: { volume: 0 } as Spectrum,

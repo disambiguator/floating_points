@@ -2,9 +2,12 @@ import { Effects, OrbitControls, useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { OrbitControls as OrbitControlsImpl, ShaderPass } from 'three-stdlib';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import type * as THREE from 'three';
+import type {
+  GLTF,
+  OrbitControls as OrbitControlsImpl,
+  ShaderPass,
+} from 'three-stdlib';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import defaultForwardUV from 'lib/shaders/defaultForwardUV.vert';

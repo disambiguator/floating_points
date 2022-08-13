@@ -1,18 +1,18 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { Leva, button, folder, useControls } from 'leva';
-import { OnChangeHandler } from 'leva/dist/declarations/src/types';
+import type { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import { Config, Env, spectrumSelector, useStore } from 'lib/store';
-import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
+import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
-import { sceneName, scenes } from './scenes';
+import { type sceneName, scenes } from './scenes';
 
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
   useControls({

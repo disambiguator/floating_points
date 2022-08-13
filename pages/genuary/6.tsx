@@ -1,7 +1,7 @@
 import { Cone, Sphere, Torus } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import React, { useRef, useState } from 'react';
-import * as THREE from 'three';
+import type * as THREE from 'three';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
 

@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { CSG } from 'three-csg-ts';
-import { Config, useStore } from '../lib/store';
+import { type Config, useStore } from '../lib/store';
 
 type TunnelParams = {
   size: [number, number, number];

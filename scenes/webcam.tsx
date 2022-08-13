@@ -1,7 +1,7 @@
 import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { Config } from '../lib/store';
+import type { Config } from '../lib/store';
 
 const WebcamShader = {
   vertexShader: /* glsl */ `

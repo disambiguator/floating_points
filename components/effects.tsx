@@ -1,6 +1,6 @@
 import { Effects as DreiEffects } from '@react-three/drei';
 import {
-  ReactThreeFiber,
+  type ReactThreeFiber,
   extend,
   useFrame,
   useThree,
@@ -11,7 +11,7 @@ import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
 import { scaleMidi, useMidiController } from '../lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import { Config, CustomEffectsType } from '../lib/store';
+import type { Config, CustomEffectsType } from '../lib/store';
 
 extend({ AfterimagePass });
 

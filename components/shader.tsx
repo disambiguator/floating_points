@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { ShaderMaterial, ShaderMaterialParameters } from 'three';
+import type { ShaderMaterial, ShaderMaterialParameters } from 'three';
 
 const Shaders = React.memo(function Shader({
   shader,

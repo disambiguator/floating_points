@@ -1,9 +1,9 @@
-import { ShaderMaterialParameters } from 'three';
+import type { ShaderMaterialParameters } from 'three';
 import DusenShader from 'lib/shaders/dusen';
 import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
 import StarkShader from 'lib/shaders/stark';
-import { Config } from 'lib/store';
+import type { Config } from 'lib/store';
 import { barsConfig } from 'scenes/bars';
 import { clothConfig } from 'scenes/cloth';
 import { controlConfig } from 'scenes/control';

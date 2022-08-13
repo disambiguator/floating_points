@@ -3,7 +3,7 @@ import { useControls } from 'leva';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from '../lib/midi';
-import { Config, useSpectrum, useStore } from '../lib/store';
+import { type Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = {

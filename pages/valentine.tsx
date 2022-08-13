@@ -2,7 +2,7 @@ import { Effects } from '@react-three/drei';
 import { extend, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { AfterimagePass, ShaderPass } from 'three-stdlib';
+import { AfterimagePass, type ShaderPass } from 'three-stdlib';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 

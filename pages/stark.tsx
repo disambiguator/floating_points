@@ -4,8 +4,8 @@ import React, { useRef } from 'react';
 import {
   DataTexture,
   RedFormat,
-  ShaderMaterial,
-  ShaderMaterialParameters,
+  type ShaderMaterial,
+  type ShaderMaterialParameters,
 } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';

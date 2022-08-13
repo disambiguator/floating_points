@@ -2,7 +2,7 @@ import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useMemo, useRef, useState } from 'react';
-import { Line2 } from 'three-stdlib';
+import type { Line2 } from 'three-stdlib';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
 

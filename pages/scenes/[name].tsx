@@ -1,7 +1,7 @@
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import React from 'react';
 import Mixer from 'components/mixer';
-import { sceneName, scenes } from '../../components/scenes';
+import { type sceneName, scenes } from '../../components/scenes';
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const params = context.params as { name: string };

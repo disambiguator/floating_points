@@ -1,5 +1,5 @@
 import { makeNoise2D } from 'open-simplex-noise';
-import * as p5 from 'p5';
+import type * as p5 from 'p5';
 import React from 'react';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';

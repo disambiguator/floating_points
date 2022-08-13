@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { DataTexture, RedFormat, ShaderMaterial } from 'three';
-import * as THREE from 'three';
+import { DataTexture, RedFormat, type ShaderMaterial } from 'three';
 import defaultForwardUV from 'lib/shaders/defaultForwardUV.vert';
 import doomFrag from 'lib/shaders/doom.frag';
 import Page from '../components/page';
@@ -15,7 +14,7 @@ const shader = {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
     noise: {
-      value: new THREE.DataTexture(new Uint8Array([0]), 0, 1, THREE.RedFormat),
+      value: new DataTexture(new Uint8Array([0]), 0, 1, RedFormat),
     },
   },
 };

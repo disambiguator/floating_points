@@ -1,8 +1,8 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import Material, { GenericMaterial } from 'component-material';
+import Material, { type GenericMaterial } from 'component-material';
 import { useControls } from 'leva';
 import React, { useRef } from 'react';
-import { PointLight } from 'three';
+import type { PointLight } from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import lightnoiseVertHead from 'lib/shaders/lightnoiseVertHead.glsl';

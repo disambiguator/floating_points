@@ -1,15 +1,15 @@
 import { useControls } from 'leva';
-import React, { useEffect } from 'react';
+import { type ComponentType, useEffect } from 'react';
 import * as THREE from 'three';
-import create, { StoreApi } from 'zustand';
+import create, { type StoreApi } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { Spectrum } from './audio';
+import type { Spectrum } from './audio';
 
-type SceneContents<T> = React.ComponentType<{
+type SceneContents<T> = ComponentType<{
   config: T;
 }>;
 
-export type CustomEffectsType<T> = React.ComponentType<{
+export type CustomEffectsType<T> = ComponentType<{
   params: T;
 }>;
 

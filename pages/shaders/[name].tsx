@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import React from 'react';
 import { FiberScene } from 'components/scene';
 import Shader from 'components/shader';

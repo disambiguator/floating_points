@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { ShaderMaterial } from 'three';
+import type { ShaderMaterial } from 'three';
 import shader from 'lib/shaders/marble';
 
 const Dusen = React.memo(function Dusen() {

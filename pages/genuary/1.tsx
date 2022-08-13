@@ -2,7 +2,7 @@ import { Effects, Instance, Instances, OrbitControls } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import fragmentShader from './1.glsl';
