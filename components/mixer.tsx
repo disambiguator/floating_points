@@ -7,7 +7,7 @@ import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import { initMidiController, useMidi } from 'lib/midi';
+import { type MidiConfig, initMidiController, useMidi } from 'lib/midi';
 import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
 import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { INITIAL_CAMERA_STATE } from './config';
@@ -168,14 +168,16 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     }),
   }));
 
-  const config = useMemo(() => {
-    return {
-      button1: () => setControl({ Contents: sceneNames[0] }),
-      button2: () => setControl({ Contents: sceneNames[1] }),
-    };
-  }, [setControl]);
-
-  useMidi(config);
+  useMidi(
+    useMemo(
+      (): MidiConfig => ({
+        button1: () => setControl({ Contents: sceneNames[0] }),
+        button2: () => setControl({ Contents: sceneNames[1] }),
+        button3: () => setControl({ Contents: sceneNames[2] }),
+      }),
+      [setControl],
+    ),
+  );
 
   return null;
 };

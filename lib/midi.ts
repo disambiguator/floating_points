@@ -30,6 +30,12 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     7: '7',
     F1: 'button1',
     'F#1': 'button2',
+    G1: 'button3',
+    'G#1': 'button4',
+    A1: 'button5',
+    'A#1': 'button6',
+    B1: 'button7',
+    C2: 'button8',
     'G#0': 'rightshift',
     G0: 'leftshift',
     'B-1': 'function1',
@@ -54,6 +60,7 @@ export type MidiConfig = Partial<{
   7: ControlChangeCallback;
   button1: NoteCallback;
   button2: NoteCallback;
+  button3: NoteCallback;
   function1: NoteCallback;
 }>;
 

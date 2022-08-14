@@ -1,13 +1,13 @@
 import { useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { folder, useControls } from 'leva';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { scaleMidi } from '../lib/midi';
+import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = {
-  vertexShader: `
+  vertexShader: /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -31,7 +31,7 @@ const Shader = {
     }
 `,
 
-  fragmentShader: `
+  fragmentShader: /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -118,9 +118,25 @@ export const Shapes = React.memo(function Shapes() {
 
   useSpectrum({ amplitude: setAmplitude });
 
-  useControls('chaos', {
-    warp: { value: 0, min: 0, max: 127, onChange: setAmplitude },
-  });
+  const [, setControls] = useControls(() => ({
+    chaos: folder({
+      warp: { value: 0, min: 0, max: 127, onChange: setAmplitude },
+    }),
+  }));
+
+  useMidi(
+    useMemo(
+      (): MidiConfig => ({
+        1: (value, modifiers) => {
+          if (modifiers.shift) {
+            // @ts-expect-error - dont know why this does not work
+            setControls({ warp: value });
+          }
+        },
+      }),
+      [setControls],
+    ),
+  );
 
   useFrame(({ camera }) => {
     camera.translateX(-0.5);

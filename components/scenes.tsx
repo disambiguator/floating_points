@@ -24,10 +24,10 @@ export const shaders: Record<string, ShaderMaterialParameters> = {
 export const scenes = {
   spiro: spiroConfig,
   dusen: dusenConfig,
+  chaos: chaosConfig,
   bars: barsConfig,
   cubefield: cubefieldConfig,
   control: controlConfig,
-  chaos: chaosConfig,
   cloth: clothConfig,
   fbm: fbmConfig,
   marble: marbleConfig,
