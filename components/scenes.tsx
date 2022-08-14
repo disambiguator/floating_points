@@ -23,8 +23,8 @@ export const shaders: Record<string, ShaderMaterialParameters> = {
 
 export const scenes = {
   spiro: spiroConfig,
-  bars: barsConfig,
   dusen: dusenConfig,
+  bars: barsConfig,
   cubefield: cubefieldConfig,
   control: controlConfig,
   chaos: chaosConfig,
@@ -34,4 +34,6 @@ export const scenes = {
   webcam: webcamConfig,
 };
 
-export type sceneName = keyof typeof scenes;
+export const sceneNames = Object.keys(scenes);
+
+export type SceneName = keyof typeof scenes;

@@ -6,13 +6,14 @@ import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
+import { useMidiController } from 'lib/midi';
 import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
 import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
-import { type sceneName, scenes } from './scenes';
+import { type SceneName, sceneNames, scenes } from './scenes';
 
 // In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
@@ -149,11 +150,11 @@ const onUserChange =
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   const { audioEnabled, set } = useMemo(() => useStore.getState(), []);
 
-  useControls({
+  const [, setControl] = useControls(() => ({
     Contents: {
       value: name,
       options: Object.keys(scenes),
-      onChange: onUserChange((name: sceneName) => {
+      onChange: onUserChange((name: SceneName) => {
         if (name !== useStore.getState().env?.name)
           set({ env: { ...scenes[name] } });
       }),
@@ -164,7 +165,16 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
         onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
       },
     }),
-  });
+  }));
+
+  const config = useMemo(() => {
+    return {
+      button1: () => setControl({ Contents: sceneNames[0] }),
+      button2: () => setControl({ Contents: sceneNames[1] }),
+    };
+  }, [setControl]);
+
+  useMidiController(config);
 
   return null;
 };
@@ -194,7 +204,7 @@ const Mixer = () => {
   );
 };
 
-export default function MixerPage({ name }: { name: sceneName }) {
+export default function MixerPage({ name }: { name: SceneName }) {
   const set = useStore((state) => state.set);
   const { initialParams = {}, ...env } = useMemo(() => scenes[name], [name]);
   useEffect(() => {
