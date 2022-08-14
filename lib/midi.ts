@@ -27,9 +27,11 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     4: '4',
     5: '5',
     6: '6',
+    7: '7',
     F1: 'button1',
     'F#1': 'button2',
     'G#0': 'shift',
+    'B-1': 'function1',
   },
 };
 
@@ -44,8 +46,10 @@ export type MidiConfig = Partial<{
   4: ControlChangeCallback;
   5: ControlChangeCallback;
   6: ControlChangeCallback;
+  7: ControlChangeCallback;
   button1: NoteCallback;
   button2: NoteCallback;
+  function1: NoteCallback;
 }>;
 
 const modifiers: Modifiers = {
@@ -53,10 +57,6 @@ const modifiers: Modifiers = {
 };
 
 export const initMidiController = async (): Promise<() => void> => {
-  if (WebMidi.enabled) {
-    throw 'useMidiController was already run.';
-  }
-
   await WebMidi.enable();
 
   const cleanupFunctions = Object.entries(MAPPINGS).map(([name, mapping]) => {
@@ -112,7 +112,7 @@ export const useMidi = (config: MidiConfig) => {
           }
         }
         // Debugging
-        // console.log(e);
+        // console.log(e.value);
       };
       input.addListener('controlchange', controlChangeListener);
 

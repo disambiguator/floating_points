@@ -47,12 +47,12 @@ const TunnelEffects = () => {
           pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
         },
       },
-      kaleidoscope: {
+      zoom: {
         value: 0,
         min: 0,
         max: 127,
-        onChange: (kaleidoscope) => {
-          ref.current!.uniforms.numSides.value = kaleidoscope;
+        onChange: (zoom) => {
+          ref.current!.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
         },
       },
       bitcrush: {
@@ -61,6 +61,14 @@ const TunnelEffects = () => {
         max: 127,
         onChange: (v) => {
           ref.current!.uniforms.bitcrush.value = v;
+        },
+      },
+      kaleidoscope: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (kaleidoscope) => {
+          ref.current!.uniforms.numSides.value = kaleidoscope;
         },
       },
       xSpeed: {
@@ -90,14 +98,6 @@ const TunnelEffects = () => {
             Math.PI / 10,
             true,
           );
-        },
-      },
-      zoom: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (zoom) => {
-          ref.current!.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
         },
       },
       trailNoise: folder({
@@ -145,7 +145,7 @@ const TunnelEffects = () => {
       },
       2: (value) => {
         // @ts-expect-error - Not sure why typing messed up here
-        setControl({ kaleidoscope: value });
+        setControl({ zoom: value });
       },
       3: (value) => {
         // @ts-expect-error - Not sure why typing messed up here
@@ -159,6 +159,12 @@ const TunnelEffects = () => {
       },
       6: (value, modifiers) => {
         setControl({ [modifiers.shift ? 'time' : 'angle']: value });
+      },
+      7: (value) => {
+        const currentValue = ref.current!.uniforms.numSides.value;
+        const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ kaleidoscope: newValue });
       },
     }),
     [setControl],

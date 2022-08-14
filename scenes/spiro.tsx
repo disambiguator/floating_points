@@ -3,7 +3,7 @@ import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
-import { scaleMidi } from '../lib/midi';
+import { scaleMidi, useMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 
@@ -74,16 +74,18 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
 
   useSpectrum({ distort: setDistort });
 
+  const newPositions = useCallback(() => {
+    const newSeeds = initPositions();
+    set((state) => {
+      const env = state.env as Config<SpiroParams>;
+      return {
+        env: { ...env, params: { ...env.params, seeds: newSeeds } },
+      };
+    });
+  }, [set]);
+
   useControls('spiro', {
-    'New Positions': button(() => {
-      const newSeeds = initPositions();
-      set((state) => {
-        const env = state.env as Config<SpiroParams>;
-        return {
-          env: { ...env, params: { ...env.params, seeds: newSeeds } },
-        };
-      });
-    }),
+    'New Positions': button(newPositions),
     distort: { value: 0, min: 0, max: 127, setDistort },
     color: {
       value: false,
@@ -92,6 +94,8 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
       },
     },
   });
+
+  useMidi(useMemo(() => ({ function1: newPositions }), [newPositions]));
 
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
   const displacement = useMemo(() => {
