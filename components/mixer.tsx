@@ -207,17 +207,18 @@ const Mixer = () => {
 
 export default function MixerPage({ name }: { name: SceneName }) {
   const set = useStore((state) => state.set);
-  const { initialParams = {}, ...env } = useMemo(() => scenes[name], [name]);
+  const scene = useMemo(() => scenes[name], [name]);
 
   // Initialize function. When moving to React 18 this may be a problem if it is run twice.
   useEffect(() => {
     let cleanup = noop;
     initMidiController().then((cleanupMidi) => {
       cleanup = cleanupMidi;
+      const { initialParams = {}, ...env } = scene;
       set({ env, ...initialParams });
     });
     return cleanup;
-  }, [set, initialParams, env]);
+  }, [set, scene]);
 
   return (
     <Page>
