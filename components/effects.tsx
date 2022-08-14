@@ -139,9 +139,11 @@ const TunnelEffects = () => {
 
   const midiMapping: MidiConfig = useMemo(
     () => ({
-      1: (value) => {
-        // @ts-expect-error - Not sure why typing messed up here
-        setControl({ trails: value });
+      1: (value, { shift }) => {
+        if (!shift) {
+          // @ts-expect-error - Not sure why typing messed up here
+          setControl({ trails: value });
+        }
       },
       2: (value) => {
         // @ts-expect-error - Not sure why typing messed up here

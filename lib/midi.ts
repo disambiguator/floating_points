@@ -30,12 +30,17 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     7: '7',
     F1: 'button1',
     'F#1': 'button2',
-    'G#0': 'shift',
+    'G#0': 'rightshift',
+    G0: 'leftshift',
     'B-1': 'function1',
   },
 };
 
-type Modifiers = { shift: boolean };
+const modifiers = {
+  shift: false,
+};
+
+type Modifiers = typeof modifiers;
 
 type ControlChangeCallback = (midiVal: number, modifiers: Modifiers) => void;
 type NoteCallback = () => void;
@@ -52,10 +57,6 @@ export type MidiConfig = Partial<{
   function1: NoteCallback;
 }>;
 
-const modifiers: Modifiers = {
-  shift: false,
-};
-
 export const initMidiController = async (): Promise<() => void> => {
   await WebMidi.enable();
 
@@ -65,7 +66,10 @@ export const initMidiController = async (): Promise<() => void> => {
 
     const noteOnListener = (e: NoteMessageEvent) => {
       const param = mapping[e.note.identifier];
-      if (param === 'shift') {
+      if (param === 'leftshift') {
+        modifiers.shift = true;
+      }
+      if (param === 'rightshift') {
         modifiers.shift = true;
       }
     };
@@ -73,7 +77,10 @@ export const initMidiController = async (): Promise<() => void> => {
 
     const noteOffListener = (e: NoteMessageEvent) => {
       const param = mapping[e.note.identifier];
-      if (param === 'shift') {
+      if (param === 'leftshift') {
+        modifiers.shift = false;
+      }
+      if (param === 'rightshift') {
         modifiers.shift = false;
       }
     };

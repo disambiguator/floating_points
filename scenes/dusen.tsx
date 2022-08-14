@@ -1,27 +1,43 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useControls } from 'leva';
-import React, { useEffect, useRef, useState } from 'react';
+import { folder, useControls } from 'leva';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import type { ShaderMaterial } from 'three';
 import { INITIAL_CAMERA_STATE } from 'components/config';
-import { scaleMidi } from '../lib/midi';
+import { scaleMidi, useMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
 import { type Config, useSpectrum } from '../lib/store';
 
-const Dusen = React.memo(function Dusen() {
+const Dusen = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
   const ref = useRef<ShaderMaterial>();
   const [radius, setRadius] = useState(0);
   const camera = useThree((t) => t.camera);
-  useControls('dusen', {
-    radius: {
-      value: 27,
-      min: 0,
-      max: 127,
-      onChange: setRadius,
-    },
-  });
+  const [, setControls] = useControls(() => ({
+    dusen: folder({
+      radius: {
+        value: 27,
+        min: 0,
+        max: 127,
+        onChange: setRadius,
+      },
+    }),
+  }));
   useSpectrum({ radius: setRadius });
+
+  useMidi(
+    useMemo(
+      () => ({
+        1: (value, modifiers) => {
+          if (modifiers.shift) {
+            // @ts-expect-error - dont know why this does not work
+            setControls({ radius: value });
+          }
+        },
+      }),
+      [setControls],
+    ),
+  );
 
   useEffect(() => {
     // Reset camera position to original
