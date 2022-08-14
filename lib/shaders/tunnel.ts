@@ -1,5 +1,6 @@
-import * as THREE from 'three';
-import tunnelFragment from './tunnel.frag';
+import { Vector2 } from 'three';
+import vertexShader from './defaultForwardUV.vert';
+import fragmentShader from './tunnel.frag';
 
 const TunnelShader = {
   uniforms: {
@@ -12,27 +13,16 @@ const TunnelShader = {
     tOld: { value: null },
     tNew: { value: null },
     angle: { value: 0 },
-    mouse: { value: new THREE.Vector2(0, 0) },
+    mouse: { value: new Vector2(0, 0) },
     aspect: { value: 0 },
     numSides: { value: 0 },
     bitcrush: { value: 0 },
     zoomDamp: { value: 0.96 },
     zoom: { value: 0.01 },
-    resolution: { value: new THREE.Vector2(0, 0) },
+    resolution: { value: new Vector2(0, 0) },
   },
-
-  vertexShader: [
-    'varying vec2 vUv;',
-
-    'void main() {',
-
-    '	vUv = uv;',
-    '	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-
-    '}',
-  ].join('\n'),
-
-  fragmentShader: tunnelFragment,
+  vertexShader,
+  fragmentShader,
 };
 
 export default TunnelShader;

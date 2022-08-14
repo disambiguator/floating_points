@@ -28,8 +28,11 @@ varying vec2 vUv;
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: blend = require(glsl-blend/all)
 
+// Getting blending right has been hard here.
 vec4 colorBlend(vec4 colorNew, vec4 colorOld) {
-  if (colorNew.a > 0.99) return colorNew;
+  // This is maybe a bad idea, but always use the newest value if the trails value
+  // is all the way high. This should prevent the screen from just going white.
+  if (damp == 1.0 && length(colorNew.rgb) > 0.1) return colorNew;
 
   // See all blend modes: https://github.com/jamieowen/glsl-blend/blob/master/modes.js
   // LIGHTEN = 11
