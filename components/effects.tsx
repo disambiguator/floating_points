@@ -9,7 +9,7 @@ import { folder, useControls } from 'leva';
 import React, { useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
-import { scaleMidi, useMidiController } from '../lib/midi';
+import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import type { Config, CustomEffectsType } from '../lib/store';
 
@@ -47,6 +47,22 @@ const TunnelEffects = () => {
           pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
         },
       },
+      kaleidoscope: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (kaleidoscope) => {
+          ref.current!.uniforms.numSides.value = kaleidoscope;
+        },
+      },
+      bitcrush: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (v) => {
+          ref.current!.uniforms.bitcrush.value = v;
+        },
+      },
       xSpeed: {
         value: 64,
         min: 0,
@@ -74,22 +90,6 @@ const TunnelEffects = () => {
             Math.PI / 10,
             true,
           );
-        },
-      },
-      kaleidoscope: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (kaleidoscope) => {
-          ref.current!.uniforms.numSides.value = kaleidoscope;
-        },
-      },
-      bitcrush: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (v) => {
-          ref.current!.uniforms.bitcrush.value = v;
         },
       },
       zoom: {
@@ -137,17 +137,33 @@ const TunnelEffects = () => {
     }),
   }));
 
-  const midiMapping = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries({ 1: 'trails' }).map(([key, param]) => [
-        key,
-        (value: number) => {
-          setControl({ [param]: value });
-        },
-      ]),
-    );
-  }, [setControl]);
-  useMidiController(midiMapping);
+  const midiMapping: MidiConfig = useMemo(
+    () => ({
+      1: (value) => {
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ trails: value });
+      },
+      2: (value) => {
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ kaleidoscope: value });
+      },
+      3: (value) => {
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ bitcrush: value });
+      },
+      4: (value, modifiers) => {
+        setControl({ [modifiers.shift ? 'amplitude' : 'xSpeed']: value });
+      },
+      5: (value, modifiers) => {
+        setControl({ [modifiers.shift ? 'frequency' : 'ySpeed']: value });
+      },
+      6: (value, modifiers) => {
+        setControl({ [modifiers.shift ? 'time' : 'angle']: value });
+      },
+    }),
+    [setControl],
+  );
+  useMidi(midiMapping);
 
   useFrame(({ mouse }, delta) => {
     const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];

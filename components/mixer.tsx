@@ -1,12 +1,13 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { Leva, button, folder, useControls } from 'leva';
 import type { OnChangeHandler } from 'leva/dist/declarations/src/types';
+import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import { useMidiController } from 'lib/midi';
+import { initMidiController, useMidi } from 'lib/midi';
 import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
 import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { INITIAL_CAMERA_STATE } from './config';
@@ -174,7 +175,7 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     };
   }, [setControl]);
 
-  useMidiController(config);
+  useMidi(config);
 
   return null;
 };
@@ -207,8 +208,15 @@ const Mixer = () => {
 export default function MixerPage({ name }: { name: SceneName }) {
   const set = useStore((state) => state.set);
   const { initialParams = {}, ...env } = useMemo(() => scenes[name], [name]);
+
+  // Initialize function. When moving to React 18 this may be a problem if it is run twice.
   useEffect(() => {
-    set({ env, ...initialParams });
+    let cleanup = noop;
+    initMidiController().then((cleanupMidi) => {
+      cleanup = cleanupMidi;
+      set({ env, ...initialParams });
+    });
+    return cleanup;
   }, [set, initialParams, env]);
 
   return (
