@@ -18,7 +18,10 @@ export const scaleMidi = (
   return min + (midi * (max - min)) / 127;
 };
 
-const MAPPINGS: Record<string, Record<string, string>> = {
+const MAPPINGS: Record<
+  string,
+  Record<string, string | [string, { enabled: number }]>
+> = {
   'Nocturn Keyboard': {},
   'Akai Pro AFX': {
     1: '1',
@@ -38,7 +41,9 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     C2: 'button8',
     'G#0': 'rightshift',
     G0: 'leftshift',
-    'B-1': 'function1',
+    'B-1': ['function1', { enabled: 0.3 }],
+    // controller 20 is led number display
+    // controller 30 is weird led strip
   },
 };
 
@@ -64,12 +69,29 @@ export type MidiConfig = Partial<{
   function1: NoteCallback;
 }>;
 
+// const sweep = (f: (attack: number) => void) => {
+//   let v = 0;
+
+//   const intervalId = setInterval(() => {
+//     if (v >= 1) {
+//       clearInterval(intervalId);
+//       f(0);
+//       return;
+//     }
+
+//     f(v);
+//     v = v + 0.01;
+//   }, 100);
+// };
+
 export const initMidiController = async (): Promise<() => void> => {
   await WebMidi.enable();
 
   const cleanupFunctions = Object.entries(MAPPINGS).map(([name, mapping]) => {
     const input = WebMidi.getInputByName(name);
     if (!input) return noop;
+
+    WebMidi.getOutputByName(name).sendAllSoundOff();
 
     const noteOnListener = (e: NoteMessageEvent) => {
       const param = mapping[e.note.identifier];
@@ -110,23 +132,42 @@ export const useMidi = (config: MidiConfig) => {
 
     const cleanup = Object.entries(MAPPINGS).map(([name, mapping]) => {
       const input = WebMidi.getInputByName(name);
+      const output = WebMidi.getOutputByName(name);
       if (!input) return noop;
 
-      const controlChangeListener = (e: ControlChangeMessageEvent) => {
-        const param = mapping[e.controller.number];
-
-        if (param && param in config) {
-          if (typeof e.rawValue === 'number') {
-            // @ts-expect-error - Fix this later.
-            const callbackFn: ControlChangeCallback = config[param];
-            callbackFn(e.rawValue, modifiers);
-          } else {
-            // eslint-disable-next-line no-console
-            console.error('This should not happen', e);
+      const entries = Object.entries(mapping);
+      Object.keys(config).forEach((button) => {
+        const [note] = entries.find(([, noteConfig]) => {
+          if (Array.isArray(noteConfig)) {
+            return noteConfig[0] === button;
           }
-        }
+          return noteConfig === button;
+        });
+        output.playNote(note, { attack: 0.1 });
+      });
+
+      const controlChangeListener = (e: ControlChangeMessageEvent) => {
         // Debugging
-        // console.log(e.value);
+        // console.log(e);
+
+        const param = mapping[e.controller.number];
+        if (!param) {
+          return;
+        }
+
+        const identifier = Array.isArray(param) ? param[0] : param;
+        if (!(identifier in config)) {
+          return;
+        }
+
+        if (e.rawValue) {
+          // @ts-expect-error - Fix this later.
+          const callbackFn: ControlChangeCallback = config[identifier];
+          callbackFn(e.rawValue, modifiers);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('This should not happen', e);
+        }
       };
       input.addListener('controlchange', controlChangeListener);
 
@@ -136,15 +177,25 @@ export const useMidi = (config: MidiConfig) => {
           // @ts-expect-error - Fix this later.
           const callbackFn: NoteCallback = config[param];
           callbackFn();
+          output.playNote(e.note.identifier, { attack: Math.random() });
         }
         // Debugging
-        // console.log(e.note.identifier);
+        console.log(e.note.identifier);
       };
       input.addListener('noteon', noteOnListener);
+
+      const noteOffListener = (e: NoteMessageEvent) => {
+        const param = mapping[e.note.identifier];
+        if (param && param in config) {
+          output.playNote(e.note.identifier, { attack: 0 });
+        }
+      };
+      input.addListener('noteoff', noteOffListener);
 
       return () => {
         input.removeListener('controlchange', controlChangeListener);
         input.removeListener('noteon', noteOnListener);
+        input.removeListener('noteoff', noteOffListener);
       };
     });
 
