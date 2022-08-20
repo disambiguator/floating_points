@@ -65,6 +65,10 @@ export type MidiConfig = Partial<{
 }>;
 
 export const initMidiController = async (): Promise<() => void> => {
+  if (!navigator.requestMIDIAccess) {
+    return noop;
+  }
+
   await WebMidi.enable();
 
   const cleanupFunctions = Object.entries(MAPPINGS).map(([name, mapping]) => {
@@ -105,7 +109,7 @@ export const initMidiController = async (): Promise<() => void> => {
 export const useMidi = (config: MidiConfig) => {
   useEffect(() => {
     if (!WebMidi.enabled) {
-      throw 'WebMidi is not enabled. Run `useMidiController`';
+      return;
     }
 
     const cleanup = Object.entries(MAPPINGS).map(([name, mapping]) => {
