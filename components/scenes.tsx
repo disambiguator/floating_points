@@ -10,6 +10,7 @@ import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
 import { fbmConfig } from 'scenes/fbm';
 import { chaosConfig } from 'scenes/geometric_chaos';
+import { landscapeConfig } from 'scenes/landscape';
 import { marbleConfig } from 'scenes/marble';
 import { spiroConfig } from 'scenes/spiro';
 import { webcamConfig } from 'scenes/webcam';
@@ -25,6 +26,7 @@ export const scenes = {
   spiro: spiroConfig,
   dusen: dusenConfig,
   chaos: chaosConfig,
+  landscape: landscapeConfig,
   bars: barsConfig,
   cubefield: cubefieldConfig,
   control: controlConfig,
