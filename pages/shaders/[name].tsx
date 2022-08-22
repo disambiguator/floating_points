@@ -19,7 +19,7 @@ export async function getStaticPaths() {
   };
 }
 
-export default function ShaderPage({ name }: { name: string }) {
+export default function ShaderPage({ name }: { name: keyof typeof shaders }) {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>

@@ -76,7 +76,7 @@ void main() {
 const Dusen = function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<THREE.ShaderMaterial>();
+  const ref = useRef<typeof Shader>();
   const zoomState = useRef({
     mouse: { clientX: 0, clientY: 0 },
     zooming: false,

@@ -1,6 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import type * as THREE from 'three';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
 
@@ -99,7 +98,7 @@ const shader = {
 const Eclipse = React.memo(function Shader() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<THREE.ShaderMaterial>();
+  const ref = useRef<typeof shader>();
 
   useFrame(({ clock }) => {
     ref.current!.uniforms.time.value = clock.elapsedTime;

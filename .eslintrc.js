@@ -6,7 +6,7 @@ module.exports = {
     'next/core-web-vitals',
     'plugin:import/recommended',
     'plugin:import/typescript',
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from @typescript-eslint/eslint-plugin
+    'plugin:@typescript-eslint/recommended',
     'problems',
     'prettier',
   ],
@@ -16,12 +16,14 @@ module.exports = {
     ecmaFeatures: {
       jsx: true, // Allows for the parsing of JSX
     },
+    project: ['./tsconfig.json'],
   },
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/no-unnecessary-condition': 'error',
     'prefer-destructuring': 2,
     'react/prop-types': 'off',
     'import/no-cycle': 2,
@@ -33,7 +35,7 @@ module.exports = {
         groups: ['builtin', 'external', 'internal', ['parent', 'sibling']],
       },
     ],
-    'react/react-in-jsx-scope': 'off',
+    'react/react-in-jsx-scope': 'off', // NextJS handles babel transform for us
     '@typescript-eslint/no-unused-vars': [
       // Allow unused args/vars to be marked with an underscore
       'error',

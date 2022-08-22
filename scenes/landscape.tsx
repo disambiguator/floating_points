@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { memo, useRef } from 'react';
-import { type ShaderMaterial, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import Shader from '../lib/shaders/landscape';
 import { type Config } from '../lib/store';
 
@@ -9,7 +9,7 @@ const colorVector = new Vector3();
 const Landscape = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>();
+  const ref = useRef<typeof Shader>();
   useFrame(({ clock }) => {
     if (!ref.current) return;
 

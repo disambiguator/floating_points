@@ -3,11 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect, useRef } from 'react';
 import type * as THREE from 'three';
-import type {
-  GLTF,
-  OrbitControls as OrbitControlsImpl,
-  ShaderPass,
-} from 'three-stdlib';
+import type { GLTF, OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import defaultForwardUV from 'lib/shaders/defaultForwardUV.vert';
@@ -69,7 +65,7 @@ const Dither = {
 export const Shapes = React.memo(function Shapes() {
   const gl = useThree((t) => t.gl);
   const controlsRef = useRef<OrbitControlsImpl>(null);
-  const materialRef = useRef<ShaderPass>();
+  const materialRef = useRef<typeof Dither>();
   const groupRef = useRef<THREE.Group>();
 
   useEffect(() => {

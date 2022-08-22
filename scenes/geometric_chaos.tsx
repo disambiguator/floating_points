@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
+import { type BufferGeometry, type Mesh, Uniform, Vector3 } from 'three';
 import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
@@ -51,9 +51,9 @@ const Shader = {
 `,
 
   uniforms: {
-    amplitude: new THREE.Uniform(0.0005),
-    origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-    direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
+    amplitude: new Uniform(0.0005),
+    origin: new Uniform(new Vector3(0, 0, 0)),
+    direction: new Uniform(new Vector3(0, 0, 0)),
   },
 };
 
@@ -64,8 +64,8 @@ const Box = ({
   displacement: Float32Array;
   material: JSX.Element;
 }) => {
-  const meshRef = useRef<THREE.Mesh>();
-  const geometryRef = useRef<THREE.BufferGeometry>();
+  const meshRef = useRef<Mesh>();
+  const geometryRef = useRef<BufferGeometry>();
 
   useEffect(() => {
     const m = meshRef.current!;
@@ -102,7 +102,7 @@ for (let i = 0; i < renderSpeed; i++) {
 }
 
 export const Shapes = React.memo(function Shapes() {
-  const materialRef = useRef<THREE.ShaderMaterial>();
+  const materialRef = useRef<typeof Shader>();
 
   const setAmplitude = useCallback((v) => {
     materialRef.current!.uniforms.amplitude.value = scaleMidi(

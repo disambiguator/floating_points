@@ -19,7 +19,7 @@ const Shader = {
 };
 
 const Scene = React.memo(function Scene() {
-  const ref = useRef<THREE.ShaderMaterial>();
+  const ref = useRef<typeof Shader>();
   const { posScale, striations, height } = useControls({
     posScale: { value: 30, min: 0, max: 60 },
     striations: { value: 30, min: 0, max: 50 },

@@ -91,7 +91,7 @@ export const useAudioUrl = (url: string, enabled = true) => {
       setAudio({ analyser, listener });
     });
     return () => {
-      camera?.children && camera.remove(listener);
+      camera.remove(listener);
       sound.source && sound.stop();
     };
   }, [enabled, camera, url]);

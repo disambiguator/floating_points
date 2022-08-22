@@ -21,7 +21,7 @@ interface OrbitPosition {
 const Spiro = () => {
   const numPoints = 50000;
   const renderSpeed = 2500;
-  const colorEnabled = false;
+  const colorEnabled = false as boolean;
 
   let counter = 0;
 

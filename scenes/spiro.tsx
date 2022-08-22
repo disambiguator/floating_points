@@ -62,7 +62,7 @@ interface SpiroParams {
 }
 export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   const set = useStore((state) => state.set);
-  const shaderMaterialRef = useRef<THREE.ShaderMaterial>();
+  const shaderMaterialRef = useRef<typeof SpiroShader>();
 
   const setDistort = useCallback((v) => {
     shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(

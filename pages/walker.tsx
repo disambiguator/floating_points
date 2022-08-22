@@ -8,10 +8,11 @@ type Walker = {
   y: number;
 };
 
-const visited: Array<Array<boolean>> = [];
+const visited: boolean[][] = [];
 
 const hasVisited = (x: number, y: number) => {
-  if (visited[x] === undefined) visited[x] = [];
+  const maybeVisitedX = visited[x] as boolean[] | undefined;
+  if (!maybeVisitedX) visited[x] = [];
 
   if (visited[x][y] === true) return true;
 

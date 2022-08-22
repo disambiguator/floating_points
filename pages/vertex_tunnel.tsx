@@ -8,9 +8,13 @@ import { FiberScene } from '../components/scene';
 
 const tunnelWidth = 300.0;
 
+interface CustomShader extends THREE.ShaderMaterial {
+  uniforms: { time: { value: number } };
+}
+
 const Vertices = () => {
   const matRef = useRef<THREE.MeshLambertMaterial>();
-  const shaderRef = useRef<THREE.Shader>();
+  const shaderRef = useRef<CustomShader>();
 
   useFrame(() => {
     const shader = shaderRef.current;
@@ -18,7 +22,7 @@ const Vertices = () => {
   });
 
   useEffect(() => {
-    matRef.current!.onBeforeCompile = (shader) => {
+    matRef.current!.onBeforeCompile = (shader: CustomShader) => {
       shader.uniforms.time = { value: 0 };
       const token = '#include <begin_vertex>';
       const customTransform = `

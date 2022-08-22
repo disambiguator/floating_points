@@ -1,4 +1,3 @@
-import type { ShaderMaterialParameters } from 'three';
 import DusenShader from 'lib/shaders/dusen';
 import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
@@ -15,7 +14,7 @@ import { marbleConfig } from 'scenes/marble';
 import { spiroConfig } from 'scenes/spiro';
 import { webcamConfig } from 'scenes/webcam';
 
-export const shaders: Record<string, ShaderMaterialParameters> = {
+export const shaders = {
   fbm: FbmShader,
   dusen: DusenShader,
   marble: MarbleShader,

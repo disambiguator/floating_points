@@ -6,5 +6,5 @@
     "exactOptionalPropertyTypes": true
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", ".eslintrc.js", "**/*.js", "**/*.ts", "**/*.tsx"]
 }

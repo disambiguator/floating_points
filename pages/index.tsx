@@ -97,6 +97,8 @@ const artwork = [
 
 const translateDistance = 1;
 
+type Point = { x: number; y: number };
+
 const endPoints = ({
   width,
   height,
@@ -105,7 +107,7 @@ const endPoints = ({
   width: number;
   height: number;
   slope: number;
-}) => {
+}): [Point, Point] => {
   const interceptX = Math.random() * width;
   const interceptY = Math.random() * height;
   const m = slope;
@@ -119,7 +121,7 @@ const endPoints = ({
   ].filter(
     (point) =>
       point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height,
-  );
+  ) as [Point, Point];
 };
 
 const setNewFragmentWidth = () => Math.floor(Math.random() * 15) + 1;
@@ -130,7 +132,7 @@ const Scatter = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let slopeX = 0;
   let slopeY = 0;
-  let points: { x: number; y: number }[];
+  let points: [Point, Point];
 
   const isMobile = useIsMobile();
 

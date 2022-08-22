@@ -65,6 +65,8 @@ export type MidiConfig = Partial<{
 }>;
 
 export const initMidiController = async (): Promise<() => void> => {
+  // This is optional based on browser support
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!navigator.requestMIDIAccess) {
     return noop;
   }
@@ -73,6 +75,8 @@ export const initMidiController = async (): Promise<() => void> => {
 
   const cleanupFunctions = Object.entries(MAPPINGS).map(([name, mapping]) => {
     const input = WebMidi.getInputByName(name);
+    // This should be fixed by https://github.com/djipco/webmidi/pull/289
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!input) return noop;
 
     const noteOnListener = (e: NoteMessageEvent) => {
@@ -114,6 +118,8 @@ export const useMidi = (config: MidiConfig) => {
 
     const cleanup = Object.entries(MAPPINGS).map(([name, mapping]) => {
       const input = WebMidi.getInputByName(name);
+      // This should be fixed by https://github.com/djipco/webmidi/pull/289
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!input) return noop;
 
       const controlChangeListener = (e: ControlChangeMessageEvent) => {
