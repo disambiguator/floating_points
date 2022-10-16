@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Page from '../components/page';
-import { Dimensions } from '../lib/types';
+import type { Dimensions } from '../lib/types';
 
 let timer = 0;
 

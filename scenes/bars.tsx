@@ -3,10 +3,10 @@ import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { isEmpty } from 'lodash';
 import React, { useRef } from 'react';
-import { AfterimagePass, Line2 } from 'three-stdlib';
+import type { AfterimagePass, Line2 } from 'three-stdlib';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
-import { Config, useStore } from '../lib/store';
+import { type Config, useStore } from '../lib/store';
 
 const BarsShader = {
   uniforms: {
@@ -109,6 +109,7 @@ const Bars = React.memo(function Bars() {
       color={color}
       linewidth={lineWidth}
       points={new Array(SAMPLE_LENGTH * 3).fill(0)}
+      alphaWrite={undefined} // IDK why i need this
     />
   );
 });

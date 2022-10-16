@@ -1,17 +1,17 @@
 import { Effects as DreiEffects } from '@react-three/drei';
 import {
-  ReactThreeFiber,
+  type ReactThreeFiber,
   extend,
   useFrame,
   useThree,
 } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
 import { AfterimagePass } from 'three-stdlib';
-import { scaleMidi } from '../lib/midi';
+import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import { Config, CustomEffectsType } from '../lib/store';
+import type { Config, CustomEffectsType } from '../lib/store';
 
 extend({ AfterimagePass });
 
@@ -33,7 +33,7 @@ const TunnelEffects = () => {
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
-  useControls(() => ({
+  const [, setControl] = useControls(() => ({
     postprocessing: folder({
       trails: {
         value: 0,
@@ -45,6 +45,30 @@ const TunnelEffects = () => {
           pass.uniforms.damp.value =
             trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
           pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
+        },
+      },
+      zoom: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (zoom) => {
+          ref.current!.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
+        },
+      },
+      bitcrush: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (v) => {
+          ref.current!.uniforms.bitcrush.value = v;
+        },
+      },
+      kaleidoscope: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (kaleidoscope) => {
+          ref.current!.uniforms.numSides.value = kaleidoscope;
         },
       },
       xSpeed: {
@@ -74,30 +98,6 @@ const TunnelEffects = () => {
             Math.PI / 10,
             true,
           );
-        },
-      },
-      kaleidoscope: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (kaleidoscope) => {
-          ref.current!.uniforms.numSides.value = kaleidoscope;
-        },
-      },
-      bitcrush: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (v) => {
-          ref.current!.uniforms.bitcrush.value = v;
-        },
-      },
-      zoom: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (zoom) => {
-          ref.current!.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
         },
       },
       trailNoise: folder({
@@ -136,6 +136,42 @@ const TunnelEffects = () => {
       }),
     }),
   }));
+
+  const midiMapping: MidiConfig = useMemo(
+    () => ({
+      1: (value, { shift }) => {
+        if (!shift) {
+          // @ts-expect-error - Not sure why typing messed up here
+          setControl({ trails: value });
+        }
+      },
+      2: (value) => {
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ zoom: value });
+      },
+      3: (value) => {
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ bitcrush: value });
+      },
+      4: (value, modifiers) => {
+        setControl({ [modifiers.shift ? 'amplitude' : 'xSpeed']: value });
+      },
+      5: (value, modifiers) => {
+        setControl({ [modifiers.shift ? 'frequency' : 'ySpeed']: value });
+      },
+      6: (value, modifiers) => {
+        setControl({ [modifiers.shift ? 'time' : 'angle']: value });
+      },
+      7: (value) => {
+        const currentValue = ref.current!.uniforms.numSides.value;
+        const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
+        // @ts-expect-error - Not sure why typing messed up here
+        setControl({ kaleidoscope: newValue });
+      },
+    }),
+    [setControl],
+  );
+  useMidi(midiMapping);
 
   useFrame(({ mouse }, delta) => {
     const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];

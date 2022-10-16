@@ -1,7 +1,6 @@
-import { GetStaticProps } from 'next';
-import React from 'react';
+import type { GetStaticProps } from 'next';
 import Mixer from 'components/mixer';
-import { sceneName, scenes } from '../../components/scenes';
+import { scenes } from '../../components/scenes';
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const params = context.params as { name: string };
@@ -19,6 +18,4 @@ export async function getStaticPaths() {
   };
 }
 
-export default function ShaderPage({ name }: { name: sceneName }) {
-  return <Mixer name={name} />;
-}
+export default Mixer;

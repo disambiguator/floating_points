@@ -1,13 +1,13 @@
 import { useFrame } from '@react-three/fiber';
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
-import { BoxData } from '../components/cubedraw';
-import { Config } from '../lib/store';
+import type { BoxData } from '../components/cubedraw';
+import type { Config } from '../lib/store';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
   const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
   useFrame(({ clock }) => {
-    const mesh = meshRef.current!;
+    const mesh = meshRef.current;
     if (!mesh) return;
 
     const factor = Math.sin(creationTime + clock.elapsedTime);

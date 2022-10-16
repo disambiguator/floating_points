@@ -3,14 +3,11 @@ module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   extends: [
     'eslint:recommended',
-    'next',
-    'plugin:import/recommended',
+    'next/core-web-vitals',
     'plugin:import/typescript',
-    'plugin:react-hooks/recommended',
-    'plugin:react/recommended', // Uses the recommended rules from @eslint-plugin-react
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from @typescript-eslint/eslint-plugin
-    'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+    'plugin:@typescript-eslint/recommended',
     'problems',
+    'prettier',
   ],
   parserOptions: {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
@@ -18,15 +15,16 @@ module.exports = {
     ecmaFeatures: {
       jsx: true, // Allows for the parsing of JSX
     },
+    project: ['./tsconfig.json'],
   },
   rules: {
+    'no-unused-vars': 'off', // Conflicts with TypeScript
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unnecessary-condition': 'error',
     'prefer-destructuring': 2,
     'react/prop-types': 'off',
-    'import/no-cycle': 2,
     'sort-imports': ['error', { ignoreDeclarationSort: true }],
     'import/order': [
       'error',
@@ -35,15 +33,7 @@ module.exports = {
         groups: ['builtin', 'external', 'internal', ['parent', 'sibling']],
       },
     ],
-    'react/react-in-jsx-scope': 'off',
-    '@typescript-eslint/no-unused-vars': [
-      // Allow unused args/vars to be marked with an underscore
-      'error',
-      {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      },
-    ],
+    'react/react-in-jsx-scope': 'off', // NextJS handles babel transform for us
     'object-shorthand': ['error', 'always'],
     'prefer-arrow-callback': 'off', // configs with react/display-name
   },

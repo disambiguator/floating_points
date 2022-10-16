@@ -1,13 +1,13 @@
 import { useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
-import React, { useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
-import { scaleMidi } from '../lib/midi';
-import { Config, useStore } from '../lib/store';
+import { folder, useControls } from 'leva';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { type BufferGeometry, type Mesh, Uniform, Vector3 } from 'three';
+import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
+import { type Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = {
-  vertexShader: `
+  vertexShader: /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -31,7 +31,7 @@ const Shader = {
     }
 `,
 
-  fragmentShader: `
+  fragmentShader: /* glsl */ `
     #ifdef GL_ES
     precision highp float;
     #endif
@@ -51,9 +51,9 @@ const Shader = {
 `,
 
   uniforms: {
-    amplitude: new THREE.Uniform(0.0005),
-    origin: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-    direction: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
+    amplitude: new Uniform(0.0005),
+    origin: new Uniform(new Vector3(0, 0, 0)),
+    direction: new Uniform(new Vector3(0, 0, 0)),
   },
 };
 
@@ -64,8 +64,8 @@ const Box = ({
   displacement: Float32Array;
   material: JSX.Element;
 }) => {
-  const meshRef = useRef<THREE.Mesh>();
-  const geometryRef = useRef<THREE.BufferGeometry>();
+  const meshRef = useRef<Mesh>();
+  const geometryRef = useRef<BufferGeometry>();
 
   useEffect(() => {
     const m = meshRef.current!;
@@ -96,34 +96,47 @@ const Box = ({
   );
 };
 
+const displacement = new Float32Array(renderSpeed);
+for (let i = 0; i < renderSpeed; i++) {
+  displacement[i] = Math.random() * 5;
+}
+
 export const Shapes = React.memo(function Shapes() {
-  const materialRef = useRef<THREE.ShaderMaterial>();
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
+  const materialRef = useRef<typeof Shader>();
+
+  const setAmplitude = useCallback((v) => {
+    materialRef.current!.uniforms.amplitude.value = scaleMidi(
+      v * 1000,
+      0,
+      0.0005,
+    );
   }, []);
 
   const material = useMemo(() => {
     return <shaderMaterial args={[Shader]} ref={materialRef} />;
   }, []);
 
-  useControls('chaos', {
-    warp: {
-      value: 0,
-      min: 0,
-      max: 127,
-      onChange: (v) => {
-        materialRef.current!.uniforms.amplitude.value = scaleMidi(
-          v * 1000,
-          0,
-          0.0005,
-        );
-      },
-    },
-  });
+  useSpectrum({ amplitude: setAmplitude });
+
+  const [, setControls] = useControls(() => ({
+    chaos: folder({
+      warp: { value: 0, min: 0, max: 127, onChange: setAmplitude },
+    }),
+  }));
+
+  useMidi(
+    useMemo(
+      (): MidiConfig => ({
+        1: (value, modifiers) => {
+          if (modifiers.shift) {
+            // @ts-expect-error - dont know why this does not work
+            setControls({ warp: value });
+          }
+        },
+      }),
+      [setControls],
+    ),
+  );
 
   useFrame(({ camera }) => {
     camera.translateX(-0.5);
@@ -141,7 +154,7 @@ export const Shapes = React.memo(function Shapes() {
         .map((_value, i) => (
           <Box key={i} displacement={displacement} material={material} />
         )),
-    [displacement, material],
+    [material],
   );
 
   return <>{cubes}</>;

@@ -1,25 +1,18 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useRef } from 'react';
-import {
-  DataTexture,
-  RedFormat,
-  ShaderMaterial,
-  ShaderMaterialParameters,
-} from 'three';
+import { DataTexture, RedFormat } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import { shaders } from '../components/scenes';
 import { useMicrophone } from '../lib/audio';
 
-const Shaders = React.memo(function Shader({
-  shader,
-}: {
-  shader: ShaderMaterialParameters;
-}) {
+const shader = shaders.stark;
+
+const Shaders = React.memo(function Shader() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>();
+  const ref = useRef<typeof shader>();
   const audio = useMicrophone();
   const { s } = useControls({ s: { value: 0.02, min: 0, max: 0.1 } });
 
@@ -56,13 +49,11 @@ const Shaders = React.memo(function Shader({
 });
 
 export default function ShaderPage() {
-  const shader = shaders.stark;
-
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>
         <FiberScene>
-          <Shaders shader={shader} />
+          <Shaders />
         </FiberScene>
       </div>
     </Page>

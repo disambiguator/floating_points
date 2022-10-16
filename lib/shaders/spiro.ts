@@ -30,13 +30,9 @@ const spiroShader = {
     }
 
     void main() {
-
-    vec3 newPosition = position + amplitude * displacement * pow(computeDistance(origin, direction, position),2.) * direction;
-
-    gl_Position = projectionMatrix *
-      modelViewMatrix *
-      vec4(newPosition,1.0);
-    vPosition = normalize(gl_Position);
+      vec3 newPosition = position + amplitude * displacement * pow(computeDistance(origin, direction, position),2.) * direction;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
+      vPosition = gl_Position;
     }
 `,
 
@@ -45,14 +41,16 @@ const spiroShader = {
 precision highp float;
 #endif
 
-// same name and type as VS
 varying vec4 vPosition;
 uniform bool color;
 uniform float time;
 
 void main() {
   if(color) {
-    gl_FragColor = vec4(vec3(vPosition.x, vPosition.y, 0.3 * abs(sin(time * 3.14159 / 4.))), 1.0);
+    vec2 vCoords = vPosition.xy;
+    vCoords /= vPosition.w;
+    vCoords = vCoords * 0.5 + 0.5;
+    gl_FragColor = vec4(vCoords.x, vCoords.y, vCoords.x + vCoords.y, 1.0);
   } else {
     gl_FragColor = vec4(1.0);
   }

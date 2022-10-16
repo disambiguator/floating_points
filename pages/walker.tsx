@@ -1,4 +1,4 @@
-import * as p5 from 'p5';
+import type * as p5 from 'p5';
 import React from 'react';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';
@@ -8,10 +8,11 @@ type Walker = {
   y: number;
 };
 
-const visited: Array<Array<boolean>> = [];
+const visited: boolean[][] = [];
 
 const hasVisited = (x: number, y: number) => {
-  if (visited[x] === undefined) visited[x] = [];
+  const maybeVisitedX = visited[x] as boolean[] | undefined;
+  if (!maybeVisitedX) visited[x] = [];
 
   if (visited[x][y] === true) return true;
 

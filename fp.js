@@ -97,8 +97,8 @@ function setupVisualizer() {
   amplitude = new p5.Amplitude();
 }
 
-window.onload = function() {
-  document.getElementById('offset').onchange = function(e) {
+window.onload = function () {
+  document.getElementById('offset').onchange = function (e) {
     offset = e.target.value;
   };
 };

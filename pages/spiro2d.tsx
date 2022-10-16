@@ -1,5 +1,5 @@
 import { times } from 'lodash';
-import p5 from 'p5';
+import type p5 from 'p5';
 import React from 'react';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';
@@ -21,7 +21,7 @@ interface OrbitPosition {
 const Spiro = () => {
   const numPoints = 50000;
   const renderSpeed = 2500;
-  const colorEnabled = false;
+  const colorEnabled = false as boolean;
 
   let counter = 0;
 

@@ -1,15 +1,14 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useRef } from 'react';
-import { ShaderMaterial } from 'three';
 import FbmShader from 'lib/shaders/fbm';
 import { scaleMidi } from '../lib/midi';
-import { Config } from '../lib/store';
+import type { Config } from '../lib/store';
 
 const FbmContents = React.memo(function FbmContents() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>();
+  const ref = useRef<typeof FbmShader>();
   const speed = useRef(0);
   useControls('fbm', {
     speed: {

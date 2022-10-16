@@ -1,5 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
-import { ThreeEvent } from '@react-three/fiber/dist/declarations/src/core/events';
+import { type ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
 import Page from './page';

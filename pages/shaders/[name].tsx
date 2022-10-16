@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import React from 'react';
 import { FiberScene } from 'components/scene';
 import Shader from 'components/shader';
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
   };
 }
 
-export default function ShaderPage({ name }: { name: string }) {
+export default function ShaderPage({ name }: { name: keyof typeof shaders }) {
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>

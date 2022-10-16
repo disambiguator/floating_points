@@ -4,11 +4,16 @@ import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import create, { SetState } from 'zustand';
+import create, { type StoreApi } from 'zustand';
+import {
+  type Audio,
+  type Spectrum,
+  analyseSpectrum,
+  useAudioUrl,
+} from 'lib/audio';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import assetUrl from '../lib/assetUrl';
-import { Audio, Spectrum, analyseSpectrum, useAudioUrl } from '../lib/audio';
 import styles from './void.module.scss';
 
 // 0 - stars: no rotation or freq response
@@ -26,7 +31,7 @@ const stringsStartTime = 67; // start rotating stars
 type State = {
   spectrum: Spectrum;
   audio: Audio | undefined;
-  setState: SetState<State>;
+  setState: StoreApi<State>['setState'];
 };
 const useStore = create<State>((set) => ({
   spectrum: { volume: 0 } as Spectrum,
@@ -68,39 +73,39 @@ const newPosition = () => {
   return pos.toArray();
 };
 
+const pointShader = {
+  uniforms: {
+    size: { value: 10 },
+    scale: { value: 350 },
+    color: { value: new THREE.Color('white') },
+  },
+  defines: {
+    USE_SIZEATTENUATION: '',
+  },
+  vertexShader: THREE.ShaderLib.points.vertexShader,
+  fragmentShader: `
+    uniform vec3 color;
+    void main() {
+        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+        float ll = length(xy);
+        gl_FragColor = vec4(color, 2.*(0.5-ll));
+    }
+    `,
+};
+
 const Stars = React.memo(function Stars() {
   const starsCount = 4000;
   const { speed } = useControls({
     speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
   });
 
-  const materialRef = useRef<THREE.ShaderMaterial>();
+  const materialRef = useRef<typeof pointShader>();
   const pointsRef = useRef<THREE.Points>();
 
   const vertices = useMemo(
     () => new Array(starsCount).fill(undefined).flatMap(newPosition),
     [starsCount],
   );
-
-  const pointShader = {
-    uniforms: {
-      size: { value: 10 },
-      scale: { value: 350 },
-      color: { value: new THREE.Color('white') },
-    },
-    defines: {
-      USE_SIZEATTENUATION: '',
-    },
-    vertexShader: THREE.ShaderLib.points.vertexShader,
-    fragmentShader: `
-      uniform vec3 color;
-      void main() {
-          vec2 xy = gl_PointCoord.xy - vec2(0.5);
-          float ll = length(xy);
-          gl_FragColor = vec4(color, 2.*(0.5-ll));
-      }
-      `,
-  };
 
   useFrame(() => {
     const time = currentTime(useStore.getState());

@@ -1,5 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
-import { ThreeEvent } from '@react-three/fiber/dist/declarations/src/core/events';
+import { type ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
 import * as THREE from 'three';
 import Page from '../components/page';
@@ -77,7 +76,7 @@ void main() {
 const Dusen = function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<THREE.ShaderMaterial>();
+  const ref = useRef<typeof Shader>();
   const zoomState = useRef({
     mouse: { clientX: 0, clientY: 0 },
     zooming: false,

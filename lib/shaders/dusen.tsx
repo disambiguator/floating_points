@@ -1,16 +1,7 @@
+import vertexShader from 'lib/shaders/defaultForwardUV.vert';
+
 const DusenShader = {
-  vertexShader: /* glsl */ `
-    varying vec2 vUv;
-
-      void main() {
-
-      vUv = uv;
-      gl_Position = projectionMatrix *
-        modelViewMatrix *
-        vec4(position,1.0);
-      }
-  `,
-
+  vertexShader,
   fragmentShader: /* glsl */ `
   #ifdef GL_ES
   precision highp float;

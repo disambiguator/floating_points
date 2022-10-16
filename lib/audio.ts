@@ -18,7 +18,11 @@ export interface Spectrum {
 }
 
 export const SAMPLE_LENGTH = 512;
-export const analyseSpectrum = (audio: Audio): Spectrum => {
+export const analyseSpectrum = (
+  audio: Audio,
+  threshold = 0,
+  scale = 1,
+): Spectrum => {
   const { analyser } = audio;
   const subBass: number[] = [];
   const bass: number[] = [];
@@ -32,7 +36,7 @@ export const analyseSpectrum = (audio: Audio): Spectrum => {
   for (let i = 0; i < analyserData.length; i++) {
     const frequency = (i * audio.listener.context.sampleRate) / fftSize;
 
-    const value = analyserData[i];
+    const value = (analyserData[i] > threshold ? analyserData[i] : 0) * scale;
 
     if (frequency >= 20 && frequency <= 60) {
       subBass.push(value);
@@ -87,7 +91,7 @@ export const useAudioUrl = (url: string, enabled = true) => {
       setAudio({ analyser, listener });
     });
     return () => {
-      camera?.children && camera.remove(listener);
+      camera.remove(listener);
       sound.source && sound.stop();
     };
   }, [enabled, camera, url]);
@@ -111,8 +115,9 @@ export function useMicrophone(enabled = true) {
           const audio = new THREE.Audio(listener);
 
           const { context } = listener;
-          const source = context.createMediaStreamSource(stream);
-          // @ts-ignore
+          const source = context.createMediaStreamSource(
+            stream,
+          ) as unknown as AudioBufferSourceNode;
           audio.setNodeSource(source);
           listener.gain.disconnect();
 
@@ -127,6 +132,8 @@ export function useMicrophone(enabled = true) {
           track.stop();
         });
     }
+    // TODO fix
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera, enabled]);
 
   return audio;

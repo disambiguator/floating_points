@@ -1,19 +1,22 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { Leva, button, folder, useControls } from 'leva';
-import { OnChangeHandler } from 'leva/dist/declarations/src/types';
+import type { OnChangeHandler } from 'leva/dist/declarations/src/types';
+import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
-import { PartialState } from 'zustand';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import { Config, Env, State, spectrumSelector, useStore } from 'lib/store';
-import { Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+import { type MidiConfig, initMidiController, useMidi } from 'lib/midi';
+import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
+import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
-import { sceneName, scenes } from './scenes';
+import { type SceneName, sceneNames, scenes } from './scenes';
 
+// In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
   useControls({
     'Pop Out': button(popOut),
@@ -92,18 +95,8 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
   const raycaster = new THREE.Raycaster();
   useControls({
     audio: folder({
-      scale: {
-        value: 1,
-        min: 0,
-        max: 10,
-        onChange: setVolumeScaler,
-      },
-      threshold: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: setVolumeThreshold,
-      },
+      scale: { value: 1, min: 0, max: 10, onChange: setVolumeScaler },
+      threshold: { value: 0, min: 0, max: 127, onChange: setVolumeThreshold },
     }),
     Export: button(() => {
       exportScene.current();
@@ -116,13 +109,13 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
     useStore.setState({ ray: raycaster.ray });
 
     if (audio) {
-      const spectrum = analyseSpectrum(audio);
-      const { volume } = spectrum;
-      const volumeControl =
-        volume * volumeScaler.current > volumeThreshold.current
-          ? volume * volumeScaler.current
-          : 0;
-      useStore.setState({ spectrum, volumeControl });
+      useStore.setState({
+        spectrum: analyseSpectrum(
+          audio,
+          volumeThreshold.current,
+          volumeScaler.current,
+        ),
+      });
     }
   });
   useEffect(() => {
@@ -158,11 +151,11 @@ const onUserChange =
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   const { audioEnabled, set } = useMemo(() => useStore.getState(), []);
 
-  useControls({
+  const [, setControl] = useControls(() => ({
     Contents: {
       value: name,
       options: Object.keys(scenes),
-      onChange: onUserChange((name: sceneName) => {
+      onChange: onUserChange((name: SceneName) => {
         if (name !== useStore.getState().env?.name)
           set({ env: { ...scenes[name] } });
       }),
@@ -173,7 +166,18 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
         onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
       },
     }),
-  });
+  }));
+
+  useMidi(
+    useMemo(
+      (): MidiConfig => ({
+        button1: () => setControl({ Contents: sceneNames[0] }),
+        button2: () => setControl({ Contents: sceneNames[1] }),
+        button3: () => setControl({ Contents: sceneNames[2] }),
+      }),
+      [setControl],
+    ),
+  );
 
   return null;
 };
@@ -186,7 +190,7 @@ const Mixer = () => {
     <>
       <Controls />
       <FiberScene
-        camera={{ far: 10000, position: [0, 0, 300] }}
+        camera={INITIAL_CAMERA_STATE}
         linear
         flat
         gl={{
@@ -203,13 +207,20 @@ const Mixer = () => {
   );
 };
 
-export default function MixerPage({ name }: { name: sceneName }) {
+export default function MixerPage({ name }: { name: SceneName }) {
   const set = useStore((state) => state.set);
-  const { initialParams = {}, ...env } = useMemo(() => scenes[name], [name]);
+  const scene = useMemo(() => scenes[name], [name]);
+
+  // Initialize function. When moving to React 18 this may be a problem if it is run twice.
   useEffect(() => {
-    const update = { env, ...initialParams } as PartialState<State>;
-    set(update);
-  }, [set, initialParams, env]);
+    let cleanup = noop;
+    initMidiController().then((cleanupMidi) => {
+      cleanup = cleanupMidi;
+      const { initialParams = {}, ...env } = scene;
+      set({ env, ...initialParams });
+    });
+    return cleanup;
+  }, [set, scene]);
 
   return (
     <Page>

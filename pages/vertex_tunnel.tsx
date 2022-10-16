@@ -1,16 +1,20 @@
 import { useFrame } from '@react-three/fiber';
-import glsl from 'glslify';
 import { Perf } from 'r3f-perf';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import customGlsl from 'lib/shaders/vertexTunnel.glsl';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 
 const tunnelWidth = 300.0;
 
+interface CustomShader extends THREE.ShaderMaterial {
+  uniforms: { time: { value: number } };
+}
+
 const Vertices = () => {
   const matRef = useRef<THREE.MeshLambertMaterial>();
-  const shaderRef = useRef<THREE.Shader>();
+  const shaderRef = useRef<CustomShader>();
 
   useFrame(() => {
     const shader = shaderRef.current;
@@ -18,7 +22,7 @@ const Vertices = () => {
   });
 
   useEffect(() => {
-    matRef.current!.onBeforeCompile = (shader) => {
+    matRef.current!.onBeforeCompile = (shader: CustomShader) => {
       shader.uniforms.time = { value: 0 };
       const token = '#include <begin_vertex>';
       const customTransform = `
@@ -32,12 +36,6 @@ const Vertices = () => {
           `;
 
       const token2 = '#include <common>';
-      const customGlsl = glsl`
-      #include <common>
-      #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
-      uniform float time;
-
-      `;
       shader.vertexShader = shader.vertexShader
         .replace(token, customTransform)
         .replace(token2, customGlsl);

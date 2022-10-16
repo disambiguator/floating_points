@@ -1,5 +1,4 @@
-/* eslint-disable import/no-named-as-default-member */
-import ReactGA from 'react-ga';
+import { event, initialize, pageview } from 'react-ga';
 
 interface Event {
   action: string;
@@ -9,18 +8,16 @@ interface Event {
 export const useAnalytics = () => {
   return {
     init: (trackingId: string) => {
-      ReactGA.initialize(trackingId);
+      initialize(trackingId);
     },
     trackPageViewed: (path?: string) => {
       if (path) {
-        return ReactGA.pageview(path);
+        return pageview(path);
       }
-      return ReactGA.pageview(
-        window.location.pathname + window.location.search,
-      );
+      return pageview(window.location.pathname + window.location.search);
     },
     trackEvent: (params: Event) => {
-      ReactGA.event(params);
+      event(params);
     },
   };
 };
