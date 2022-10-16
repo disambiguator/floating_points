@@ -48,7 +48,7 @@ const Cloth = React.memo(function Cloth() {
     geometry.setPositions(
       new Array(length)
         .fill(undefined)
-        .flatMap((f, i) => [
+        .flatMap((_f, i) => [
           ((i * size.width) / length - size.width / 2) * 2,
           noise2D(i * frequency.current, clock.elapsedTime) * amplitude.current,
           0,

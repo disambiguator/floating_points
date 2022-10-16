@@ -18,10 +18,10 @@ module.exports = {
     project: ['./tsconfig.json'],
   },
   rules: {
+    'no-unused-vars': 'off', // Conflicts with TypeScript
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/no-unnecessary-condition': 'error',
     'prefer-destructuring': 2,
     'react/prop-types': 'off',
@@ -34,14 +34,6 @@ module.exports = {
       },
     ],
     'react/react-in-jsx-scope': 'off', // NextJS handles babel transform for us
-    '@typescript-eslint/no-unused-vars': [
-      // Allow unused args/vars to be marked with an underscore
-      'error',
-      {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      },
-    ],
     'object-shorthand': ['error', 'always'],
     'prefer-arrow-callback': 'off', // configs with react/display-name
   },

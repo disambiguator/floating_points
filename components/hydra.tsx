@@ -18,18 +18,16 @@ export default function HydraApp() {
   });
   const hydra = useHydra();
   useEffect(() => {
-    /* eslint-disable @typescript-eslint/no-unused-vars  */
-    /* eslint-disable no-unused-vars */
-    const { src, osc, gradient, shape, voronoi, solid, noise } = generators;
+    // const { src, osc, gradient, shape, voronoi, solid, noise } = generators;
+    const { solid, noise } = generators;
     const {
-      sources: [s0, s1, s2, s3],
-      outputs: [o0, o1, o2, o3],
-      hush,
+      // sources: [s0, s1, s2, s3],
+      // outputs: [o0, o1, o2, o3],
+      outputs: [o0],
+      // hush,
       loop,
       render,
     } = hydra;
-    /* eslint-enable no-unused-vars */
-    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     (noise(() => scale.current) as any)
       .mult(

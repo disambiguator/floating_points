@@ -1,8 +1,8 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { memo, useRef } from 'react';
 import { Vector3 } from 'three';
+import type { Config } from 'lib/store';
 import Shader from '../lib/shaders/landscape';
-import { type Config } from '../lib/store';
 
 const colorVector = new Vector3();
 

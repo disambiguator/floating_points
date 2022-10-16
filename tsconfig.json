@@ -3,7 +3,17 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": false, // I do not actually understand the point of this rule.
+    "noUncheckedIndexedAccess": false, // Maybe one day, but this is currently too much of a headache
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "importsNotUsedAsValues": "error"
   },
   "exclude": ["node_modules"],
   "include": ["next-env.d.ts", ".eslintrc.js", "**/*.js", "**/*.ts", "**/*.tsx"]
