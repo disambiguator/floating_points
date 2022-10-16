@@ -8,6 +8,7 @@
     "lint": "eslint_d . --ext=ts,tsx,js,jsx && npm run prettier",
     "lint-fix": "eslint_d . --ext=ts,tsx --fix",
     "test": "tsc && npm run lint",
+    "test-ci": "tsc && eslint . --ext=ts,tsx,js,jsx && npm run prettier",
     "build": "next build",
     "watch": "tsc --watch",
     "start": "next dev"
