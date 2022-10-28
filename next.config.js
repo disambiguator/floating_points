@@ -7,9 +7,6 @@ module.exports = {
     });
     return config;
   },
-  typescript: {
-    ignoreDevErrors: true,
-  },
   // Remove this once I figure out hydra-ts nonsense
   experimental: { esmExternals: 'loose' },
 };
