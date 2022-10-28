@@ -107,7 +107,10 @@ export const initMidiController = async (): Promise<() => void> => {
     };
   });
 
-  return () => cleanupFunctions.forEach((c) => c());
+  return () =>
+    cleanupFunctions.forEach((c) => {
+      c();
+    });
 };
 
 export const useMidi = (config: MidiConfig) => {
@@ -158,6 +161,9 @@ export const useMidi = (config: MidiConfig) => {
       };
     });
 
-    return () => cleanup.forEach((c) => c());
+    return () =>
+      cleanup.forEach((c) => {
+        c();
+      });
   }, [config]);
 };

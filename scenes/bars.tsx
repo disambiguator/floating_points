@@ -106,6 +106,7 @@ const Bars = React.memo(function Bars() {
     <Line
       position={[0, -800, -1000]}
       ref={lineRef}
+      // @ts-expect-error - not sure what is happening. Hopefully fixed in newer Drei
       color={color}
       linewidth={lineWidth}
       points={new Array(SAMPLE_LENGTH * 3).fill(0)}

@@ -52,6 +52,7 @@ const Eclipse = React.memo(function Shader() {
         <Line
           ref={lineRef}
           points={points.length > 0 ? transformedPoints : [[0, 0, 0]]}
+          // @ts-expect-error - not sure what is happening. Hopefully fixed in newer Drei
           color={'purple'}
           lineWidth={3}
           alphaWrite={undefined} // IDK why i need this
