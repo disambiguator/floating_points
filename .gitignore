@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 .DS_Store
 *.mp4
 *.wav
+*.obj
