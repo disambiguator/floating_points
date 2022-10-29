@@ -9,6 +9,7 @@ import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
 import { fbmConfig } from 'scenes/fbm';
 import { chaosConfig } from 'scenes/geometric_chaos';
+import { halloweenConfig } from 'scenes/halloween';
 import { landscapeConfig } from 'scenes/landscape';
 import { marbleConfig } from 'scenes/marble';
 import { spiroConfig } from 'scenes/spiro';
@@ -33,6 +34,7 @@ export const scenes = {
   fbm: fbmConfig,
   marble: marbleConfig,
   webcam: webcamConfig,
+  halloween: halloweenConfig,
 };
 
 export const sceneNames = Object.keys(scenes);
