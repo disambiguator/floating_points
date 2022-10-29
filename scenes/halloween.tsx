@@ -98,7 +98,9 @@ const Halloween = React.memo(function Dusen() {
       </mesh>
       {seeds.map((s, i) => (
         <Orbits key={i} seed={s}>
-          <Skull />
+          <React.Suspense fallback={null}>
+            <Skull />
+          </React.Suspense>
         </Orbits>
       ))}
       {lights.map((s, i) => (
