@@ -37,6 +37,11 @@ const getPoint = (radius: number, theta: number, phi: number) => {
   return { x: xCoordinate, y: yCoordinate, z: zCoordinate };
 };
 
+const displacement = new Float32Array(renderSpeed);
+for (let i = 0; i < renderSpeed; i++) {
+  displacement[i] = Math.random() * 5;
+}
+
 function generateVertices(positions: Seed[]) {
   const vertices = new Float32Array(renderSpeed * 3);
   for (let i = 0; i < renderSpeed; i++) {
@@ -86,7 +91,7 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
 
   useControls('spiro', {
     'New Positions': button(newPositions),
-    distort: { value: 0, min: 0, max: 127, setDistort },
+    distort: { value: 0, min: 0, max: 127, onChange: setDistort },
     color: {
       value: false,
       onChange: (v) => {
@@ -98,13 +103,6 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   useMidi(useMemo(() => ({ function1: newPositions }), [newPositions]));
 
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
-  const displacement = useMemo(() => {
-    const d = new Float32Array(renderSpeed);
-    for (let i = 0; i < renderSpeed; i++) {
-      d[i] = Math.random() * 5;
-    }
-    return d;
-  }, []);
 
   const { seeds } = config;
 
@@ -115,11 +113,10 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   }, [seeds]);
 
   useFrame(({ clock }) => {
-    positions.current = positions.current.map((p) => ({
-      ...p,
-      arc: p.arc + p.speed * renderSpeed,
-      phi: p.phi + p.phiSpeed * renderSpeed,
-    }));
+    positions.current.forEach((p) => {
+      p.arc += p.speed * renderSpeed;
+      p.phi += p.phiSpeed * renderSpeed;
+    });
 
     const { ray } = useStore.getState();
 
