@@ -70,9 +70,11 @@ void main() {
   }
 
   // Rotate defined angle
-  vec2 rotation = vec2(sin(angle), cos(angle));
-  coord.x = coord.x * rotation.y + coord.y * rotation.x;
-  coord.y = coord.y * rotation.y - coord.x * rotation.x;
+  float c = cos(angle);
+  float s = sin(angle);
+  vec2 center = mouse;
+  mat2 rotation_matrix = mat2(c, -s, s, c);
+  coord = rotation_matrix * (coord - center) + center;
 
   // tunnel and zoom
   float scale = 0.05;
