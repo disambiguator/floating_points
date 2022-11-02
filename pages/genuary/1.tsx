@@ -15,7 +15,7 @@ const Shader = {
     precision highp float;
     #endif
 
-    varying vec3 vPosition;
+    out vec3 vPosition;
     void main() {
         vPosition = (vec4(position,1.) * instanceMatrix).xyz;
         gl_Position = projectionMatrix *
@@ -29,7 +29,7 @@ const Shader = {
     precision highp float;
     #endif
 
-    varying vec3 vPosition;
+    in vec3 vPosition;
     void main() {
       vec3 color = normalize(vPosition);
       gl_FragColor = vec4(color, 1.0);
@@ -61,7 +61,7 @@ const KaleidoscopeShader = {
   precision highp float;
   #endif
 
-  varying vec2 vUv;
+  out vec2 vUv;
   void main() {
       vUv = uv;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);

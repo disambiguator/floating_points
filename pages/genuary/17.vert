@@ -10,7 +10,7 @@ uniform float height;
 float noise(vec2 pos, float scaling) {
   return snoise3(vec3(pos / posScale, 1.0)) * scaling;
 }
-varying vec3 color;
+out vec3 color;
 
 void main() {
   vec3 p = position;

@@ -5,7 +5,7 @@ import Page from '../../components/page';
 
 const shader = {
   vertexShader: /* glsl */ `
-    varying vec2 vUv;
+    out vec2 vUv;
     void main() {
       vUv = uv;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
@@ -18,7 +18,7 @@ const shader = {
 
   uniform float aspect;
   uniform float time;
-  varying vec2 vUv;
+  in vec2 vUv;
 
   const vec2 lpos = vec2(0.5);
   const vec3 moonColor = vec3(0.2);

@@ -6,7 +6,7 @@ import { FiberScene } from '../components/scene';
 
 const Shader = {
   vertexShader: /* glsl */ `
-  varying vec2 vUv;
+  out vec2 vUv;
 
   void main() {
 
@@ -27,7 +27,7 @@ uniform float time;
 uniform float radius;
 uniform float zoom;
 
-varying vec2 vUv;
+in vec2 vUv;
 uniform vec2 bounds;
 
 // http://www.iquilezles.org/www/articles/palettes/palettes.htm

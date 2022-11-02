@@ -5,7 +5,7 @@ uniform float aspect;
 uniform float time;
 uniform sampler2D tDiffuse;
 uniform float threshold;
-varying vec2 vUv;
+in vec2 vUv;
 
 // #pragma glslify: dither = require(glsl-dither)
 #pragma glslify: dither = require(glsl-dither/8x8)

@@ -21,7 +21,7 @@ const float PI = 3.14159265359;
 uniform sampler2D tOld;
 uniform sampler2D tNew;
 
-varying vec2 vUv;
+in vec2 vUv;
 
 #pragma glslify: kaleidoscope = require(./kaleidoscope.glsl)
 #pragma glslify: zoomFun = require(./zoom.glsl)

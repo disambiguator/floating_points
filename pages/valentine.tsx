@@ -14,7 +14,7 @@ const Text = ({ children }: { children: any }) => {
 
 const ValentineShader = {
   vertexShader: /* glsl */ `
-    varying vec2 vUv;
+    out vec2 vUv;
     void main() {
       vUv = uv;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
@@ -27,7 +27,7 @@ const ValentineShader = {
 
   uniform float aspect;
   uniform sampler2D video;
-  varying vec2 vUv;
+  in vec2 vUv;
   const float a = 0.09;
 
   float heart(in vec2 p) {

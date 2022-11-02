@@ -13,7 +13,7 @@ const DusenShader = {
   uniform float radius;
   uniform vec3 color;
 
-  varying vec2 vUv;
+  in vec2 vUv;
 
   float circ(vec2 p, float radius) {
       return step(length(p - 0.5), radius);

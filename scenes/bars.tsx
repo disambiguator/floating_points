@@ -17,7 +17,7 @@ const BarsShader = {
   },
 
   vertexShader: [
-    'varying vec2 vUv;',
+    'out vec2 vUv;',
 
     'void main() {',
 
@@ -37,7 +37,7 @@ const BarsShader = {
     uniform sampler2D tOld;
     uniform sampler2D tNew;
 
-    varying vec2 vUv;
+    in vec2 vUv;
 
     void main() {
     	vec4 texelNew = texture2D( tNew, vUv);

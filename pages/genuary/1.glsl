@@ -3,7 +3,7 @@ precision highp float;
 #endif
 uniform float aspect;
 uniform sampler2D tDiffuse;
-varying vec2 vUv;
+in vec2 vUv;
 
 #pragma glslify: kaleidoscope = require(../../lib/shaders/kaleidoscope.glsl)
 

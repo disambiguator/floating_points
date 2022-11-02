@@ -17,7 +17,7 @@ const Shader = {
     uniform vec3 direction;
     attribute float displacement;
 
-    varying vec3 vPosition;
+    out vec3 vPosition;
 
     void main() {
 
@@ -36,15 +36,13 @@ const Shader = {
     precision highp float;
     #endif
 
-    // same name and type as VS
-    varying vec3 vPosition;
-    varying float vColor;
+    in vec3 vPosition;
+    in float vColor;
 
     void main() {
 
     vec3 color = normalize(vPosition);
 
-    // feed into our frag colour
     gl_FragColor = vec4(color, 1.0);
 
     }

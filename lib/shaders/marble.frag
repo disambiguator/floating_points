@@ -5,7 +5,7 @@ precision highp float;
 uniform float aspect;
 uniform float time;
 uniform float G;
-varying vec2 vUv;
+in vec2 vUv;
 uniform vec3 primaryColor;
 uniform vec3 secondaryColor;
 

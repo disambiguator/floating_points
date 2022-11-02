@@ -6,7 +6,7 @@ uniform float aspect;
 uniform float time;
 uniform float radius;
 uniform float G;
-varying vec2 vUv;
+in vec2 vUv;
 
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 

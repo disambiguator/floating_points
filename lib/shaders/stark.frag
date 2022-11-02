@@ -7,7 +7,7 @@ uniform float time;
 uniform float radius;
 uniform sampler2D audio;
 uniform float s;
-varying vec2 vUv;
+in vec2 vUv;
 
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
 #pragma glslify: hsv2rgb = require(glsl-hsv2rgb)

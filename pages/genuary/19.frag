@@ -21,7 +21,7 @@ const float PI = 3.14159265359;
 uniform sampler2D tOld;
 uniform sampler2D tNew;
 
-varying vec2 vUv;
+in vec2 vUv;
 
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: blend = require(glsl-blend/all)

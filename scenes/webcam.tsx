@@ -5,7 +5,7 @@ import type { Config } from '../lib/store';
 
 const WebcamShader = {
   vertexShader: /* glsl */ `
-  varying vec4 vColor;
+  out vec4 vColor;
     uniform sampler2D camera;
     uniform float depth;
 
@@ -39,7 +39,7 @@ const WebcamShader = {
 precision highp float;
 #endif
 
-varying vec4 vColor;
+in vec4 vColor;
 uniform sampler2D camera;
 
 void main()
