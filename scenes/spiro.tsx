@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import React, { useCallback, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
+import { useRefState } from 'lib/hooks';
 import { scaleMidi, useMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
 import { type Config, useSpectrum, useStore } from '../lib/store';
@@ -83,6 +84,7 @@ const SpiroContents = () => {
   useSpectrum({ distort: setDistort });
 
   const positions = useRef(initPositions());
+  const [speed, setSpeed] = useRefState(1);
   const newPositions = useCallback(() => {
     positions.current = initPositions();
   }, []);
@@ -96,6 +98,12 @@ const SpiroContents = () => {
         shaderMaterialRef.current!.uniforms.color.value = v;
       },
     },
+    speed: {
+      value: 1,
+      min: -10,
+      max: 10,
+      onChange: setSpeed,
+    },
   });
 
   const { numVertices } = useControls('spiro', {
@@ -108,8 +116,8 @@ const SpiroContents = () => {
 
   useFrame(({ clock }) => {
     positions.current.forEach((p) => {
-      p.arc += p.speed * numVertices;
-      p.phi += p.phiSpeed * numVertices;
+      p.arc += p.speed * numVertices * speed.current;
+      p.phi += p.phiSpeed * numVertices * speed.current;
     });
 
     const { ray } = useStore.getState();
