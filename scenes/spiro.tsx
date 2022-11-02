@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
 import { scaleMidi, useMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
@@ -60,13 +60,9 @@ function generateVertices(positions: Seed[]) {
   return vertices;
 }
 
-export const initPositions = () => [randPosition(), randPosition()];
+const initPositions = () => [randPosition(), randPosition()];
 
-interface SpiroParams {
-  seeds?: Seed[];
-}
-export const SpiroContents = ({ config }: { config: SpiroParams }) => {
-  const set = useStore((state) => state.set);
+const SpiroContents = () => {
   const shaderMaterialRef = useRef<typeof SpiroShader>();
 
   const setDistort = useCallback((v) => {
@@ -79,15 +75,10 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
 
   useSpectrum({ distort: setDistort });
 
+  const positions = useRef(initPositions());
   const newPositions = useCallback(() => {
-    const newSeeds = initPositions();
-    set((state) => {
-      const env = state.env as Config<SpiroParams>;
-      return {
-        env: { ...env, params: { ...env.params, seeds: newSeeds } },
-      };
-    });
-  }, [set]);
+    positions.current = initPositions();
+  }, []);
 
   useControls('spiro', {
     'New Positions': button(newPositions),
@@ -103,14 +94,6 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   useMidi(useMemo(() => ({ function1: newPositions }), [newPositions]));
 
   const positionAttributeRef = useRef<THREE.BufferAttribute>();
-
-  const { seeds } = config;
-
-  const positions = useRef(seeds ?? initPositions());
-
-  useEffect(() => {
-    if (seeds) positions.current = seeds;
-  }, [seeds]);
 
   useFrame(({ clock }) => {
     positions.current.forEach((p) => {
@@ -155,8 +138,8 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   );
 };
 
-export const spiroConfig: Config<SpiroParams> = {
+export const spiroConfig: Config = {
   Contents: SpiroContents,
   name: 'spiro',
-  params: { seeds: initPositions() },
+  params: {},
 };
