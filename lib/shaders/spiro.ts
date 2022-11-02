@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import fragmentShader from './spiro.frag';
+import vertexShader from './spiro.vert';
 
 const spiroShader = {
   uniforms: {
@@ -8,54 +10,8 @@ const spiroShader = {
     color: new THREE.Uniform(0.0),
     time: new THREE.Uniform(0),
   },
-
-  vertexShader: /* glsl */ `
-    #ifdef GL_ES
-    precision highp float;
-    #endif
-
-    uniform float amplitude;
-    uniform vec3 origin;
-    uniform vec3 direction;
-    attribute float displacement;
-
-    varying vec4 vPosition;
-
-    float computeDistance(vec3 mouseOrigin, vec3 mouseDirection, vec3 vertexPosition) {
-      vec3 d = normalize(mouseDirection);
-      vec3 v = vertexPosition - mouseOrigin;
-      float t = dot(v, d);
-      vec3 P = mouseOrigin + t * d;
-      return distance(P, vertexPosition);
-    }
-
-    void main() {
-      vec3 newPosition = position + amplitude * displacement * pow(computeDistance(origin, direction, position),2.) * direction;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
-      vPosition = gl_Position;
-    }
-`,
-
-  fragmentShader: /* glsl */ `
-#ifdef GL_ES
-precision highp float;
-#endif
-
-varying vec4 vPosition;
-uniform bool color;
-uniform float time;
-
-void main() {
-  if(color) {
-    vec2 vCoords = vPosition.xy;
-    vCoords /= vPosition.w;
-    vCoords = vCoords * 0.5 + 0.5;
-    gl_FragColor = vec4(vCoords.x, vCoords.y, vCoords.x + vCoords.y, 1.0);
-  } else {
-    gl_FragColor = vec4(1.0);
-  }
-}
-`,
+  vertexShader,
+  fragmentShader,
 };
 
 export default spiroShader;
