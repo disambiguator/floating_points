@@ -35,11 +35,6 @@ const getPoint = (radius: number, theta: number, phi: number) => [
   radius * Math.cos(theta),
 ];
 
-const displacement = new Float32Array(MAX_VERTICES);
-for (let i = 0; i < MAX_VERTICES; i++) {
-  displacement[i] = Math.random() * 5;
-}
-
 function generateVertices(numVertices: number, positions: Seed[]) {
   const vertices = new Float32Array(numVertices * 3);
   for (let i = 0; i < numVertices; i++) {
@@ -142,12 +137,6 @@ const SpiroContents = () => {
   return (
     <line>
       <bufferGeometry>
-        <bufferAttribute
-          attachObject={['attributes', 'displacement']}
-          count={numVertices}
-          array={displacement}
-          itemSize={1}
-        />
         <bufferAttribute
           ref={positionAttributeRef}
           attachObject={['attributes', 'position']}

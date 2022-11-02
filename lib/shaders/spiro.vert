@@ -2,10 +2,12 @@
 precision highp float;
 #endif
 
+#pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
+
 uniform float amplitude;
 uniform vec3 origin;
 uniform vec3 direction;
-in float displacement;
+uniform float time;
 
 out vec4 vPosition;
 
@@ -22,6 +24,7 @@ float computeDistance(
 }
 
 void main() {
+  float displacement = snoise3(vec3(position.xy / 30.0, time));
   vec3 newPosition =
     position +
     amplitude *

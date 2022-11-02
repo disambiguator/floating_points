@@ -4,7 +4,6 @@ precision highp float;
 
 in vec4 vPosition;
 uniform bool color;
-uniform float time;
 
 void main() {
   if (color) {
