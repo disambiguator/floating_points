@@ -1,11 +1,11 @@
+import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import { sumBy } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import type * as THREE from 'three';
-import { scaleMidi, useMidi } from '../lib/midi';
-import SpiroShader from '../lib/shaders/spiro';
-import { type Config, useSpectrum, useStore } from '../lib/store';
+import type { Line2 } from 'three-stdlib';
+import { useMidi } from '../lib/midi';
+import { type Config, useStore } from '../lib/store';
 
 const numPoints = 50000;
 const renderSpeed = 1000;
@@ -67,17 +67,7 @@ interface SpiroParams {
 }
 export const SpiroContents = ({ config }: { config: SpiroParams }) => {
   const set = useStore((state) => state.set);
-  const shaderMaterialRef = useRef<typeof SpiroShader>();
-
-  const setDistort = useCallback((v) => {
-    shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
-      v,
-      0,
-      0.0005,
-    );
-  }, []);
-
-  useSpectrum({ distort: setDistort });
+  const lineRef = useRef<Line2>(null);
 
   const newPositions = useCallback(() => {
     const newSeeds = initPositions();
@@ -91,18 +81,15 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
 
   useControls('spiro', {
     'New Positions': button(newPositions),
-    distort: { value: 0, min: 0, max: 127, onChange: setDistort },
-    color: {
-      value: false,
-      onChange: (v) => {
-        shaderMaterialRef.current!.uniforms.color.value = v;
-      },
-    },
+    // color: {
+    //   value: false,
+    //   onChange: (v) => {
+    //     lineRef.current!.material.color = v;
+    //   },
+    // },
   });
 
   useMidi(useMemo(() => ({ function1: newPositions }), [newPositions]));
-
-  const positionAttributeRef = useRef<THREE.BufferAttribute>();
 
   const { seeds } = config;
 
@@ -112,46 +99,31 @@ export const SpiroContents = ({ config }: { config: SpiroParams }) => {
     if (seeds) positions.current = seeds;
   }, [seeds]);
 
-  useFrame(({ clock }) => {
+  useFrame(() => {
     positions.current.forEach((p) => {
       p.arc += p.speed * renderSpeed;
       p.phi += p.phiSpeed * renderSpeed;
     });
 
-    const { ray } = useStore.getState();
-
-    const shaderMaterial = shaderMaterialRef.current;
-    if (shaderMaterial) {
-      shaderMaterial.uniforms.origin.value = ray.origin;
-      shaderMaterial.uniforms.direction.value = ray.direction;
-      shaderMaterial.uniforms.time.value = clock.elapsedTime;
-    }
-
-    const positionAttribute = positionAttributeRef.current;
-    if (positionAttribute) {
-      positionAttribute.array = generateVertices(positions.current);
-      positionAttribute.needsUpdate = true;
+    const line = lineRef.current;
+    if (line) {
+      line.geometry.setPositions(generateVertices(positions.current));
+      // material.uniforms.time.value = clock.elapsedTime;
     }
   });
 
   return (
-    <line>
-      <bufferGeometry>
-        <bufferAttribute
-          attachObject={['attributes', 'displacement']}
-          count={renderSpeed}
-          array={displacement}
-          itemSize={1}
-        />
-        <bufferAttribute
-          ref={positionAttributeRef}
-          attachObject={['attributes', 'position']}
-          count={renderSpeed}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <shaderMaterial ref={shaderMaterialRef} args={[SpiroShader]} />
-    </line>
+    <Line
+      ref={lineRef}
+      points={[
+        [0, 0, 0],
+        [0, 0, 100],
+      ]}
+      // @ts-expect-error - drei update should fix it
+      color={'purple'}
+      lineWidth={3}
+      alphaWrite={undefined} // IDK why i need this
+    />
   );
 };
 
