@@ -83,6 +83,7 @@ export const Controls = () => {
   );
 };
 
+const raycaster = new THREE.Raycaster();
 const Scene = <T,>({ env }: { env: Env<T> }) => {
   const gl = useThree((t) => t.gl);
   const audioEnabled = useStore((state) => state.audioEnabled);
@@ -92,7 +93,6 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
     // eslint-disable-next-line no-alert
     window.alert('Not instantiated yet');
   });
-  const raycaster = new THREE.Raycaster();
   useControls({
     audio: folder({
       scale: { value: 1, min: 0, max: 10, onChange: setVolumeScaler },
@@ -105,7 +105,7 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
   const audio = useMicrophone(audioEnabled);
 
   useFrame(({ camera, mouse }) => {
-    raycaster.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
+    raycaster.setFromCamera(mouse, camera);
     useStore.setState({ ray: raycaster.ray });
 
     if (audio) {
