@@ -13,37 +13,18 @@ const float PI = 3.14159265359;
 // signed distance to a 2D polygon
 // adapted from triangle
 // https://iquilezles.org/articles/distfunctions2d
-float sdPoly(vec2[N] poly, vec2 p) {
-  vec2[N] e;
-  vec2[N] v;
-  vec2[N] pq;
-  // data
-  for (int i = 0; i < N; i++) {
-    int i2 = int(mod(float(i + 1), float(N))); //i+1
-    e[i] = poly[i2] - poly[i];
-    v[i] = p - poly[i];
-    pq[i] = v[i] - e[i] * clamp(dot(v[i], e[i]) / dot(e[i], e[i]), 0.0, 1.0);
+float sdPoly(vec2[N] v, vec2 p) {
+  float d = dot(p - v[0], p - v[0]);
+  float s = 1.0;
+  for (int i = 0, j = N - 1; i < N; j = i, i++) {
+    vec2 e = v[j] - v[i];
+    vec2 w = p - v[i];
+    vec2 b = w - e * clamp(dot(w, e) / dot(e, e), 0.0, 1.0);
+    d = min(d, dot(b, b));
+    bvec3 c = bvec3(p.y >= v[i].y, p.y < v[j].y, e.x * w.y > e.y * w.x);
+    if (all(c) || all(not(c))) s *= -1.0;
   }
-
-  //distance
-  float d = dot(pq[0], pq[0]);
-  for (int i = 1; i < N; i++) {
-    d = min(d, dot(pq[i], pq[i]));
-  }
-
-  //winding number
-  // from http://geomalgorithms.com/a03-_inclusion.html
-  int wn = 0;
-  for (int i = 0; i < N; i++) {
-    int i2 = int(mod(float(i + 1), float(N)));
-    bool cond1 = 0.0 <= v[i].y;
-    bool cond2 = 0.0 > v[i2].y;
-    float val3 = cross2d(e[i], v[i]); //isLeft
-    wn += cond1 && cond2 && val3 > 0.0 ? 1 : 0; // have  a valid up intersect
-    wn -= !cond1 && !cond2 && val3 < 0.0 ? 1 : 0; // have  a valid down intersect
-  }
-  float s = wn == 0 ? 1.0 : -1.0;
-  return sqrt(d) * s;
+  return s * sqrt(d);
 }
 
 const vec2 top = vec2(0.0, 1.0);
