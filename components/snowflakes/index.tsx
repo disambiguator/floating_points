@@ -101,7 +101,7 @@ const Shaders = React.memo(function Shader() {
   });
 
   // const t = useRef(1);
-  // animate many snowflakes
+  // // animate many snowflakes
   // useFrame(() => {
   //   t.current++;
   //   if (t.current % 20 === 0) {

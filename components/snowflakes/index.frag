@@ -17,7 +17,8 @@ float sdPoly(vec2[N] v, vec2 p) {
   float d = dot(p - v[0], p - v[0]);
   float s = 1.0;
   for (int i = 0, j = N - 1; i < N; j = i, i++) {
-    vec2 e = v[j] - v[i];
+    vec2 e = v[j] - v[i] + 0.08 * sin(p.y * 150.0);
+    // vec2 e = v[j] - v[i] + 0.08 * sin(p.y * 150.0);
     vec2 w = p - v[i];
     vec2 b = w - e * clamp(dot(w, e) / dot(e, e), 0.0, 1.0);
     d = min(d, dot(b, b));
