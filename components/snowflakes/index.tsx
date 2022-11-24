@@ -1,5 +1,6 @@
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { button, useControls } from 'leva';
+import { minBy } from 'lodash';
 import React, { useRef } from 'react';
 import { Vector2 } from 'three';
 import Page from 'components/page';
@@ -27,15 +28,19 @@ const kaleid = (uv: Vector2) => {
   return uv;
 };
 
+const points = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'] as const;
+
 const shader = {
   vertexShader,
   fragmentShader,
   uniforms: {
-    p1: { value: kaleid(new Vector2(0.2, 0.7)) },
-    p2: { value: kaleid(new Vector2(0.2, 0.5)) },
+    ...(Object.fromEntries(
+      points.map((p) => [p, { value: new Vector2() }]),
+    ) as Record<typeof points[number], { value: Vector2 }>),
     k: { value: true },
     hover: { value: false },
     time: { value: 0 },
+    totalTime: { value: 0 },
   },
 };
 
@@ -43,14 +48,29 @@ const Shaders = React.memo(function Shader() {
   const size = useThree((t) => t.size);
   const clock = useThree((t) => t.clock);
 
-  const mouseDown = useRef<'p1' | 'p2' | null>(null);
+  const mouseDown = useRef<typeof points[number] | null>(null);
   const animate = useRef<number | null>(null);
   const ref = useRef<typeof shader>();
+  const uniforms = () => ref.current!.uniforms;
+
   const { kaleidoscope } = useControls({
     kaleidoscope: true,
+    randomize: button(() => {
+      const numPoints = Math.floor(Math.random() * 8);
+      points.forEach((p, i) => {
+        if (i < numPoints) {
+          uniforms()[p].value.set(0, 0);
+        } else {
+          kaleid(
+            uniforms()[p].value.set(
+              Math.random() * 2 - 1,
+              Math.random() * 2 - 1,
+            ),
+          );
+        }
+      });
+    }),
   });
-
-  const uniforms = () => ref.current!.uniforms;
 
   const onPointerDown = ({ uv }: ThreeEvent<PointerEvent>) => {
     if (!uv) return;
@@ -58,13 +78,13 @@ const Shaders = React.memo(function Shader() {
     uv.multiplyScalar(2).subScalar(1);
     kaleid(uv);
 
-    const d1 = uv.distanceTo(uniforms().p1.value);
-    const d2 = uv.distanceTo(uniforms().p2.value);
-
-    if (d1 < d2 && d1 < 0.05) {
-      mouseDown.current = 'p1';
-    } else if (d2 < d1 && d2 < 0.02) {
-      mouseDown.current = 'p2';
+    const distances = points.map((p) => ({
+      name: p,
+      distance: uv.distanceTo(uniforms()[p].value),
+    }));
+    const m = minBy(distances, (i) => i.distance)!;
+    if (m.distance < 0.05) {
+      mouseDown.current = m.name;
     }
   };
 
@@ -91,6 +111,7 @@ const Shaders = React.memo(function Shader() {
   };
 
   useFrame(() => {
+    uniforms().totalTime.value = clock.elapsedTime;
     if (animate.current !== null) {
       uniforms().time.value = uniforms().hover.value
         ? clock.elapsedTime - animate.current
@@ -117,7 +138,7 @@ const Shaders = React.memo(function Shader() {
 
   return (
     <mesh
-      position={[0, 0, -510]}
+      position={[0, 0, -610]}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -135,6 +156,7 @@ const Shaders = React.memo(function Shader() {
 });
 
 export default function ShaderPage() {
+  // light blue background
   return (
     <Page>
       <div style={{ height: '90vh', width: '90vh' }}>

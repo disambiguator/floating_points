@@ -1,7 +1,7 @@
-#define N (4)
+#define N (10)
 
-uniform float k, hover, time;
-uniform vec2 p1, p2;
+uniform float k, hover, time, totalTime;
+uniform vec2 p1, p2, p3, p4, p5, p6, p7, p8;
 in vec2 vUv;
 
 float cross2d(vec2 v0, vec2 v1) {
@@ -17,8 +17,10 @@ float sdPoly(vec2[N] v, vec2 p) {
   float d = dot(p - v[0], p - v[0]);
   float s = 1.0;
   for (int i = 0, j = N - 1; i < N; j = i, i++) {
-    vec2 e = v[j] - v[i] + 0.08 * sin(p.y * 150.0);
-    // vec2 e = v[j] - v[i] + 0.08 * sin(p.y * 150.0);
+    vec2 e = v[j] - v[i];
+    // vec2 e = v[j] - v[i] + 0.08 * sin(p.y * 150.0 + totalTime * 3.0);
+    // e += 0.01 * sin(p.y * 150.0);
+    // e += 0.03 * sin(p.x * 150.0);
     vec2 w = p - v[i];
     vec2 b = w - e * clamp(dot(w, e) / dot(e, e), 0.0, 1.0);
     d = min(d, dot(b, b));
@@ -57,12 +59,12 @@ void main() {
     p = kaleidoscope(p, 6.0);
   }
 
-  vec2[N] poly = vec2[N](top, p1, p2, center);
+  vec2[N] poly = vec2[N](top, p1, p2, p3, p4, p5, p6, p7, p8, center);
   float d = sdPoly(poly, p);
 
   vec3 col = vec3(0.0);
   // border of cutout
-  float cutoffSize = 0.08;
+  float cutoffSize = 0.06;
   col = mix(col, vec3(1.0), smoothstep(-cutoffSize - dF, -cutoffSize + dF, d));
   // border of snowflake
   col = mix(col, vec3(0.0), smoothstep(-dF, dF, d));
@@ -73,7 +75,25 @@ void main() {
   //   col = mix(col, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
 
   // hover targets
-  if (min(distance(p, p1), distance(p, p2)) < 0.02) {
+  if (
+    min(
+      distance(p, p1),
+      min(
+        distance(p, p2),
+        min(
+          distance(p, p3),
+          min(
+            distance(p, p4),
+            min(
+              distance(p, p5),
+              min(distance(p, p6), min(distance(p, p7), distance(p, p8)))
+            )
+          )
+        )
+      )
+    ) <
+    0.02
+  ) {
     col = mix(col, vec3(1.0, 0.0, 0.0), smoothstep(0.0, 0.2, time));
   }
 
