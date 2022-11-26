@@ -51,14 +51,7 @@ vec2 kaleidoscope(vec2 uv, float numSides) {
   return d * vec2(cos(angle), sin(angle));
 }
 
-void main() {
-  // Move from 0 to 1 domain to -1 to 1 domain
-  vec2 p = vUv * 2.0 - 1.0;
-
-  if (k > 0.0) {
-    p = kaleidoscope(p, 6.0);
-  }
-
+vec3 sdfSnowflake(vec2 p) {
   vec2[N] poly = vec2[N](top, p1, p2, p3, p4, p5, p6, p7, p8, center);
   float d = sdPoly(poly, p);
 
@@ -69,10 +62,18 @@ void main() {
   // border of snowflake
   col = mix(col, vec3(0.0), smoothstep(-dF, dF, d));
 
-  //   vec3 col = vec3(1.0) - sign(d) * vec3(0.1, 0.4, 0.7);
-  //   col *= 1.0 - exp(-2.0 * abs(d));
-  //   col *= 0.8 + 0.2 * cos(120.0 * d);
-  //   col = mix(col, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
+  return col;
+}
+
+void main() {
+  // Move from 0 to 1 domain to -1 to 1 domain
+  vec2 p = vUv * 2.0 - 1.0;
+
+  if (k > 0.0) {
+    p = kaleidoscope(p, 6.0);
+  }
+
+  vec3 col = sdfSnowflake(p);
 
   // hover targets
   if (
