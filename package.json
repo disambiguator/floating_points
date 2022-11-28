@@ -30,7 +30,7 @@
     "@types/react": "^17.0.0",
     "@types/react-responsive": "^8.0.2",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.44.0",
+    "@typescript-eslint/parser": "^5.45.0",
     "eslint": "^8.27.0",
     "eslint-config-next": "^13.0.4",
     "eslint-config-prettier": "^8.1.0",
