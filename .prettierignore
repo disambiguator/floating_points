@@ -5,3 +5,4 @@ dist/*
 public/*
 .next/*
 .log
+pnpm-lock.yaml

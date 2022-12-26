@@ -5,10 +5,10 @@
   "main": ".eslintrc.js",
   "scripts": {
     "prettier": "prettier --check .",
-    "lint": "eslint_d . --ext=ts,tsx,js,jsx && npm run prettier",
+    "lint": "eslint_d . --ext=ts,tsx,js,jsx && pnpm prettier",
     "lint-fix": "eslint_d . --ext=ts,tsx --fix",
-    "test": "tsc && npm run lint",
-    "test-ci": "tsc && eslint . --ext=ts,tsx,js,jsx && npm run prettier",
+    "test": "tsc && pnpm lint",
+    "test-ci": "tsc && eslint . --ext=ts,tsx,js,jsx && pnpm prettier",
     "build": "next build",
     "watch": "tsc --watch",
     "start": "next dev"
