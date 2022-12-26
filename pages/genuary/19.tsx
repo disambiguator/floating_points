@@ -51,7 +51,7 @@ const Letter = ({ letter, angle }: { letter: string; angle: number }) => {
 const Postprocessing = () => {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const effectsRef = useRef<AfterimagePass>();
+  const effectsRef = useRef<AfterimagePass>(null);
   useFrame(({ clock }) => {
     effectsRef.current!.uniforms.time.value = clock.elapsedTime;
   });
@@ -73,7 +73,7 @@ const Postprocessing = () => {
 };
 
 export const Shapes = React.memo(function Shapes() {
-  const groupRef = useRef<THREE.Group>();
+  const groupRef = useRef<THREE.Group>(null);
   useFrame(() => {
     groupRef.current!.rotation.z += 0.01;
   });

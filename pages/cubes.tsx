@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import React, { useMemo, useRef, useState } from 'react';
-import type { BufferGeometry } from 'three';
+import type { BoxGeometry } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 
@@ -13,7 +13,7 @@ const Cube = ({
   position: [number, number, number];
   rotation: [number, number, number];
 }) => {
-  const boxGeometry = useRef<BufferGeometry>();
+  const boxGeometry = useRef<BoxGeometry>(null);
   const colors = useMemo(() => {
     const d = new Float32Array(24 * 3);
     for (let i = 0; i < 24; i++) {

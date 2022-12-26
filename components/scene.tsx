@@ -6,11 +6,9 @@ export const FiberScene = ({
   controls,
   children,
   ...rest
-}: Props & { controls?: boolean }) => {
-  return (
-    <Canvas mode="concurrent" {...rest}>
-      {controls && <OrbitControls />}
-      {children}
-    </Canvas>
-  );
-};
+}: Props & { controls?: boolean }) => (
+  <Canvas {...rest}>
+    {controls && <OrbitControls />}
+    {children}
+  </Canvas>
+);

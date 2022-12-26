@@ -62,8 +62,8 @@ const Box = ({
   displacement: Float32Array;
   material: JSX.Element;
 }) => {
-  const meshRef = useRef<Mesh>();
-  const geometryRef = useRef<BufferGeometry>();
+  const meshRef = useRef<Mesh>(null);
+  const geometryRef = useRef<BufferGeometry>(null);
 
   useEffect(() => {
     const m = meshRef.current!;
@@ -81,14 +81,14 @@ const Box = ({
 
   return (
     <mesh ref={meshRef}>
-      <boxBufferGeometry args={[15, 15, 15]} ref={geometryRef}>
+      <boxGeometry args={[15, 15, 15]} ref={geometryRef}>
         <bufferAttribute
           attachObject={['attributes', 'displacement']}
           count={renderSpeed}
           array={displacement}
           itemSize={1}
         />
-      </boxBufferGeometry>
+      </boxGeometry>
       {material}
     </mesh>
   );
@@ -100,9 +100,9 @@ for (let i = 0; i < renderSpeed; i++) {
 }
 
 export const Shapes = React.memo(function Shapes() {
-  const materialRef = useRef<typeof Shader>();
+  const materialRef = useRef<typeof Shader>(null);
 
-  const setAmplitude = useCallback((v) => {
+  const setAmplitude = useCallback((v: number) => {
     materialRef.current!.uniforms.amplitude.value = scaleMidi(
       v * 1000,
       0,

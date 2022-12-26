@@ -13,7 +13,7 @@ interface CustomShader extends THREE.ShaderMaterial {
 }
 
 const Vertices = () => {
-  const matRef = useRef<THREE.MeshLambertMaterial>();
+  const matRef = useRef<THREE.MeshPhongMaterial>(null);
   const shaderRef = useRef<CustomShader>();
 
   useFrame(() => {

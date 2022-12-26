@@ -98,7 +98,7 @@ const shader = {
 const Eclipse = React.memo(function Shader() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof shader>();
+  const ref = useRef<typeof shader>(null);
 
   useFrame(({ clock }) => {
     ref.current!.uniforms.time.value = clock.elapsedTime;

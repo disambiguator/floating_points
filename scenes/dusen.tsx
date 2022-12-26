@@ -9,7 +9,7 @@ import { type Config, useSpectrum } from '../lib/store';
 const Dusen = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof DusenShader>();
+  const ref = useRef<typeof DusenShader>(null);
   const [radius, setRadius] = useState(0);
   const camera = useThree((t) => t.camera);
   const [, setControls] = useControls(() => ({

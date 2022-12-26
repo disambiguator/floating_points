@@ -5,7 +5,7 @@ import type { BoxData } from '../components/cubedraw';
 import type { Config } from '../lib/store';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
-  const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
+  const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>(null);
   useFrame(({ clock }) => {
     const mesh = meshRef.current;
     if (!mesh) return;

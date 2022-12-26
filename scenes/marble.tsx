@@ -6,7 +6,7 @@ import type { Config } from 'lib/store';
 const Dusen = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof shader>();
+  const ref = useRef<typeof shader>(null);
 
   useFrame(({ clock }) => {
     if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;

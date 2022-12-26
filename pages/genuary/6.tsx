@@ -21,8 +21,8 @@ const Eye = ({ position }: { position: [number, number, number] }) => {
 const radius = 10;
 
 const Person = ({ timeOffset }: { timeOffset: number }) => {
-  const ref = useRef<THREE.Group>();
-  const mainGroupRef = useRef<THREE.Group>();
+  const ref = useRef<THREE.Group>(null);
+  const mainGroupRef = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     const group = ref.current!;
     const t = clock.elapsedTime - timeOffset;

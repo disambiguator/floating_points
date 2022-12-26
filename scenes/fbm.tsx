@@ -8,7 +8,7 @@ import type { Config } from '../lib/store';
 const FbmContents = React.memo(function FbmContents() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof FbmShader>();
+  const ref = useRef<typeof FbmShader>(null);
   const speed = useRef(0);
   useControls('fbm', {
     speed: {

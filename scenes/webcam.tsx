@@ -57,7 +57,7 @@ void main()
 };
 
 const Webcam = React.memo(function Shader() {
-  const ref = useRef<THREE.ShaderMaterial>();
+  const ref = useRef<THREE.ShaderMaterial>(null);
   const { depth } = useControls({ depth: { value: 30, min: 0, max: 500 } });
   const video: HTMLVideoElement = document.getElementById(
     'webcam',

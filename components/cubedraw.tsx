@@ -11,7 +11,7 @@ export type BoxData = {
   creationTime: number;
 };
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
-  const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>();
+  const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>(null);
   useFrame(({ clock }) => {
     const mesh = meshRef.current!;
     const factor = Math.sin(creationTime + clock.elapsedTime / 3);

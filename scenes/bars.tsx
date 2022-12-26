@@ -54,7 +54,7 @@ const BarsShader = {
 };
 
 const Effects = () => {
-  const ref = useRef<AfterimagePass>();
+  const ref = useRef<AfterimagePass>(null);
 
   useControls('bars', {
     damp: {
@@ -110,7 +110,6 @@ const Bars = React.memo(function Bars() {
       color={color}
       linewidth={lineWidth}
       points={new Array(SAMPLE_LENGTH * 3).fill(0)}
-      alphaWrite={undefined} // IDK why i need this
     />
   );
 });

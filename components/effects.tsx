@@ -29,7 +29,7 @@ declare global {
 /* eslint-enable @typescript-eslint/no-namespace */
 
 const TunnelEffects = () => {
-  const ref = useRef<AfterimagePass>();
+  const ref = useRef<AfterimagePass>(null);
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);

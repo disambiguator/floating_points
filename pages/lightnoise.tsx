@@ -51,7 +51,7 @@ function CustomMaterial() {
 
 function Scene() {
   const size = useThree((t) => t.size);
-  const lightRef = useRef<PointLight>();
+  const lightRef = useRef<PointLight>(null);
 
   useFrame(({ clock }) => {
     lightRef.current!.position.y = Math.sin(clock.elapsedTime) * 100;

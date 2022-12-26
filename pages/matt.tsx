@@ -31,7 +31,7 @@ const Box = ({
   data: Data;
   index: number;
 }) => {
-  const canvasTextureRef = useRef<THREE.CanvasTexture>();
+  const canvasTextureRef = useRef<THREE.CanvasTexture>(null);
   const canvas = document.createElement('canvas');
 
   canvas.width = width;
@@ -133,7 +133,7 @@ const Rain = () => {
     particles.push(newParticle);
   }
   const mat = new THREE.PointsMaterial({ color: 0x0033ff, size: 10 });
-  const positionAttributeRef = useRef<THREE.BufferAttribute>();
+  const positionAttributeRef = useRef<THREE.BufferAttribute>(null);
 
   useFrame(() => {
     particles.forEach((p) => {

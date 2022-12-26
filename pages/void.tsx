@@ -99,8 +99,8 @@ const Stars = React.memo(function Stars() {
     speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
   });
 
-  const materialRef = useRef<typeof pointShader>();
-  const pointsRef = useRef<THREE.Points>();
+  const materialRef = useRef<typeof pointShader>(null);
+  const pointsRef = useRef<THREE.Points>(null);
 
   const vertices = useMemo(
     () => new Array(starsCount).fill(undefined).flatMap(newPosition),
@@ -162,8 +162,8 @@ const Row = ({
     -planeWidth / 2 + y * lengthSpacing,
   ];
 
-  const meshRef = useRef<THREE.Mesh>();
-  const geometryRef = useRef<THREE.BufferGeometry>();
+  const meshRef = useRef<THREE.Mesh>(null);
+  const geometryRef = useRef<THREE.BufferGeometry>(null);
   useEffect(() => {
     geometryRef.current!.computeVertexNormals();
   }, []);
@@ -214,7 +214,7 @@ const Terrain = React.memo(function Terrain() {
 
   const iRef = useRef(-1);
   const yRef = useRef(-1);
-  const groupRef = useRef<THREE.Group>();
+  const groupRef = useRef<THREE.Group>(null);
   const material = useMemo(
     () => (
       <meshLambertMaterial

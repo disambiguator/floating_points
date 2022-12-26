@@ -72,7 +72,7 @@ const KaleidoscopeShader = {
 
 export const Shapes = React.memo(function Shapes() {
   const controlsRef = useRef<OrbitControlsImpl>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>();
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
   useFrame(({ clock }) => {
     const controls = controlsRef.current!;
     controls.setAzimuthalAngle(clock.elapsedTime * 0.6);

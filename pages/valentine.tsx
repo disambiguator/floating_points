@@ -81,7 +81,7 @@ const ValentineShader = {
 };
 
 const Quad = () => {
-  const ref = useRef<ShaderPass>();
+  const ref = useRef<ShaderPass>(null);
   const aspect = useThree((t) => t.viewport.aspect);
   const video: HTMLVideoElement = document.getElementById(
     'webcam',

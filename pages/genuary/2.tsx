@@ -28,7 +28,7 @@ type GLTFResult = GLTF & {
 };
 
 function Model(props: JSX.IntrinsicElements['group']) {
-  const group = useRef<THREE.Group>();
+  const group = useRef<THREE.Group>(null);
   const { nodes, materials } = useGLTF(
     '/male_face/scene.gltf',
   ) as unknown as GLTFResult;
@@ -65,8 +65,8 @@ const Dither = {
 export const Shapes = React.memo(function Shapes() {
   const gl = useThree((t) => t.gl);
   const controlsRef = useRef<OrbitControlsImpl>(null);
-  const materialRef = useRef<typeof Dither>();
-  const groupRef = useRef<THREE.Group>();
+  const materialRef = useRef<typeof Dither>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
     gl.setPixelRatio(0.4);

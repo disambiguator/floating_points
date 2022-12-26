@@ -56,7 +56,7 @@ const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
 });
 
 const Control = () => {
-  const lightRef = useRef<THREE.PointLight>();
+  const lightRef = useRef<THREE.PointLight>(null);
   useFrame(({ camera }) => {
     const { spectrum } = useStore.getState();
     if (spectrum.volume > 10) camera.position.z -= spectrum.volume / 100;

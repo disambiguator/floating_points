@@ -66,9 +66,9 @@ function generateVertices(numVertices: number, positions: Seed[]) {
 const initPositions = () => [randPosition(), randPosition()];
 
 const SpiroContents = () => {
-  const shaderMaterialRef = useRef<typeof SpiroShader>();
+  const shaderMaterialRef = useRef<typeof SpiroShader>(null);
 
-  const setDistort = useCallback((v) => {
+  const setDistort = useCallback((v: number) => {
     shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
       v,
       0,
@@ -107,7 +107,7 @@ const SpiroContents = () => {
 
   useMidi(useMemo(() => ({ function1: newPositions }), [newPositions]));
 
-  const positionAttributeRef = useRef<THREE.BufferAttribute>();
+  const positionAttributeRef = useRef<THREE.BufferAttribute>(null);
 
   useFrame(({ clock }) => {
     positions.current.forEach((p) => {
