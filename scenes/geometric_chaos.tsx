@@ -1,7 +1,13 @@
 import { useFrame } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { type BufferGeometry, type Mesh, Uniform, Vector3 } from 'three';
+import {
+  BoxGeometry,
+  type Mesh,
+  ShaderMaterial,
+  Uniform,
+  Vector3,
+} from 'three';
 import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
@@ -63,7 +69,7 @@ const Box = ({
   material: JSX.Element;
 }) => {
   const meshRef = useRef<Mesh>(null);
-  const geometryRef = useRef<BufferGeometry>(null);
+  const geometryRef = useRef<BoxGeometry>(null);
 
   useEffect(() => {
     const m = meshRef.current!;
@@ -100,7 +106,7 @@ for (let i = 0; i < renderSpeed; i++) {
 }
 
 export const Shapes = React.memo(function Shapes() {
-  const materialRef = useRef<typeof Shader>(null);
+  const materialRef = useRef<ShaderMaterial>(null);
 
   const setAmplitude = useCallback((v: number) => {
     materialRef.current!.uniforms.amplitude.value = scaleMidi(

@@ -63,7 +63,6 @@ const Cloth = React.memo(function Cloth() {
   return (
     <Line
       position={[0, -800, -1000]}
-      alphaWrite={undefined} // IDK what this is
       ref={lineRef}
       // @ts-expect-error - not sure what is happening. Hopefully fixed in newer Drei
       color={'cyan'}

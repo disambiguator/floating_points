@@ -1,6 +1,6 @@
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { BackSide, Color, Group } from 'three';
+import { BackSide, Color, Group, ShaderMaterial } from 'three';
 import { OBJLoader } from 'three-stdlib';
 import assetUrl from 'lib/assetUrl';
 import shader from 'lib/shaders/marble';
@@ -76,7 +76,7 @@ const Orbits = ({
 
 const Halloween = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
-  const ref = useRef<typeof shader>();
+  const ref = useRef<ShaderMaterial>(null);
 
   useFrame(({ clock }) => {
     if (!ref.current) return;

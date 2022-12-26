@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useRef } from 'react';
-import { DataTexture, RedFormat } from 'three';
+import { DataTexture, RedFormat, ShaderMaterial } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import { shaders } from '../components/scenes';
@@ -12,7 +12,7 @@ const shader = shaders.stark;
 const Shaders = React.memo(function Shader() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof shader>(null);
+  const ref = useRef<ShaderMaterial>(null);
   const audio = useMicrophone();
   const { s } = useControls({ s: { value: 0.02, min: 0, max: 0.1 } });
 

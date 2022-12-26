@@ -1,12 +1,13 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
+import type { ShaderMaterial } from 'three';
 import shader from 'lib/shaders/marble';
 import type { Config } from 'lib/store';
 
 const Dusen = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof shader>(null);
+  const ref = useRef<ShaderMaterial>(null);
 
   useFrame(({ clock }) => {
     if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;

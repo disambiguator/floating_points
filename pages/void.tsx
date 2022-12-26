@@ -99,7 +99,7 @@ const Stars = React.memo(function Stars() {
     speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
   });
 
-  const materialRef = useRef<typeof pointShader>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointsRef = useRef<THREE.Points>(null);
 
   const vertices = useMemo(

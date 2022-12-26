@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import React, { useCallback, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
+import type { ShaderMaterial } from 'three';
 import { useRefState } from 'lib/hooks';
 import { scaleMidi, useMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
@@ -66,7 +67,7 @@ function generateVertices(numVertices: number, positions: Seed[]) {
 const initPositions = () => [randPosition(), randPosition()];
 
 const SpiroContents = () => {
-  const shaderMaterialRef = useRef<typeof SpiroShader>(null);
+  const shaderMaterialRef = useRef<ShaderMaterial>(null);
 
   const setDistort = useCallback((v: number) => {
     shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(

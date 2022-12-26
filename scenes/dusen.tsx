@@ -1,6 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import type { ShaderMaterial } from 'three';
 import { INITIAL_CAMERA_STATE } from 'components/config';
 import { scaleMidi, useMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
@@ -9,7 +10,7 @@ import { type Config, useSpectrum } from '../lib/store';
 const Dusen = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<typeof DusenShader>(null);
+  const ref = useRef<ShaderMaterial>(null);
   const [radius, setRadius] = useState(0);
   const camera = useThree((t) => t.camera);
   const [, setControls] = useControls(() => ({

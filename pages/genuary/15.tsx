@@ -40,7 +40,7 @@ function buildTwistMaterial() {
 }
 
 const Scene = React.memo(function Scene() {
-  const ref = useRef<THREE.Group>();
+  const ref = useRef<THREE.Group>(null);
   // const { depth } = useControls({ depth: { value: 30, min: 0, max: 500 } });
   useFrame(() => {
     ref.current!.rotation.z += 1;
