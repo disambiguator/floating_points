@@ -7,6 +7,4 @@ module.exports = {
     });
     return config;
   },
-  // Remove this once I figure out hydra-ts nonsense
-  experimental: { esmExternals: 'loose' },
 };

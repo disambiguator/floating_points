@@ -53,7 +53,6 @@
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
     "glsl-hsv2rgb": "^1.0.0",
-    "hydra-ts": "^1.0.0",
     "leva": "^0.9.31",
     "lodash": "^4.17.20",
     "next": "^12.1.0",
