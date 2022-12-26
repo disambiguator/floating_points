@@ -26,6 +26,7 @@
   "devDependencies": {
     "@tsconfig/next": "^1.0.4",
     "@types/lodash": "^4.14.189",
+    "@types/node": "^18.11.17",
     "@types/p5": "^1.4.3",
     "@types/react": "^17.0.0",
     "@types/react-responsive": "^8.0.2",
