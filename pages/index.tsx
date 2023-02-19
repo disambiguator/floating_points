@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import React, { useEffect, useRef } from 'react';
+import styles from './index.module.scss';
 import assetUrl from '../lib/assetUrl';
 import { useIsMobile } from '../lib/mediaQueries';
-import styles from './index.module.scss';
 
 const artwork = [
   {

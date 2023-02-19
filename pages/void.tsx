@@ -11,10 +11,10 @@ import {
   analyseSpectrum,
   useAudioUrl,
 } from 'lib/audio';
+import styles from './void.module.scss';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 import assetUrl from '../lib/assetUrl';
-import styles from './void.module.scss';
 
 // 0 - stars: no rotation or freq response
 const bassStartTime = 17; // stars respond to music

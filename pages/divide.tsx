@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import Page from '../components/page';
 import styles from './divide.module.scss';
+import Page from '../components/page';
 
 const translateDistance = 1;
 const width = 800;

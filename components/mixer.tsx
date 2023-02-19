@@ -9,12 +9,12 @@ import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
 import { type MidiConfig, initMidiController, useMidi } from 'lib/midi';
 import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
-import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { type SceneName, sceneNames, scenes } from './scenes';
+import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
 
 // In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
