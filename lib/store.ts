@@ -1,7 +1,7 @@
 import { useControls } from 'leva';
 import { type ComponentType, useEffect } from 'react';
 import * as THREE from 'three';
-import create, { type StoreApi } from 'zustand';
+import { type StoreApi, create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { Spectrum } from './audio';
 

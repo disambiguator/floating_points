@@ -174,7 +174,7 @@ const TunnelEffects = () => {
   useMidi(midiMapping);
 
   useFrame(({ mouse }, delta) => {
-    const uniforms = ref.current!.uniforms as typeof TunnelShader['uniforms'];
+    const uniforms = ref.current!.uniforms as (typeof TunnelShader)['uniforms'];
     uniforms.mouse.value.x = mouse.x * viewport.aspect;
     uniforms.mouse.value.y = mouse.y;
     uniforms.time.value += delta * trailNoiseTimeRef.current;
