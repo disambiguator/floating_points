@@ -33,7 +33,7 @@
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.52.0",
     "eslint": "^8.36.0",
-    "eslint-config-next": "^13.0.4",
+    "eslint-config-next": "^13.3.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-config-problems": "^7.0.1",
     "eslint-plugin-import": "^2.22.1",
