@@ -100,7 +100,6 @@ export const Shapes = React.memo(function Shapes() {
       <Effects>
         <shaderPass
           ref={materialRef}
-          attachArray="passes"
           args={[Dither]}
           uniforms-threshold-value={threshold}
         />

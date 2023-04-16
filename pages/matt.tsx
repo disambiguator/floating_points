@@ -161,7 +161,7 @@ const Rain = () => {
         <bufferGeometry>
           <bufferAttribute
             ref={positionAttributeRef}
-            attachObject={['attributes', 'position']}
+            attach="attributes-position"
             count={MAX}
             array={positionsFromParticles(particles)}
             itemSize={3}

@@ -64,7 +64,6 @@ const Cloth = React.memo(function Cloth() {
     <Line
       position={[0, -800, -1000]}
       ref={lineRef}
-      // @ts-expect-error - not sure what is happening. Hopefully fixed in newer Drei
       color={'cyan'}
       linewidth={scaleMidi(lineWidth, 1, 30)}
       points={[

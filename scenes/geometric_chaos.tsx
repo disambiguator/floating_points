@@ -89,7 +89,7 @@ const Box = ({
     <mesh ref={meshRef}>
       <boxGeometry args={[15, 15, 15]} ref={geometryRef}>
         <bufferAttribute
-          attachObject={['attributes', 'displacement']}
+          attach="attributes-displacement"
           count={renderSpeed}
           array={displacement}
           itemSize={1}

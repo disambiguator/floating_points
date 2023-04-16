@@ -10,7 +10,7 @@ export default function Page({
   background?: string;
 }) {
   return (
-    <React.StrictMode>
+    <>
       <style global jsx>{`
         body {
           margin: 0;
@@ -25,6 +25,6 @@ export default function Page({
         style={{ background }}
         id="container"
       />
-    </React.StrictMode>
+    </>
   );
 }

@@ -60,7 +60,6 @@ const Postprocessing = () => {
     <Effects>
       <afterimagePass
         ref={effectsRef}
-        attachArray="passes"
         args={[0.96, TunnelShader]}
         uniforms-aspect-value={viewport.aspect}
         uniforms-resolution-value={new THREE.Vector2(

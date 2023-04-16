@@ -32,7 +32,7 @@ const Cube = ({
         args={[sideLength, sideLength, sideLength]}
       >
         <bufferAttribute
-          attachObject={['attributes', 'color']}
+          attach="attributes-color"
           count={24}
           array={colors}
           itemSize={3}

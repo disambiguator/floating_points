@@ -183,7 +183,7 @@ const TunnelEffects = () => {
   return (
     <afterimagePass
       ref={ref}
-      attachArray="passes"
+      attach="passes-1"
       args={[0.96, TunnelShader]}
       uniforms-aspect-value={viewport.aspect}
       uniforms-resolution-value={new Vector2(

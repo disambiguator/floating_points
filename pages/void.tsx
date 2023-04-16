@@ -125,7 +125,7 @@ const Stars = React.memo(function Stars() {
     <points ref={pointsRef}>
       <bufferGeometry>
         <bufferAttribute
-          attachObject={['attributes', 'position']}
+          attach="attributes-position"
           count={starsCount}
           array={new Float32Array(vertices)}
           itemSize={3}
@@ -195,7 +195,7 @@ const Row = ({
         index={new THREE.BufferAttribute(new Uint16Array(indices), 1)}
       >
         <bufferAttribute
-          attachObject={['attributes', 'position']}
+          attach="attributes-position"
           count={array.length / 3}
           itemSize={3}
           array={new Float32Array(array)}

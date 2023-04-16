@@ -18,7 +18,7 @@ const Electron = React.memo(function Electron(props: {
   direction: THREE.Vector3;
   remove: () => void;
 }) {
-  const ref = useRef<THREE.Mesh>();
+  const ref = useRef<THREE.Mesh>(null);
   const scene = useThree((t) => t.scene);
 
   const [direction, setDirection] = useState(props.direction);

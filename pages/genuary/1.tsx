@@ -96,7 +96,7 @@ export const Shapes = React.memo(function Shapes() {
         {cubes}
       </Instances>
       <Effects>
-        <shaderPass attachArray="passes" args={[KaleidoscopeShader]} />
+        <shaderPass args={[KaleidoscopeShader]} />
       </Effects>
     </>
   );

@@ -140,7 +140,7 @@ const SpiroContents = () => {
       <bufferGeometry>
         <bufferAttribute
           ref={positionAttributeRef}
-          attachObject={['attributes', 'position']}
+          attach="attributes-position"
           count={numVertices}
           itemSize={3}
         />

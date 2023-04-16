@@ -106,12 +106,11 @@ const Quad = () => {
     <Effects disableRenderPass>
       <shaderPass
         ref={ref}
-        attachArray="passes"
         args={[ValentineShader]}
         uniforms-video-value={new THREE.VideoTexture(video)}
         uniforms-aspect-value={aspect}
       />
-      <afterimagePass attachArray="passes" args={[0.98]} />
+      <afterimagePass args={[0.98]} />
     </Effects>
   );
 };
