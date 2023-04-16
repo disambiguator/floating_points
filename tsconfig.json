@@ -12,8 +12,7 @@
     "noPropertyAccessFromIndexSignature": false, // I do not actually understand the point of this rule.
     "noUncheckedIndexedAccess": false, // Maybe one day, but this is currently too much of a headache
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "importsNotUsedAsValues": "error"
+    "noUnusedParameters": true
   },
   "exclude": ["node_modules"],
   "include": ["next-env.d.ts", ".eslintrc.js", "**/*.js", "**/*.ts", "**/*.tsx"]
