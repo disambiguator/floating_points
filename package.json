@@ -64,7 +64,7 @@
     "react-dom": "^18.2.0",
     "react-ga": "^3.3.0",
     "react-new-window": "^1.0.1",
-    "react-p5-wrapper": "^3.0.1",
+    "react-p5-wrapper": "^4.1.1",
     "react-responsive": "^9.0.0",
     "sass": "^1.56.1",
     "three": "^0.151.3",
