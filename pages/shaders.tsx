@@ -12,7 +12,7 @@ const Scatter = () => (
       <div className={styles.gallery}>
         {Object.entries(shaders).map(([name, shader]) => (
           <div className={styles.galleryItem} key={name}>
-            <Link passHref href={`/shaders/${name}`}>
+            <Link passHref href={`/shaders/${name}`} legacyBehavior>
               <div
                 style={{
                   height: 'inherit',
@@ -25,8 +25,8 @@ const Scatter = () => (
                 </FiberScene>
               </div>
             </Link>
-            <Link href={`/shaders/${name}`}>
-              <a className={styles.title}>{name}</a>
+            <Link href={`/shaders/${name}`} className={styles.title}>
+              {name}
             </Link>
           </div>
         ))}
