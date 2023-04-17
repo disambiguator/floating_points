@@ -28,7 +28,7 @@
     "@types/lodash": "^4.14.189",
     "@types/node": "^18.11.18",
     "@types/p5": "^1.4.3",
-    "@types/react": "^18.0.5",
+    "@types/react": "^18.0.37",
     "@types/react-responsive": "^8.0.2",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.52.0",
