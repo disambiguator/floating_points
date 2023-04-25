@@ -1,7 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import type { ShaderMaterial } from 'three';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { INITIAL_CAMERA_STATE } from 'components/config';
 import { scaleMidi, useMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
@@ -10,9 +9,9 @@ import { type Config, useSpectrum } from '../lib/store';
 const Dusen = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>(null);
   const [radius, setRadius] = useState(0);
   const camera = useThree((t) => t.camera);
+  const shader = DusenShader();
   const [, setControls] = useControls(() => ({
     dusen: folder({
       radius: {
@@ -47,15 +46,14 @@ const Dusen = memo(function Dusen() {
   }, [camera]);
 
   useFrame(({ clock }) => {
-    if (ref.current) ref.current.uniforms.time.value = clock.elapsedTime;
+    shader.uniforms.time.value = clock.elapsedTime;
   });
 
   return (
     <mesh position={[0, 0, -215]}>
       <planeGeometry args={[size.width, size.height]} />
       <shaderMaterial
-        ref={ref}
-        args={[DusenShader]}
+        args={[shader]}
         uniforms-aspect-value={viewport.aspect}
         uniforms-radius-value={scaleMidi(radius, 0, 1)}
       />

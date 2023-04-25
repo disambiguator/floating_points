@@ -1,9 +1,9 @@
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { BackSide, Color, Group, ShaderMaterial } from 'three';
+import { BackSide, Color, Group } from 'three';
 import { OBJLoader } from 'three-stdlib';
 import assetUrl from 'lib/assetUrl';
-import shader from 'lib/shaders/marble';
+import MarbleShader from 'lib/shaders/marble';
 import type { Config } from 'lib/store';
 
 const orange = new Color(235 / 255, 97 / 255, 35 / 255);
@@ -76,11 +76,10 @@ const Orbits = ({
 
 const Halloween = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
-  const ref = useRef<ShaderMaterial>(null);
+  const shader = MarbleShader();
 
   useFrame(({ clock }) => {
-    if (!ref.current) return;
-    ref.current.uniforms.time.value = clock.elapsedTime;
+    shader.uniforms.time.value = clock.elapsedTime;
   });
 
   return (
@@ -88,7 +87,6 @@ const Halloween = React.memo(function Dusen() {
       <mesh>
         <sphereGeometry args={[40]} />
         <shaderMaterial
-          ref={ref}
           args={[shader]}
           uniforms-aspect-value={viewport.aspect}
           uniforms-primaryColor-value={orange}

@@ -2,7 +2,7 @@ import { Color } from 'three';
 import defaultForwardUV from './defaultForwardUV.vert';
 import fragmentShader from './marble.frag';
 
-const MarbleShader = {
+const MarbleShader = () => ({
   vertexShader: defaultForwardUV,
   fragmentShader,
   uniforms: {
@@ -16,6 +16,6 @@ const MarbleShader = {
       value: new Color(213.0 / 255.0, 222.0 / 255.0, 164.0 / 255.0),
     },
   },
-};
+});
 
 export default MarbleShader;

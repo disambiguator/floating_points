@@ -1,6 +1,6 @@
 import vertexShader from 'lib/shaders/defaultForwardUV.vert';
 
-const DusenShader = {
+const DusenShader = () => ({
   vertexShader,
   fragmentShader: /* glsl */ `
   #ifdef GL_ES
@@ -80,6 +80,6 @@ const DusenShader = {
     time: { value: 0.0 },
     radius: { value: 0.15 },
   },
-};
+});
 
 export default DusenShader;

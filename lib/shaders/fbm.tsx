@@ -1,7 +1,7 @@
 import fbmVert from './defaultForwardUV.vert';
 import fbmFrag from './fbm.frag';
 
-const FbmShader = {
+const FbmShader = () => ({
   vertexShader: fbmVert,
   fragmentShader: fbmFrag,
   uniforms: {
@@ -10,6 +10,6 @@ const FbmShader = {
     radius: { value: 0.0 },
     G: { value: 2 ** -0.707 },
   },
-};
+});
 
 export default FbmShader;

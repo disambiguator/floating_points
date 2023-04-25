@@ -4,13 +4,14 @@ import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import { shaders } from 'components/scenes';
 import Shader from 'components/shader';
+import { DefaultShader } from './shaders/[name]';
 import styles from './shaders.module.scss';
 
 const Scatter = () => (
   <Page>
     <div className={styles.root}>
       <div className={styles.gallery}>
-        {Object.entries(shaders).map(([name, shader]) => (
+        {Object.keys(shaders).map((name) => (
           <div className={styles.galleryItem} key={name}>
             <Link passHref href={`/shaders/${name}`} legacyBehavior>
               <div
@@ -21,7 +22,9 @@ const Scatter = () => (
                 }}
               >
                 <FiberScene>
-                  <Shader shader={shader} />
+                  <Shader>
+                    <DefaultShader name={name as keyof typeof shaders} />
+                  </Shader>
                 </FiberScene>
               </div>
             </Link>

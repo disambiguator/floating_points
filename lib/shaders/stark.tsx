@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import defaultForwardUV from './defaultForwardUV.vert';
 import starkFrag from './stark.frag';
 
-const StarkShader = {
+const StarkShader = () => ({
   vertexShader: defaultForwardUV,
   fragmentShader: starkFrag,
   uniforms: {
@@ -13,6 +13,6 @@ const StarkShader = {
       value: new THREE.DataTexture(new Uint8Array([0]), 0, 1, THREE.RedFormat),
     },
   },
-};
+});
 
 export default StarkShader;
