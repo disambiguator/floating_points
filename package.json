@@ -69,7 +69,7 @@
     "sass": "^1.62.1",
     "three": "^0.152.2",
     "three-csg-ts": "^3.1.6",
-    "three-stdlib": "^2.21.12",
+    "three-stdlib": "^2.23.9",
     "zustand": "^4.3.8"
   }
 }
