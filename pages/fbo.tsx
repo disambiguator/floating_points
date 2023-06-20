@@ -59,6 +59,7 @@ function ScreenQuadScene() {
 
   useFrame(() => {
     composer.render();
+    composer.swapBuffers();
   });
 
   return (
@@ -66,7 +67,7 @@ function ScreenQuadScene() {
       <Box position={[0, 0, 0]}>
         <meshBasicMaterial
           ref={materialRef}
-          map={composer.readBuffer.texture}
+          map={target.texture}
         />
       </Box>
       {createPortal(<Shapes />, bufferScene)}
