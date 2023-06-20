@@ -3,6 +3,7 @@ import { folder, useControls } from 'leva';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   BoxGeometry,
+  Group,
   type Mesh,
   ShaderMaterial,
   Uniform,
@@ -107,6 +108,7 @@ for (let i = 0; i < renderSpeed; i++) {
 
 export const Shapes = React.memo(function Shapes() {
   const materialRef = useRef<ShaderMaterial>(null);
+  const groupRef = useRef<Group>(null!);
 
   const setAmplitude = useCallback((v: number) => {
     materialRef.current!.uniforms.amplitude.value = scaleMidi(
@@ -142,8 +144,8 @@ export const Shapes = React.memo(function Shapes() {
     ),
   );
 
-  useFrame(({ camera }) => {
-    camera.translateX(-0.5);
+  useFrame(() => {
+    groupRef.current.rotateX(-0.005);
     const { ray } = useStore.getState();
 
     const material = materialRef.current!;
@@ -161,7 +163,7 @@ export const Shapes = React.memo(function Shapes() {
     [material],
   );
 
-  return <>{cubes}</>;
+  return <group ref={groupRef}>{cubes}</group>;
 });
 
 export const chaosConfig: Config = {
