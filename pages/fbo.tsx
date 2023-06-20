@@ -65,10 +65,7 @@ function ScreenQuadScene() {
   return (
     <>
       <Box position={[0, 0, 0]}>
-        <meshBasicMaterial
-          ref={materialRef}
-          map={target.texture}
-        />
+        <meshBasicMaterial ref={materialRef} map={target.texture} />
       </Box>
       {createPortal(<Shapes />, bufferScene)}
     </>
