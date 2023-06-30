@@ -45,7 +45,7 @@ const Shapes = () => {
 function ScreenQuadScene() {
   const target = useFBO();
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const { gl } = useThree();
+  const gl = useThree((t) => t.gl);
 
   const bufferScene = new THREE.Scene();
   bufferScene.background = new THREE.Color('darkblue');
