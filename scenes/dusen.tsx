@@ -6,19 +6,24 @@ import { scaleMidi, useMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
 import { type Config, useSpectrum } from '../lib/store';
 
-const Dusen = memo(function Dusen() {
+export const Dusen = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
   const [radius, setRadius] = useState(0);
   const camera = useThree((t) => t.camera);
-  const shader = DusenShader();
-  const [, setControls] = useControls(() => ({
+  const shader = useMemo(DusenShader, []);
+  const [{ speed }, setControls] = useControls(() => ({
     dusen: folder({
       radius: {
         value: 27,
         min: 0,
         max: 127,
         onChange: setRadius,
+      },
+      speed: {
+        value: 1,
+        min: 0,
+        max: 5,
       },
     }),
   }));
@@ -45,8 +50,8 @@ const Dusen = memo(function Dusen() {
     camera.position.set(...INITIAL_CAMERA_STATE.position);
   }, [camera]);
 
-  useFrame(({ clock }) => {
-    shader.uniforms.time.value = clock.elapsedTime;
+  useFrame((_, delta) => {
+    shader.uniforms.time.value += delta * speed;
   });
 
   return (

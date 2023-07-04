@@ -6,9 +6,9 @@ import {
   useThree,
 } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
-import { AfterimagePass } from 'three-stdlib';
+import { AfterimagePass, EffectComposer } from 'three-stdlib';
 import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import type { Config, CustomEffectsType } from '../lib/store';
@@ -28,8 +28,9 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-const TunnelEffects = () => {
-  const ref = useRef<AfterimagePass>(null);
+export const useTunnelEffects = () => {
+  // Could use r3f's extend here if we go back to only using this declaratively.
+  const ref = useRef<AfterimagePass>(new AfterimagePass(0.96, TunnelShader));
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
@@ -169,7 +170,7 @@ const TunnelEffects = () => {
         setControl({ kaleidoscope: newValue });
       },
     }),
-    [setControl],
+    [setControl, ref],
   );
   useMidi(midiMapping);
 
@@ -180,18 +181,17 @@ const TunnelEffects = () => {
     uniforms.time.value += delta * trailNoiseTimeRef.current;
   });
 
-  return (
-    <afterimagePass
-      ref={ref}
-      attach="passes-1"
-      args={[0.96, TunnelShader]}
-      uniforms-aspect-value={viewport.aspect}
-      uniforms-resolution-value={new Vector2(
-        size.width,
-        size.height,
-      ).multiplyScalar(window.devicePixelRatio)}
-    />
-  );
+  useEffect(() => {
+    const pass = ref.current;
+
+    pass.uniforms.aspect.value = viewport.aspect;
+    pass.uniforms.resolution.value = new Vector2(
+      size.width,
+      size.height,
+    ).multiplyScalar(window.devicePixelRatio);
+  }, [viewport.aspect, size, ref]);
+
+  return ref.current;
 };
 
 export const Effects = <T,>({
@@ -201,9 +201,16 @@ export const Effects = <T,>({
   name: Config<T>['name'];
   params: T;
   CustomEffects: CustomEffectsType<T> | undefined;
-}) => (
-  <DreiEffects disableGamma>
-    <TunnelEffects />
-    {CustomEffects && <CustomEffects params={params} />}
-  </DreiEffects>
-);
+}) => {
+  const ref = useRef<EffectComposer>();
+  const tunnelEffects = useTunnelEffects();
+  useEffect(() => {
+    ref.current!.addPass(tunnelEffects);
+  }, [tunnelEffects]);
+
+  return (
+    <DreiEffects ref={ref} disableGamma>
+      {CustomEffects && <CustomEffects params={params} />}
+    </DreiEffects>
+  );
+};
