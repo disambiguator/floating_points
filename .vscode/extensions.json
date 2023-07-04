@@ -1,5 +1,3 @@
 {
-    "recommendations": [
-        "slevesque.shader"
-    ]
+  "recommendations": ["slevesque.shader"]
 }
