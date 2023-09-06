@@ -202,7 +202,7 @@ export const Effects = <T,>({
   params: T;
   CustomEffects: CustomEffectsType<T> | undefined;
 }) => {
-  const ref = useRef<EffectComposer>();
+  const ref = useRef<EffectComposer>(null);
   const tunnelEffects = useTunnelEffects();
   useEffect(() => {
     ref.current!.addPass(tunnelEffects);
