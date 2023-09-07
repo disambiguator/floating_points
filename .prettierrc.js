@@ -4,4 +4,5 @@ module.exports = {
   printWidth: 80,
   tabWidth: 2,
   overrides: [{ files: ['*.frag'], options: { parser: 'glsl-parser' } }],
+  plugins: ['prettier-plugin-glsl'],
 };
