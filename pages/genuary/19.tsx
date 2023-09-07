@@ -48,10 +48,14 @@ const Letter = ({ letter, angle }: { letter: string; angle: number }) => {
   );
 };
 
+declare class AfterimagePassType extends AfterimagePass {
+  uniforms: (typeof TunnelShader)['uniforms'];
+}
+
 const Postprocessing = () => {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const effectsRef = useRef<AfterimagePass>(null);
+  const effectsRef = useRef<AfterimagePassType>(null);
   useFrame(({ clock }) => {
     effectsRef.current!.uniforms.time.value = clock.elapsedTime;
   });

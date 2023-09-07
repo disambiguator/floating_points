@@ -12,11 +12,11 @@ function sum<T>(array: T[], f: (arg0: T) => number) {
   return array.reduce((accum, p) => accum + f(p), 0);
 }
 
-interface OrbitPosition {
+type OrbitPosition = {
   arc: number;
   radius: number;
   speed: number;
-}
+};
 
 const Spiro = () => {
   const numPoints = 50000;

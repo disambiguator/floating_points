@@ -8,9 +8,9 @@ import { FiberScene } from '../components/scene';
 
 const tunnelWidth = 300.0;
 
-interface CustomShader extends THREE.ShaderMaterial {
+type CustomShader = {
   uniforms: { time: { value: number } };
-}
+} & THREE.ShaderMaterial;
 
 const Vertices = () => {
   const matRef = useRef<THREE.MeshPhongMaterial>(null);

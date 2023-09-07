@@ -4,14 +4,14 @@ import type { Dimensions } from '../lib/types';
 
 let timer = 0;
 
-interface Point {
+type Point = {
   x: number;
   y: number;
-}
+};
 
 const Scatter = ({ width, height }: Dimensions) => {
   const ref = useRef<HTMLCanvasElement>(null);
-  let points: Array<Point>;
+  let points: Point[];
 
   const inRange = (point: Point) =>
     point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height;

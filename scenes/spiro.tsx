@@ -14,13 +14,13 @@ function randInt(min: number, max: number) {
   return Math.floor(Math.random() * max) + min;
 }
 
-interface Seed {
+type Seed = {
   radius: number;
   arc: number;
   phi: number;
   speed: number;
   phiSpeed: number;
-}
+};
 
 const randPosition = (): Seed => ({
   radius: randInt(50, 300),
@@ -67,7 +67,7 @@ function generateVertices(numVertices: number, positions: Seed[]) {
 const initPositions = () => [randPosition(), randPosition()];
 
 const SpiroContents = () => {
-  const shaderMaterialRef = useRef<ShaderMaterial>(null);
+  const shaderMaterialRef = useRef<ShaderMaterial & typeof SpiroShader>(null);
 
   const setDistort = useCallback((v: number) => {
     shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
@@ -90,8 +90,8 @@ const SpiroContents = () => {
     distort: { value: 0, min: 0, max: 127, onChange: setDistort },
     color: {
       value: false,
-      onChange: (v) => {
-        shaderMaterialRef.current!.uniforms.color.value = v;
+      onChange: (v: boolean) => {
+        shaderMaterialRef.current!.uniforms.color.value = v ? 1 : 0;
       },
     },
     speed: {

@@ -163,7 +163,9 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
     audio: folder({
       enabled: {
         value: audioEnabled,
-        onChange: onUserChange((audioEnabled) => set({ audioEnabled })),
+        onChange: onUserChange((audioEnabled: boolean) => {
+          set({ audioEnabled });
+        }),
       },
     }),
   }));
@@ -171,9 +173,15 @@ const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
   useMidi(
     useMemo(
       (): MidiConfig => ({
-        button1: () => setControl({ Contents: sceneNames[0] }),
-        button2: () => setControl({ Contents: sceneNames[1] }),
-        button3: () => setControl({ Contents: sceneNames[2] }),
+        button1: () => {
+          setControl({ Contents: sceneNames[0] });
+        },
+        button2: () => {
+          setControl({ Contents: sceneNames[1] });
+        },
+        button3: () => {
+          setControl({ Contents: sceneNames[2] });
+        },
       }),
       [setControl],
     ),
@@ -214,11 +222,16 @@ export default function MixerPage({ name }: { name: SceneName }) {
   // Initialize function. When moving to React 18 this may be a problem if it is run twice.
   useEffect(() => {
     let cleanup = noop;
-    initMidiController().then((cleanupMidi) => {
-      cleanup = cleanupMidi;
-      const { initialParams = {}, ...env } = scene;
-      set({ env, ...initialParams });
-    });
+    initMidiController()
+      .then((cleanupMidi) => {
+        cleanup = cleanupMidi;
+        const { initialParams = {}, ...env } = scene;
+        set({ env, ...initialParams });
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      });
     return cleanup;
   }, [set, scene]);
 

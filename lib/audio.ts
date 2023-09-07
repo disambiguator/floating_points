@@ -3,19 +3,19 @@ import { mean } from 'lodash';
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
-export interface Audio {
+export type Audio = {
   analyser: THREE.AudioAnalyser;
   listener: THREE.AudioListener;
-}
+};
 
-export interface Spectrum {
+export type Spectrum = {
   subBass: number;
   volume: number;
   bass: number;
   midrange: number;
   treble: number;
   frequencyData: number[];
-}
+};
 
 export const SAMPLE_LENGTH = 512;
 export const analyseSpectrum = (
@@ -124,6 +124,10 @@ export function useMicrophone(enabled = true) {
           const analyser = new THREE.AudioAnalyser(audio, 1024);
           setAudio({ analyser, listener });
           setStream(stream);
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error(e);
         });
     } else if (audio) {
       camera.remove(audio.listener);

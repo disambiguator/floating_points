@@ -18,6 +18,7 @@ extend({ AfterimagePass });
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
   namespace JSX {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface IntrinsicElements {
       afterimagePass: ReactThreeFiber.Node<
         AfterimagePass,
@@ -28,9 +29,15 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
+declare class AfterimagePassType extends AfterimagePass {
+  uniforms: (typeof TunnelShader)['uniforms'];
+}
+
 export const useTunnelEffects = () => {
   // Could use r3f's extend here if we go back to only using this declaratively.
-  const ref = useRef<AfterimagePass>(new AfterimagePass(0.96, TunnelShader));
+  const ref = useRef<AfterimagePassType>(
+    new AfterimagePass(0.96, TunnelShader),
+  );
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
@@ -40,8 +47,8 @@ export const useTunnelEffects = () => {
         value: 0,
         min: 0,
         max: 127,
-        onChange: (trails) => {
-          const pass = ref.current!;
+        onChange: (trails: number) => {
+          const pass = ref.current;
 
           pass.uniforms.damp.value =
             trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
@@ -52,48 +59,48 @@ export const useTunnelEffects = () => {
         value: 0,
         min: 0,
         max: 127,
-        onChange: (zoom) => {
-          ref.current!.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
+        onChange: (zoom: number) => {
+          ref.current.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
         },
       },
       bitcrush: {
         value: 0,
         min: 0,
         max: 127,
-        onChange: (v) => {
-          ref.current!.uniforms.bitcrush.value = v;
+        onChange: (v: number) => {
+          ref.current.uniforms.bitcrush.value = v;
         },
       },
       kaleidoscope: {
         value: 0,
         min: 0,
         max: 127,
-        onChange: (kaleidoscope) => {
-          ref.current!.uniforms.numSides.value = kaleidoscope;
+        onChange: (kaleidoscope: number) => {
+          ref.current.uniforms.numSides.value = kaleidoscope;
         },
       },
       xSpeed: {
         value: 64,
         min: 0,
         max: 127,
-        onChange: (xSpeed) => {
-          ref.current!.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
+        onChange: (xSpeed: number) => {
+          ref.current.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
         },
       },
       ySpeed: {
         value: 64,
         min: 0,
         max: 127,
-        onChange: (ySpeed) => {
-          ref.current!.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
+        onChange: (ySpeed: number) => {
+          ref.current.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
         },
       },
       angle: {
         value: 64,
         min: 0,
         max: 127,
-        onChange: (v) => {
-          ref.current!.uniforms.angle.value = scaleMidi(
+        onChange: (v: number) => {
+          ref.current.uniforms.angle.value = scaleMidi(
             v,
             -Math.PI / 10,
             Math.PI / 10,
@@ -106,8 +113,8 @@ export const useTunnelEffects = () => {
           value: 0,
           min: 0,
           max: 127,
-          onChange: (v) => {
-            ref.current!.uniforms.trailNoiseAmplitude.value = scaleMidi(
+          onChange: (v: number) => {
+            ref.current.uniforms.trailNoiseAmplitude.value = scaleMidi(
               v,
               0,
               0.1,
@@ -118,8 +125,8 @@ export const useTunnelEffects = () => {
           value: 0,
           min: 0,
           max: 127,
-          onChange: (v) => {
-            ref.current!.uniforms.trailNoiseFrequency.value = scaleMidi(
+          onChange: (v: number) => {
+            ref.current.uniforms.trailNoiseFrequency.value = scaleMidi(
               v,
               0,
               50,
@@ -130,7 +137,7 @@ export const useTunnelEffects = () => {
           value: 0,
           min: 0,
           max: 127,
-          onChange: (v) => {
+          onChange: (v: number) => {
             trailNoiseTimeRef.current = scaleMidi(v, 0, 2);
           },
         },
@@ -164,7 +171,7 @@ export const useTunnelEffects = () => {
         setControl({ [modifiers.shift ? 'time' : 'angle']: value });
       },
       7: (value) => {
-        const currentValue = ref.current!.uniforms.numSides.value;
+        const currentValue = ref.current.uniforms.numSides.value;
         const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
         // @ts-expect-error - Not sure why typing messed up here
         setControl({ kaleidoscope: newValue });
@@ -175,7 +182,7 @@ export const useTunnelEffects = () => {
   useMidi(midiMapping);
 
   useFrame(({ mouse }, delta) => {
-    const uniforms = ref.current!.uniforms as (typeof TunnelShader)['uniforms'];
+    const { uniforms } = ref.current;
     uniforms.mouse.value.x = mouse.x * viewport.aspect;
     uniforms.mouse.value.y = mouse.y;
     uniforms.time.value += delta * trailNoiseTimeRef.current;

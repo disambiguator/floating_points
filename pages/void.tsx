@@ -332,7 +332,11 @@ function PerlinField() {
 export default function VoidPage() {
   const [started, start] = useState(false);
   return (
-    <Page onClick={() => start(true)}>
+    <Page
+      onClick={() => {
+        start(true);
+      }}
+    >
       {started ? (
         <PerlinField />
       ) : (

@@ -69,7 +69,7 @@ const Control = () => {
   });
 
   const zSize = 5;
-  const tunnels: Array<TunnelParams> = new Array(512)
+  const tunnels: TunnelParams[] = new Array(512)
     .fill(undefined)
     .map((_, i) => ({
       position: [0, 0, 100 + i * zSize],

@@ -8,7 +8,11 @@ export default function BarsPage() {
   return started ? (
     <Mixer name="bars" />
   ) : (
-    <Page onClick={() => start(true)}>
+    <Page
+      onClick={() => {
+        start(true);
+      }}
+    >
       <div>Click to start</div>
     </Page>
   );

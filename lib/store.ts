@@ -59,7 +59,8 @@ export const useSpectrum = (values: Record<string, (n: number) => void>) => {
   const { volume } = useControls('audio', {
     volume: { value: null, options: Object.keys(values) },
   });
-  return useEffect((): void | (() => void) => {
+  // @ts-expect-error - i don't always have to return
+  useEffect(() => {
     if (audioEnabled && volume)
       return useStore.subscribe(
         (state) => state.spectrum.volume,

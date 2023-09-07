@@ -14,7 +14,7 @@ const hasVisited = (x: number, y: number) => {
   const maybeVisitedX = visited[x] as boolean[] | undefined;
   if (!maybeVisitedX) visited[x] = [];
 
-  if (visited[x][y] === true) return true;
+  if (visited[x][y]) return true;
 
   visited[x][y] = true;
   return false;

@@ -354,7 +354,11 @@ export default function HTTFPage() {
   const [started, start] = useState(false);
 
   return (
-    <Page onClick={() => start(true)}>
+    <Page
+      onClick={() => {
+        start(true);
+      }}
+    >
       {started ? (
         <FiberScene
           gl={{ antialias: true }}

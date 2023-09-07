@@ -69,9 +69,9 @@ const Webcam = React.memo(function Shader() {
         video: { width: 1280, height: 720, facingMode: 'user' },
         audio: false,
       })
-      .then(function (stream) {
+      .then(async function (stream) {
         video.srcObject = stream;
-        video.play();
+        await video.play();
       })
       .catch(function (err) {
         // eslint-disable-next-line no-console
@@ -85,7 +85,7 @@ const Webcam = React.memo(function Shader() {
       <shaderMaterial
         ref={ref}
         args={[WebcamShader]}
-        uniforms-camera-value={new THREE.VideoTexture(video!)}
+        uniforms-camera-value={new THREE.VideoTexture(video)}
         uniforms-depth-value={depth}
       />
     </mesh>

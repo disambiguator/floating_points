@@ -105,10 +105,11 @@ export const initMidiController = async (): Promise<() => void> => {
     };
   });
 
-  return () =>
+  return () => {
     cleanupFunctions.forEach((c) => {
       c();
     });
+  };
 };
 
 export const useMidi = (config: MidiConfig) => {
@@ -127,7 +128,7 @@ export const useMidi = (config: MidiConfig) => {
         if (param && param in config) {
           if (typeof e.rawValue === 'number') {
             // @ts-expect-error - Fix this later.
-            const callbackFn: ControlChangeCallback = config[param];
+            const callbackFn = config[param] as ControlChangeCallback;
             callbackFn(e.rawValue, modifiers);
           } else {
             // eslint-disable-next-line no-console
@@ -143,7 +144,7 @@ export const useMidi = (config: MidiConfig) => {
         const param = mapping[e.note.identifier];
         if (param && param in config) {
           // @ts-expect-error - Fix this later.
-          const callbackFn: NoteCallback = config[param];
+          const callbackFn = config[param] as NoteCallback;
           callbackFn();
         }
         // Debugging
@@ -157,9 +158,10 @@ export const useMidi = (config: MidiConfig) => {
       };
     });
 
-    return () =>
+    return () => {
       cleanup.forEach((c) => {
         c();
       });
+    };
   }, [config]);
 };

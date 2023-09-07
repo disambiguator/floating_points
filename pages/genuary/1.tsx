@@ -80,7 +80,7 @@ export const Shapes = React.memo(function Shapes() {
   });
 
   const cubes = useMemo(() => {
-    const c = Array(numCubes);
+    const c = Array<React.JSX.Element>(numCubes);
     for (let i = 0; i < numCubes; i++) {
       c[i] = <BoxInstance key={i} />;
     }

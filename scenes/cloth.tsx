@@ -19,7 +19,7 @@ const Cloth = React.memo(function Cloth() {
       value: 46,
       min: 0,
       max: 127,
-      onChange: (v) => {
+      onChange: (v: number) => {
         setAmplitude(scaleMidi(v, 1, 500));
       },
     },
@@ -27,7 +27,7 @@ const Cloth = React.memo(function Cloth() {
       value: 46,
       min: 0,
       max: 127,
-      onChange: (v) => {
+      onChange: (v: number) => {
         setFrequency(scaleMidi(v, 0, 0.2));
       },
     },
@@ -56,7 +56,7 @@ const Cloth = React.memo(function Cloth() {
     );
 
     if (!freezeColor.current) {
-      material!.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.2);
+      material.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.2);
     }
   });
 

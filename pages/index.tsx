@@ -255,13 +255,15 @@ const Scatter = () => {
                   loop
                   autoPlay={isMobile}
                   style={{ cursor: 'pointer' }}
-                  //@ts-expect-error - not recognized as video
-                  onMouseOver={(event) => event.target.play()}
-                  //@ts-expect-error - not recognized as video
-                  onMouseOut={(event) => event.target.pause()}
+                  onMouseOver={(event) => {
+                    void (event.target as HTMLVideoElement).play();
+                  }}
+                  onMouseOut={(event) => {
+                    (event.target as HTMLVideoElement).pause();
+                  }}
                 >
                   <source
-                    src={assetUrl(`${p.previewPath || p.path}.mp4`)}
+                    src={assetUrl(`${p.previewPath ?? p.path}.mp4`)}
                     type="video/mp4"
                   />
                   Your browser does not support the video tag.

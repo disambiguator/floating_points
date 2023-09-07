@@ -10,7 +10,7 @@ import { useMicrophone } from '../lib/audio';
 const Shaders = React.memo(function Shader() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>(null);
+  const ref = useRef<ShaderMaterial & ReturnType<typeof StarkShader>>(null);
   const audio = useMicrophone();
   const { s } = useControls({ s: { value: 0.02, min: 0, max: 0.1 } });
 

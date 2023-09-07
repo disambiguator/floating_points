@@ -1,10 +1,10 @@
 import { event, initialize, pageview } from 'react-ga';
 
-interface Event {
+type Event = {
   action: string;
   category: string;
   label?: string;
-}
+};
 export const useAnalytics = () => {
   return {
     init: (trackingId: string) => {
@@ -12,9 +12,9 @@ export const useAnalytics = () => {
     },
     trackPageViewed: (path?: string) => {
       if (path) {
-        return pageview(path);
+        pageview(path);
       }
-      return pageview(window.location.pathname + window.location.search);
+      pageview(window.location.pathname + window.location.search);
     },
     trackEvent: (params: Event) => {
       event(params);

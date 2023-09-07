@@ -53,15 +53,19 @@ const BarsShader = {
   `,
 };
 
+declare class AfterimagePassType extends AfterimagePass {
+  uniforms: (typeof BarsShader)['uniforms'];
+}
+
 const Effects = () => {
-  const ref = useRef<AfterimagePass>(null);
+  const ref = useRef<AfterimagePassType>(null);
 
   useControls('bars', {
     damp: {
       value: 10,
       min: 0,
       max: 127,
-      onChange: (damp) => {
+      onChange: (damp: number) => {
         const pass = ref.current!;
         pass.uniforms.damp.value = scaleMidi(damp, 0, 1);
       },
@@ -70,7 +74,7 @@ const Effects = () => {
       value: 10,
       min: 0,
       max: 127,
-      onChange: (damp) => {
+      onChange: (damp: number) => {
         const pass = ref.current!;
         pass.uniforms.zoom.value = scaleMidi(damp, 0, 0.3);
       },
@@ -99,7 +103,7 @@ const Bars = React.memo(function Bars() {
       return [((i * size.width) / SAMPLE_LENGTH - size.width / 2) * 2, f, 0];
     });
 
-    geometry!.setPositions(vertices);
+    geometry.setPositions(vertices);
   });
 
   return (
