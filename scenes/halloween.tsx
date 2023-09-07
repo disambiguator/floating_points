@@ -1,6 +1,6 @@
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { BackSide, Color, Group } from 'three';
+import { BackSide, Color, Group, Object3D } from 'three';
 import { OBJLoader } from 'three-stdlib';
 import assetUrl from 'lib/assetUrl';
 import MarbleShader from 'lib/shaders/marble';
@@ -10,7 +10,7 @@ const orange = new Color(235 / 255, 97 / 255, 35 / 255);
 const black = new Color(0, 0, 0);
 
 function Skull() {
-  const obj = useLoader(OBJLoader, assetUrl('/skull.obj'));
+  const obj = useLoader(OBJLoader, assetUrl('/skull.obj')) as Object3D;
   return <primitive object={obj.clone()} />;
 }
 
