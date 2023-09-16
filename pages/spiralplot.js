@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from 'react';
 
 let delta = 10;
