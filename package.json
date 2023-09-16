@@ -5,8 +5,8 @@
   "main": ".eslintrc.js",
   "scripts": {
     "prettier": "prettier --check .",
-    "lint": "eslint . --ext=ts,tsx && npm run prettier",
-    "lint-fix": "eslint . --ext=ts,tsx --fix && prettier --write .",
+    "lint": "next lint && npm run prettier",
+    "lint-fix": "next lint --fix && prettier --write .",
     "test": "tsc && npm run lint",
     "build": "next build",
     "watch": "tsc --watch",
