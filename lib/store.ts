@@ -23,6 +23,7 @@ export type Config<T = Record<string, any>> = {
   initialParams?: Partial<Params>;
   CustomEffects?: CustomEffectsType<T>;
   Contents: SceneContents<T>;
+  terrain?: true;
 };
 
 export type Env<T> = Omit<Config<T>, 'initialParams'>;

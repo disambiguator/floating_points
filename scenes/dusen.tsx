@@ -43,12 +43,12 @@ export const Dusen = memo(function Dusen() {
     ),
   );
 
-  useEffect(() => {
-    // Reset camera position to original
-    // This is not super generic yet, and it should be if we re-use this.
-    camera.far = INITIAL_CAMERA_STATE.far;
-    camera.position.set(...INITIAL_CAMERA_STATE.position);
-  }, [camera]);
+  // useEffect(() => {
+  //   // Reset camera position to original
+  //   // This is not super generic yet, and it should be if we re-use this.
+  //   camera.far = INITIAL_CAMERA_STATE.far;
+  //   camera.position.set(...INITIAL_CAMERA_STATE.position);
+  // }, [camera]);
 
   useFrame((_, delta) => {
     shader.uniforms.time.value += delta * speed;
@@ -70,4 +70,5 @@ export const dusenConfig: Config = {
   name: 'dusen',
   Contents: Dusen,
   params: {},
+  terrain: true,
 };

@@ -2,7 +2,13 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Leva, button, folder, useControls } from 'leva';
 import type { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import { noop } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
@@ -14,7 +20,20 @@ import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { type SceneName, sceneNames, scenes } from './scenes';
+import Terrain from './terrain';
 import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+
+const TerrainController = ({ children }: { children: ReactElement }) => {
+  const { mult } = useControls({
+    mult: { value: 0, min: 0, max: 20 },
+  });
+
+  if (mult === 0) {
+    return children;
+  }
+
+  return <Terrain>{children}</Terrain>;
+};
 
 // In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
@@ -157,7 +176,13 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
 
   return (
     <>
-      <env.Contents config={env.params} />
+      {env.terrain ? (
+        <TerrainController>
+          <env.Contents config={env.params} />
+        </TerrainController>
+      ) : (
+        <env.Contents config={env.params} />
+      )}
       <Effects
         name={env.name}
         params={env.params}
