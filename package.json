@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@react-three/drei": "^9.84.0",
-    "@react-three/fiber": "^8.14.2",
+    "@react-three/fiber": "^8.14.3",
     "@types/three": "^0.155.1",
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
