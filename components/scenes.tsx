@@ -7,6 +7,7 @@ import { clothConfig } from 'scenes/cloth';
 import { controlConfig } from 'scenes/control';
 import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
+import { fadeConfig } from 'scenes/fade';
 import { fbmConfig } from 'scenes/fbm';
 import { chaosConfig } from 'scenes/geometric_chaos';
 import { halloweenConfig } from 'scenes/halloween';
@@ -35,6 +36,7 @@ export const scenes = {
   marble: marbleConfig,
   webcam: webcamConfig,
   halloween: halloweenConfig,
+  fade: fadeConfig,
 };
 
 export const sceneNames = Object.keys(scenes);

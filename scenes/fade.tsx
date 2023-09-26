@@ -1,76 +1,68 @@
-import { Line } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { makeNoise2D } from 'open-simplex-noise';
-import React, { useMemo, useRef } from 'react';
-import type { Line2 } from 'three-stdlib';
-import { useRefState } from 'lib/hooks';
-import { scaleMidi } from '../lib/midi';
-import { type Config, useSpectrum } from '../lib/store';
+import React, { useState } from 'react';
+import * as THREE from 'three';
+import { scaleMidi } from 'lib/midi';
+import vertexShader from 'lib/shaders/defaultForwardUV.vert';
+import fragmentShader from 'lib/shaders/fade.frag';
+import { type Config } from 'lib/store';
 
-const length = 300;
+const circle = [];
+for (let i = 0; i < 100; i++) {
+  circle[i] = new THREE.Vector2();
+}
+
+const shader = {
+  vertexShader,
+  fragmentShader,
+  uniforms: {
+    aspect: { value: 0 },
+    trailNoiseFrequency: { value: 0 },
+    trailNoiseAmplitude: { value: 0 },
+    time: { value: 0 },
+    circle: { value: circle },
+    circleTime: { value: new Array(100).fill(0) },
+    numCircles: { value: 0 },
+    aberration: { value: 0 },
+  },
+};
+
 const Cloth = React.memo(function Cloth() {
-  const [amplitude, setAmplitude] = useRefState(100);
-  const [freezeColor, setFreezeColor] = useRefState(false);
-  const [frequency, setFrequency] = useRefState(100);
-  const { lineWidth } = useControls('cloth', {
-    lineWidth: { value: 46, min: 0, max: 127, label: 'Line width' },
-    amplitude: {
-      value: 46,
-      min: 0,
-      max: 127,
-      onChange: (v: number) => {
-        setAmplitude(scaleMidi(v, 1, 500));
-      },
-    },
-    frequency: {
-      value: 46,
-      min: 0,
-      max: 127,
-      onChange: (v: number) => {
-        setFrequency(scaleMidi(v, 0, 0.2));
-      },
-    },
-    freezeColor: {
-      value: false,
-      onChange: setFreezeColor,
-    },
+  const size = useThree((t) => t.size);
+  const viewport = useThree((t) => t.viewport);
+  const clock = useThree((t) => t.clock);
+  const { amplitude, frequency, aberration } = useControls({
+    frequency: { value: 10, min: 0, max: 127 },
+    amplitude: { value: 0, min: 0, max: 127 },
+    aberration: { value: 0, min: 0, max: 0.1 },
   });
-  const lineRef = useRef<Line2>(null);
-  const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
-  useSpectrum({ amplitude: setAmplitude });
 
-  useFrame(({ clock, size }) => {
-    const line = lineRef.current;
-    if (!line) return;
-
-    const { geometry, material } = line;
-    geometry.setPositions(
-      new Array(length)
-        .fill(undefined)
-        .flatMap((_f, i) => [
-          ((i * size.width) / length - size.width / 2) * 2,
-          noise2D(i * frequency.current, clock.elapsedTime) * amplitude.current,
-          0,
-        ]),
-    );
-
-    if (!freezeColor.current) {
-      material.color.setHSL((clock.getElapsedTime() / 5) % 1, 1, 0.2);
-    }
+  useFrame(() => {
+    shader.uniforms.time.value = clock.elapsedTime;
   });
+
+  const onClick = ({ uv }: ThreeEvent<MouseEvent>) => {
+    if (!uv) return;
+    uv.multiplyScalar(2).subScalar(1);
+    uv.x *= viewport.aspect;
+    const c = shader.uniforms.circle.value;
+    c[shader.uniforms.numCircles.value].set(uv.x, uv.y);
+    shader.uniforms.circleTime.value[shader.uniforms.numCircles.value] =
+      clock.elapsedTime;
+    shader.uniforms.numCircles.value++;
+  };
 
   return (
-    <Line
-      position={[0, -800, -1000]}
-      ref={lineRef}
-      color={'cyan'}
-      linewidth={scaleMidi(lineWidth, 1, 30)}
-      points={[
-        [0, 0, 0],
-        [0, 0, 100],
-      ]}
-    />
+    <mesh position={[0, 0, -215]} onClick={onClick}>
+      <planeGeometry args={[size.width, size.height]} />
+      <shaderMaterial
+        args={[shader]}
+        uniforms-aspect-value={viewport.aspect}
+        uniforms-trailNoiseFrequency-value={scaleMidi(frequency, 0, 200)}
+        uniforms-trailNoiseAmplitude-value={scaleMidi(amplitude, 0, 1)}
+        uniforms-aberration-value={aberration}
+      />
+    </mesh>
   );
 });
 
