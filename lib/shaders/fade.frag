@@ -29,7 +29,9 @@ vec3 circ(vec2 p, float radius) {
             snoise2(trailNoiseFrequency * vec2(p.x, p.y)),
             snoise2(time + trailNoiseFrequency * vec2(p.x, p.y))
           );
-      if (length(pos - circle[i]) < radius) return vec3(1.0);
+      if (length(pos - circle[i]) < radius) {
+        return vec3(5.0 - (time - circleTime[i]));
+      }
     }
   }
 
@@ -50,10 +52,12 @@ void main() {
 
   // float aberration = 0.01;
   vec3 color = circ(position, 0.1);
-  color = vec3(
-    circ(position + vec2(aberration), 0.1).r,
-    circ(position + vec2(-aberration), 0.1).r,
-    circ(position + vec2(aberration, -aberration), 0.1).r
-  );
+  if (aberration > 0.0) {
+    color = vec3(
+      circ(position + vec2(aberration), 0.1).r,
+      circ(position + vec2(-aberration), 0.1).r,
+      circ(position + vec2(aberration, -aberration), 0.1).r
+    );
+  }
   gl_FragColor = vec4(color, 1.0);
 }

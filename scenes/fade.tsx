@@ -1,6 +1,6 @@
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from 'lib/midi';
 import vertexShader from 'lib/shaders/defaultForwardUV.vert';
@@ -27,6 +27,11 @@ const shader = {
   },
 };
 
+type Circle = {
+  x: number;
+  y: number;
+  time: number;
+};
 const Cloth = React.memo(function Cloth() {
   const size = useThree((t) => t.size);
   const viewport = useThree((t) => t.viewport);
@@ -37,19 +42,34 @@ const Cloth = React.memo(function Cloth() {
     aberration: { value: 0, min: 0, max: 0.1 },
   });
 
+  const [circles, setCircles] = useState<Circle[]>([]);
+  useEffect(() => {
+    const c = shader.uniforms.circle.value;
+    circles.forEach(({ x, y, time }, i) => {
+      c[i].set(x, y);
+      shader.uniforms.circleTime.value[i] = time;
+    });
+    shader.uniforms.numCircles.value = circles.length;
+  }, [circles]);
+
+  const lastClear = useRef(0);
   useFrame(() => {
     shader.uniforms.time.value = clock.elapsedTime;
+
+    if (clock.elapsedTime - lastClear.current > 3) {
+      setCircles((circ) => {
+        return circ.filter((c) => clock.elapsedTime - c.time < 10);
+      });
+      lastClear.current = clock.elapsedTime;
+    }
   });
 
   const onClick = ({ uv }: ThreeEvent<MouseEvent>) => {
     if (!uv) return;
     uv.multiplyScalar(2).subScalar(1);
     uv.x *= viewport.aspect;
-    const c = shader.uniforms.circle.value;
-    c[shader.uniforms.numCircles.value].set(uv.x, uv.y);
-    shader.uniforms.circleTime.value[shader.uniforms.numCircles.value] =
-      clock.elapsedTime;
-    shader.uniforms.numCircles.value++;
+
+    setCircles((c) => [...c, { x: uv.x, y: uv.y, time: clock.elapsedTime }]);
   };
 
   return (
