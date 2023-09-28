@@ -36,7 +36,7 @@ export const scenes = {
   marble: marbleConfig,
   webcam: webcamConfig,
   halloween: halloweenConfig,
-  fade: fadeConfig,
+  fireworks: fadeConfig,
 };
 
 export const sceneNames = Object.keys(scenes);
