@@ -3,11 +3,12 @@ precision highp float;
 #endif
 
 uniform float aspect;
-uniform float trailNoiseFrequency;
+// uniform float trailNoiseFrequency;
 uniform float time;
 uniform float aberration;
 uniform vec2[100] circle;
 uniform float[100] circleTime;
+uniform vec3[100] circleColor;
 uniform int numCircles;
 
 in vec2 vUv;
@@ -17,17 +18,24 @@ in vec2 vUv;
 vec3 circ(vec2 p, float radius) {
   for (int i = 0; i < 100; i++) {
     if (i >= numCircles) return vec3(0.0);
+    float trailNoiseFrequency = mod(circleTime[i] * 2.0, 5.0) + 5.0;
     float trailNoiseAmplitude = time - circleTime[i];
     if (trailNoiseAmplitude > 0.0 && trailNoiseFrequency > 0.0) {
+      float movement = time / 20.0;
       vec2 pos =
         p +
         trailNoiseAmplitude *
           vec2(
-            snoise3(trailNoiseFrequency * vec3(p.x, p.y, time / 50.0)),
-            snoise3(time + trailNoiseFrequency * vec3(p.x, p.y, time / 50.0))
+            snoise3(
+              trailNoiseFrequency * vec3(p.x, p.y, circleTime[i] + movement)
+            ),
+            snoise3(
+              time +
+                trailNoiseFrequency * vec3(p.x, p.y, circleTime[i] + movement)
+            )
           );
       if (length(pos - circle[i]) < radius) {
-        return vec3(5.0 - (time - circleTime[i]));
+        return circleColor[i] * (5.0 - (time - circleTime[i]));
       }
     }
   }

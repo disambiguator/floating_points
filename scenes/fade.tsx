@@ -8,8 +8,10 @@ import fragmentShader from 'lib/shaders/fade.frag';
 import { type Config } from 'lib/store';
 
 const circle = [];
+const circleColor = [];
 for (let i = 0; i < 100; i++) {
   circle[i] = new THREE.Vector2();
+  circleColor[i] = new THREE.Color();
 }
 
 const shader = {
@@ -22,6 +24,7 @@ const shader = {
     time: { value: 0 },
     circle: { value: circle },
     circleTime: { value: new Array(100).fill(0) },
+    circleColor: { value: circleColor },
     numCircles: { value: 0 },
     aberration: { value: 0 },
   },
@@ -31,6 +34,7 @@ type Circle = {
   x: number;
   y: number;
   time: number;
+  color: THREE.Color;
 };
 const Cloth = React.memo(function Cloth() {
   const size = useThree((t) => t.size);
@@ -45,9 +49,10 @@ const Cloth = React.memo(function Cloth() {
   const [circles, setCircles] = useState<Circle[]>([]);
   useEffect(() => {
     const c = shader.uniforms.circle.value;
-    circles.forEach(({ x, y, time }, i) => {
+    circles.forEach(({ x, y, time, color }, i) => {
       c[i].set(x, y);
       shader.uniforms.circleTime.value[i] = time;
+      shader.uniforms.circleColor.value[i] = color;
     });
     shader.uniforms.numCircles.value = circles.length;
   }, [circles]);
@@ -69,7 +74,15 @@ const Cloth = React.memo(function Cloth() {
     uv.multiplyScalar(2).subScalar(1);
     uv.x *= viewport.aspect;
 
-    setCircles((c) => [...c, { x: uv.x, y: uv.y, time: clock.elapsedTime }]);
+    setCircles((c) => [
+      ...c,
+      {
+        x: uv.x,
+        y: uv.y,
+        time: clock.elapsedTime,
+        color: new THREE.Color().setHex(0xffffff * Math.random()),
+      },
+    ]);
   };
 
   return (
