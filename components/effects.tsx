@@ -5,7 +5,7 @@ import {
   useFrame,
   useThree,
 } from '@react-three/fiber';
-import { folder, useControls } from 'leva';
+import { button, folder, useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
 import { AfterimagePass, EffectComposer } from 'three-stdlib';
@@ -108,6 +108,10 @@ export const useTunnelEffects = () => {
           );
         },
       },
+      'reset rotations': button(() => {
+        // @ts-expect-error - idk why leva typing fails here
+        setControl({ xSpeed: 64, ySpeed: 64, angle: 64 });
+      }),
       trailNoise: folder({
         amplitude: {
           value: 0,

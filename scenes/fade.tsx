@@ -56,7 +56,7 @@ const Cloth = React.memo(function Cloth() {
   useFrame(() => {
     shader.uniforms.time.value = clock.elapsedTime;
 
-    if (clock.elapsedTime - lastClear.current > 3) {
+    if (circles.length > 0 && clock.elapsedTime - lastClear.current > 3) {
       setCircles((circ) => {
         return circ.filter((c) => clock.elapsedTime - c.time < 10);
       });
