@@ -13,8 +13,8 @@ uniform int numCircles;
 
 in vec2 vUv;
 
-#pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
-// #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
+// #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
+#pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 
 vec3 circ(vec2 p, float radius) {
   for (int i = 0; i < 100; i++) {
@@ -26,8 +26,8 @@ vec3 circ(vec2 p, float radius) {
         p +
         trailNoiseAmplitude *
           vec2(
-            snoise2(trailNoiseFrequency * vec2(p.x, p.y)),
-            snoise2(time + trailNoiseFrequency * vec2(p.x, p.y))
+            snoise3(trailNoiseFrequency * vec3(p.x, p.y, time / 50.0)),
+            snoise3(time + trailNoiseFrequency * vec3(p.x, p.y, time / 50.0))
           );
       if (length(pos - circle[i]) < radius) {
         return vec3(5.0 - (time - circleTime[i]));
@@ -39,7 +39,8 @@ vec3 circ(vec2 p, float radius) {
 }
 
 void main() {
-  vec2 position = vUv * 2.0 - 1.0;
+  vec2 position = vUv;
+  position = position * 2.0 - 1.0;
   position.x *= aspect;
 
   // if (abs(position.x) > 0.99 * aspect || abs(position.y) > 0.99) {
