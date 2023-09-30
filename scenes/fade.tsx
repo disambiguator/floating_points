@@ -27,6 +27,7 @@ const shader = {
     circleColor: { value: circleColor },
     numCircles: { value: 0 },
     aberration: { value: 0 },
+    fadeTime: { value: 0 },
   },
 };
 
@@ -40,10 +41,11 @@ const Cloth = React.memo(function Cloth() {
   const size = useThree((t) => t.size);
   const viewport = useThree((t) => t.viewport);
   const clock = useThree((t) => t.clock);
-  const { amplitude, frequency, aberration } = useControls({
+  const { amplitude, frequency, aberration, fadeTime } = useControls({
     frequency: { value: 10, min: 0, max: 127 },
     amplitude: { value: 0, min: 0, max: 127 },
     aberration: { value: 0, min: 0, max: 0.1 },
+    fadeTime: { value: 10, min: 0, max: 127 },
   });
 
   const [circles, setCircles] = useState<Circle[]>([]);
@@ -61,7 +63,10 @@ const Cloth = React.memo(function Cloth() {
   useFrame(() => {
     shader.uniforms.time.value = clock.elapsedTime;
 
-    if (circles.length > 0 && clock.elapsedTime - lastClear.current > 3) {
+    if (
+      circles.length > 0 &&
+      clock.elapsedTime - lastClear.current > fadeTime
+    ) {
       setCircles((circ) => {
         return circ.filter((c) => clock.elapsedTime - c.time < 10);
       });
@@ -91,9 +96,10 @@ const Cloth = React.memo(function Cloth() {
       <shaderMaterial
         args={[shader]}
         uniforms-aspect-value={viewport.aspect}
-        uniforms-trailNoiseFrequency-value={scaleMidi(frequency, 0, 200)}
+        uniforms-trailNoiseFrequency-value={scaleMidi(frequency, 0, 20)}
         uniforms-trailNoiseAmplitude-value={scaleMidi(amplitude, 0, 1)}
         uniforms-aberration-value={aberration}
+        uniforms-fadeTime-value={scaleMidi(fadeTime, 0, 60)}
       />
     </mesh>
   );
