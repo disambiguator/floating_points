@@ -1,4 +1,4 @@
-import { useControls } from 'leva';
+import { uniqueId } from 'lodash';
 import { type ComponentType, useEffect } from 'react';
 import * as THREE from 'three';
 import { type StoreApi, create } from 'zustand';
@@ -32,6 +32,10 @@ export type State = Params & {
   spectrum: Spectrum;
   set: StoreApi<State>['setState'];
   env: Env<any> | null;
+  volumeControls: Record<string, { id: string; control: (n: number) => void }>;
+  addVolumeControl: (
+    newValue: Record<string, (n: number) => void>,
+  ) => () => void;
 };
 
 export const spectrumSelector = (state: State) => state.spectrum;
@@ -48,23 +52,39 @@ export const useStore = create<State>()(
       frequencyData: [],
     },
     audioEnabled: false,
+    volumeControls: {},
+    addVolumeControl: (newControls: Record<string, (n: number) => void>) => {
+      const id = uniqueId();
+
+      const newData = Object.fromEntries(
+        Object.entries(newControls).map(([k, v]) => [k, { id, control: v }]),
+      );
+
+      set(({ volumeControls }: State) => ({
+        volumeControls: { ...volumeControls, ...newData },
+      }));
+
+      return () => {
+        set(({ volumeControls }: State) => {
+          const newControls = Object.fromEntries(
+            Object.entries(volumeControls).filter(([, value]) => {
+              return value.id !== id;
+            }),
+          );
+
+          return {
+            volumeControls: newControls,
+          };
+        });
+      };
+    },
     env: null,
     set,
   })),
 );
 
 export const useSpectrum = (values: Record<string, (n: number) => void>) => {
-  const audioEnabled = useStore((state) => state.audioEnabled);
+  const addVolumeControl = useStore((state) => state.addVolumeControl);
 
-  const { volume } = useControls('audio', {
-    volume: { value: null, options: Object.keys(values) },
-  });
-  // @ts-expect-error - i don't always have to return
-  useEffect(() => {
-    if (audioEnabled && volume)
-      return useStore.subscribe(
-        (state) => state.spectrum.volume,
-        values[volume],
-      );
-  }, [volume, values, audioEnabled]);
+  useEffect(() => addVolumeControl(values), [addVolumeControl, values]);
 };

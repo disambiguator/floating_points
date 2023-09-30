@@ -11,7 +11,7 @@ import { Vector2 } from 'three';
 import { AfterimagePass, EffectComposer } from 'three-stdlib';
 import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import type { Config, CustomEffectsType } from '../lib/store';
+import { type Config, type CustomEffectsType, useSpectrum } from '../lib/store';
 
 extend({ AfterimagePass });
 
@@ -41,6 +41,15 @@ export const useTunnelEffects = () => {
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
+
+  const onChangeTrailNoiseAmplitude = (v: number) => {
+    ref.current.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
+  };
+
+  useSpectrum({
+    trailNoiseAmplitude: onChangeTrailNoiseAmplitude,
+  });
+
   const [, setControl] = useControls(() => ({
     postprocessing: folder({
       trails: {
@@ -117,13 +126,7 @@ export const useTunnelEffects = () => {
           value: 0,
           min: 0,
           max: 127,
-          onChange: (v: number) => {
-            ref.current.uniforms.trailNoiseAmplitude.value = scaleMidi(
-              v,
-              0,
-              0.1,
-            );
-          },
+          onChange: onChangeTrailNoiseAmplitude,
         },
         frequency: {
           value: 0,

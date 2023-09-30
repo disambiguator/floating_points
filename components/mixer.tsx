@@ -25,6 +25,31 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
   return null;
 };
 
+const VolumeControl = React.memo(function VolumeControl() {
+  const volumeControls = useStore((s) => s.volumeControls);
+  const { volumeControl } = useControls(
+    {
+      audio: folder({
+        volumeControl: { value: null, options: Object.keys(volumeControls) },
+      }),
+    },
+    [volumeControls],
+  );
+
+  // @ts-expect-error - i don't always have to return
+  useEffect(() => {
+    if (volumeControl) {
+      return useStore.subscribe(
+        (state) => state.spectrum.volume,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        volumeControls[volumeControl]?.control,
+      );
+    }
+  }, [volumeControl, volumeControls]);
+
+  return null;
+});
+
 const SpectrumVisualizer = () => {
   const [, set] = useControls(() => ({
     audio: folder({
@@ -47,7 +72,7 @@ const SpectrumVisualizer = () => {
     );
   }, [set]);
 
-  return null;
+  return <VolumeControl />;
 };
 
 export const Controls = () => {
