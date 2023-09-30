@@ -72,6 +72,14 @@ export const useTunnelEffects = () => {
           ref.current.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
         },
       },
+      aberration: {
+        value: 0,
+        min: 0,
+        max: 127,
+        onChange: (v: number) => {
+          ref.current.uniforms.aberration.value = scaleMidi(v, 0, 0.1);
+        },
+      },
       bitcrush: {
         value: 0,
         min: 0,

@@ -5,6 +5,7 @@ uniform float damp;
 uniform float zoom;
 uniform float zoomDamp;
 uniform float bitcrush;
+uniform float aberration;
 uniform float xspeed;
 uniform float yspeed;
 uniform float trailNoiseFrequency;
@@ -101,6 +102,21 @@ void main() {
 
   vec4 texelNew = texture2D(tNew, coord);
   vec4 texelOld = texture2D(tOld, coord) - (1.0 - damp);
+
+  if (aberration > 0.0) {
+    texelNew.r = texture2D(
+      tNew,
+      coord + aberration * vec2(-sin(PI / 3.0), cos(PI / 3.0))
+    ).r;
+    texelNew.g = texture2D(
+      tNew,
+      coord + aberration * vec2(sin(PI / 3.0), cos(PI / 3.0))
+    ).g;
+    texelNew.b = texture2D(
+      tNew,
+      coord + aspect * aberration * vec2(0.0, -1.0)
+    ).b;
+  }
 
   gl_FragColor = colorBlend(texelNew, texelOld);
 }

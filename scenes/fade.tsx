@@ -26,7 +26,6 @@ const shader = {
     circleTime: { value: new Array(100).fill(0) },
     circleColor: { value: circleColor },
     numCircles: { value: 0 },
-    aberration: { value: 0 },
     fadeTime: { value: 0 },
   },
 };
@@ -41,10 +40,9 @@ const Cloth = React.memo(function Cloth() {
   const size = useThree((t) => t.size);
   const viewport = useThree((t) => t.viewport);
   const clock = useThree((t) => t.clock);
-  const { amplitude, frequency, aberration, fadeTime } = useControls({
+  const { amplitude, frequency, fadeTime } = useControls({
     frequency: { value: 10, min: 0, max: 127 },
     amplitude: { value: 0, min: 0, max: 127 },
-    aberration: { value: 0, min: 0, max: 0.1 },
     fadeTime: { value: 10, min: 0, max: 127 },
   });
 
@@ -98,7 +96,6 @@ const Cloth = React.memo(function Cloth() {
         uniforms-aspect-value={viewport.aspect}
         uniforms-trailNoiseFrequency-value={scaleMidi(frequency, 0, 20)}
         uniforms-trailNoiseAmplitude-value={scaleMidi(amplitude, 0, 1)}
-        uniforms-aberration-value={aberration}
         uniforms-fadeTime-value={scaleMidi(fadeTime, 0, 60)}
       />
     </mesh>

@@ -20,6 +20,7 @@ const TunnelShader = {
     zoomDamp: { value: 0.96 },
     zoom: { value: 0.01 },
     resolution: { value: new Vector2(0, 0) },
+    aberration: { value: 0 },
   },
   vertexShader,
   fragmentShader,

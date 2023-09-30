@@ -5,7 +5,6 @@ precision highp float;
 uniform float aspect;
 uniform float trailNoiseFrequency;
 uniform float time;
-uniform float aberration;
 uniform vec2[100] circle;
 uniform float[100] circleTime;
 uniform vec3[100] circleColor;
@@ -52,12 +51,6 @@ void main() {
   position.x *= aspect;
 
   vec3 color = circ(position, 0.1);
-  if (aberration > 0.0) {
-    color = vec3(
-      circ(position + vec2(aberration), 0.1).r,
-      circ(position + vec2(-aberration), 0.1).r,
-      circ(position + vec2(aberration, -aberration), 0.1).r
-    );
-  }
+
   gl_FragColor = vec4(color, 1.0);
 }
