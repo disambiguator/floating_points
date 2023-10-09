@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
-    "@tsconfig/next": "^2.0.0",
+    "@tsconfig/next": "^2.0.1",
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.8.2",
     "@types/p5": "^1.6.2",
