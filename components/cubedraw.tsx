@@ -64,7 +64,7 @@ const CubeDraw = () => {
         <meshBasicMaterial visible={false} side={THREE.DoubleSide} />
       </mesh>
       {boxes}
-      <pointLight position={[1000, 100, 1000]} />
+      <pointLight position={[1000, 0, 0]} intensity={4000000} />
     </>
   );
 };

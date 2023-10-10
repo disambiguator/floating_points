@@ -103,7 +103,7 @@ const Halloween = React.memo(function Dusen() {
       ))}
       {lights.map((s, i) => (
         <Orbits key={i} seed={s}>
-          <pointLight color={s.color} intensity={0.7} />
+          <pointLight color={s.color} intensity={600} />
         </Orbits>
       ))}
     </>
