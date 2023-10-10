@@ -146,7 +146,7 @@ const Eclipse = React.memo(function Shader() {
         position={new THREE.Vector3(size / 2, 0, 0)}
         direction={new THREE.Vector3(-1, 0, 0)}
       /> */}
-      <pointLight position={[-size / 2, 0, size / 2]} />
+      <pointLight position={[-size / 2, 0, size / 2]} intensity={1000} />
     </>
   );
 });

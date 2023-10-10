@@ -65,7 +65,7 @@ const Control = () => {
     const light = lightRef.current;
     if (!light) return;
     light.position.set(...camera.position.toArray());
-    light.intensity = spectrum.bass / 1000;
+    light.intensity = spectrum.bass * 10 + 100;
   });
 
   const zSize = 5;
@@ -92,6 +92,6 @@ export const controlConfig: Config = {
   Contents: Control,
   params: {},
   initialParams: {
-    audioEnabled: true,
+    // audioEnabled: true,
   },
 };

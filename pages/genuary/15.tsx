@@ -1,5 +1,4 @@
-import { useFrame } from '@react-three/fiber';
-import React, { useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
@@ -41,21 +40,14 @@ function buildTwistMaterial() {
 }
 
 const Scene = React.memo(function Scene() {
-  const ref = useRef<THREE.Group>(null);
-  // const { depth } = useControls({ depth: { value: 30, min: 0, max: 500 } });
-  useFrame(() => {
-    ref.current!.rotation.z += 1;
-  });
   return (
-    <>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} material={buildTwistMaterial()}>
-        <planeGeometry args={[100, 100, 100, 100]} />
-        {/* <shaderMaterial ref={ref} args={[Shader]} /> */}
-      </mesh>
-      <group ref={ref}>
-        <pointLight position={[0, 100, 0]} />
-      </group>
-    </>
+    <mesh
+      receiveShadow
+      rotation={[-Math.PI / 2, 0, 0]}
+      material={buildTwistMaterial()}
+    >
+      <planeGeometry args={[100, 100, 100, 100]} />
+    </mesh>
   );
 });
 

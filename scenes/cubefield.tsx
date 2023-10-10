@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
+import type { BoxData } from 'pages/cubedraw';
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
-import type { BoxData } from '../components/cubedraw';
 import type { Config } from '../lib/store';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
@@ -24,9 +24,11 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 
 export const CubeField = () => {
   const [boxes, setBoxes] = useState<JSX.Element[]>([]);
+  const lightRef = useRef<THREE.PointLight>(null);
 
-  useFrame(({ clock, camera }) => {
-    camera.translateOnAxis(new THREE.Vector3(0, 0, -1), 10);
+  useFrame(({ clock, camera }, delta) => {
+    lightRef.current!.translateZ(-delta * 500);
+    camera.translateZ(-delta * 500);
     const newBoxes = [...boxes];
     const x = 200 * Math.cos((3 * clock.elapsedTime) % (Math.PI * 2));
     const y = 200 * Math.sin((3 * clock.elapsedTime) % (Math.PI * 2));
@@ -51,7 +53,8 @@ export const CubeField = () => {
   return (
     <>
       {boxes}
-      <pointLight position={[1000, 100, 1000]} />
+      <ambientLight intensity={0.5} />
+      <pointLight ref={lightRef} position={[0, 0, 100]} intensity={100000} />
     </>
   );
 };

@@ -90,9 +90,9 @@ export const Shapes = React.memo(function Shapes() {
     <>
       <OrbitControls ref={controlsRef} />
       <group ref={groupRef}>
-        <pointLight position={[20, 100, 0]} color="red" />
-        <pointLight position={[-40, 10, 0]} color="blue" />
-        <pointLight position={[0, -100, 0]} color="cyan" />
+        <pointLight position={[20, 100, 0]} intensity={100000} color="red" />
+        <pointLight position={[-40, 10, 0]} intensity={100000} color="blue" />
+        <pointLight position={[0, -100, 0]} intensity={100000} color="cyan" />
       </group>
       <React.Suspense fallback={null}>
         <Model />

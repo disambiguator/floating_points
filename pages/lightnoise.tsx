@@ -53,9 +53,9 @@ function Scene() {
   const size = useThree((t) => t.size);
   const lightRef = useRef<PointLight>(null);
 
-  useFrame(({ clock }) => {
-    lightRef.current!.position.y = Math.sin(clock.elapsedTime) * 100;
-  });
+  // useFrame(({ clock }) => {
+  //   lightRef.current!.position.y = Math.sin(clock.elapsedTime) * 100;
+  // });
 
   return (
     <>
@@ -65,9 +65,9 @@ function Scene() {
       </mesh>
       <pointLight
         ref={lightRef}
+        position={[0, 0, 100]}
+        intensity={50000}
         castShadow
-        decay={2000000000}
-        position={[0, 100, 30]}
       />
     </>
   );

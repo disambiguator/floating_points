@@ -75,8 +75,7 @@ const Eclipse = React.memo(function Shader() {
   return (
     <>
       {people}
-      <pointLight position={[0, 4, 5]} />
-      <ambientLight />
+      <pointLight position={[0, 4, 5]} intensity={100} />
     </>
   );
 });
