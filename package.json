@@ -68,6 +68,6 @@
     "three": "^0.157.0",
     "three-csg-ts": "^3.1.6",
     "three-stdlib": "^2.27.2",
-    "zustand": "^4.4.2"
+    "zustand": "^4.4.3"
   }
 }
