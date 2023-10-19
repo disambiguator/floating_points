@@ -7,13 +7,22 @@ import React, { useMemo } from 'react';
 export const FiberScene = ({
   controls,
   children,
+  gl,
   ...rest
 }: Props & { controls?: boolean }) => {
   const router = useRouter();
   const debug = useMemo(() => !!router.query.debug, [router]);
 
+  const canvasProps: Omit<Props, 'children'> = {
+    ...rest,
+    gl: {
+      localClippingEnabled: true,
+      ...gl,
+    },
+  };
+
   return (
-    <Canvas {...rest}>
+    <Canvas {...canvasProps}>
       {controls && <OrbitControls />}
       {debug && <Perf />}
       {children}

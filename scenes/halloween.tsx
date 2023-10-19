@@ -51,7 +51,7 @@ const lights = new Array(2).fill(undefined).map((_, i) => {
   };
 });
 
-const Orbits = ({
+export const Orbits = ({
   seed: { thetaSpeed, theta, phi, phiSpeed, radius },
   children,
 }: {

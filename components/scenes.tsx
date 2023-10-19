@@ -13,6 +13,7 @@ import { chaosConfig } from 'scenes/geometric_chaos';
 import { halloweenConfig } from 'scenes/halloween';
 import { landscapeConfig } from 'scenes/landscape';
 import { marbleConfig } from 'scenes/marble';
+import { skullConfig } from 'scenes/skull';
 import { spiroConfig } from 'scenes/spiro';
 import { webcamConfig } from 'scenes/webcam';
 
@@ -37,6 +38,7 @@ export const scenes = {
   webcam: webcamConfig,
   halloween: halloweenConfig,
   fireworks: fadeConfig,
+  skull: skullConfig,
 };
 
 export const sceneNames = Object.keys(scenes);
