@@ -1,5 +1,5 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Color,
   Group,
@@ -35,9 +35,22 @@ const lights = new Array(10).fill(undefined).map(() => {
   };
 });
 
+useLoader.preload(OBJLoader, assetUrl('/pumpkin.obj'));
+useLoader.preload(OBJLoader, assetUrl('/skull.obj'));
+
 function Skull() {
   const ref = useRef<Mesh>(null);
-  const obj = useLoader(OBJLoader, assetUrl('/skull.obj')) as Object3D;
+  const pumpkin = useLoader(OBJLoader, assetUrl('/pumpkin.obj')) as Object3D;
+  const skull = useLoader(OBJLoader, assetUrl('/skull.obj')) as Object3D;
+  const objects = useMemo(() => [pumpkin, skull], [pumpkin, skull]);
+
+  const [obj, setObj] = useState(skull);
+  const nextObject = useCallback(() => {
+    setObj((o) => {
+      return objects[(objects.indexOf(o) + 1) % objects.length];
+    });
+  }, [setObj, objects]);
+
   const o = useMemo(() => obj.clone(), [obj]);
   const meshes = useMemo(() => {
     const m: Mesh<any, MeshStandardMaterial>[] = [];
@@ -47,22 +60,34 @@ function Skull() {
         m.push(c);
         c.material = new MeshStandardMaterial();
         // c.material.roughness = 0;
-        c.material.clippingPlanes = [new Plane(new Vector3(0, 0, -1))];
+        c.material.clippingPlanes = [new Plane(new Vector3(0, 0, -1), 100)];
       }
     });
     return m;
   }, [o]);
 
+  const prevConstant = useRef<number>(0);
+  const prevDir = useRef<'up' | 'down'>('up');
+  const period = 3;
   useFrame(({ clock }) => {
     ref.current!.rotation.y = clock.elapsedTime;
+
+    const constant = Math.sin((2 * Math.PI * clock.elapsedTime) / period);
+
+    const dir = constant > prevConstant.current ? 'up' : 'down';
+    const changedDirections = dir !== prevDir.current;
+    if (dir === 'up' && changedDirections) {
+      nextObject();
+    }
+    prevConstant.current = constant;
+    prevDir.current = dir;
+
     meshes.forEach((m) => {
       m.material.clippingPlanes.forEach((plane) => {
-        plane.constant = Math.sin(clock.elapsedTime * 2);
+        plane.constant = constant;
       });
     });
   });
-
-  //   child.material.clippingPlanes = [new Plane(new Vector3(0, 0, -1), 0)];
 
   return <primitive ref={ref} object={o} />;
 }
