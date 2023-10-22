@@ -15,6 +15,7 @@ import { landscapeConfig } from 'scenes/landscape';
 import { marbleConfig } from 'scenes/marble';
 import { skullConfig } from 'scenes/skull';
 import { spiroConfig } from 'scenes/spiro';
+import { videoConfig } from 'scenes/video';
 import { webcamConfig } from 'scenes/webcam';
 
 export const shaders = {
@@ -39,6 +40,7 @@ export const scenes = {
   halloween: halloweenConfig,
   fireworks: fadeConfig,
   skull: skullConfig,
+  video: videoConfig,
 };
 
 export const sceneNames = Object.keys(scenes);
