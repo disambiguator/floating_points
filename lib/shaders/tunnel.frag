@@ -79,8 +79,7 @@ void main() {
 
   // tunnel and zoom
   float scale = 0.05;
-  coord.y = (coord.y - mouse.y) * (1.0 + scale * yspeed) + mouse.y;
-  coord.x = (coord.x - mouse.x) * (1.0 + scale * xspeed) + mouse.x;
+  coord = (coord - mouse) * (1.0 + scale * vec2(xspeed, yspeed)) + mouse;
 
   // Get old frame (in 0 to 1 coordinate system)
   coord.x /= aspect;
