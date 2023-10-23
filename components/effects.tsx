@@ -27,14 +27,6 @@ export const useTunnelEffects = () => {
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
 
-  const onChangeTrailNoiseAmplitude = (v: number) => {
-    pass.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
-  };
-
-  useSpectrum({
-    trailNoiseAmplitude: onChangeTrailNoiseAmplitude,
-  });
-
   const [, setControl] = useControls(() => ({
     postprocessing: folder({
       trails: {
@@ -113,11 +105,14 @@ export const useTunnelEffects = () => {
         setControl({ xSpeed: 64, ySpeed: 64, angle: 64 });
       }),
       trailNoise: folder({
-        amplitude: {
+        trailNoiseAmplitude: {
+          label: 'amplitude',
           value: 0,
           min: 0,
           max: 127,
-          onChange: onChangeTrailNoiseAmplitude,
+          onChange: (v: number) => {
+            pass.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
+          },
         },
         frequency: {
           value: 0,
@@ -138,6 +133,17 @@ export const useTunnelEffects = () => {
       }),
     }),
   }));
+
+  useSpectrum(
+    Object.fromEntries(
+      ['bitcrush', 'trailNoiseAmplitude'].map((k) => [
+        k,
+        (v: number) => {
+          setControl({ [k]: v });
+        },
+      ]),
+    ),
+  );
 
   const midiMapping: MidiConfig = useMemo(
     () => ({
