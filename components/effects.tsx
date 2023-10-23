@@ -36,7 +36,6 @@ export const useTunnelEffects = () => {
         onChange: (trails: number) => {
           pass.uniforms.damp.value =
             trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
-          pass.uniforms.zoomDamp.value = scaleMidi(trails, 0, 1);
         },
       },
       zoom: {

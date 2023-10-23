@@ -17,7 +17,6 @@ const TunnelShader = {
     aspect: { value: 0 },
     numSides: { value: 0 },
     bitcrush: { value: 0 },
-    zoomDamp: { value: 0.96 },
     zoom: { value: 0.01 },
     resolution: { value: new Vector2(0, 0) },
     aberration: { value: 0 },

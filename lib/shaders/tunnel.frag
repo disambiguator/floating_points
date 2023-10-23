@@ -3,7 +3,6 @@ precision highp float;
 #endif
 uniform float damp;
 uniform float zoom;
-uniform float zoomDamp;
 uniform float bitcrush;
 uniform float aberration;
 uniform float xspeed;
@@ -25,7 +24,6 @@ uniform sampler2D tNew;
 in vec2 vUv;
 
 #pragma glslify: kaleidoscope = require(./kaleidoscope.glsl)
-#pragma glslify: zoomFun = require(./zoom.glsl)
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: blend = require(glsl-blend/all)
 
@@ -63,11 +61,6 @@ void main() {
 
   if (numSides > 0.0) {
     coord = kaleidoscope(coord, numSides);
-  }
-
-  // Zoom multiplier
-  if (zoom > 0.0) {
-    coord = zoomFun(coord, zoomDamp, zoom);
   }
 
   // Rotate defined angle
