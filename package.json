@@ -64,6 +64,7 @@
     "react-new-window": "^1.0.1",
     "react-p5-wrapper": "^4.1.2",
     "react-responsive": "^9.0.0",
+    "sass": "^1.69.4",
     "three": "^0.157.0",
     "three-csg-ts": "^3.1.6",
     "three-stdlib": "^2.27.2",
