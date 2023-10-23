@@ -1,10 +1,5 @@
 import { Effects as DreiEffects } from '@react-three/drei';
-import {
-  type ReactThreeFiber,
-  extend,
-  useFrame,
-  useThree,
-} from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { button, folder, useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
@@ -17,22 +12,6 @@ import {
   useSpectrum,
   useStore,
 } from '../lib/store';
-
-extend({ AfterimagePass });
-
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace JSX {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    interface IntrinsicElements {
-      afterimagePass: ReactThreeFiber.Node<
-        AfterimagePass,
-        typeof AfterimagePass
-      >;
-    }
-  }
-}
-/* eslint-enable @typescript-eslint/no-namespace */
 
 declare class AfterimagePassType extends AfterimagePass {
   uniforms: (typeof TunnelShader)['uniforms'];
