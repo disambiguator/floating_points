@@ -135,7 +135,7 @@ export const useTunnelEffects = () => {
 
   useSpectrum(
     Object.fromEntries(
-      ['bitcrush', 'trailNoiseAmplitude'].map((k) => [
+      ['bitcrush', 'trailNoiseAmplitude', 'aberration'].map((k) => [
         k,
         (v: number) => {
           setControl({ [k]: v });
