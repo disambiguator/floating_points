@@ -129,9 +129,26 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
   });
   const audio = useMicrophone(audioEnabled);
 
+  const set = useStore((s) => s.set);
+
+  useEffect(() => {
+    const shiftPress = (e: KeyboardEvent) => {
+      set({ shiftPressed: e.shiftKey });
+    };
+    document.addEventListener('keydown', shiftPress);
+    document.addEventListener('keyup', shiftPress);
+
+    return () => {
+      document.removeEventListener('keydown', shiftPress);
+      document.removeEventListener('keyup', shiftPress);
+    };
+  }, [set]);
+
   useFrame(({ camera, mouse }) => {
-    raycaster.setFromCamera(mouse, camera);
-    useStore.setState({ ray: raycaster.ray });
+    if (useStore.getState().shiftPressed) {
+      raycaster.setFromCamera(mouse, camera);
+      set({ ray: raycaster.ray });
+    }
 
     if (audio) {
       useStore.setState({
@@ -226,11 +243,13 @@ const Mixer = () => {
         camera={INITIAL_CAMERA_STATE}
         linear
         flat
-        gl={{
-          antialias: true,
-          // Only turn this on when exporting
-          // preserveDrawingBuffer: true,
-        }}
+        // gl={
+        // {
+        // antialias: true,
+        // Only turn this on when exporting
+        // preserveDrawingBuffer: true,
+        // }
+        // }
         controls={env.name !== 'cubefield' && env.name !== 'control'}
       >
         <Scene env={env} />

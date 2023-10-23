@@ -11,7 +11,12 @@ import { Vector2 } from 'three';
 import { AfterimagePass, EffectComposer } from 'three-stdlib';
 import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import { type Config, type CustomEffectsType, useSpectrum } from '../lib/store';
+import {
+  type Config,
+  type CustomEffectsType,
+  useSpectrum,
+  useStore,
+} from '../lib/store';
 
 extend({ AfterimagePass });
 
@@ -198,8 +203,10 @@ export const useTunnelEffects = () => {
 
   useFrame(({ mouse }, delta) => {
     const { uniforms } = ref.current;
-    uniforms.mouse.value.x = mouse.x * viewport.aspect;
-    uniforms.mouse.value.y = mouse.y;
+    if (useStore.getState().shiftPressed) {
+      uniforms.mouse.value.x = mouse.x * viewport.aspect;
+      uniforms.mouse.value.y = mouse.y;
+    }
     uniforms.time.value += delta * trailNoiseTimeRef.current;
   });
 

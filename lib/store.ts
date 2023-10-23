@@ -36,6 +36,7 @@ export type State = Params & {
   addVolumeControl: (
     newValue: Record<string, (n: number) => void>,
   ) => () => void;
+  shiftPressed: boolean;
 };
 
 export const spectrumSelector = (state: State) => state.spectrum;
@@ -80,6 +81,7 @@ export const useStore = create<State>()(
     },
     env: null,
     set,
+    shiftPressed: false,
   })),
 );
 
