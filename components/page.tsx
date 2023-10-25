@@ -12,6 +12,9 @@ export default function Page({
   return (
     <>
       <style global jsx>{`
+        html {
+          background: black;
+        }
         body {
           margin: 0;
         }
