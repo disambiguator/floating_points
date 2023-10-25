@@ -1,25 +1,16 @@
-import { useFrame, useLoader } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import React, {
   ForwardedRef,
   forwardRef,
   useCallback,
-  useEffect,
   useRef,
   useState,
 } from 'react';
-import {
-  Color,
-  Group,
-  Mesh,
-  MeshStandardMaterial,
-  Object3D,
-  Plane,
-  Vector3,
-} from 'three';
-import { OBJLoader } from 'three-stdlib';
-import assetUrl from 'lib/assetUrl';
+import { Color, Group, MeshStandardMaterial, Plane, Vector3 } from 'three';
 import { type Config, useSpectrum } from 'lib/store';
+import Pumpkin from 'models/Pumpkin';
+import Skull from 'models/Skull';
 import { Orbits } from './halloween';
 
 // const orange = new Color(235 / 255, 97 / 255, 35 / 255);
@@ -43,93 +34,61 @@ const lights = new Array(2).fill(undefined).map(() => {
   };
 });
 
-useLoader.preload(OBJLoader, assetUrl('/pumpkin.obj'));
-useLoader.preload(OBJLoader, assetUrl('/skull.obj'));
-
-const Skull = forwardRef(function Skull(_, ref: ForwardedRef<Object3D>) {
-  const skull = useLoader(OBJLoader, assetUrl('/skull.obj')) as Object3D;
-
-  return <primitive ref={ref} object={skull} />;
+const ScaledPumpkin = forwardRef(function ScaledPumpkin(
+  props,
+  ref: ForwardedRef<Group>,
+) {
+  return <Pumpkin scale={4} ref={ref} {...props} />;
 });
 
-const Pumpkin = forwardRef(function Pumpkin(_, ref: ForwardedRef<Object3D>) {
-  const pumpkin = useLoader(OBJLoader, assetUrl('/pumpkin.obj')) as Object3D;
-
-  return <primitive scale={4} ref={ref} object={pumpkin} />;
-});
-
-const objects = [Skull, Pumpkin];
+const objects = [Skull, ScaledPumpkin];
 
 function Model() {
-  const ref = useRef<Mesh>(null);
+  const ref = useRef<Group>(null);
+  const materialRef = useRef<MeshStandardMaterial>(null);
   const [Obj, setObj] = useState<(typeof objects)[0]>(Skull);
   const nextObject = useCallback(() => {
-    setObj(
-      (o: typeof Skull) => objects[(objects.indexOf(o) + 1) % objects.length],
-    );
+    setObj((o: any) => objects[(objects.indexOf(o) + 1) % objects.length]);
   }, [setObj]);
-  const meshes = useRef<Mesh<any, MeshStandardMaterial>[]>([]);
-  useEffect(() => {
-    const m: Mesh<any, MeshStandardMaterial>[] = [];
-    ref.current!.traverse((child) => {
-      if (child instanceof Mesh) {
-        const c = child as Mesh<any, MeshStandardMaterial>;
-        m.push(c);
-        c.material = new MeshStandardMaterial();
-        c.material.clippingPlanes = [new Plane(new Vector3(0, 0, -1), 100)];
-      }
-    });
-    meshes.current = m;
-  }, [Obj]);
 
   useControls({
     model: button(nextObject),
   });
 
-  // const prevConstant = useRef<number>(0);
-  // const prevDir = useRef<'up' | 'down'>('up');
   const period = 3;
   useFrame(({ clock }) => {
     ref.current!.rotation.y = clock.elapsedTime;
 
-    const constant = Math.sin((2 * Math.PI * clock.elapsedTime) / period);
-
-    // const dir = constant > prevConstant.current ? 'up' : 'down';
-    // const changedDirections = dir !== prevDir.current;
-    // if (dir === 'up' && changedDirections) {
-    //   nextObject();
-    // }
-    // prevConstant.current = constant;
-    // prevDir.current = dir;
-
-    meshes.current.forEach((m) => {
-      m.material.clippingPlanes.forEach((plane) => {
-        plane.constant = constant;
-      });
+    materialRef.current!.clippingPlanes.forEach((plane) => {
+      plane.constant = Math.sin((2 * Math.PI * clock.elapsedTime) / period);
     });
   });
 
-  return <Obj ref={ref} />;
+  return (
+    <Obj ref={ref}>
+      <meshStandardMaterial
+        ref={materialRef}
+        clippingPlanes={[new Plane(new Vector3(0, 0, -1), 0.5)]}
+      />
+    </Obj>
+  );
 }
 
 const Halloween = React.memo(function Dusen() {
   const groupRef = useRef<Group>(null);
 
   const [{ light }, setControl] = useControls(() => ({
-    light: { min: 0, max: 100, value: 0 },
+    light: { min: 0, max: 100, value: 10 },
   }));
-
-  useSpectrum({
-    light: (v) => {
-      setControl({ light: v * 0.1 });
-    },
-  });
 
   const setSize = useCallback((v: number) => {
     groupRef.current!.scale.set(v, v, v);
   }, []);
 
   useSpectrum({
+    light: (v) => {
+      setControl({ light: v * 0.1 });
+    },
     size: setSize,
   });
 

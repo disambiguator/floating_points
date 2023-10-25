@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 *.mp4
 *.wav
 *.obj
+*.glb
