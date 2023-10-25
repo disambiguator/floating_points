@@ -1,4 +1,5 @@
 import { useFrame, useLoader } from '@react-three/fiber';
+import { button, useControls } from 'leva';
 import React, {
   ForwardedRef,
   forwardRef,
@@ -81,21 +82,25 @@ function Model() {
     meshes.current = m;
   }, [Obj]);
 
-  const prevConstant = useRef<number>(0);
-  const prevDir = useRef<'up' | 'down'>('up');
+  useControls({
+    model: button(nextObject),
+  });
+
+  // const prevConstant = useRef<number>(0);
+  // const prevDir = useRef<'up' | 'down'>('up');
   const period = 3;
   useFrame(({ clock }) => {
     ref.current!.rotation.y = clock.elapsedTime;
 
     const constant = Math.sin((2 * Math.PI * clock.elapsedTime) / period);
 
-    const dir = constant > prevConstant.current ? 'up' : 'down';
-    const changedDirections = dir !== prevDir.current;
-    if (dir === 'up' && changedDirections) {
-      nextObject();
-    }
-    prevConstant.current = constant;
-    prevDir.current = dir;
+    // const dir = constant > prevConstant.current ? 'up' : 'down';
+    // const changedDirections = dir !== prevDir.current;
+    // if (dir === 'up' && changedDirections) {
+    //   nextObject();
+    // }
+    // prevConstant.current = constant;
+    // prevDir.current = dir;
 
     meshes.current.forEach((m) => {
       m.material.clippingPlanes.forEach((plane) => {
@@ -109,6 +114,16 @@ function Model() {
 
 const Halloween = React.memo(function Dusen() {
   const groupRef = useRef<Group>(null);
+
+  const [{ light }, setControl] = useControls(() => ({
+    light: { min: 0, max: 100, value: 0 },
+  }));
+
+  useSpectrum({
+    light: (v) => {
+      setControl({ light: v * 0.1 });
+    },
+  });
 
   const setSize = useCallback((v: number) => {
     groupRef.current!.scale.set(v, v, v);
@@ -127,7 +142,7 @@ const Halloween = React.memo(function Dusen() {
       </group>
       {lights.map((s, i) => (
         <Orbits key={i} seed={s}>
-          <pointLight color={s.color} intensity={s.intensity} />
+          <pointLight color={s.color} intensity={s.intensity * light} />
         </Orbits>
       ))}
       {/* <pointLight color={orange} position={[0, 0, 10]} intensity={600} /> */}
