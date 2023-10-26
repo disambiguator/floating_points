@@ -9,6 +9,7 @@ import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
 import { fadeConfig } from 'scenes/fade';
 import { fbmConfig } from 'scenes/fbm';
+import { fboSkullConfig } from 'scenes/fbo_skull';
 import { chaosConfig } from 'scenes/geometric_chaos';
 import { halloweenConfig } from 'scenes/halloween';
 import { landscapeConfig } from 'scenes/landscape';
@@ -41,6 +42,7 @@ export const scenes = {
   fireworks: fadeConfig,
   skull: skullConfig,
   video: videoConfig,
+  fboSkull: fboSkullConfig,
 };
 
 export const sceneNames = Object.keys(scenes);

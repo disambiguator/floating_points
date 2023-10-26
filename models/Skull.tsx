@@ -1,5 +1,5 @@
 import { useGLTF } from '@react-three/drei';
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef } from 'react';
 import * as THREE from 'three';
 import { GLTF } from 'three-stdlib';
 
