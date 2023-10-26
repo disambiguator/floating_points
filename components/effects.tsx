@@ -8,7 +8,7 @@ import {
 import { button, folder, useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Vector2 } from 'three';
-import { AfterimagePass, EffectComposer } from 'three-stdlib';
+import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
 import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import {
@@ -18,7 +18,7 @@ import {
   useStore,
 } from '../lib/store';
 
-extend({ AfterimagePass });
+extend({ AfterimagePass, UnrealBloomPass });
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
@@ -28,6 +28,10 @@ declare global {
       afterimagePass: ReactThreeFiber.Node<
         AfterimagePass,
         typeof AfterimagePass
+      >;
+      unrealBloomPass: ReactThreeFiber.Node<
+        UnrealBloomPass,
+        typeof UnrealBloomPass
       >;
     }
   }
@@ -221,19 +225,17 @@ export const Effects = <T,>({
   params: T;
   CustomEffects: CustomEffectsType<T> | undefined;
 }) => {
-  const ref = useRef<EffectComposer>(null);
   const tunnelEffects = useTunnelEffects();
-  useEffect(() => {
-    const effects = ref.current;
-    effects!.addPass(tunnelEffects);
-    return () => {
-      if (effects) effects.removePass(tunnelEffects);
-    };
-  }, [tunnelEffects]);
-
+  const { strength } = useControls({
+    postprocessing: folder({
+      strength: { value: 0, min: 0, max: 10, label: 'bloom' },
+    }),
+  });
   return (
-    <DreiEffects ref={ref} disableGamma>
+    <DreiEffects disableGamma>
       {CustomEffects && <CustomEffects params={params} />}
+      <primitive object={tunnelEffects} />
+      <unrealBloomPass strength={strength} />
     </DreiEffects>
   );
 };

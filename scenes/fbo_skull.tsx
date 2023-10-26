@@ -68,9 +68,9 @@ function ScreenQuadScene() {
     mult: {
       value: 0,
       min: 0,
-      max: 4,
+      max: 40,
       onChange: (v) => {
-        materialRef.current!.uniforms.mult.value = v;
+        materialRef.current!.uniforms.mult.value = v * 0.1;
       },
     },
   }));
