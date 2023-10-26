@@ -59,14 +59,6 @@ export const useTunnelEffects = () => {
             trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
         },
       },
-      zoom: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (zoom: number) => {
-          pass.uniforms.zoom.value = scaleMidi(zoom, 0, 0.3);
-        },
-      },
       aberration: {
         value: 0,
         min: 0,
@@ -175,7 +167,7 @@ export const useTunnelEffects = () => {
       },
       2: (value) => {
         // @ts-expect-error - Not sure why typing messed up here
-        setControl({ zoom: value });
+        setControl({ aberration: value });
       },
       3: (value) => {
         // @ts-expect-error - Not sure why typing messed up here

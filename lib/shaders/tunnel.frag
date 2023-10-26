@@ -2,7 +2,6 @@
 precision highp float;
 #endif
 uniform float damp;
-uniform float zoom;
 uniform float bitcrush;
 uniform float aberration;
 uniform float xspeed;
