@@ -226,16 +226,34 @@ export const Effects = <T,>({
   CustomEffects: CustomEffectsType<T> | undefined;
 }) => {
   const tunnelEffects = useTunnelEffects();
-  const { strength } = useControls({
+  const bloomRef = useRef<UnrealBloomPass>(null);
+  const [, setControl] = useControls(() => ({
     postprocessing: folder({
-      strength: { value: 0, min: 0, max: 10, label: 'bloom' },
+      bloom: {
+        value: 0,
+        min: 0,
+        max: 10,
+        onChange: (v: number) => {
+          if (bloomRef.current) {
+            bloomRef.current.strength = v;
+          }
+        },
+      },
     }),
+  }));
+
+  useSpectrum({
+    bloom: (v: number) => {
+      // @ts-expect-error - Not sure why typing messed up here
+      setControl({ bloom: v });
+    },
   });
+
   return (
     <DreiEffects disableGamma>
       {CustomEffects && <CustomEffects params={params} />}
       <primitive object={tunnelEffects} />
-      <unrealBloomPass strength={strength} />
+      <unrealBloomPass ref={bloomRef} />
     </DreiEffects>
   );
 };

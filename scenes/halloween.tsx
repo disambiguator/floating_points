@@ -1,18 +1,12 @@
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef } from 'react';
-import { BackSide, Color, Group, Object3D } from 'three';
-import { OBJLoader } from 'three-stdlib';
-import assetUrl from 'lib/assetUrl';
+import { BackSide, Color, Group } from 'three';
 import MarbleShader from 'lib/shaders/marble';
 import type { Config } from 'lib/store';
+import Skull from 'models/Skull';
 
 const orange = new Color(235 / 255, 97 / 255, 35 / 255);
 const black = new Color(0, 0, 0);
-
-function Skull() {
-  const obj = useLoader(OBJLoader, assetUrl('/skull.obj')) as Object3D;
-  return <primitive object={obj.clone()} />;
-}
 
 export type Seed = {
   radius: number;
