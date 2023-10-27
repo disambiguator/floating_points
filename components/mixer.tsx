@@ -38,37 +38,34 @@ const VolumeControl = React.memo(function VolumeControl() {
     [volumeControls],
   );
 
-  // @ts-expect-error - i don't always have to return
   useEffect(() => {
     if (volumeControl) {
       return useStore.subscribe(
         (state) => state.spectrum.volume,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        volumeControls[volumeControl]?.control,
+        volumeControls[volumeControl].control,
       );
     }
+    return undefined;
   }, [volumeControl, volumeControls]);
 
-  // @ts-expect-error - i don't always have to return
   useEffect(() => {
     if (bassControl) {
       return useStore.subscribe(
         (state) => state.spectrum.bass,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        volumeControls[bassControl]?.control,
+        volumeControls[bassControl].control,
       );
     }
+    return undefined;
   }, [bassControl, volumeControls]);
 
-  // @ts-expect-error - i don't always have to return
   useEffect(() => {
     if (trebleControl) {
       return useStore.subscribe(
         (state) => state.spectrum.treble,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        volumeControls[trebleControl]?.control,
+        volumeControls[trebleControl].control,
       );
     }
+    return undefined;
   }, [trebleControl, volumeControls]);
 
   return null;

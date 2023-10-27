@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { INITIAL_CAMERA_STATE } from 'components/config';
 import { scaleMidi, useMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
@@ -9,7 +9,6 @@ import { type Config, useSpectrum } from '../lib/store';
 export const Dusen = memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const [radius, setRadius] = useState(0);
   const camera = useThree((t) => t.camera);
   const shader = useMemo(DusenShader, []);
   const [{ speed }, setControls] = useControls(() => ({
@@ -18,7 +17,9 @@ export const Dusen = memo(function Dusen() {
         value: 27,
         min: 0,
         max: 127,
-        onChange: setRadius,
+        onChange: (v: number) => {
+          shader.uniforms.radius.value = scaleMidi(v, 0, 1);
+        },
       },
       speed: {
         value: 1,
@@ -27,7 +28,12 @@ export const Dusen = memo(function Dusen() {
       },
     }),
   }));
-  useSpectrum({ radius: setRadius });
+  useSpectrum({
+    radius: (v) => {
+      // @ts-expect-error - dont know why this does not work
+      setControls({ radius: v });
+    },
+  });
 
   useMidi(
     useMemo(
@@ -57,11 +63,7 @@ export const Dusen = memo(function Dusen() {
   return (
     <mesh position={[0, 0, -215]}>
       <planeGeometry args={[size.width, size.height]} />
-      <shaderMaterial
-        args={[shader]}
-        uniforms-aspect-value={viewport.aspect}
-        uniforms-radius-value={scaleMidi(radius, 0, 1)}
-      />
+      <shaderMaterial args={[shader]} uniforms-aspect-value={viewport.aspect} />
     </mesh>
   );
 });
