@@ -23,5 +23,4 @@ const Dusen = React.memo(function Dusen() {
 export const marbleConfig: Config = {
   name: 'marble',
   Contents: Dusen,
-  params: {},
 };

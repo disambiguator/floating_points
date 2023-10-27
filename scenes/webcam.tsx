@@ -95,5 +95,4 @@ const Webcam = React.memo(function Shader() {
 export const webcamConfig: Config = {
   name: 'webcam',
   Contents: Webcam,
-  params: {},
 };

@@ -153,5 +153,4 @@ const SpiroContents = () => {
 export const spiroConfig: Config = {
   Contents: SpiroContents,
   name: 'spiro',
-  params: {},
 };

@@ -105,5 +105,4 @@ const Cloth = React.memo(function Cloth() {
 export const fadeConfig: Config = {
   name: 'fireworks',
   Contents: Cloth,
-  params: {},
 };

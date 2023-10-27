@@ -30,5 +30,4 @@ const Halloween = React.memo(function Dusen() {
 export const videoConfig: Config = {
   name: 'video',
   Contents: Halloween,
-  params: {},
 };

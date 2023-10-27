@@ -77,5 +77,4 @@ const Cloth = React.memo(function Cloth() {
 export const clothConfig: Config = {
   name: 'cloth',
   Contents: Cloth,
-  params: {},
 };

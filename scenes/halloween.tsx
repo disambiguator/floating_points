@@ -107,5 +107,4 @@ const Halloween = React.memo(function Dusen() {
 export const halloweenConfig: Config = {
   name: 'halloween',
   Contents: Halloween,
-  params: {},
 };

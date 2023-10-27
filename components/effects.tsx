@@ -11,12 +11,7 @@ import { Vector2 } from 'three';
 import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
 import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import {
-  type Config,
-  type CustomEffectsType,
-  useSpectrum,
-  useStore,
-} from '../lib/store';
+import { type Config, useSpectrum, useStore } from '../lib/store';
 
 extend({ AfterimagePass, UnrealBloomPass });
 
@@ -217,13 +212,11 @@ export const useTunnelEffects = () => {
   return pass;
 };
 
-export const Effects = <T,>({
-  params,
+export const Effects = ({
   CustomEffects,
 }: {
-  name: Config<T>['name'];
-  params: T;
-  CustomEffects: CustomEffectsType<T> | undefined;
+  name: Config['name'];
+  CustomEffects: Config['CustomEffects'] | undefined;
 }) => {
   const tunnelEffects = useTunnelEffects();
   const bloomRef = useRef<UnrealBloomPass>(null);
@@ -251,7 +244,7 @@ export const Effects = <T,>({
 
   return (
     <DreiEffects disableGamma>
-      {CustomEffects && <CustomEffects params={params} />}
+      {CustomEffects && <CustomEffects />}
       <primitive object={tunnelEffects} />
       <unrealBloomPass ref={bloomRef} />
     </DreiEffects>

@@ -3,9 +3,9 @@ import { createPortal, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
+import { scenes } from 'components/scenes';
 import { Config, useSpectrum } from 'lib/store';
 import Skull from 'models/Skull';
-import { Dusen } from 'scenes/dusen';
 
 const res = 2000;
 
@@ -45,7 +45,16 @@ uniform sampler2D t;
 };
 
 const DusenScreen = () => {
-  return <Dusen />;
+  const controls = useControls({
+    innerScene: { value: 'dusen', options: Object.keys(scenes) },
+  });
+  const innerScene = controls.innerScene as keyof typeof scenes;
+
+  const Contents = useMemo(() => {
+    return scenes[innerScene].Contents;
+  }, [innerScene]);
+
+  return <Contents />;
 };
 
 function ScreenQuadScene() {
@@ -107,5 +116,4 @@ function FBO() {
 export const fboSkullConfig: Config = {
   name: 'fboSkull',
   Contents: FBO,
-  params: {},
 };

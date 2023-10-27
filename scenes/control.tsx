@@ -90,7 +90,6 @@ const Control = () => {
 export const controlConfig: Config = {
   name: 'control',
   Contents: Control,
-  params: {},
   initialParams: {
     // audioEnabled: true,
   },

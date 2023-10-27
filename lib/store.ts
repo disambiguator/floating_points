@@ -5,33 +5,24 @@ import { type StoreApi, create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { Spectrum } from './audio';
 
-type SceneContents<T> = ComponentType<{
-  config: T;
-}>;
-
-export type CustomEffectsType<T> = ComponentType<{
-  params: T;
-}>;
-
 type Params = {
   audioEnabled: boolean;
 };
 
-export type Config<T = Record<string, any>> = {
+export type Config = {
   name: string;
-  params: T;
   initialParams?: Partial<Params>;
-  CustomEffects?: CustomEffectsType<T>;
-  Contents: SceneContents<T>;
+  CustomEffects?: ComponentType;
+  Contents: ComponentType;
 };
 
-export type Env<T> = Omit<Config<T>, 'initialParams'>;
+export type Env = Omit<Config, 'initialParams'>;
 
 export type State = Params & {
   ray: THREE.Ray;
   spectrum: Spectrum;
   set: StoreApi<State>['setState'];
-  env: Env<any> | null;
+  env: Env | null;
   volumeControls: Record<string, { id: string; control: (n: number) => void }>;
   addVolumeControl: (
     newValue: Record<string, (n: number) => void>,

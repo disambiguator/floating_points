@@ -71,5 +71,4 @@ export const Dusen = memo(function Dusen() {
 export const dusenConfig: Config = {
   name: 'dusen',
   Contents: Dusen,
-  params: {},
 };

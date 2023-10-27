@@ -39,5 +39,4 @@ const Landscape = memo(function Dusen() {
 export const landscapeConfig: Config = {
   name: 'landscape',
   Contents: Landscape,
-  params: {},
 };

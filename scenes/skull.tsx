@@ -112,5 +112,4 @@ const Halloween = React.memo(function Dusen() {
 export const skullConfig: Config = {
   name: 'skull',
   Contents: Halloween,
-  params: {},
 };

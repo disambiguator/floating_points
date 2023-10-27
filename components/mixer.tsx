@@ -130,7 +130,7 @@ export const Controls = () => {
 };
 
 const raycaster = new THREE.Raycaster();
-const Scene = <T,>({ env }: { env: Env<T> }) => {
+const Scene = ({ env }: { env: Env }) => {
   const gl = useThree((t) => t.gl);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const [volumeScaler, setVolumeScaler] = useRefState(1);
@@ -195,12 +195,8 @@ const Scene = <T,>({ env }: { env: Env<T> }) => {
 
   return (
     <>
-      <env.Contents config={env.params} />
-      <Effects
-        name={env.name}
-        params={env.params}
-        CustomEffects={env.CustomEffects}
-      />
+      <env.Contents />
+      <Effects name={env.name} CustomEffects={env.CustomEffects} />
     </>
   );
 };
@@ -211,7 +207,7 @@ const onUserChange =
     if (!context.initial) onChange(value, path, context);
   };
 
-const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
+const GuiControls = ({ name }: { name: Config['name'] }) => {
   const set = useStore((state) => state.set);
   const audioEnabled = useStore((state) => state.audioEnabled);
 

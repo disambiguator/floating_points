@@ -169,5 +169,4 @@ export const Shapes = React.memo(function Shapes() {
 export const chaosConfig: Config = {
   name: 'chaos',
   Contents: Shapes,
-  params: {},
 };
