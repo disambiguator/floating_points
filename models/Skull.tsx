@@ -2,6 +2,7 @@ import { useGLTF } from '@react-three/drei';
 import React, { forwardRef } from 'react';
 import * as THREE from 'three';
 import { GLTF } from 'three-stdlib';
+import assetUrl from 'lib/assetUrl';
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -14,7 +15,7 @@ export default forwardRef<
   THREE.Group<THREE.Object3DEventMap>,
   JSX.IntrinsicElements['group']
 >(function Skull(props, ref) {
-  const { nodes } = useGLTF('/skull.glb') as GLTFResult;
+  const { nodes } = useGLTF(assetUrl('/skull.glb')) as GLTFResult;
   return (
     <group ref={ref} {...props} dispose={null}>
       <mesh geometry={nodes.top.geometry} material={nodes.top.material}>
@@ -27,4 +28,4 @@ export default forwardRef<
   );
 });
 
-useGLTF.preload('/skull.glb');
+useGLTF.preload(assetUrl('/skull.glb'));
