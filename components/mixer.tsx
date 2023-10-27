@@ -27,10 +27,12 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
 
 const VolumeControl = React.memo(function VolumeControl() {
   const volumeControls = useStore((s) => s.volumeControls);
-  const { volumeControl } = useControls(
+  const { volumeControl, bassControl, trebleControl } = useControls(
     {
       audio: folder({
         volumeControl: { value: null, options: Object.keys(volumeControls) },
+        bassControl: { value: null, options: Object.keys(volumeControls) },
+        trebleControl: { value: null, options: Object.keys(volumeControls) },
       }),
     },
     [volumeControls],
@@ -46,6 +48,28 @@ const VolumeControl = React.memo(function VolumeControl() {
       );
     }
   }, [volumeControl, volumeControls]);
+
+  // @ts-expect-error - i don't always have to return
+  useEffect(() => {
+    if (bassControl) {
+      return useStore.subscribe(
+        (state) => state.spectrum.bass,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        volumeControls[bassControl]?.control,
+      );
+    }
+  }, [bassControl, volumeControls]);
+
+  // @ts-expect-error - i don't always have to return
+  useEffect(() => {
+    if (trebleControl) {
+      return useStore.subscribe(
+        (state) => state.spectrum.treble,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        volumeControls[trebleControl]?.control,
+      );
+    }
+  }, [trebleControl, volumeControls]);
 
   return null;
 });
@@ -191,7 +215,8 @@ const onUserChange =
   };
 
 const GuiControls = <T,>({ name }: { name: Config<T>['name'] }) => {
-  const { audioEnabled, set } = useMemo(() => useStore.getState(), []);
+  const set = useStore((state) => state.set);
+  const audioEnabled = useStore((state) => state.audioEnabled);
 
   const [, setControl] = useControls(() => ({
     Contents: {
