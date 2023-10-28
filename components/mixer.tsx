@@ -1,6 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { Leva, button, folder, useControls } from 'leva';
-import type { OnChangeHandler } from 'leva/dist/declarations/src/types';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
@@ -76,7 +75,6 @@ const SpectrumVisualizer = () => {
     audio: folder({
       spectrum: folder({
         volume: { value: 0, min: 0, max: 127 },
-        subBass: { value: 0, min: 0, max: 127 },
         bass: { value: 0, min: 0, max: 127 },
         midrange: { value: 0, min: 0, max: 127 },
         treble: { value: 0, min: 0, max: 127 },
@@ -87,8 +85,8 @@ const SpectrumVisualizer = () => {
   useEffect(() => {
     return useStore.subscribe(
       spectrumSelector,
-      ({ volume, subBass, bass, midrange, treble }: Spectrum) => {
-        set({ volume, subBass, bass, midrange, treble });
+      ({ volume, bass, midrange, treble }: Spectrum) => {
+        set({ volume, bass, midrange, treble });
       },
     );
   }, [set]);
@@ -141,7 +139,7 @@ const Scene = ({ env }: { env: Env }) => {
   });
   useControls({
     audio: folder({
-      scale: { value: 1, min: 0, max: 10, onChange: setVolumeScaler },
+      scale: { value: 1, min: 0, max: 5, onChange: setVolumeScaler },
       threshold: { value: 0, min: 0, max: 127, onChange: setVolumeThreshold },
     }),
     Export: button(() => {

@@ -3,7 +3,6 @@ import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
 import StarkShader from 'lib/shaders/stark';
 import { barsConfig } from 'scenes/bars';
-import { clothConfig } from 'scenes/cloth';
 import { controlConfig } from 'scenes/control';
 import { cubefieldConfig } from 'scenes/cubefield';
 import { dusenConfig } from 'scenes/dusen';
@@ -34,7 +33,7 @@ export const scenes = {
   bars: barsConfig,
   cubefield: cubefieldConfig,
   control: controlConfig,
-  cloth: clothConfig,
+  // cloth: clothConfig,
   fbm: fbmConfig,
   shader: marbleConfig,
   webcam: webcamConfig,

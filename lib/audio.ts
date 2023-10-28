@@ -9,7 +9,6 @@ export type Audio = {
 };
 
 export type Spectrum = {
-  subBass: number;
   volume: number;
   bass: number;
   midrange: number;
@@ -24,7 +23,6 @@ export const analyseSpectrum = (
   scale = 1,
 ): Spectrum => {
   const { analyser } = audio;
-  const subBass: number[] = [];
   const bass: number[] = [];
   const midrange: number[] = [];
   const treble: number[] = [];
@@ -38,9 +36,7 @@ export const analyseSpectrum = (
 
     const value = (analyserData[i] > threshold ? analyserData[i] : 0) * scale;
 
-    if (frequency >= 20 && frequency <= 60) {
-      subBass.push(value);
-    } else if (frequency <= 250) {
+    if (frequency >= 20 && frequency <= 250) {
       bass.push(value);
     } else if (frequency <= 4000) {
       midrange.push(value);
@@ -59,13 +55,14 @@ export const analyseSpectrum = (
   // presence 4 khz - 6 khz
   // brilliance 6 khz - 20 khz
 
+  volume = volume / analyser.analyser.frequencyBinCount;
+
   return {
     frequencyData,
-    volume: volume / 2 / analyser.analyser.frequencyBinCount,
-    bass: mean(bass) / 2,
-    subBass: mean(subBass) / 2,
-    midrange: mean(midrange) / 2,
-    treble: mean(treble) / 2,
+    volume,
+    bass: mean(bass) * 0.3,
+    midrange: mean(midrange) * 0.5,
+    treble: mean(treble),
   };
 };
 
