@@ -138,7 +138,7 @@ export const useMidi = (config: MidiConfig) => {
           }
         }
         // Debugging
-        console.log(e, e.value);
+        // console.log(e.value);
       };
       input.addListener('controlchange', controlChangeListener);
 

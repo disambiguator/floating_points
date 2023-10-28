@@ -1,12 +1,21 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React from 'react';
-import MarbleShader from 'lib/shaders/marble';
+import { useControls } from 'leva';
+import React, { useMemo } from 'react';
+import { shaders } from 'components/scenes';
 import type { Config } from 'lib/store';
 
 const Dusen = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const shader = MarbleShader();
+
+  const { name } = useControls({
+    name: {
+      value: 'marble',
+      options: Object.keys(shaders),
+    },
+  });
+
+  const shader = useMemo(() => shaders[name as keyof typeof shaders](), [name]);
 
   useFrame(({ clock }) => {
     shader.uniforms.time.value = clock.elapsedTime;
@@ -21,6 +30,6 @@ const Dusen = React.memo(function Dusen() {
 });
 
 export const marbleConfig: Config = {
-  name: 'marble',
+  name: 'shader',
   Contents: Dusen,
 };

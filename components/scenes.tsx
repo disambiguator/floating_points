@@ -36,7 +36,7 @@ export const scenes = {
   control: controlConfig,
   cloth: clothConfig,
   fbm: fbmConfig,
-  marble: marbleConfig,
+  shader: marbleConfig,
   webcam: webcamConfig,
   halloween: halloweenConfig,
   fireworks: fadeConfig,
