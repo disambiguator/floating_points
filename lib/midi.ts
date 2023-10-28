@@ -28,6 +28,7 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     5: '5',
     6: '6',
     7: '7',
+    8: '8',
     F1: 'button1',
     'F#1': 'button2',
     G1: 'button3',
@@ -58,6 +59,7 @@ export type MidiConfig = Partial<{
   5: ControlChangeCallback;
   6: ControlChangeCallback;
   7: ControlChangeCallback;
+  8: ControlChangeCallback;
   button1: NoteCallback;
   button2: NoteCallback;
   button3: NoteCallback;
@@ -136,7 +138,7 @@ export const useMidi = (config: MidiConfig) => {
           }
         }
         // Debugging
-        // console.log(e.value);
+        console.log(e, e.value);
       };
       input.addListener('controlchange', controlChangeListener);
 

@@ -147,7 +147,17 @@ export const useTunnelEffects = () => {
 
   useSpectrum(
     Object.fromEntries(
-      ['bitcrush', 'trailNoiseAmplitude', 'aberration'].map((k) => [
+      [
+        'trails',
+        'aberration',
+        'bitcrush',
+        'trailNoiseAmplitude',
+        'frequency',
+        'time',
+        'angle',
+        'xSpeed',
+        'ySpeed',
+      ].map((k) => [
         k,
         (v: number) => {
           setControl({ [k]: v });
@@ -173,7 +183,9 @@ export const useTunnelEffects = () => {
         setControl({ bitcrush: value });
       },
       4: (value, modifiers) => {
-        setControl({ [modifiers.shift ? 'amplitude' : 'xSpeed']: value });
+        setControl({
+          [modifiers.shift ? 'trailNoiseAmplitude' : 'xSpeed']: value,
+        });
       },
       5: (value, modifiers) => {
         setControl({ [modifiers.shift ? 'frequency' : 'ySpeed']: value });
@@ -239,6 +251,15 @@ export const Effects = ({
     bloom: (v: number) => {
       // @ts-expect-error - Not sure why typing messed up here
       setControl({ bloom: v });
+    },
+  });
+
+  useMidi({
+    8: (v: number) => {
+      const currentValue = bloomRef.current!.strength;
+      const mult = (v === 1 ? 1 : -1) * 0.1;
+      // @ts-expect-error - Not sure why typing messed up here
+      setControl({ bloom: currentValue + mult });
     },
   });
 
