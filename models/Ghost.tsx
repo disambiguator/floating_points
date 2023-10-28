@@ -23,10 +23,7 @@ type GLTFResult = GLTF & {
   };
 };
 
-export default forwardModelRef(function Ghost(
-  props: JSX.IntrinsicElements['group'],
-  ref,
-) {
+export default forwardModelRef(function Ghost(props, ref) {
   const { nodes, materials } = useGLTF(assetUrl('/ghost.glb')) as GLTFResult;
   return (
     <group ref={ref} {...props} dispose={null}>

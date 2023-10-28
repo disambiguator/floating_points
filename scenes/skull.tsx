@@ -10,6 +10,7 @@ import {
   Vector3,
 } from 'three';
 import { type Config, useSpectrum } from 'lib/store';
+import Bat from 'models/Bat';
 import Ghost from 'models/Ghost';
 import Pumpkin from 'models/Pumpkin';
 import Skull from 'models/Skull';
@@ -40,7 +41,8 @@ const lights = () =>
 const objects = [
   [Skull, { scale: 100 }],
   [Pumpkin, { scale: 400 }],
-  [Ghost, {}],
+  [Ghost, { scale: 100 }],
+  [Bat, { scale: 120 }],
 ] as const;
 
 function Model() {
