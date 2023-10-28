@@ -7,7 +7,7 @@ import {
 } from '@react-three/fiber';
 import { button, folder, useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Vector2 } from 'three';
+import { NearestFilter, Vector2 } from 'three';
 import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
 import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
@@ -39,10 +39,12 @@ declare class AfterimagePassType extends AfterimagePass {
 
 export const useTunnelEffects = () => {
   // Could use r3f's extend here if we go back to only using this declaratively.
-  const pass = useMemo<AfterimagePassType>(
-    () => new AfterimagePass(0.96, TunnelShader),
-    [],
-  );
+  const pass = useMemo<AfterimagePassType>(() => {
+    const p = new AfterimagePass(0.96, TunnelShader);
+    p.textureComp.texture.minFilter = NearestFilter;
+    // p.textureComp.texture.magFilter = LinearFilter;
+    return p;
+  }, []);
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);

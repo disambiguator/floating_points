@@ -40,6 +40,7 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     'G#0': 'rightshift',
     G0: 'leftshift',
     'B-1': 'function1',
+    E1: 'center',
   },
 };
 
@@ -64,6 +65,7 @@ export type MidiConfig = Partial<{
   button2: NoteCallback;
   button3: NoteCallback;
   function1: NoteCallback;
+  center: NoteCallback;
 }>;
 
 export const initMidiController = async (): Promise<() => void> => {

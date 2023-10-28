@@ -130,6 +130,7 @@ export const Controls = () => {
 const raycaster = new THREE.Raycaster();
 const Scene = ({ env }: { env: Env }) => {
   const gl = useThree((t) => t.gl);
+  const camera = useThree((t) => t.camera);
   const audioEnabled = useStore((state) => state.audioEnabled);
   const [volumeScaler, setVolumeScaler] = useRefState(1);
   const [volumeThreshold, setVolumeThreshold] = useRefState(1);
@@ -149,6 +150,14 @@ const Scene = ({ env }: { env: Env }) => {
   const audio = useMicrophone(audioEnabled);
 
   const set = useStore((s) => s.set);
+
+  useMidi({
+    center: () => {
+      // Reset camera position to original
+      camera.far = INITIAL_CAMERA_STATE.far;
+      camera.position.set(...INITIAL_CAMERA_STATE.position);
+    },
+  });
 
   useEffect(() => {
     const shiftPress = (e: KeyboardEvent) => {
