@@ -201,12 +201,6 @@ const Scene = ({ env }: { env: Env }) => {
   );
 };
 
-const onUserChange =
-  (onChange: OnChangeHandler): OnChangeHandler =>
-  (value, path, context) => {
-    if (!context.initial) onChange(value, path, context);
-  };
-
 const GuiControls = ({ name }: { name: Config['name'] }) => {
   const set = useStore((state) => state.set);
   const audioEnabled = useStore((state) => state.audioEnabled);
@@ -215,17 +209,17 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
     Contents: {
       value: name,
       options: Object.keys(scenes),
-      onChange: onUserChange((name: SceneName) => {
+      onChange: (name: SceneName) => {
         if (name !== useStore.getState().env?.name)
           set({ env: { ...scenes[name] } });
-      }),
+      },
     },
     audio: folder({
       enabled: {
         value: audioEnabled,
-        onChange: onUserChange((audioEnabled: boolean) => {
+        onChange: (audioEnabled: boolean) => {
           set({ audioEnabled });
-        }),
+        },
       },
     }),
   }));
@@ -279,7 +273,6 @@ const Mixer = () => {
 
 export default function MixerPage({ name }: { name: SceneName }) {
   const set = useStore((state) => state.set);
-  const scene = useMemo(() => scenes[name], [name]);
 
   // Initialize function. When moving to React 18 this may be a problem if it is run twice.
   useEffect(() => {
@@ -287,15 +280,18 @@ export default function MixerPage({ name }: { name: SceneName }) {
     initMidiController()
       .then((cleanupMidi) => {
         cleanup = cleanupMidi;
-        const { initialParams = {}, ...env } = scene;
-        set({ env, ...initialParams });
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.error(e);
       });
     return cleanup;
-  }, [set, scene]);
+  }, [set]);
+
+  useEffect(() => {
+    const { initialParams = {}, ...env } = scenes[name];
+    set({ env, ...initialParams });
+  }, [set, name]);
 
   return (
     <Page>
