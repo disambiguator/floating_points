@@ -1,8 +1,9 @@
 import { useGLTF } from '@react-three/drei';
-import React, { forwardRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { GLTF } from 'three-stdlib';
 import assetUrl from 'lib/assetUrl';
+import { forwardModelRef } from './helpers';
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -10,10 +11,7 @@ type GLTFResult = GLTF & {
   };
 };
 
-export default forwardRef<
-  THREE.Group<THREE.Object3DEventMap>,
-  JSX.IntrinsicElements['group']
->(function Pumpkin(props, ref) {
+export default forwardModelRef(function Pumpkin(props, ref) {
   const { nodes } = useGLTF(assetUrl('/pumpkin.glb')) as GLTFResult;
   return (
     <group ref={ref} {...props} dispose={null}>
