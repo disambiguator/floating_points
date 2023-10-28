@@ -41,7 +41,8 @@ const VolumeControl = React.memo(function VolumeControl() {
     if (volumeControl) {
       return useStore.subscribe(
         (state) => state.spectrum.volume,
-        volumeControls[volumeControl].control,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        volumeControls[volumeControl]?.control,
       );
     }
     return undefined;
@@ -51,7 +52,8 @@ const VolumeControl = React.memo(function VolumeControl() {
     if (bassControl) {
       return useStore.subscribe(
         (state) => state.spectrum.bass,
-        volumeControls[bassControl].control,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        volumeControls[bassControl]?.control,
       );
     }
     return undefined;
@@ -61,7 +63,8 @@ const VolumeControl = React.memo(function VolumeControl() {
     if (trebleControl) {
       return useStore.subscribe(
         (state) => state.spectrum.treble,
-        volumeControls[trebleControl].control,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        volumeControls[trebleControl]?.control,
       );
     }
     return undefined;
@@ -271,7 +274,9 @@ const Mixer = () => {
         // }
         controls={env.name !== 'cubefield' && env.name !== 'control'}
       >
-        <Scene env={env} />
+        <React.Suspense fallback={null}>
+          <Scene env={env} />
+        </React.Suspense>
         <GuiControls name={env.name} />
       </FiberScene>
     </>

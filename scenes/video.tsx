@@ -17,17 +17,7 @@ const Video = () => {
   );
 };
 
-const Halloween = React.memo(function Dusen() {
-  return (
-    <>
-      <React.Suspense fallback={null}>
-        <Video />
-      </React.Suspense>
-    </>
-  );
-});
-
 export const videoConfig: Config = {
   name: 'video',
-  Contents: Halloween,
+  Contents: Video,
 };

@@ -1,13 +1,14 @@
 import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
-import React, {
-  ForwardedRef,
-  forwardRef,
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
-import { Color, Group, MeshStandardMaterial, Plane, Vector3 } from 'three';
+import React, { useCallback, useRef, useState } from 'react';
+import {
+  Color,
+  Group,
+  MeshStandardMaterial,
+  Plane,
+  PointLight,
+  Vector3,
+} from 'three';
 import { type Config, useSpectrum } from 'lib/store';
 import Pumpkin from 'models/Pumpkin';
 import Skull from 'models/Skull';
@@ -20,35 +21,32 @@ import { Orbits } from './halloween';
 //   new Color(56 / 255, 252 / 255, 159 / 255),
 // ];
 
-const lights = new Array(2).fill(undefined).map(() => {
-  return {
-    radius: 4,
-    theta: 2 * Math.PI * Math.random(),
-    // phi: 2 * Math.PI * Math.random(),
-    phi: 0,
-    thetaSpeed: 3 * Math.random(),
-    phiSpeed: 0,
-    // color: colors[i],
-    color: new Color(Math.random(), Math.random(), Math.random()),
-    intensity: 100 / 10,
-  };
-});
+const lights = () =>
+  new Array(2).fill(undefined).map(() => {
+    return {
+      radius: 400,
+      theta: 2 * Math.PI * Math.random(),
+      // phi: 2 * Math.PI * Math.random(),
+      phi: 0,
+      thetaSpeed: 3 * Math.random(),
+      phiSpeed: 0,
+      // color: colors[i],
+      color: new Color(Math.random(), Math.random(), Math.random()),
+      intensity: 10000,
+    };
+  });
 
-const ScaledPumpkin = forwardRef(function ScaledPumpkin(
-  props,
-  ref: ForwardedRef<Group>,
-) {
-  return <Pumpkin scale={4} ref={ref} {...props} />;
-});
-
-const objects = [Skull, ScaledPumpkin];
+const objects = [
+  [Skull, { scale: 100 }],
+  [Pumpkin, { scale: 400 }],
+] as const;
 
 function Model() {
   const ref = useRef<Group>(null);
   const materialRef = useRef<MeshStandardMaterial>(null);
-  const [Obj, setObj] = useState<(typeof objects)[0]>(Skull);
+  const [[Obj, props], setObj] = useState<(typeof objects)[0]>(objects[0]);
   const nextObject = useCallback(() => {
-    setObj((o: any) => objects[(objects.indexOf(o) + 1) % objects.length]);
+    setObj((o: any): any => objects[(objects.indexOf(o) + 1) % objects.length]);
   }, [setObj]);
 
   useControls({
@@ -65,7 +63,7 @@ function Model() {
   });
 
   return (
-    <Obj ref={ref}>
+    <Obj {...props} ref={ref}>
       <meshStandardMaterial
         ref={materialRef}
         clippingPlanes={[new Plane(new Vector3(0, 0, -1), 0.5)]}
@@ -76,9 +74,19 @@ function Model() {
 
 const Halloween = React.memo(function Dusen() {
   const groupRef = useRef<Group>(null);
+  const lightsRef = useRef<PointLight[]>([]);
 
-  const [{ light }, setControl] = useControls(() => ({
-    light: { min: 0, max: 100, value: 10 },
+  const [, setControl] = useControls(() => ({
+    light: {
+      min: 0,
+      max: 100,
+      value: 10,
+      onChange: (v) => {
+        lightsRef.current.forEach((l) => {
+          l.intensity = v * 10000;
+        });
+      },
+    },
   }));
 
   const setSize = useCallback((v: number) => {
@@ -87,7 +95,7 @@ const Halloween = React.memo(function Dusen() {
 
   useSpectrum({
     light: (v) => {
-      setControl({ light: v * 0.1 });
+      setControl({ light: v });
     },
     size: setSize,
   });
@@ -95,16 +103,18 @@ const Halloween = React.memo(function Dusen() {
   return (
     <>
       <group ref={groupRef}>
-        <React.Suspense fallback={null}>
-          <Model />
-        </React.Suspense>
+        <Model />
       </group>
-      {lights.map((s, i) => (
+      {lights().map((s, i) => (
         <Orbits key={i} seed={s}>
-          <pointLight color={s.color} intensity={s.intensity * light} />
+          <pointLight
+            ref={(e) => {
+              lightsRef.current[i] = e!;
+            }}
+            color={s.color}
+          />
         </Orbits>
       ))}
-      {/* <pointLight color={orange} position={[0, 0, 10]} intensity={600} /> */}
     </>
   );
 });

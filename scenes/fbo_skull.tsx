@@ -1,6 +1,6 @@
 import { useFBO } from '@react-three/drei';
 import { createPortal, useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { folder, useControls } from 'leva';
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { scenes } from 'components/scenes';
@@ -74,18 +74,21 @@ function ScreenQuadScene() {
   });
 
   const [, setControl] = useControls(() => ({
-    mult: {
-      value: 0,
-      min: 0,
-      max: 40,
-      onChange: (v) => {
-        materialRef.current!.uniforms.mult.value = v * 0.1;
+    skull: folder({
+      mult: {
+        value: 0,
+        min: 0,
+        max: 40,
+        onChange: (v) => {
+          materialRef.current!.uniforms.mult.value = v * 0.1;
+        },
       },
-    },
+    }),
   }));
 
   useSpectrum({
     mult: (v) => {
+      // @ts-expect-error - w/e
       setControl({ mult: v });
     },
   });
@@ -105,15 +108,7 @@ function ScreenQuadScene() {
   );
 }
 
-function FBO() {
-  return (
-    <React.Suspense fallback={null}>
-      <ScreenQuadScene />
-    </React.Suspense>
-  );
-}
-
 export const fboSkullConfig: Config = {
   name: 'fboSkull',
-  Contents: FBO,
+  Contents: ScreenQuadScene,
 };
