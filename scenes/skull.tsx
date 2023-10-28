@@ -61,7 +61,7 @@ function Model() {
   useFrame(({ clock }) => {
     ref.current!.rotation.y = clock.elapsedTime;
 
-    materialRef.current!.clippingPlanes.forEach((plane) => {
+    materialRef.current!.clippingPlanes?.forEach((plane) => {
       plane.constant = Math.sin((2 * Math.PI * clock.elapsedTime) / period);
     });
   });
