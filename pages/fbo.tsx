@@ -7,7 +7,7 @@ import { EffectComposer, RenderPass } from 'three-stdlib';
 import { useTunnelEffects } from 'components/effects';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
-import { Dusen } from 'scenes/dusen';
+import { scenes } from 'components/scenes';
 
 const res = 2000;
 
@@ -44,7 +44,16 @@ uniform sampler2D t;
 };
 
 const DusenScreen = () => {
-  return <Dusen />;
+  const controls = useControls({
+    innerScene: { value: 'dusen', options: Object.keys(scenes) },
+  });
+  const innerScene = controls.innerScene as keyof typeof scenes;
+
+  const Contents = useMemo(() => {
+    return scenes[innerScene].Contents;
+  }, [innerScene]);
+
+  return <Contents />;
 };
 
 function ScreenQuadScene() {

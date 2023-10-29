@@ -69,25 +69,26 @@ const initPositions = () => [randPosition(), randPosition()];
 const SpiroContents = () => {
   const shaderMaterialRef = useRef<ShaderMaterial & typeof SpiroShader>(null);
 
-  const setDistort = useCallback((v: number) => {
-    shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
-      v,
-      0,
-      0.0005,
-    );
-  }, []);
-
-  useSpectrum({ distort: setDistort });
-
   const positions = useRef(initPositions());
   const [speed, setSpeed] = useRefState(1);
   const newPositions = useCallback(() => {
     positions.current = initPositions();
   }, []);
 
-  useControls('spiro', {
+  const [, setControl] = useControls('spiro', () => ({
     'New Positions': button(newPositions),
-    distort: { value: 0, min: 0, max: 127, onChange: setDistort },
+    distort: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (v: number) => {
+        shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
+          v,
+          0,
+          0.005,
+        );
+      },
+    },
     color: {
       value: false,
       onChange: (v: boolean) => {
@@ -99,6 +100,12 @@ const SpiroContents = () => {
       min: -10,
       max: 10,
       onChange: setSpeed,
+    },
+  }));
+
+  useSpectrum({
+    distort: (v: number) => {
+      setControl({ distort: v });
     },
   });
 

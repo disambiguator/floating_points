@@ -65,7 +65,7 @@ export const useTunnelEffects = () => {
         min: 0,
         max: 127,
         onChange: (v: number) => {
-          pass.uniforms.aberration.value = scaleMidi(v, 0, 0.1);
+          pass.uniforms.aberration.value = scaleMidi(v, 0, 0.02);
         },
       },
       bitcrush: {
@@ -89,7 +89,7 @@ export const useTunnelEffects = () => {
         min: 0,
         max: 127,
         onChange: (xSpeed: number) => {
-          pass.uniforms.xspeed.value = scaleMidi(xSpeed, -1, 1, true);
+          pass.uniforms.xspeed.value = scaleMidi(127 - xSpeed, -1, 1, true);
         },
       },
       ySpeed: {
@@ -97,7 +97,7 @@ export const useTunnelEffects = () => {
         min: 0,
         max: 127,
         onChange: (ySpeed: number) => {
-          pass.uniforms.yspeed.value = scaleMidi(ySpeed, -1, 1, true);
+          pass.uniforms.yspeed.value = scaleMidi(127 - ySpeed, -1, 1, true);
         },
       },
       angle: {

@@ -35,10 +35,10 @@ void main() {
   `,
   fragmentShader: `
   in vec2 vUv;
-uniform sampler2D t;
+  uniform sampler2D t;
 
   void main() {
-    gl_FragColor = texture2D(t, vUv);
+    gl_FragColor = max(texture2D(t, vUv), vec4(0.1));
   }
   `,
   uniforms: { mult: { value: 0 }, t: { value: null } },
@@ -46,7 +46,7 @@ uniform sampler2D t;
 
 const DusenScreen = () => {
   const controls = useControls({
-    innerScene: { value: 'dusen', options: Object.keys(scenes) },
+    innerScene: { value: 'dusen', options: ['dusen', 'chaos', 'shader'] },
   });
   const innerScene = controls.innerScene as keyof typeof scenes;
 

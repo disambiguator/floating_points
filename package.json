@@ -10,7 +10,8 @@
     "test": "tsc && npm run lint",
     "build": "next build",
     "watch": "tsc --watch",
-    "start": "next dev"
+    "start": "next dev",
+    "prod": "next build && next start"
   },
   "repository": {
     "type": "git",
