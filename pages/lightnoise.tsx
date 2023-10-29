@@ -7,8 +7,14 @@ import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import lightnoiseVertHead from 'lib/shaders/lightnoiseVertHead.glsl';
 
+type MyMaterial = GenericMaterial & {
+  aspect: number;
+  depth: number;
+  time: number;
+  radius: number;
+};
 function CustomMaterial() {
-  const ref = useRef<GenericMaterial>();
+  const ref = useRef<MyMaterial>();
   const viewport = useThree((t) => t.viewport);
   const { depth } = useControls({
     depth: { value: 100, min: 0, max: 1000 },

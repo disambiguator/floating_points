@@ -11,7 +11,7 @@ export const FiberScene = ({
   ...rest
 }: Props & { controls?: boolean }) => {
   const router = useRouter();
-  const debug = useMemo(() => !!router.query.debug, [router]);
+  const debug = useMemo(() => !!router.query['debug'], [router]);
 
   const canvasProps: Omit<Props, 'children'> = {
     ...rest,

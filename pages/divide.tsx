@@ -71,7 +71,12 @@ const Divide = () => {
   });
 
   return (
-    <canvas className={styles.root} width={width} height={height} ref={ref} />
+    <canvas
+      className={styles['root']}
+      width={width}
+      height={height}
+      ref={ref}
+    />
   );
 };
 

@@ -7,7 +7,7 @@ import shaderChunk from './15.glsl';
 function buildTwistMaterial() {
   const material = new THREE.MeshNormalMaterial();
   material.onBeforeCompile = function (shader) {
-    shader.uniforms.time = { value: 0 };
+    shader.uniforms['time'] = { value: 0 };
 
     shader.vertexShader = shaderChunk + shader.vertexShader;
     shader.vertexShader = shader.vertexShader.replace(

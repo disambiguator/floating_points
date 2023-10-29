@@ -23,7 +23,7 @@ export default function Page({
         }
       `}</style>
       <div
-        className={styles.container}
+        className={styles['container']}
         {...rest}
         style={{ background }}
         id="container"

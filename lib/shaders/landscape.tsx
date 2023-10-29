@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import vertexShader from 'lib/shaders/defaultForwardUV.vert';
 
-const DusenShader = {
+const DusenShader = () => ({
   vertexShader,
   fragmentShader: /* glsl */ `
   #ifdef GL_ES
@@ -44,6 +44,6 @@ const DusenShader = {
     radius: { value: 0.15 },
     color: { value: new Vector3() },
   },
-};
+});
 
 export default DusenShader;

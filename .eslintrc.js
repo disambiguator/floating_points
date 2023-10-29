@@ -34,7 +34,9 @@ module.exports = {
       },
     ],
     'object-shorthand': ['error', 'always'],
-    'prefer-arrow-callback': 'off', // configs with react/display-name
+    'prefer-arrow-callback': 'off', // configs with react/display-name,
+    'dot-notation': 'off',
+    '@typescript-eslint/dot-notation': 'error',
   },
   env: {
     browser: true,

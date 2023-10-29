@@ -1,13 +1,9 @@
 import { Effects, OrbitControls, useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
-import type {
-  GLTF,
-  OrbitControls as OrbitControlsImpl,
-  ShaderPass,
-} from 'three-stdlib';
+import type { GLTF, OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
 import defaultForwardUV from 'lib/shaders/defaultForwardUV.vert';
@@ -56,7 +52,7 @@ function Model(props: JSX.IntrinsicElements['group']) {
 
 useGLTF.preload('/male_face/scene.gltf');
 
-const Dither = {
+const Dither = () => ({
   uniforms: {
     tDiffuse: { value: null },
     threshold: { value: 0 },
@@ -64,12 +60,12 @@ const Dither = {
   },
   vertexShader: defaultForwardUV,
   fragmentShader,
-};
+});
 
 export const Shapes = React.memo(function Shapes() {
   const gl = useThree((t) => t.gl);
   const controlsRef = useRef<OrbitControlsImpl>(null);
-  const materialRef = useRef<ShaderPass>(null);
+  const shader = useMemo(Dither, []);
   const groupRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
@@ -77,7 +73,7 @@ export const Shapes = React.memo(function Shapes() {
   }, [gl]);
 
   useFrame(({ clock }) => {
-    materialRef.current!.uniforms.time.value = clock.elapsedTime;
+    shader.uniforms.time.value = clock.elapsedTime;
     groupRef.current!.rotation.x = clock.elapsedTime / 2;
     groupRef.current!.rotation.z = clock.elapsedTime / 3;
   });
@@ -98,11 +94,7 @@ export const Shapes = React.memo(function Shapes() {
         <Model />
       </React.Suspense>
       <Effects>
-        <shaderPass
-          ref={materialRef}
-          args={[Dither]}
-          uniforms-threshold-value={threshold}
-        />
+        <shaderPass args={[shader]} uniforms-threshold-value={threshold} />
       </Effects>
     </>
   );

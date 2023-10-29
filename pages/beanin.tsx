@@ -1,10 +1,10 @@
 import { type ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
 
-const Shader = {
+const Shader = () => ({
   vertexShader: /* glsl */ `
   out vec2 vUv;
 
@@ -71,21 +71,21 @@ void main() {
     bounds: { value: new THREE.Vector2(0, 0) },
     zoom: { value: 1 },
   },
-};
+});
 
 const Dusen = function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<THREE.ShaderMaterial>(null);
+  const shader = useMemo(Shader, []);
   const zoomState = useRef({
     mouse: { clientX: 0, clientY: 0 },
     zooming: false,
   });
 
   const zoom = (mouse: { clientX: number; clientY: number }) => {
-    const { uniforms } = ref.current!;
+    const { uniforms } = shader;
 
-    const bounds = uniforms.bounds.value as THREE.Vector2;
+    const bounds = uniforms.bounds.value;
     const normalizedCoords = new THREE.Vector2(
       ((mouse.clientX / window.innerWidth) * 2 - 1) * viewport.aspect,
       ((window.innerHeight - mouse.clientY) / window.innerHeight) * 2 - 1,
@@ -93,13 +93,13 @@ const Dusen = function Dusen() {
 
     const mandelbrotCoord = normalizedCoords
       .clone()
-      .divideScalar(uniforms.zoom.value as number)
+      .divideScalar(uniforms.zoom.value)
       .sub(bounds);
 
     uniforms.zoom.value *= 1.01;
 
     uniforms.bounds.value = normalizedCoords
-      .divideScalar(uniforms.zoom.value as number)
+      .divideScalar(uniforms.zoom.value)
       .sub(mandelbrotCoord);
   };
 
@@ -110,7 +110,7 @@ const Dusen = function Dusen() {
       return;
     }
 
-    ref.current!.uniforms.time.value = clock.elapsedTime;
+    shader.uniforms.time.value = clock.elapsedTime;
     zoom(mouse);
   });
 
@@ -134,11 +134,7 @@ const Dusen = function Dusen() {
       position={[0, 0, -215]}
     >
       <planeGeometry args={[size.width, size.height]} />
-      <shaderMaterial
-        ref={ref}
-        args={[Shader]}
-        uniforms-aspect-value={viewport.aspect}
-      />
+      <shaderMaterial args={[shader]} uniforms-aspect-value={viewport.aspect} />
     </mesh>
   );
 };

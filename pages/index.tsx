@@ -229,10 +229,10 @@ const Scatter = () => {
           background-color: black;
         }
       `}</style>
-      <div className={styles.root}>
-        <div className={styles.contents}>
+      <div className={styles['root']}>
+        <div className={styles['contents']}>
           <h1>Paras Sanghavi</h1>
-          <div className={styles.subheading}>
+          <div className={styles['subheading']}>
             web developer and generative artist based in San Francisco.
           </div>
           <div>
@@ -247,9 +247,9 @@ const Scatter = () => {
           </div>
         </div>
 
-        <div className={styles.gallery}>
+        <div className={styles['gallery']}>
           {artwork.map((p) => (
-            <div className={styles.galleryItem} key={p.name}>
+            <div className={styles['galleryItem']} key={p.name}>
               <Link href={p.path} passHref>
                 <video
                   loop
@@ -269,7 +269,7 @@ const Scatter = () => {
                   Your browser does not support the video tag.
                 </video>
               </Link>
-              <Link href={p.path} className={styles.title}>
+              <Link href={p.path} className={styles['title']}>
                 {p.name}
               </Link>
               {p.description}

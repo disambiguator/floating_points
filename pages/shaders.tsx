@@ -9,10 +9,10 @@ import styles from './shaders.module.scss';
 
 const Scatter = () => (
   <Page>
-    <div className={styles.root}>
-      <div className={styles.gallery}>
+    <div className={styles['root']}>
+      <div className={styles['gallery']}>
         {Object.keys(shaders).map((name) => (
-          <div className={styles.galleryItem} key={name}>
+          <div className={styles['galleryItem']} key={name}>
             <Link passHref href={`/shaders/${name}`} legacyBehavior>
               <div
                 style={{
@@ -28,7 +28,7 @@ const Scatter = () => (
                 </FiberScene>
               </div>
             </Link>
-            <Link href={`/shaders/${name}`} className={styles.title}>
+            <Link href={`/shaders/${name}`} className={styles['title']}>
               {name}
             </Link>
           </div>

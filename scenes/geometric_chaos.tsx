@@ -1,19 +1,12 @@
 import { useFrame } from '@react-three/fiber';
-import { folder, useControls } from 'leva';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-  BoxGeometry,
-  Group,
-  type Mesh,
-  ShaderMaterial,
-  Uniform,
-  Vector3,
-} from 'three';
+import { useControls } from 'leva';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { BoxGeometry, Group, type Mesh, Uniform, Vector3 } from 'three';
 import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 const renderSpeed = 1000;
 
-const Shader = {
+const Shader = () => ({
   vertexShader: /* glsl */ `
     #ifdef GL_ES
     precision highp float;
@@ -60,7 +53,7 @@ const Shader = {
     origin: new Uniform(new Vector3(0, 0, 0)),
     direction: new Uniform(new Vector3(0, 0, 0)),
   },
-};
+});
 
 const Box = ({
   displacement,
@@ -107,35 +100,35 @@ for (let i = 0; i < renderSpeed; i++) {
 }
 
 export const Shapes = React.memo(function Shapes() {
-  const materialRef = useRef<ShaderMaterial>(null);
   const groupRef = useRef<Group>(null!);
-
-  const setAmplitude = useCallback((v: number) => {
-    materialRef.current!.uniforms.amplitude.value = scaleMidi(
-      v * 1000,
-      0,
-      0.0005,
-    );
-  }, []);
+  const shader = useMemo(Shader, []);
 
   const material = useMemo(() => {
-    return <shaderMaterial args={[Shader]} ref={materialRef} />;
-  }, []);
+    return <shaderMaterial args={[shader]} />;
+  }, [shader]);
 
-  useSpectrum({ amplitude: setAmplitude });
-
-  const [, setControls] = useControls(() => ({
-    chaos: folder({
-      warp: { value: 0, min: 0, max: 127, onChange: setAmplitude },
-    }),
+  const [, setControls] = useControls('chaos', () => ({
+    warp: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (v: number) => {
+        shader.uniforms.amplitude.value = scaleMidi(v * 1000, 0, 0.0005);
+      },
+    },
   }));
+
+  useSpectrum({
+    amplitude: (v) => {
+      setControls({ warp: v });
+    },
+  });
 
   useMidi(
     useMemo(
       (): MidiConfig => ({
         1: (value, modifiers) => {
           if (modifiers.shift) {
-            // @ts-expect-error - dont know why this does not work
             setControls({ warp: value });
           }
         },
@@ -148,9 +141,8 @@ export const Shapes = React.memo(function Shapes() {
     groupRef.current.rotateX(-0.005);
     const { ray } = useStore.getState();
 
-    const material = materialRef.current!;
-    material.uniforms.origin.value = ray.origin;
-    material.uniforms.direction.value = ray.direction;
+    shader.uniforms.origin.value = ray.origin;
+    shader.uniforms.direction.value = ray.direction;
   });
 
   const cubes = useMemo(

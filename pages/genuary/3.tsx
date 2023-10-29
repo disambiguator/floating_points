@@ -1,10 +1,9 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { useRef } from 'react';
-import type { ShaderMaterial } from 'three';
+import React, { useMemo } from 'react';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
 
-const shader = {
+const Shader = () => ({
   vertexShader: /* glsl */ `
     out vec2 vUv;
     void main() {
@@ -94,25 +93,21 @@ const shader = {
     aspect: { value: 0.0 },
     time: { value: 0.0 },
   },
-};
+});
 
-const Eclipse = React.memo(function Shader() {
+const Eclipse = React.memo(function Eclipse() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial>(null);
+  const shader = useMemo(Shader, []);
 
   useFrame(({ clock }) => {
-    ref.current!.uniforms.time.value = clock.elapsedTime;
+    shader.uniforms.time.value = clock.elapsedTime;
   });
 
   return (
     <mesh position={[0, 0, -500]}>
       <planeGeometry args={[size.width, size.height]} />
-      <shaderMaterial
-        ref={ref}
-        args={[shader]}
-        uniforms-aspect-value={viewport.aspect}
-      />
+      <shaderMaterial args={[shader]} uniforms-aspect-value={viewport.aspect} />
     </mesh>
   );
 });

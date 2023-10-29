@@ -73,7 +73,7 @@ const newPosition = () => {
   return pos.toArray();
 };
 
-const pointShader = {
+const pointShader = () => ({
   uniforms: {
     size: { value: 10 },
     scale: { value: 350 },
@@ -91,15 +91,15 @@ const pointShader = {
         gl_FragColor = vec4(color, 2.*(0.5-ll));
     }
     `,
-};
+});
 
 const Stars = React.memo(function Stars() {
+  const shader = useMemo(pointShader, []);
   const starsCount = 4000;
   const { speed } = useControls({
     speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
   });
 
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointsRef = useRef<THREE.Points>(null);
 
   const vertices = useMemo(
@@ -113,7 +113,7 @@ const Stars = React.memo(function Stars() {
     if (time > bassStartTime) {
       const { volume } = useStore.getState().spectrum;
       const size = 20 + (volume / 4) ** 2;
-      materialRef.current!.uniforms.size.value = size;
+      shader.uniforms.size.value = size;
     }
 
     if (time > stringsStartTime) {
@@ -132,8 +132,7 @@ const Stars = React.memo(function Stars() {
         />
       </bufferGeometry>
       <shaderMaterial
-        ref={materialRef}
-        args={[pointShader]}
+        args={[shader]}
         transparent
         depthWrite={false}
         depthTest
@@ -340,8 +339,8 @@ export default function VoidPage() {
       {started ? (
         <PerlinField />
       ) : (
-        <div className={styles.splash}>
-          <div className={styles.title}>VOID</div>
+        <div className={styles['splash']}>
+          <div className={styles['title']}>VOID</div>
           <div>Click to start</div>
         </div>
       )}

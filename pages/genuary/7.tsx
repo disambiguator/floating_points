@@ -123,7 +123,7 @@ function Wordle({ height }: { height: number; width: number }) {
     };
   }, [animate]);
   return (
-    <div className={styles.root} style={style}>
+    <div className={styles['root']} style={style}>
       {lines}
     </div>
   );

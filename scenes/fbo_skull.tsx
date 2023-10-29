@@ -1,7 +1,7 @@
 import { useFBO } from '@react-three/drei';
 import { createPortal, useFrame } from '@react-three/fiber';
 import { folder, useControls } from 'leva';
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import * as THREE from 'three';
 import { scenes } from 'components/scenes';
 import { Config, useSpectrum } from 'lib/store';
@@ -9,7 +9,7 @@ import Skull from 'models/Skull';
 
 const res = 2000;
 
-const shader = {
+const Shader = () => ({
   vertexShader: `
   #ifdef GL_ES
 precision highp float;
@@ -42,7 +42,7 @@ void main() {
   }
   `,
   uniforms: { mult: { value: 0 }, t: { value: null } },
-};
+});
 
 const DusenScreen = () => {
   const controls = useControls({
@@ -58,7 +58,7 @@ const DusenScreen = () => {
 };
 
 function ScreenQuadScene() {
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const shader = useMemo(Shader, []);
 
   const target = useFBO(res, res, {
     magFilter: THREE.NearestFilter,
@@ -80,7 +80,7 @@ function ScreenQuadScene() {
         min: 0,
         max: 40,
         onChange: (v) => {
-          materialRef.current!.uniforms.mult.value = v * 0.1;
+          shader.uniforms.mult.value = v * 0.1;
         },
       },
     }),
@@ -97,7 +97,6 @@ function ScreenQuadScene() {
     <>
       <Skull scale={100}>
         <shaderMaterial
-          ref={materialRef}
           args={[shader]}
           uniforms-t-value={target.texture}
           uniforms-mult-value={0}
