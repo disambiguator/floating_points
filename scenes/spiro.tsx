@@ -30,11 +30,12 @@ const randPosition = (): Seed => ({
   phiSpeed: 0,
 });
 
-const getPoint = (radius: number, theta: number, phi: number) => [
-  radius * Math.sin(theta) * Math.cos(phi),
-  radius * Math.cos(theta) * Math.sin(phi),
-  radius * Math.cos(theta),
-];
+const getPoint = (radius: number, theta: number, phi: number) =>
+  [
+    radius * Math.sin(theta) * Math.cos(phi),
+    radius * Math.cos(theta) * Math.sin(phi),
+    radius * Math.cos(theta),
+  ] as const;
 
 function generateVertices(numVertices: number, positions: Seed[]) {
   const vertices = new Float32Array(numVertices * 3);
