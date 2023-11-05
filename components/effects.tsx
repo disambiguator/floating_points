@@ -49,101 +49,98 @@ export const useTunnelEffects = () => {
   const size = useThree((three) => three.size);
   const trailNoiseTimeRef = useRef(0);
 
-  const [, setControl] = useControls(() => ({
-    postprocessing: folder({
-      trails: {
-        value: 0,
-        min: 0,
-        max: 127,
-        onChange: (trails: number) => {
-          pass.uniforms.damp.value =
-            trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
-        },
+  const [, setControl] = useControls('postprocessing', () => ({
+    trails: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (trails: number) => {
+        pass.uniforms.damp.value =
+          trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
       },
-      aberration: {
+    },
+    aberration: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (v: number) => {
+        pass.uniforms.aberration.value = scaleMidi(v, 0, 0.02);
+      },
+    },
+    bitcrush: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (v: number) => {
+        pass.uniforms.bitcrush.value = v;
+      },
+    },
+    kaleidoscope: {
+      value: 0,
+      min: 0,
+      max: 127,
+      onChange: (kaleidoscope: number) => {
+        pass.uniforms.numSides.value = kaleidoscope;
+      },
+    },
+    xSpeed: {
+      value: 64,
+      min: 0,
+      max: 127,
+      onChange: (xSpeed: number) => {
+        pass.uniforms.xspeed.value = scaleMidi(127 - xSpeed, -1, 1, true);
+      },
+    },
+    ySpeed: {
+      value: 64,
+      min: 0,
+      max: 127,
+      onChange: (ySpeed: number) => {
+        pass.uniforms.yspeed.value = scaleMidi(127 - ySpeed, -1, 1, true);
+      },
+    },
+    angle: {
+      value: 64,
+      min: 0,
+      max: 127,
+      onChange: (v: number) => {
+        pass.uniforms.angle.value = scaleMidi(
+          v,
+          -Math.PI / 10,
+          Math.PI / 10,
+          true,
+        );
+      },
+    },
+    'reset rotations': button(() => {
+      setControl({ xSpeed: 64, ySpeed: 64, angle: 64 });
+    }),
+    trailNoise: folder({
+      trailNoiseAmplitude: {
+        label: 'amplitude',
         value: 0,
         min: 0,
         max: 127,
         onChange: (v: number) => {
-          pass.uniforms.aberration.value = scaleMidi(v, 0, 0.02);
+          pass.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
         },
       },
-      bitcrush: {
+      frequency: {
         value: 0,
         min: 0,
         max: 127,
         onChange: (v: number) => {
-          pass.uniforms.bitcrush.value = v;
+          pass.uniforms.trailNoiseFrequency.value = scaleMidi(v, 0, 50);
         },
       },
-      kaleidoscope: {
+      time: {
         value: 0,
         min: 0,
         max: 127,
-        onChange: (kaleidoscope: number) => {
-          pass.uniforms.numSides.value = kaleidoscope;
-        },
-      },
-      xSpeed: {
-        value: 64,
-        min: 0,
-        max: 127,
-        onChange: (xSpeed: number) => {
-          pass.uniforms.xspeed.value = scaleMidi(127 - xSpeed, -1, 1, true);
-        },
-      },
-      ySpeed: {
-        value: 64,
-        min: 0,
-        max: 127,
-        onChange: (ySpeed: number) => {
-          pass.uniforms.yspeed.value = scaleMidi(127 - ySpeed, -1, 1, true);
-        },
-      },
-      angle: {
-        value: 64,
-        min: 0,
-        max: 127,
         onChange: (v: number) => {
-          pass.uniforms.angle.value = scaleMidi(
-            v,
-            -Math.PI / 10,
-            Math.PI / 10,
-            true,
-          );
+          trailNoiseTimeRef.current = scaleMidi(v, 0, 2);
         },
       },
-      'reset rotations': button(() => {
-        // @ts-expect-error - idk why leva typing fails here
-        setControl({ xSpeed: 64, ySpeed: 64, angle: 64 });
-      }),
-      trailNoise: folder({
-        trailNoiseAmplitude: {
-          label: 'amplitude',
-          value: 0,
-          min: 0,
-          max: 127,
-          onChange: (v: number) => {
-            pass.uniforms.trailNoiseAmplitude.value = scaleMidi(v, 0, 0.1);
-          },
-        },
-        frequency: {
-          value: 0,
-          min: 0,
-          max: 127,
-          onChange: (v: number) => {
-            pass.uniforms.trailNoiseFrequency.value = scaleMidi(v, 0, 50);
-          },
-        },
-        time: {
-          value: 0,
-          min: 0,
-          max: 127,
-          onChange: (v: number) => {
-            trailNoiseTimeRef.current = scaleMidi(v, 0, 2);
-          },
-        },
-      }),
     }),
   }));
 
@@ -172,16 +169,13 @@ export const useTunnelEffects = () => {
     () => ({
       1: (value, { shift }) => {
         if (!shift) {
-          // @ts-expect-error - Not sure why typing messed up here
           setControl({ trails: value });
         }
       },
       2: (value) => {
-        // @ts-expect-error - Not sure why typing messed up here
         setControl({ aberration: value });
       },
       3: (value) => {
-        // @ts-expect-error - Not sure why typing messed up here
         setControl({ bitcrush: value });
       },
       4: (value, modifiers) => {
@@ -198,7 +192,6 @@ export const useTunnelEffects = () => {
       7: (value) => {
         const currentValue = pass.uniforms.numSides.value;
         const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
-        // @ts-expect-error - Not sure why typing messed up here
         setControl({ kaleidoscope: newValue });
       },
     }),
@@ -234,24 +227,21 @@ export const Effects = ({
 }) => {
   const tunnelEffects = useTunnelEffects();
   const bloomRef = useRef<UnrealBloomPass>(null);
-  const [, setControl] = useControls(() => ({
-    postprocessing: folder({
-      bloom: {
-        value: 0,
-        min: 0,
-        max: 10,
-        onChange: (v: number) => {
-          if (bloomRef.current) {
-            bloomRef.current.strength = v;
-          }
-        },
+  const [, setControl] = useControls('postprocessing', () => ({
+    bloom: {
+      value: 0,
+      min: 0,
+      max: 10,
+      onChange: (v: number) => {
+        if (bloomRef.current) {
+          bloomRef.current.strength = v;
+        }
       },
-    }),
+    },
   }));
 
   useSpectrum({
     bloom: (v: number) => {
-      // @ts-expect-error - Not sure why typing messed up here
       setControl({ bloom: v });
     },
   });
@@ -260,7 +250,6 @@ export const Effects = ({
     8: (v: number) => {
       const currentValue = bloomRef.current!.strength;
       const mult = (v === 1 ? 1 : -1) * 0.1;
-      // @ts-expect-error - Not sure why typing messed up here
       setControl({ bloom: currentValue + mult });
     },
   });

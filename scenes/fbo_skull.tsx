@@ -1,6 +1,6 @@
 import { useFBO } from '@react-three/drei';
 import { createPortal, useFrame } from '@react-three/fiber';
-import { folder, useControls } from 'leva';
+import { useControls } from 'leva';
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
 import { scenes } from 'components/scenes';
@@ -73,22 +73,19 @@ function ScreenQuadScene() {
     state.gl.setRenderTarget(null);
   });
 
-  const [, setControl] = useControls(() => ({
-    skull: folder({
-      mult: {
-        value: 0,
-        min: 0,
-        max: 40,
-        onChange: (v) => {
-          shader.uniforms.mult.value = v * 0.1;
-        },
+  const [, setControl] = useControls('skull', () => ({
+    mult: {
+      value: 0,
+      min: 0,
+      max: 40,
+      onChange: (v) => {
+        shader.uniforms.mult.value = v * 0.1;
       },
-    }),
+    },
   }));
 
   useSpectrum({
     mult: (v) => {
-      // @ts-expect-error - w/e
       setControl({ mult: v });
     },
   });

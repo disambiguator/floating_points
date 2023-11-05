@@ -27,12 +27,11 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
 const VolumeControl = React.memo(function VolumeControl() {
   const volumeControls = useStore((s) => s.volumeControls);
   const { volumeControl, bassControl, trebleControl } = useControls(
+    'audio',
     {
-      audio: folder({
-        volumeControl: { value: null, options: Object.keys(volumeControls) },
-        bassControl: { value: null, options: Object.keys(volumeControls) },
-        trebleControl: { value: null, options: Object.keys(volumeControls) },
-      }),
+      volumeControl: { value: null, options: Object.keys(volumeControls) },
+      bassControl: { value: null, options: Object.keys(volumeControls) },
+      trebleControl: { value: null, options: Object.keys(volumeControls) },
     },
     [volumeControls],
   );
@@ -74,14 +73,12 @@ const VolumeControl = React.memo(function VolumeControl() {
 });
 
 const SpectrumVisualizer = () => {
-  const [, set] = useControls(() => ({
-    audio: folder({
-      spectrum: folder({
-        volume: { value: 0, min: 0, max: 127 },
-        bass: { value: 0, min: 0, max: 127 },
-        midrange: { value: 0, min: 0, max: 127 },
-        treble: { value: 0, min: 0, max: 127 },
-      }),
+  const [, set] = useControls('audio', () => ({
+    spectrum: folder({
+      volume: { value: 0, min: 0, max: 127 },
+      bass: { value: 0, min: 0, max: 127 },
+      midrange: { value: 0, min: 0, max: 127 },
+      treble: { value: 0, min: 0, max: 127 },
     }),
   }));
 
