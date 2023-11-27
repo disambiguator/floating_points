@@ -26,7 +26,7 @@
   "devDependencies": {
     "@tsconfig/next": "^2.0.1",
     "@types/lodash": "^4.14.201",
-    "@types/p5": "^1.7.3",
+    "@types/p5": "^1.7.4",
     "@types/react": "^18.2.39",
     "@types/react-responsive": "^8.0.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
