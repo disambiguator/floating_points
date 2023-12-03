@@ -1,16 +1,15 @@
 import { useGLTF } from '@react-three/drei';
+import { ObjectMap } from '@react-three/fiber';
 import React from 'react';
 import * as THREE from 'three';
 import { GLTF } from 'three-stdlib';
 import assetUrl from 'lib/assetUrl';
 import { forwardModelRef } from './helpers';
 
-type GLTFResult = GLTF & {
-  nodes: {
-    top: THREE.Mesh;
-    bottom: THREE.Mesh;
+type GLTFResult = GLTF &
+  ObjectMap & {
+    nodes: { top: THREE.Mesh; bottom: THREE.Mesh };
   };
-};
 
 export default forwardModelRef(function Skull(props, ref) {
   const { nodes } = useGLTF(assetUrl('/skull.glb')) as GLTFResult;

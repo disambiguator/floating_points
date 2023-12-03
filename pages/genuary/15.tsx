@@ -25,9 +25,6 @@ function buildTwistMaterial() {
             );
       `,
     );
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    material.userData.shader = shader;
   };
 
   // Make sure WebGLRenderer doesnt reuse a single program

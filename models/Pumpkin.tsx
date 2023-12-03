@@ -1,15 +1,15 @@
 import { useGLTF } from '@react-three/drei';
+import { ObjectMap } from '@react-three/fiber';
 import React from 'react';
 import * as THREE from 'three';
 import { GLTF } from 'three-stdlib';
 import assetUrl from 'lib/assetUrl';
 import { forwardModelRef } from './helpers';
 
-type GLTFResult = GLTF & {
-  nodes: {
-    Halloween_Pumpkin: THREE.Mesh;
+type GLTFResult = GLTF &
+  ObjectMap & {
+    nodes: { Halloween_Pumpkin: THREE.Mesh };
   };
-};
 
 export default forwardModelRef(function Pumpkin(props, ref) {
   const { nodes } = useGLTF(assetUrl('/pumpkin.glb')) as GLTFResult;
