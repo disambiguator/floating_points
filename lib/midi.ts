@@ -42,6 +42,15 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     'B-1': 'function1',
     E1: 'center',
   },
+  'USB MIDI Device': {
+    // Midi Fighter Twister
+    0: '1',
+    1: '2',
+    2: '3',
+    3: '4',
+    4: '5',
+    5: '6',
+  },
 };
 
 const modifiers = {
@@ -116,15 +125,25 @@ export const initMidiController = async (): Promise<() => void> => {
   };
 };
 
+export const setMidiController = (channel: number, value: number) => {
+  if (!WebMidi.enabled) {
+    return;
+  }
+
+  WebMidi.outputs.forEach((output) => {
+    output.channels[1].sendControlChange(channel, value);
+  });
+};
+
 export const useMidi = (config: MidiConfig) => {
   useEffect(() => {
     if (!WebMidi.enabled) {
       return;
     }
 
-    const cleanup = Object.entries(MAPPINGS).map(([name, mapping]) => {
-      const input = WebMidi.getInputByName(name);
-      if (!input) return noop;
+    const cleanup = WebMidi.inputs.map((input) => {
+      const mapping =
+        (MAPPINGS[input.name] as Record<string, string> | undefined) ?? {};
 
       const controlChangeListener = (e: ControlChangeMessageEvent) => {
         const param = mapping[e.controller.number];
@@ -138,9 +157,10 @@ export const useMidi = (config: MidiConfig) => {
             // eslint-disable-next-line no-console
             console.error('This should not happen', e);
           }
+        } else {
+          // Debugging
+          // console.log(input.name, e.controller.number, e.rawValue);
         }
-        // Debugging
-        // console.log(e.value);
       };
       input.addListener('controlchange', controlChangeListener);
 

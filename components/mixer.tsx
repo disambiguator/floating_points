@@ -6,7 +6,12 @@ import NewWindow from 'react-new-window';
 import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
-import { type MidiConfig, initMidiController, useMidi } from 'lib/midi';
+import {
+  type MidiConfig,
+  initMidiController,
+  setMidiController,
+  useMidi,
+} from 'lib/midi';
 import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
 import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
@@ -87,6 +92,10 @@ const SpectrumVisualizer = () => {
       spectrumSelector,
       ({ volume, bass, midrange, treble }: Spectrum) => {
         set({ volume, bass, midrange, treble });
+        setMidiController(12, volume);
+        setMidiController(13, bass);
+        setMidiController(14, midrange);
+        setMidiController(15, treble);
       },
     );
   }, [set]);

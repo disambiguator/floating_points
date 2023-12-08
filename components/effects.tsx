@@ -9,7 +9,7 @@ import { button, folder, useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { NearestFilter, Vector2 } from 'three';
 import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
-import { type MidiConfig, scaleMidi, useMidi } from 'lib/midi';
+import { scaleMidi, setMidiController, useMidi } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 
@@ -57,6 +57,7 @@ export const useTunnelEffects = () => {
       onChange: (trails: number) => {
         pass.uniforms.damp.value =
           trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
+        setMidiController(0, trails);
       },
     },
     aberration: {
@@ -165,39 +166,40 @@ export const useTunnelEffects = () => {
     ),
   );
 
-  const midiMapping: MidiConfig = useMemo(
-    () => ({
-      1: (value, { shift }) => {
-        if (!shift) {
-          setControl({ trails: value });
-        }
-      },
-      2: (value) => {
-        setControl({ aberration: value });
-      },
-      3: (value) => {
-        setControl({ bitcrush: value });
-      },
-      4: (value, modifiers) => {
-        setControl({
-          [modifiers.shift ? 'trailNoiseAmplitude' : 'xSpeed']: value,
-        });
-      },
-      5: (value, modifiers) => {
-        setControl({ [modifiers.shift ? 'frequency' : 'ySpeed']: value });
-      },
-      6: (value, modifiers) => {
-        setControl({ [modifiers.shift ? 'time' : 'angle']: value });
-      },
-      7: (value) => {
-        const currentValue = pass.uniforms.numSides.value;
-        const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
-        setControl({ kaleidoscope: newValue });
-      },
-    }),
-    [setControl, pass],
+  useMidi(
+    useMemo(
+      () => ({
+        1: (value, { shift }) => {
+          if (!shift) {
+            setControl({ trails: value });
+          }
+        },
+        2: (value) => {
+          setControl({ aberration: value });
+        },
+        3: (value) => {
+          setControl({ bitcrush: value });
+        },
+        4: (value, modifiers) => {
+          setControl({
+            [modifiers.shift ? 'trailNoiseAmplitude' : 'xSpeed']: value,
+          });
+        },
+        5: (value, modifiers) => {
+          setControl({ [modifiers.shift ? 'frequency' : 'ySpeed']: value });
+        },
+        6: (value, modifiers) => {
+          setControl({ [modifiers.shift ? 'time' : 'angle']: value });
+        },
+        7: (value) => {
+          const currentValue = pass.uniforms.numSides.value;
+          const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
+          setControl({ kaleidoscope: newValue });
+        },
+      }),
+      [setControl, pass],
+    ),
   );
-  useMidi(midiMapping);
 
   useFrame(({ mouse }, delta) => {
     const { uniforms } = pass;
