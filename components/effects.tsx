@@ -233,11 +233,12 @@ export const Effects = ({
     bloom: {
       value: 0,
       min: 0,
-      max: 10,
+      max: 127,
       onChange: (v: number) => {
         if (bloomRef.current) {
-          bloomRef.current.strength = v;
+          bloomRef.current.strength = scaleMidi(v, 0, 10);
         }
+        setMidiController(7, v);
       },
     },
   }));
@@ -250,9 +251,7 @@ export const Effects = ({
 
   useMidi({
     8: (v: number) => {
-      const currentValue = bloomRef.current!.strength;
-      const mult = (v === 1 ? 1 : -1) * 0.1;
-      setControl({ bloom: currentValue + mult });
+      setControl({ bloom: v });
     },
   });
 

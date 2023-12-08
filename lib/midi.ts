@@ -42,14 +42,17 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     'B-1': 'function1',
     E1: 'center',
   },
-  'USB MIDI Device': {
-    // Midi Fighter Twister
+  'Midi Fighter Twister': {
     0: '1',
     1: '2',
     2: '3',
     3: '4',
     4: '5',
     5: '6',
+    6: '7',
+    7: '8',
+    8: '9',
+    9: '10',
   },
 };
 
@@ -159,7 +162,6 @@ export const useMidi = (config: MidiConfig) => {
           }
         } else {
           // Debugging
-          // console.log(input.name, e.controller.number, e.rawValue);
         }
       };
       input.addListener('controlchange', controlChangeListener);
