@@ -77,35 +77,8 @@ const VolumeControl = React.memo(function VolumeControl() {
   return null;
 });
 
-const SpectrumVisualizer = () => {
-  const [, set] = useControls('audio', () => ({
-    spectrum: folder({
-      volume: { value: 0, min: 0, max: 127 },
-      bass: { value: 0, min: 0, max: 127 },
-      midrange: { value: 0, min: 0, max: 127 },
-      treble: { value: 0, min: 0, max: 127 },
-    }),
-  }));
-
-  useEffect(() => {
-    return useStore.subscribe(
-      spectrumSelector,
-      ({ volume, bass, midrange, treble }: Spectrum) => {
-        set({ volume, bass, midrange, treble });
-        setMidiController(12, volume);
-        setMidiController(13, bass);
-        setMidiController(14, midrange);
-        setMidiController(15, treble);
-      },
-    );
-  }, [set]);
-
-  return <VolumeControl />;
-};
-
 export const Controls = () => {
   const isMobile = useIsMobile();
-  const audioEnabled = useStore((state) => state.audioEnabled);
   const [poppedOut, setPoppedOut] = useState(false);
   const popOut = useCallback(() => {
     setPoppedOut(true);
@@ -131,7 +104,6 @@ export const Controls = () => {
           {!isMobile && <PopOutControls popOut={popOut} />}
         </>
       )}
-      {audioEnabled ? <SpectrumVisualizer /> : null}
     </>
   );
 };
@@ -237,8 +209,32 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
           set({ audioEnabled });
         },
       },
+      spectrum: folder(
+        {
+          volume: { value: 0, min: 0, max: 127 },
+          bass: { value: 0, min: 0, max: 127 },
+          midrange: { value: 0, min: 0, max: 127 },
+          treble: { value: 0, min: 0, max: 127 },
+        },
+        {
+          render: (get) => get('audio.enabled') as boolean,
+        },
+      ),
     }),
   }));
+
+  useEffect(() => {
+    return useStore.subscribe(
+      spectrumSelector,
+      ({ volume, bass, midrange, treble }: Spectrum) => {
+        setControl({ volume, bass, midrange, treble });
+        setMidiController(12, volume);
+        setMidiController(13, bass);
+        setMidiController(14, midrange);
+        setMidiController(15, treble);
+      },
+    );
+  }, [setControl]);
 
   useMidi(
     useMemo(
