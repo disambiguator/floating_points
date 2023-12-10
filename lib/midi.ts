@@ -113,10 +113,8 @@ export const initMidiController = async (): Promise<() => void> => {
 
   await WebMidi.enable();
 
-  const cleanupFunctions = Object.entries(MAPPINGS).map(([name, mapping]) => {
-    const input = WebMidi.getInputByName(name);
-    if (!input) return noop;
-
+  const cleanupFunctions = WebMidi.inputs.map((input) => {
+    const mapping = MAPPINGS[input.name];
     const noteOnListener = (e: NoteMessageEvent) => {
       const param = mapping[e.note.identifier];
       if (param) {
@@ -143,6 +141,12 @@ export const initMidiController = async (): Promise<() => void> => {
     };
   });
 
+  // WebMidi.outputs.forEach((output) => {
+  //   for (let i = 0; i < 16; i++) {
+  //     output.channels[6].sendControlChange(i, 17);
+  //   }
+  // });
+
   return () => {
     cleanupFunctions.forEach((c) => {
       c();
@@ -157,9 +161,7 @@ export const useMidi = (config: MidiConfig) => {
     }
 
     const cleanup = WebMidi.inputs.map((input) => {
-      const mapping =
-        (MAPPINGS[input.name] as Record<string, string> | undefined) ?? {};
-
+      const mapping = MAPPINGS[input.name];
       const controlChangeListener = (e: ControlChangeMessageEvent) => {
         const param = mapping[e.controller.number];
         if (param && param in config) {
@@ -205,9 +207,7 @@ export const useMidiTwo = (
     }
 
     const cleanup = WebMidi.inputs.map((input) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const mapping = MAPPINGS[input.name] ?? {};
-
+      const mapping = MAPPINGS[input.name];
       const controlChangeListener = (e: ControlChangeMessageEvent) => {
         const param = mapping[e.controller.number];
         if (param && param in config) {
