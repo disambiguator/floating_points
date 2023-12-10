@@ -256,7 +256,7 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
     ),
   );
 
-  return null;
+  return audioEnabled ? <VolumeControl /> : null;
 };
 
 const Mixer = () => {

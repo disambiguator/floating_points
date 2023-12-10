@@ -6,6 +6,7 @@ import {
   type NoteMessageEvent,
   WebMidi,
 } from 'webmidi';
+import { useStore } from './store';
 
 export const scaleMidi = (
   midi: number,
@@ -38,12 +39,13 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     'A#1': 'button6',
     B1: 'button7',
     C2: 'button8',
-    'G#0': 'rightshift',
-    G0: 'leftshift',
+    'G#0': 'shift',
+    G0: 'shift',
     'B-1': 'function1',
     E1: 'center',
   },
   'Midi Fighter Twister': {
+    // cc
     0: '1',
     1: '2',
     2: '3',
@@ -60,12 +62,27 @@ const MAPPINGS: Record<string, Record<string, string>> = {
     13: '14',
     14: '15',
     15: '16',
+    // notes
+    'C-1': '1',
+    'C#-1': '2',
+    'D-1': '3',
+    'D#-1': '4',
+    'E-1': '5',
+    'F-1': '6',
+    'F#-1': '7',
+    'G-1': '8',
+    'G#-1': '9',
+    'A-1': '10',
+    'A#-1': '11',
+    'B-1': '12',
+    C0: '13',
+    'C#0': '14',
+    D0: '15',
+    'D#0': '16',
   },
 };
 
-const modifiers = {
-  shift: false,
-};
+export const modifiers: Record<string, boolean> = {};
 
 type Modifiers = typeof modifiers;
 
@@ -102,22 +119,22 @@ export const initMidiController = async (): Promise<() => void> => {
 
     const noteOnListener = (e: NoteMessageEvent) => {
       const param = mapping[e.note.identifier];
-      if (param === 'leftshift') {
-        modifiers.shift = true;
-      }
-      if (param === 'rightshift') {
-        modifiers.shift = true;
+      if (param) {
+        modifiers[param] = true;
+      } else {
+        // Debugging
+        console.log(e.note.identifier);
       }
     };
     input.addListener('noteon', noteOnListener);
 
     const noteOffListener = (e: NoteMessageEvent) => {
       const param = mapping[e.note.identifier];
-      if (param === 'leftshift') {
-        modifiers.shift = false;
-      }
-      if (param === 'rightshift') {
-        modifiers.shift = false;
+      if (param) {
+        modifiers[param] = false;
+      } else {
+        // Debugging
+        console.log(e.note.identifier);
       }
     };
     input.addListener('noteoff', noteOffListener);
@@ -221,8 +238,40 @@ export const useMidiTwo = (
       };
       input.addListener('controlchange', controlChangeListener);
 
+      const unsubscribe = new Map<string, () => void>();
+      const noteOnListener = (e: NoteMessageEvent) => {
+        const param = mapping[e.note.identifier];
+        if (param && param in config) {
+          if (!['13', '14', '15', '16'].includes(param)) {
+            if (modifiers['13']) {
+              const unsub = unsubscribe.get(param);
+              if (unsub) {
+                unsub();
+                unsubscribe.delete(param);
+              } else {
+                unsubscribe.set(
+                  param,
+                  useStore.subscribe(
+                    (state) => state.spectrum.volume,
+                    (value) => {
+                      const fullPath = `${folder}.${config[param]}`;
+                      store.setValueAtPath(fullPath, value, false);
+                    },
+                  ),
+                );
+              }
+            }
+          }
+        }
+
+        // Debugging
+        // console.log(e.note.identifier);
+      };
+      input.addListener('noteon', noteOnListener);
+
       return () => {
         input.removeListener('controlchange', controlChangeListener);
+        input.removeListener('noteon', noteOnListener);
       };
     });
 

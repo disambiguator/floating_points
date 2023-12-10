@@ -26,18 +26,18 @@ export const Dusen = memo(function Dusen() {
     },
   });
 
-  useMidi(
-    useMemo(
-      () => ({
-        1: (value, modifiers) => {
-          if (modifiers.shift) {
-            setControls({ radius: value });
-          }
-        },
-      }),
-      [setControls],
-    ),
-  );
+  // useMidi(
+  //   useMemo(
+  //     () => ({
+  //       1: (value, modifiers) => {
+  //         if (modifiers.shift) {
+  //           setControls({ radius: value });
+  //         }
+  //       },
+  //     }),
+  //     [setControls],
+  //   ),
+  // );
 
   useFrame((_, delta) => {
     shader.uniforms.time.value += delta * speed;
