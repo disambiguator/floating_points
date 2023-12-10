@@ -1,3 +1,4 @@
+import { DataInput, StoreType } from 'leva/dist/declarations/src/types';
 import { noop } from 'lodash';
 import { useEffect } from 'react';
 import {
@@ -190,4 +191,85 @@ export const useMidi = (config: MidiConfig) => {
       });
     };
   }, [config]);
+};
+
+export const useMidiTwo = (
+  store: StoreType,
+  folder: string,
+  config: Record<string, string>,
+) => {
+  useEffect(() => {
+    if (!WebMidi.enabled) {
+      return;
+    }
+
+    const cleanup = WebMidi.inputs.map((input) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const mapping = MAPPINGS[input.name] ?? {};
+
+      const controlChangeListener = (e: ControlChangeMessageEvent) => {
+        const param = mapping[e.controller.number];
+
+        if (param && param in config) {
+          if (typeof e.rawValue === 'number') {
+            const storeParam = config[param];
+            const fullPath = `${folder}.${storeParam}`;
+            store.setValueAtPath(fullPath, e.rawValue, false);
+          } else {
+            // eslint-disable-next-line no-console
+            console.error('This should not happen', e);
+          }
+        } else {
+          // Debugging
+        }
+      };
+      input.addListener('controlchange', controlChangeListener);
+
+      return () => {
+        input.removeListener('controlchange', controlChangeListener);
+      };
+    });
+
+    return () => {
+      cleanup.forEach((c) => {
+        c();
+      });
+    };
+  }, [store, folder, config]);
+
+  useEffect(() => {
+    if (!WebMidi.enabled) {
+      return;
+    }
+
+    const unsubs = Object.entries(config).map(([param, storeParam]) => {
+      const fullPath = `${folder}.${storeParam}`;
+
+      const unsub = store.useStore.subscribe(
+        (s) => {
+          const item = s.data[fullPath] as DataInput | undefined;
+          return item?.value as number | undefined;
+        },
+        (value) => {
+          if (!value) return;
+
+          WebMidi.outputs.forEach((output) => {
+            const mapping = MAPPINGS[output.name];
+            const number = Object.entries(mapping).find(
+              ([, v]) => v === param,
+            )?.[0];
+            if (!number) return;
+            output.channels[1].sendControlChange(Number(number), value);
+          });
+        },
+      );
+      return unsub;
+    });
+
+    return () => {
+      unsubs.forEach((c) => {
+        c();
+      });
+    };
+  }, [store, folder, config]);
 };

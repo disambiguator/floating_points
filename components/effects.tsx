@@ -5,11 +5,11 @@ import {
   useFrame,
   useThree,
 } from '@react-three/fiber';
-import { button, folder, useControls } from 'leva';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { button, folder, levaStore, useControls } from 'leva';
+import { useEffect, useMemo, useRef } from 'react';
 import { NearestFilter, Vector2 } from 'three';
 import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
-import { scaleMidi, setMidiController, useMidi } from 'lib/midi';
+import { scaleMidi, useMidi, useMidiTwo } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 
@@ -37,6 +37,16 @@ declare class AfterimagePassType extends AfterimagePass {
   uniforms: (typeof TunnelShader)['uniforms'];
 }
 
+const midiConfig = {
+  1: 'trails',
+  2: 'aberration',
+  3: 'bitcrush',
+  4: 'xSpeed',
+  // shift : 'trailNoiseAmplitude'
+  5: 'ySpeed',
+  // shift frequency
+  6: 'angle',
+};
 export const useTunnelEffects = () => {
   // Could use r3f's extend here if we go back to only using this declaratively.
   const pass = useMemo<AfterimagePassType>(() => {
@@ -57,7 +67,6 @@ export const useTunnelEffects = () => {
       onChange: (trails: number) => {
         pass.uniforms.damp.value =
           trails === 0 ? trails : scaleMidi(trails, 0.9, 1);
-        setMidiController(0, trails);
       },
     },
     aberration: {
@@ -166,46 +175,13 @@ export const useTunnelEffects = () => {
     ),
   );
 
-  useMidi(
-    useMemo(
-      () => ({
-        1: (value, { shift }) => {
-          if (!shift) {
-            setControl({ trails: value });
-          }
-        },
-        2: (value) => {
-          setControl({ aberration: value });
-        },
-        3: (value) => {
-          setControl({ bitcrush: value });
-        },
-        4: (value, modifiers) => {
-          setControl({
-            [modifiers.shift ? 'trailNoiseAmplitude' : 'xSpeed']: value,
-          });
-        },
-        5: (value, modifiers) => {
-          setControl({ [modifiers.shift ? 'frequency' : 'ySpeed']: value });
-        },
-        6: (value, modifiers) => {
-          setControl({ [modifiers.shift ? 'time' : 'angle']: value });
-        },
-        7: (value) => {
-          const currentValue = pass.uniforms.numSides.value;
-          const newValue = value === 1 ? currentValue + 1 : currentValue - 1;
-          setControl({ kaleidoscope: newValue });
-        },
-      }),
-      [setControl, pass],
-    ),
-  );
+  useMidiTwo(levaStore, 'postprocessing', midiConfig);
 
-  useFrame(({ mouse }, delta) => {
+  useFrame(({ pointer }, delta) => {
     const { uniforms } = pass;
     if (useStore.getState().shiftPressed) {
-      uniforms.mouse.value.x = mouse.x * viewport.aspect;
-      uniforms.mouse.value.y = mouse.y;
+      uniforms.mouse.value.x = pointer.x * viewport.aspect;
+      uniforms.mouse.value.y = pointer.y;
     }
     uniforms.time.value += delta * trailNoiseTimeRef.current;
   });
@@ -238,7 +214,6 @@ export const Effects = ({
         if (bloomRef.current) {
           bloomRef.current.strength = scaleMidi(v, 0, 10);
         }
-        setMidiController(7, v);
       },
     },
   }));
