@@ -121,9 +121,6 @@ export const initMidiController = async (): Promise<() => void> => {
       const param = mapping[e.note.identifier];
       if (param) {
         modifiers[param] = true;
-      } else {
-        // Debugging
-        console.log(e.note.identifier);
       }
     };
     input.addListener('noteon', noteOnListener);
@@ -132,12 +129,13 @@ export const initMidiController = async (): Promise<() => void> => {
       const param = mapping[e.note.identifier];
       if (param) {
         modifiers[param] = false;
-      } else {
-        // Debugging
-        console.log(e.note.identifier);
       }
     };
     input.addListener('noteoff', noteOffListener);
+
+    // input.addListener('midimessage', (e) => {
+    //   console.log(e.message);
+    // });
 
     return () => {
       input.removeListener('noteon', noteOnListener);
@@ -164,18 +162,10 @@ export const useMidi = (config: MidiConfig) => {
 
       const controlChangeListener = (e: ControlChangeMessageEvent) => {
         const param = mapping[e.controller.number];
-
         if (param && param in config) {
-          if (typeof e.rawValue === 'number') {
-            // @ts-expect-error - Fix this later.
-            const callbackFn = config[param] as ControlChangeCallback;
-            callbackFn(e.rawValue, modifiers);
-          } else {
-            // eslint-disable-next-line no-console
-            console.error('This should not happen', e);
-          }
-        } else {
-          // Debugging
+          // @ts-expect-error - Fix this later.
+          const callbackFn = config[param] as ControlChangeCallback;
+          callbackFn(e.rawValue!, modifiers);
         }
       };
       input.addListener('controlchange', controlChangeListener);
@@ -187,8 +177,6 @@ export const useMidi = (config: MidiConfig) => {
           const callbackFn = config[param] as NoteCallback;
           callbackFn();
         }
-        // Debugging
-        // console.log(e.note.identifier);
       };
       input.addListener('noteon', noteOnListener);
 
@@ -222,18 +210,10 @@ export const useMidiTwo = (
 
       const controlChangeListener = (e: ControlChangeMessageEvent) => {
         const param = mapping[e.controller.number];
-
         if (param && param in config) {
-          if (typeof e.rawValue === 'number') {
-            const storeParam = config[param];
-            const fullPath = `${folder}.${storeParam}`;
-            store.setValueAtPath(fullPath, e.rawValue, false);
-          } else {
-            // eslint-disable-next-line no-console
-            console.error('This should not happen', e);
-          }
-        } else {
-          // Debugging
+          const storeParam = config[param];
+          const fullPath = `${folder}.${storeParam}`;
+          store.setValueAtPath(fullPath, e.rawValue, false);
         }
       };
       input.addListener('controlchange', controlChangeListener);
@@ -263,9 +243,6 @@ export const useMidiTwo = (
             }
           }
         }
-
-        // Debugging
-        // console.log(e.note.identifier);
       };
       input.addListener('noteon', noteOnListener);
 

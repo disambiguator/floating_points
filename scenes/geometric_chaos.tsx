@@ -128,7 +128,7 @@ export const Shapes = React.memo(function Shapes() {
     useMemo(
       (): MidiConfig => ({
         1: (value, modifiers) => {
-          if (modifiers.shift) {
+          if (modifiers['shift']) {
             setControls({ warp: value });
           }
         },
