@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { Leva, button, folder, useControls } from 'leva';
+import { Leva, button, folder, levaStore, useControls } from 'leva';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
@@ -9,8 +9,8 @@ import { useIsMobile } from 'lib/mediaQueries';
 import {
   type MidiConfig,
   initMidiController,
-  setMidiController,
   useMidi,
+  useMidiTwo,
 } from 'lib/midi';
 import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
 import { INITIAL_CAMERA_STATE } from './config';
@@ -228,13 +228,16 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
       spectrumSelector,
       ({ volume, bass, midrange, treble }: Spectrum) => {
         setControl({ volume, bass, midrange, treble });
-        setMidiController(12, volume);
-        setMidiController(13, bass);
-        setMidiController(14, midrange);
-        setMidiController(15, treble);
       },
     );
   }, [setControl]);
+
+  useMidiTwo(levaStore, 'audio.spectrum', {
+    13: 'volume',
+    14: 'bass',
+    15: 'midrange',
+    16: 'treble',
+  });
 
   useMidi(
     useMemo(
