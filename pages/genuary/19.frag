@@ -10,7 +10,6 @@ uniform float trailNoiseFrequency;
 uniform float trailNoiseAmplitude;
 uniform float angle;
 uniform vec2 mouse;
-uniform vec2 resolution;
 uniform float aspect;
 uniform float time;
 uniform float numSides;

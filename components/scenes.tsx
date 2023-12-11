@@ -13,6 +13,7 @@ import { chaosConfig } from 'scenes/geometric_chaos';
 import { halloweenConfig } from 'scenes/halloween';
 // import { landscapeConfig } from 'scenes/landscape';
 import { marbleConfig } from 'scenes/marble';
+import { raymarchConfig } from 'scenes/raymarch';
 import { skullConfig } from 'scenes/skull';
 import { spiroConfig } from 'scenes/spiro';
 // import { videoConfig } from 'scenes/video';
@@ -42,6 +43,7 @@ export const scenes = {
   control: controlConfig,
   bars: barsConfig,
   // video: videoConfig,
+  raymarch: raymarchConfig,
 };
 
 export const sceneNames = Object.keys(scenes);

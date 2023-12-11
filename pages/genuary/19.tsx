@@ -22,7 +22,6 @@ const TunnelShader = {
     tNew: { value: null },
     angle: { value: 0 },
     aspect: { value: 0 },
-    resolution: { value: new THREE.Vector2(0, 0) },
   },
   vertexShader: defaultForwardUV,
   fragmentShader,
@@ -54,7 +53,6 @@ declare class AfterimagePassType extends AfterimagePass {
 
 const Postprocessing = () => {
   const viewport = useThree((t) => t.viewport);
-  const size = useThree((t) => t.size);
   const effectsRef = useRef<AfterimagePassType>(null);
   useFrame(({ clock }) => {
     effectsRef.current!.uniforms.time.value = clock.elapsedTime;
@@ -66,10 +64,6 @@ const Postprocessing = () => {
         ref={effectsRef}
         args={[0.96, TunnelShader]}
         uniforms-aspect-value={viewport.aspect}
-        uniforms-resolution-value={new THREE.Vector2(
-          size.width,
-          size.height,
-        ).multiplyScalar(window.devicePixelRatio)}
       />
     </Effects>
   );
