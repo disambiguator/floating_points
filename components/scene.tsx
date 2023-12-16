@@ -1,5 +1,5 @@
 import { OrbitControls } from '@react-three/drei';
-import { Canvas, type Props } from '@react-three/fiber';
+import { Canvas, type Props, useThree } from '@react-three/fiber';
 import { useRouter } from 'next/router';
 import { Perf } from 'r3f-perf';
 import React, { useMemo } from 'react';
@@ -17,13 +17,14 @@ export const FiberScene = ({
     ...rest,
     gl: {
       localClippingEnabled: true,
+      // pixelRatio: 0.001,
       ...gl,
     },
   };
 
   return (
     <Canvas {...canvasProps}>
-      {controls && <OrbitControls />}
+      {controls && <OrbitControls makeDefault />}
       {debug && <Perf />}
       {children}
     </Canvas>

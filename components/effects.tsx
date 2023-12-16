@@ -186,13 +186,15 @@ export const useTunnelEffects = () => {
     uniforms.time.value += delta * trailNoiseTimeRef.current;
   });
 
+  const gl = useThree((three) => three.gl);
+
   useEffect(() => {
     pass.uniforms.aspect.value = viewport.aspect;
     pass.uniforms.resolution.value = new Vector2(
       size.width,
       size.height,
-    ).multiplyScalar(window.devicePixelRatio);
-  }, [viewport.aspect, size, pass]);
+    ).multiplyScalar(gl.getPixelRatio());
+  }, [viewport.aspect, size, pass, gl]);
 
   return pass;
 };
