@@ -29,7 +29,7 @@
     "@types/p5": "^1.7.6",
     "@types/react": "^18.2.43",
     "@types/react-responsive": "^8.0.8",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.3",
