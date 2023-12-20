@@ -45,8 +45,8 @@ float perlin_field(vec3 p, vec3 rd, float z) {
     vec3(0.0, 0.0, z)
   );
   float noise = snoise4(vec4(intersection, time / 2.0));
-  if (noise > 0.9) {
-    // if (noise < 0.001) {
+  // if (noise > 0.3) {
+  if (noise < 0.001) {
     return length(intersection - p);
   }
   return 1.0;

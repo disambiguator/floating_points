@@ -25,6 +25,7 @@ export const FiberScene = ({
   return (
     <Canvas {...canvasProps}>
       {controls && <OrbitControls makeDefault />}
+      {/* {controls && <FlyControls makeDefault movementSpeed={50} />} */}
       {debug && <Perf />}
       {children}
     </Canvas>

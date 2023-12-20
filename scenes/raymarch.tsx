@@ -2,10 +2,10 @@ import { ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect } from 'react';
-import { GLSL3, Vector3 } from 'three';
-import { scaleMidi } from 'lib/midi';
+import { GLSL3, PerspectiveCamera, Vector3 } from 'three';
+import { OrbitControls } from 'three-stdlib';
 import fragmentShader from 'lib/shaders/raymarch.frag';
-import { type Config, useStore } from '../lib/store';
+import { type Config } from '../lib/store';
 
 const shader = {
   uniforms: {
@@ -28,21 +28,31 @@ const shader = {
 
 const Bars = React.memo(function Bars() {
   const viewport = useThree((t) => t.viewport);
-  const camera = useThree((t) => t.camera);
-  useEffect(() => {
-    camera.position.set(0, 0, -5);
-  }, [camera]);
+  const camera = useThree((t) => t.camera as PerspectiveCamera);
+  const controls = useThree((t) => t.controls as OrbitControls | undefined);
 
-  useFrame(({ clock, camera }) => {
-    shader.uniforms.time.value = clock.elapsedTime;
-    shader.uniforms.camera_position.value = camera.position;
-    const vector = new Vector3(0, 0, -1);
-    vector.applyQuaternion(camera.quaternion);
-    shader.uniforms.ta.value = vector;
-    const { volume } = useStore.getState().spectrum;
-    if (volume) {
-      shader.uniforms.amp.value = scaleMidi(volume, 0, 2);
+  useEffect(() => {
+    const update = () => {
+      shader.uniforms.camera_position.value = camera.position;
+      if (controls) shader.uniforms.ta.value = controls.target;
+    };
+
+    update();
+    if (controls) {
+      // controls.listenToKeyEvents(window);
+      controls.addEventListener('change', update);
     }
+    return () => {
+      controls?.removeEventListener('change', update);
+    };
+  }, [camera, controls]);
+
+  useFrame((t) => {
+    shader.uniforms.time.value = t.clock.elapsedTime;
+    // const { volume } = useStore.getState().spectrum;
+    // if (volume) {
+    //   shader.uniforms.amp.value = scaleMidi(volume, 0, 2);
+    // }
   });
 
   useControls('raymarch', {
