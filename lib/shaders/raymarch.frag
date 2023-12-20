@@ -2,6 +2,7 @@ in vec2 vUV;
 uniform float aspect;
 uniform float time;
 uniform float band;
+uniform float band_center;
 uniform vec3 camera_position;
 uniform vec3 ta;
 uniform float amp;
@@ -53,7 +54,6 @@ float perlin_field(vec3 p, vec3 rd, float z) {
 }
 
 const float spacing = 1.0;
-const float bandCenter = 0.5;
 
 float perlin_sphere(vec3 p, vec3 rd, float r) {
   vec3 center = vec3(0.0, 0.0, 0.0);
@@ -63,8 +63,8 @@ float perlin_sphere(vec3 p, vec3 rd, float r) {
   // float band = 0.01;
 
   if (distance < MINIMUM_HIT_DISTANCE) {
-    float noise = snoise4(vec4(p, time / 2.0));
-    if (noise < bandCenter - band || noise > bandCenter + band) {
+    float noise = snoise4(vec4(p, time / 20.0));
+    if (noise < band_center - band || noise > band_center + band) {
       // if (noise > 0.00001) {
       return spacing;
     }
@@ -114,8 +114,9 @@ vec3 calculate_normal(vec3 p, vec3 rd) {
   return normalize(normal);
 }
 
+uniform float starting_distance;
 vec3 ray_march(vec3 ro, vec3 rd) {
-  float total_distance_traveled = 1.0;
+  float total_distance_traveled = starting_distance;
   const int NUMBER_OF_STEPS = 32;
   const float MAXIMUM_TRACE_DISTANCE = 1000.0;
 
@@ -142,8 +143,10 @@ vec3 ray_march(vec3 ro, vec3 rd) {
       // float basis = current_position.z / 10.0;
 
       vec3 color = mod(vec3(basis * 4.0, basis * 6.0, basis * 10.0), 1.0);
-      return color;
+      // return color;
       // return normal * diffuse_intensity * 2.0;
+      return color / distance(current_position, ro) * 2.0 +
+      distance(current_position, ro) * distance(current_position, ro) / 1000.0;
     }
 
     if (total_distance_traveled > MAXIMUM_TRACE_DISTANCE) {
