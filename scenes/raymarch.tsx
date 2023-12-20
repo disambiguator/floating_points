@@ -1,7 +1,8 @@
 import { ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
+import { useControls } from 'leva';
 import React, { useEffect } from 'react';
-import { GLSL3, Matrix3, Matrix4, Vector3 } from 'three';
+import { GLSL3, Vector3 } from 'three';
 import { scaleMidi } from 'lib/midi';
 import fragmentShader from 'lib/shaders/raymarch.frag';
 import { type Config, useStore } from '../lib/store';
@@ -13,6 +14,7 @@ const shader = {
     amp: { value: 1 },
     camera_position: { value: new Vector3(0) },
     ta: { value: new Vector3() },
+    band: { value: 0 },
   },
   vertexShader: `
     out vec2 vUV;
@@ -41,6 +43,17 @@ const Bars = React.memo(function Bars() {
     if (volume) {
       shader.uniforms.amp.value = scaleMidi(volume, 0, 2);
     }
+  });
+
+  useControls('raymarch', {
+    band: {
+      value: 0,
+      min: 0,
+      max: 0.1,
+      onChange: (v: number) => {
+        shader.uniforms.band.value = v;
+      },
+    },
   });
 
   return (

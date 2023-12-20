@@ -1,6 +1,7 @@
 in vec2 vUV;
 uniform float aspect;
 uniform float time;
+uniform float band;
 uniform vec3 camera_position;
 uniform vec3 ta;
 uniform float amp;
@@ -8,6 +9,8 @@ out vec4 o_color;
 
 #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
+
+const float MINIMUM_HIT_DISTANCE = 0.001;
 
 float distance_from_sphere(vec3 p, vec3 c, float r) {
   float d = 8.0;
@@ -42,11 +45,38 @@ float perlin_field(vec3 p, vec3 rd, float z) {
     vec3(0.0, 0.0, z)
   );
   float noise = snoise4(vec4(intersection, time / 2.0));
-  if (noise > 0.5) {
+  if (noise > 0.9) {
     // if (noise < 0.001) {
     return length(intersection - p);
   }
   return 1.0;
+}
+
+const float spacing = 1.0;
+const float bandCenter = 0.5;
+
+float perlin_sphere(vec3 p, vec3 rd, float r) {
+  vec3 center = vec3(0.0, 0.0, 0.0);
+
+  float distance = sphereSDF(p, vec3(0.0), r);
+
+  // float band = 0.01;
+
+  if (distance < MINIMUM_HIT_DISTANCE) {
+    float noise = snoise4(vec4(p, time / 2.0));
+    if (noise < bandCenter - band || noise > bandCenter + band) {
+      // if (noise > 0.00001) {
+      return spacing;
+    }
+  }
+
+  return distance;
+  // float noise = snoise4(vec4(intersection, time / 2.0));
+  // if (noise > 0.5) {
+  //   // if (noise < 0.001) {
+  //   return length(intersection - p);
+  // }
+  // return 1.0;
 }
 
 float map_the_world(vec3 p, vec3 rd) {
@@ -56,7 +86,14 @@ float map_the_world(vec3 p, vec3 rd) {
   // return sphere_0 + displacement;
   // return sphereSDF(p, vec3(0.0), 2.0);
 
-  return perlin_field(p, rd, min(1.0, ceil(p.z)));
+  // return perlin_field(p, rd, min(1.0, ceil(p.z)));
+
+  float d = length(p);
+
+  return min(
+    perlin_sphere(p, rd, d - mod(d, spacing)),
+    perlin_sphere(p, rd, d - mod(d, spacing) + spacing)
+  );
 }
 
 vec3 calculate_normal(vec3 p, vec3 rd) {
@@ -78,9 +115,8 @@ vec3 calculate_normal(vec3 p, vec3 rd) {
 }
 
 vec3 ray_march(vec3 ro, vec3 rd) {
-  float total_distance_traveled = 0.0;
+  float total_distance_traveled = 1.0;
   const int NUMBER_OF_STEPS = 32;
-  const float MINIMUM_HIT_DISTANCE = 0.001;
   const float MAXIMUM_TRACE_DISTANCE = 1000.0;
 
   for (int i = 0; i < NUMBER_OF_STEPS; ++i) {
@@ -89,21 +125,23 @@ vec3 ray_march(vec3 ro, vec3 rd) {
     float distance_to_closest = map_the_world(current_position, rd);
 
     if (distance_to_closest < MINIMUM_HIT_DISTANCE) {
-      vec3 normal = calculate_normal(current_position, rd);
-      vec3 light_position = vec3(2.0, -5.0, 3.0);
-      vec3 direction_to_light = normalize(current_position - light_position);
+      // vec3 normal = calculate_normal(current_position, rd);
+      // vec3 light_position = vec3(2.0, -5.0, 3.0);
+      // vec3 direction_to_light = normalize(current_position - light_position);
 
-      float diffuse_intensity = max(0.0, dot(normal, direction_to_light));
+      // float diffuse_intensity = max(0.0, dot(normal, direction_to_light));
 
       // vec3 color = vec3(1.0);
-      vec3 color = mod(
-        vec3(
-          current_position.z / 10.0 * 4.0,
-          current_position.z / 10.0 * 6.0,
-          current_position.z / 10.0 * 10.0
-        ),
-        1.0
-      );
+
+      // float basis = length(current_position);
+      float basis =
+        (sin(current_position.x) +
+          cos(current_position.y) +
+          cos(current_position.z)) /
+        10.0;
+      // float basis = current_position.z / 10.0;
+
+      vec3 color = mod(vec3(basis * 4.0, basis * 6.0, basis * 10.0), 1.0);
       return color;
       // return normal * diffuse_intensity * 2.0;
     }
