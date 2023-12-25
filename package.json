@@ -47,7 +47,7 @@
     "webmidi": "^3.1.8"
   },
   "dependencies": {
-    "@react-three/drei": "^9.88.17",
+    "@react-three/drei": "^9.92.6",
     "@react-three/fiber": "^8.15.12",
     "@types/three": "^0.158.2",
     "component-material": "^1.0.7",
