@@ -79,21 +79,39 @@ float perlin_sphere(vec3 p, vec3 rd, float r) {
   // return 1.0;
 }
 
+float perlin_cavern(vec3 p) {
+  float noise = snoise4(vec4(p * 2.0, time / 20.0));
+
+  // return noise * 4.0;
+
+  // return noise;
+  return mod(noise, band);
+
+  if (noise < band_center - band || noise > band_center + band) {
+    return 0.03;
+  } else {
+    return 0.0;
+  }
+}
+
 float map_the_world(vec3 p, vec3 rd) {
   // float displacement = snoise4(vec4(p, time)) * 0.25 * amp;
   // float sphere_0 = distance_from_sphere(p, vec3(0.0), 2.0);
 
   // return sphere_0 + displacement;
-  // return sphereSDF(p, vec3(0.0), 2.0);
+  // return min(sphereSDF(p, vec3(1.0), 2.0), p.y + 1.0);
 
   // return perlin_field(p, rd, min(1.0, ceil(p.z)));
 
-  float d = length(p);
+  return perlin_cavern(p);
 
-  return min(
-    perlin_sphere(p, rd, d - mod(d, spacing)),
-    perlin_sphere(p, rd, d - mod(d, spacing) + spacing)
-  );
+  // float d = length(p);
+
+  // return min(
+  //   perlin_sphere(p, rd, d - mod(d, spacing)),
+  //   perlin_sphere(p, rd, d - mod(d, spacing) + spacing)
+  // );
+
 }
 
 vec3 calculate_normal(vec3 p, vec3 rd) {
@@ -114,10 +132,24 @@ vec3 calculate_normal(vec3 p, vec3 rd) {
   return normalize(normal);
 }
 
+float softShadow(vec3 ro, vec3 rd, float mint, float tmax) {
+  float res = 1.0;
+  float t = mint;
+
+  for (int i = 0; i < 16; i++) {
+    float h = map_the_world(ro + rd * t, rd);
+    res = min(res, 8.0 * h / t);
+    t += clamp(h, 0.02, 0.1);
+    if (h < 0.001 || t > tmax) break;
+  }
+
+  return clamp(res, 0.0, 1.0);
+}
+
 uniform float starting_distance;
 vec3 ray_march(vec3 ro, vec3 rd) {
   float total_distance_traveled = starting_distance;
-  const int NUMBER_OF_STEPS = 32;
+  const int NUMBER_OF_STEPS = 64;
   const float MAXIMUM_TRACE_DISTANCE = 1000.0;
 
   for (int i = 0; i < NUMBER_OF_STEPS; ++i) {
@@ -126,13 +158,12 @@ vec3 ray_march(vec3 ro, vec3 rd) {
     float distance_to_closest = map_the_world(current_position, rd);
 
     if (distance_to_closest < MINIMUM_HIT_DISTANCE) {
-      // vec3 normal = calculate_normal(current_position, rd);
-      // vec3 light_position = vec3(2.0, -5.0, 3.0);
-      // vec3 direction_to_light = normalize(current_position - light_position);
+      vec3 normal = calculate_normal(current_position, rd);
+      vec3 light_position = vec3(2.0, -5.0, 3.0);
+      // vec3 light_position = vec3(0.0);
+      vec3 direction_to_light = normalize(current_position - light_position);
 
-      // float diffuse_intensity = max(0.0, dot(normal, direction_to_light));
-
-      // vec3 color = vec3(1.0);
+      float diffuse_intensity = max(0.0, dot(normal, direction_to_light));
 
       // float basis = length(current_position);
       float basis =
@@ -141,12 +172,21 @@ vec3 ray_march(vec3 ro, vec3 rd) {
           cos(current_position.z)) /
         10.0;
       // float basis = current_position.z / 10.0;
+      // vec3 color = vec3(1.0);
 
       vec3 color = mod(vec3(basis * 4.0, basis * 6.0, basis * 10.0), 1.0);
       // return color;
       // return normal * diffuse_intensity * 2.0;
-      return color / distance(current_position, ro) * 2.0 +
-      distance(current_position, ro) * distance(current_position, ro) / 1000.0;
+      // return color * diffuse_intensity * 2.0;
+      // return color / distance(current_position, ro);
+      // return color * diffuse_intensity * 2.0;
+
+      float softShadow = clamp(
+        softShadow(current_position, direction_to_light, 0.02, 2.5),
+        0.1,
+        1.0
+      );
+      return color * softShadow * diffuse_intensity * 5.0;
     }
 
     if (total_distance_traveled > MAXIMUM_TRACE_DISTANCE) {

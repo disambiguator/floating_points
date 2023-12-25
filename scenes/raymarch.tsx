@@ -8,6 +8,23 @@ import { scaleMidi } from 'lib/midi';
 import fragmentShader from 'lib/shaders/raymarch.frag';
 import { type Config, useSpectrum } from '../lib/store';
 
+function scaleExponential(
+  v: number,
+  inMin: number,
+  inMax: number,
+  outMin: number,
+  outMax: number,
+): number {
+  // normalize value to range 0-1
+  const normalized = (v - inMin) / (inMax - inMin);
+
+  // apply exponential function and scale to output range
+  const exponential =
+    Math.exp(normalized * Math.log(outMax - outMin + 1)) - 1 + outMin;
+
+  return exponential;
+}
+
 const shader = {
   uniforms: {
     aspect: { value: 0 },
@@ -79,9 +96,15 @@ const Bars = React.memo(function Bars() {
     starting_distance: {
       value: 1,
       min: 0,
-      max: 100,
+      max: 127,
       onChange: (v: number) => {
-        shader.uniforms.starting_distance.value = v;
+        shader.uniforms.starting_distance.value = scaleExponential(
+          v,
+          0,
+          127,
+          0,
+          20,
+        );
       },
     },
     band_center: {
