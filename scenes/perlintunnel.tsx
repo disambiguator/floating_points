@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { GLSL3, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three-stdlib';
 import { scaleMidi } from 'lib/midi';
-import fragmentShader from 'lib/shaders/raymarch.frag';
+import fragmentShader from 'lib/shaders/perlintunnel.frag';
 import { type Config, useSpectrum } from '../lib/store';
 
 function scaleExponential(
@@ -137,7 +137,7 @@ const Bars = React.memo(function Bars() {
   );
 });
 
-export const raymarchConfig: Config = {
+export const perlinTunnelConfig: Config = {
   Contents: Bars,
-  name: 'raymarch',
+  name: 'perlintunnel',
 };

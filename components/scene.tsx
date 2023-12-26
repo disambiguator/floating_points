@@ -28,10 +28,12 @@ export const FiberScene = ({
     <Canvas {...canvasProps}>
       <PerformanceMonitor
         onIncline={() => {
+          // eslint-disable-next-line no-console
           console.log('incline');
           setDpr(2);
         }}
         onDecline={() => {
+          // eslint-disable-next-line no-console
           console.log('decline');
           setDpr(1);
         }}
