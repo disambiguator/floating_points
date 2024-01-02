@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { Perf } from 'r3f-perf';
 import React, { useMemo, useState } from 'react';
 
+const increment = 0.1;
+
 export const FiberScene = ({
   controls,
   children,
@@ -18,7 +20,6 @@ export const FiberScene = ({
     ...rest,
     gl: {
       localClippingEnabled: true,
-      // pixelRatio: 0.001,
       ...gl,
     },
     dpr,
@@ -28,14 +29,20 @@ export const FiberScene = ({
     <Canvas {...canvasProps}>
       <PerformanceMonitor
         onIncline={() => {
-          // eslint-disable-next-line no-console
-          console.log('incline');
-          setDpr(2);
+          setDpr((d) => {
+            const newDpr = Math.min(2, d + increment);
+            // eslint-disable-next-line no-console
+            console.log('incline', newDpr);
+            return newDpr;
+          });
         }}
         onDecline={() => {
-          // eslint-disable-next-line no-console
-          console.log('decline');
-          setDpr(1);
+          setDpr((d) => {
+            const newDpr = Math.max(0.1, d - increment);
+            // eslint-disable-next-line no-console
+            console.log('decline', newDpr);
+            return newDpr;
+          });
         }}
       />
       {controls && <OrbitControls makeDefault />}
