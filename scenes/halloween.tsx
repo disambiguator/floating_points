@@ -1,21 +1,13 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { useRef } from 'react';
-import { BackSide, Color, Group } from 'three';
+import React from 'react';
+import { BackSide, Color } from 'three';
+import { Orbits } from 'components/orbits';
 import MarbleShader from 'lib/shaders/marble';
 import type { Config } from 'lib/store';
 import Skull from 'models/Skull';
 
 const orange = new Color(235 / 255, 97 / 255, 35 / 255);
 const black = new Color(0, 0, 0);
-
-export type Seed = {
-  radius: number;
-  theta: number;
-  phi: number;
-  thetaSpeed: number;
-  phiSpeed: number;
-  // color: string;
-};
 
 const seeds = new Array(100).fill(undefined).map(() => {
   return {
@@ -44,29 +36,6 @@ const lights = new Array(2).fill(undefined).map((_, i) => {
     color: colors[i],
   };
 });
-
-export const Orbits = ({
-  seed: { thetaSpeed, theta, phi, phiSpeed, radius },
-  children,
-}: {
-  seed: Seed;
-  children: JSX.Element;
-}) => {
-  const groupRef = useRef<Group>(null);
-
-  useFrame(({ clock }) => {
-    if (!groupRef.current) return;
-
-    groupRef.current.rotation.z = -theta - clock.elapsedTime * thetaSpeed;
-    groupRef.current.rotation.y = phi + clock.elapsedTime * phiSpeed;
-  });
-
-  return (
-    <group ref={groupRef} rotation={[theta, phi, 0]}>
-      <group position={[radius, 0, 0]}>{children}</group>
-    </group>
-  );
-};
 
 const Halloween = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);

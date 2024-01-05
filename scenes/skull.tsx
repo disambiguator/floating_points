@@ -9,12 +9,12 @@ import {
   PointLight,
   Vector3,
 } from 'three';
+import { Orbits } from 'components/orbits';
 import { type Config, useSpectrum } from 'lib/store';
 import Bat from 'models/Bat';
 import Ghost from 'models/Ghost';
 import Pumpkin from 'models/Pumpkin';
 import Skull from 'models/Skull';
-import { Orbits } from './halloween';
 
 // const orange = new Color(235 / 255, 97 / 255, 35 / 255);
 
