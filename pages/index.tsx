@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React, { useEffect, useRef } from 'react';
+import { rand, randInt } from 'lib/helpers';
 import styles from './index.module.scss';
 import assetUrl from '../lib/assetUrl';
 import { useIsMobile } from '../lib/mediaQueries';
@@ -124,7 +125,7 @@ const endPoints = ({
   ) as [Point, Point];
 };
 
-const setNewFragmentWidth = () => Math.floor(Math.random() * 15) + 1;
+const setNewFragmentWidth = () => randInt(1, 16);
 
 const Scatter = () => {
   const fragmentWidth = setNewFragmentWidth();
@@ -156,8 +157,8 @@ const Scatter = () => {
     const { width, height } = canvas;
 
     if (timer % fragmentWidth === 0) {
-      slopeX = Math.random() * 10 - 5;
-      slopeY = Math.random() * 10 - 5;
+      slopeX = rand(-5, 5);
+      slopeY = rand(-5, 5);
       const slope = slopeY / slopeX;
 
       points = endPoints({ width, height, slope });

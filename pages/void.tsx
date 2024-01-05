@@ -11,6 +11,7 @@ import {
   analyseSpectrum,
   useAudioUrl,
 } from 'lib/audio';
+import { rand } from 'lib/helpers';
 import styles from './void.module.scss';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
@@ -57,7 +58,6 @@ const widthSpacing = planeWidth / width;
 const lengthSpacing = planeLength / length;
 
 const noiseFunction = makeNoise2D(Date.now());
-const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
 const newPosition = () => {
   const distance = rand(minimumStarDistance, 10000);

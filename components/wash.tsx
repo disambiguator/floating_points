@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { rand } from 'lib/helpers';
 import Page from '../components/page';
 import type { Dimensions } from '../lib/types';
 
@@ -17,8 +18,8 @@ const Scatter = ({ width, height }: Dimensions) => {
     point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height;
 
   const endPoints = () => {
-    const slopeX = Math.random() * 10 - 5;
-    const slopeY = Math.random() * 10 - 5;
+    const slopeX = rand(-5, 5);
+    const slopeY = rand(-5, 5);
     const interceptX = Math.random() * width;
     const interceptY = Math.random() * height;
     const m = slopeY / slopeX;

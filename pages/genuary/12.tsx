@@ -1,6 +1,7 @@
 import type * as p5 from 'p5';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';
+import { randInt } from 'lib/helpers';
 
 type Square = {
   x: number;
@@ -18,9 +19,7 @@ const Bendy = () => {
     const squares: Square[] = [];
 
     const newSquare = (): Square => {
-      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(
-        16,
-      )}`;
+      const randomColor = `#${randInt(16777215).toString(16)}`;
       const square = {
         x: Math.random() * width,
         y: Math.random() * height,

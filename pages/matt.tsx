@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
+import { rand, randInt } from 'lib/helpers';
 import assetUrl from '../lib/assetUrl';
 import { useAudioUrl } from '../lib/audio';
 
@@ -19,8 +20,6 @@ let happy: number;
 let birthday: number;
 let previousHappy: number;
 let previousBirthday: number;
-
-const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
 const Box = ({
   position,
@@ -322,8 +321,8 @@ const Boxes = () => {
     const interval = setInterval(() => {
       previousHappy = happy;
       previousBirthday = birthday;
-      happy = Math.floor(Math.random() * boxes.length);
-      birthday = Math.floor(Math.random() * boxes.length);
+      happy = randInt(boxes.length);
+      birthday = randInt(boxes.length);
     }, 1000);
     return () => {
       clearInterval(interval);

@@ -3,10 +3,7 @@ import type p5 from 'p5';
 import React from 'react';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';
-
-function randInt(min: number, max: number) {
-  return Math.floor(Math.random() * max) + min;
-}
+import { randInt } from 'lib/helpers';
 
 function sum<T>(array: T[], f: (arg0: T) => number) {
   return array.reduce((accum, p) => accum + f(p), 0);
@@ -39,7 +36,7 @@ const Spiro = () => {
     const addComplexity = () => {
       positions.push({
         radius: randInt(50, 300),
-        arc: randInt(0, 360),
+        arc: randInt(360),
         speed: (randInt(1, 10) * 360) / (randInt(10, 100) + numPoints),
       });
     };

@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import * as THREE from 'three';
 import { FiberScene } from 'components/scene';
+import { rand, randInt } from 'lib/helpers';
 import Page from '../../components/page';
 
 const size = 25;
@@ -65,18 +66,18 @@ const randomPosition = (): {
 } => {
   const position = new THREE.Vector3();
   const direction = new THREE.Vector3();
-  const x = Math.floor(Math.random() * 4);
+  const x = randInt(4);
   if (x === 0) {
-    position.set(Math.random() * size - size / 2, 0, -size / 2);
+    position.set(rand(-size / 2, size / 2), 0, -size / 2);
     direction.set(0, 0, 1);
   } else if (x === 1) {
-    position.set(Math.random() * size - size / 2, 0, size / 2);
+    position.set(rand(-size / 2, size / 2), 0, size / 2);
     direction.set(0, 0, -1);
   } else if (x === 2) {
-    position.set(-size / 2, 0, Math.random() * size - size / 2);
+    position.set(-size / 2, 0, rand(-size / 2, size / 2));
     direction.set(1, 0, 0);
   } else {
-    position.set(size / 2, 0, Math.random() * size - size / 2);
+    position.set(size / 2, 0, rand(-size / 2, size / 2));
     direction.set(-1, 0, 0);
   }
   return { position, direction };

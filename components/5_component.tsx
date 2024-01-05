@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 import React, { useEffect, useRef } from 'react';
+import { randInt } from 'lib/helpers';
 
 const translateDistance = 1;
 const squareLength = 400;
@@ -36,7 +37,7 @@ const endPoints = ({
   ];
 };
 
-const setNewFragmentWidth = () => Math.floor(Math.random() * 5) + 1;
+const setNewFragmentWidth = () => randInt(1, 6);
 
 const Scatter = () => {
   let fragmentWidth = setNewFragmentWidth();

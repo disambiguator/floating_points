@@ -2,6 +2,7 @@ import type * as p5 from 'p5';
 import React from 'react';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';
+import { randInt } from 'lib/helpers';
 
 type Crack = {
   x: number;
@@ -61,10 +62,10 @@ const Bendy = () => {
     const addPoint = (x: number, y: number) => {
       p.frameRate(60);
 
-      // const points = 3 + Math.floor(Math.random() * 5);
+      // const points = randInt(3, 8);
       // const offset = Math.random() * 360;
 
-      const points = 3 + Math.floor(Math.random() * 3);
+      const points = randInt(3, 6);
       const offset = Math.random() * 360;
 
       for (let i = 0; i < points; i++) {

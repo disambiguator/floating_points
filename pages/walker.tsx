@@ -2,6 +2,7 @@ import type * as p5 from 'p5';
 import React from 'react';
 import { ReactP5Wrapper } from 'components/p5_wrapper';
 import Page from 'components/page';
+import { randInt } from 'lib/helpers';
 
 type Walker = {
   x: number;
@@ -26,8 +27,8 @@ const Bendy = () => {
     const height = p.windowHeight;
 
     const newWalker = (): Walker => ({
-      x: Math.floor(Math.random() * width),
-      y: Math.floor(Math.random() * height),
+      x: randInt(width),
+      y: randInt(height),
     });
 
     const walkers: Walker[] = Array(20)
@@ -56,8 +57,8 @@ const Bendy = () => {
 
       const step = 5;
       walkers.forEach((w) => {
-        const choiceX = Math.floor(Math.random() * 3) - 1;
-        const choiceY = Math.floor(Math.random() * 3) - 1;
+        const choiceX = randInt(-1, 2);
+        const choiceY = randInt(-1, 2);
         let newX = w.x + choiceX * step;
         let newY = w.y + choiceY * step;
 
@@ -70,8 +71,8 @@ const Bendy = () => {
             return;
           }
 
-          const choiceX = Math.floor(Math.random() * 3) - 1;
-          const choiceY = Math.floor(Math.random() * 3) - 1;
+          const choiceX = randInt(-1, 2);
+          const choiceY = randInt(-1, 2);
           newX = w.x + choiceX * step;
           newY = w.y + choiceY * step;
         }

@@ -3,16 +3,13 @@ import { button, useControls } from 'leva';
 import React, { useCallback, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
 import type { ShaderMaterial } from 'three';
+import { randInt } from 'lib/helpers';
 import { useRefState } from 'lib/hooks';
 import { scaleMidi, useMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
 import { type Config, useSpectrum, useStore } from '../lib/store';
 
 const MAX_VERTICES = 1000;
-
-function randInt(min: number, max: number) {
-  return Math.floor(Math.random() * max) + min;
-}
 
 type Seed = {
   radius: number;
@@ -24,8 +21,8 @@ type Seed = {
 
 const randPosition = (): Seed => ({
   radius: randInt(50, 300),
-  arc: randInt(0, 360),
-  phi: randInt(0, 360),
+  arc: randInt(360),
+  phi: randInt(360),
   speed: (randInt(1, 10) * 360) / (randInt(10, 100) + 50000),
   phiSpeed: 0,
 });
