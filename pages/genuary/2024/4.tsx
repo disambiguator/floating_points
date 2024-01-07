@@ -1,13 +1,13 @@
 import { ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useControls } from 'leva';
 import React, { useEffect } from 'react';
 import { GLSL3, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three-stdlib';
+import Page from 'components/page';
+import { FiberScene } from 'components/scene';
 import { scaleExponential } from 'lib/helpers';
 import { scaleMidi } from 'lib/midi';
-import fragmentShader from 'lib/shaders/perlintunnel.frag';
-import { type Config, useSpectrum } from '../lib/store';
+import fragmentShader from './4.frag';
 
 const shader = {
   uniforms: {
@@ -16,9 +16,9 @@ const shader = {
     amp: { value: 1 },
     camera_position: { value: new Vector3(0) },
     ta: { value: new Vector3() },
-    band: { value: 0.1 },
-    starting_distance: { value: 1.0 },
-    band_center: { value: 0.5 },
+    band: { value: scaleMidi(14, 0, 1) },
+    starting_distance: { value: scaleExponential(127, 0, 127, 0, 20) },
+    band_center: { value: 1 - scaleMidi(0.5, 0, 1) },
   },
   vertexShader: `
     out vec2 vUV;
@@ -62,52 +62,6 @@ const Bars = React.memo(function Bars() {
 
   useFrame((t) => {
     shader.uniforms.time.value = t.clock.elapsedTime;
-    // const { volume } = useStore.getState().spectrum;
-    // if (volume) {
-    //   shader.uniforms.amp.value = scaleMidi(volume, 0, 2);
-    // }
-  });
-
-  const [, setControls] = useControls('raymarch', () => ({
-    band: {
-      value: 1.0,
-      min: 0,
-      max: 127,
-      onChange: (v: number) => {
-        shader.uniforms.band.value = scaleMidi(v, 0, 1);
-      },
-    },
-    starting_distance: {
-      value: 1,
-      min: 0,
-      max: 127,
-      onChange: (v: number) => {
-        shader.uniforms.starting_distance.value = scaleExponential(
-          v,
-          0,
-          127,
-          0,
-          20,
-        );
-      },
-    },
-    band_center: {
-      value: 0.5,
-      min: 0,
-      max: 127,
-      onChange: (v: number) => {
-        shader.uniforms.band_center.value = 1 - scaleMidi(v, 0, 1);
-      },
-    },
-  }));
-
-  useSpectrum({
-    band_center: (v) => {
-      setControls({ band_center: v });
-    },
-    band: (v) => {
-      setControls({ band: v });
-    },
   });
 
   return (
@@ -121,7 +75,17 @@ const Bars = React.memo(function Bars() {
   );
 });
 
-export const perlinTunnelConfig: Config = {
-  Contents: Bars,
-  name: 'perlintunnel',
-};
+export default function Four() {
+  return (
+    <Page>
+      <div style={{ height: '90vh', width: '90vh' }}>
+        <FiberScene
+          controls
+          camera={{ far: 1000, near: 10, position: [0, 0, 100] }}
+        >
+          <Bars />
+        </FiberScene>
+      </div>
+    </Page>
+  );
+}
