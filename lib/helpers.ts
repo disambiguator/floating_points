@@ -1,3 +1,5 @@
+import { Color } from 'three';
+
 // min inclusive, max exclusive
 export const rand = (a: number, b?: number) => {
   const min = b != null ? a : 0;
@@ -30,3 +32,21 @@ export function scaleExponential(
 
   return exponential;
 }
+
+//  generate a palette of N colors that are similar
+// to three random colors
+export const generatePalette = (n: number) => {
+  const palette = [];
+  const baseColors = [
+    new Color(Math.random(), Math.random(), Math.random()),
+    new Color(Math.random(), Math.random(), Math.random()),
+    new Color(Math.random(), Math.random(), Math.random()),
+  ];
+
+  for (let i = 0; i < n; i++) {
+    const c = baseColors[i % baseColors.length].clone();
+    c.offsetHSL(0, 0, (i / n) * 0.1);
+    palette.push(c);
+  }
+  return palette;
+};
