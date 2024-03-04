@@ -49,7 +49,7 @@
   "dependencies": {
     "@react-three/drei": "^9.99.7",
     "@react-three/fiber": "^8.15.16",
-    "@react-three/postprocessing": "^2.15.11",
+    "@react-three/postprocessing": "^2.16.0",
     "@types/three": "^0.161.2",
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
