@@ -13,21 +13,19 @@ import { rand, randInt } from 'lib/helpers';
 import Page from '../../components/page';
 
 const size = 25;
+const axis = new THREE.Vector3(0, 1, 0);
 
-const Electron = React.memo(function Electron(props: {
+const Electron = React.memo(function Electron({
+  direction,
+  position,
+  remove,
+}: {
   position: THREE.Vector3;
   direction: THREE.Vector3;
   remove: () => void;
 }) {
   const ref = useRef<THREE.Mesh>(null);
   const scene = useThree((t) => t.scene);
-
-  const [direction, setDirection] = useState(props.direction);
-
-  const scaledDirection = useMemo(
-    () => direction.clone().divideScalar(10),
-    [direction],
-  );
 
   const raycaster = useMemo(
     () => new THREE.Raycaster(undefined, undefined, 0, 1),
@@ -38,23 +36,18 @@ const Electron = React.memo(function Electron(props: {
     raycaster.set(mesh.position, direction);
     const intersects = raycaster.intersectObjects(scene.children);
     if (intersects.length > 0) {
-      setDirection((direction) => {
-        const vector = direction.clone();
-        const axis = new THREE.Vector3(0, 1, 0);
-        const angle = Math.PI / 2;
-        vector.applyAxisAngle(axis, angle);
-        return vector;
-      });
+      const angle = Math.PI / 2;
+      direction.applyAxisAngle(axis, angle);
     } else {
-      mesh.position.add(scaledDirection);
+      mesh.position.add(direction);
       if (mesh.position.length() > size) {
-        props.remove();
+        remove();
       }
     }
   });
 
   return (
-    <Box ref={ref} position={props.position}>
+    <Box ref={ref} position={position}>
       <meshStandardMaterial color="pink" />
     </Box>
   );
@@ -80,6 +73,7 @@ const randomPosition = (): {
     position.set(size / 2, 0, rand(-size / 2, size / 2));
     direction.set(-1, 0, 0);
   }
+  direction.divideScalar(10);
   return { position, direction };
 };
 
