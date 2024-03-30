@@ -122,9 +122,8 @@ export function useMicrophone(enabled = true) {
           setAudio({ analyser, listener });
           setStream(stream);
         })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error(e);
+        .catch((e: unknown) => {
+          throw e;
         });
     } else if (audio) {
       camera.remove(audio.listener);

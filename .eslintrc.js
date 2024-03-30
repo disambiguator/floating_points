@@ -38,6 +38,10 @@ module.exports = {
     'prefer-arrow-callback': 'off', // configs with react/display-name,
     'dot-notation': 'off',
     '@typescript-eslint/dot-notation': 'error',
+    '@typescript-eslint/restrict-template-expressions': [
+      'error',
+      { allowNumber: true },
+    ],
   },
   env: {
     browser: true,

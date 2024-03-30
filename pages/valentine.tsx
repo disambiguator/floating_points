@@ -96,9 +96,8 @@ const Quad = () => {
         video.srcObject = stream;
         await video.play();
       })
-      .catch(function (err) {
-        // eslint-disable-next-line no-console
-        console.error(`An error occured! ${err}`);
+      .catch(function (err: unknown) {
+        throw err;
       });
   }, [video]);
 

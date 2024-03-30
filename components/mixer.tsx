@@ -298,9 +298,8 @@ export default function MixerPage({ name }: { name: SceneName }) {
       .then((cleanupMidi) => {
         cleanup = cleanupMidi;
       })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.error(e);
+      .catch((e: unknown) => {
+        throw e;
       });
     return cleanup;
   }, [set]);
