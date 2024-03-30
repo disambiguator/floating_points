@@ -57,6 +57,7 @@
     "glsl-blend": "^1.0.3",
     "glsl-camera-ray": "^1.0.0",
     "glsl-hsv2rgb": "^1.0.0",
+    "jotai": "^2.7.2",
     "leva": "^0.9.31",
     "lodash": "^4.17.20",
     "next": "^14.1.4",

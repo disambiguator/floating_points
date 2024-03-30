@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { CSG } from 'three-csg-ts';
-import { type Config, useStore } from '../lib/store';
+import { type Config, audioEnabledAtom, store, useStore } from '../lib/store';
 
 type TunnelParams = {
   size: [number, number, number];
@@ -44,7 +44,8 @@ const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    const { audioEnabled, spectrum } = useStore.getState();
+    const audioEnabled = store.get(audioEnabledAtom);
+    const { spectrum } = useStore.getState();
     if (audioEnabled) {
       const { frequencyData } = spectrum;
       if (isEmpty(frequencyData)) return;
@@ -90,7 +91,4 @@ const Control = () => {
 export const controlConfig: Config = {
   name: 'control',
   Contents: Control,
-  initialParams: {
-    // audioEnabled: true,
-  },
 };

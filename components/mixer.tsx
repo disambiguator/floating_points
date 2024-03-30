@@ -1,4 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
+import { useAtom } from 'jotai';
 import { Leva, button, folder, levaStore, useControls } from 'leva';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,7 +13,13 @@ import {
   useMidi,
   useMidiTwo,
 } from 'lib/midi';
-import { type Config, type Env, spectrumSelector, useStore } from 'lib/store';
+import {
+  type Config,
+  type Env,
+  audioEnabledAtom,
+  spectrumSelector,
+  useStore,
+} from 'lib/store';
 import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
@@ -112,23 +119,15 @@ const raycaster = new THREE.Raycaster();
 const Scene = ({ env }: { env: Env }) => {
   const gl = useThree((t) => t.gl);
   const camera = useThree((t) => t.camera);
-  const audioEnabled = useStore((state) => state.audioEnabled);
-  const [volumeScaler, setVolumeScaler] = useRefState(1);
-  const [volumeThreshold, setVolumeThreshold] = useRefState(1);
   const [exportScene, setExportScene] = useRefState(() => {
     // eslint-disable-next-line no-alert
     window.alert('Not instantiated yet');
   });
   useControls({
-    audio: folder({
-      scale: { value: 1, min: 0, max: 5, onChange: setVolumeScaler },
-      threshold: { value: 0, min: 0, max: 127, onChange: setVolumeThreshold },
-    }),
     Export: button(() => {
       exportScene.current();
     }),
   });
-  const audio = useMicrophone(audioEnabled);
 
   const set = useStore((s) => s.set);
 
@@ -158,17 +157,8 @@ const Scene = ({ env }: { env: Env }) => {
       raycaster.setFromCamera(pointer, camera);
       set({ ray: raycaster.ray });
     }
-
-    if (audio) {
-      useStore.setState({
-        spectrum: analyseSpectrum(
-          audio,
-          volumeThreshold.current,
-          volumeScaler.current,
-        ),
-      });
-    }
   });
+
   useEffect(() => {
     setExportScene(() => {
       const href = gl.domElement.toDataURL();
@@ -191,7 +181,10 @@ const Scene = ({ env }: { env: Env }) => {
 
 const GuiControls = ({ name }: { name: Config['name'] }) => {
   const set = useStore((state) => state.set);
-  const audioEnabled = useStore((state) => state.audioEnabled);
+  const [audioEnabled, setAudioEnabled] = useAtom(audioEnabledAtom);
+  const [volumeScaler, setVolumeScaler] = useRefState(1);
+  const [volumeThreshold, setVolumeThreshold] = useRefState(1);
+  const audio = useMicrophone(audioEnabled);
 
   const [, setControl] = useControls(() => ({
     Contents: {
@@ -205,10 +198,10 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
     audio: folder({
       enabled: {
         value: audioEnabled,
-        onChange: (audioEnabled: boolean) => {
-          set({ audioEnabled });
-        },
+        onChange: setAudioEnabled,
       },
+      scale: { value: 1, min: 0, max: 5, onChange: setVolumeScaler },
+      threshold: { value: 0, min: 0, max: 127, onChange: setVolumeThreshold },
       spectrum: folder(
         {
           volume: { value: 0, min: 0, max: 127 },
@@ -222,6 +215,18 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
       ),
     }),
   }));
+
+  useFrame(() => {
+    if (audio) {
+      useStore.setState({
+        spectrum: analyseSpectrum(
+          audio,
+          volumeThreshold.current,
+          volumeScaler.current,
+        ),
+      });
+    }
+  });
 
   useEffect(() => {
     return useStore.subscribe(
@@ -305,8 +310,7 @@ export default function MixerPage({ name }: { name: SceneName }) {
   }, [set]);
 
   useEffect(() => {
-    const { initialParams = {}, ...env } = scenes[name];
-    set({ env, ...initialParams });
+    set({ env: scenes[name] });
   }, [set, name]);
 
   return (

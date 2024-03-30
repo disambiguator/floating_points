@@ -1,3 +1,4 @@
+import { atom, getDefaultStore } from 'jotai';
 import { uniqueId } from 'lodash';
 import { type ComponentType, useEffect } from 'react';
 import * as THREE from 'three';
@@ -5,20 +6,15 @@ import { type StoreApi, create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { Spectrum } from './audio';
 
-type Params = {
-  audioEnabled: boolean;
-};
-
 export type Config = {
   name: string;
-  initialParams?: Partial<Params>;
   CustomEffects?: ComponentType;
   Contents: ComponentType;
 };
 
 export type Env = Omit<Config, 'initialParams'>;
 
-export type State = Params & {
+export type State = {
   ray: THREE.Ray;
   spectrum: Spectrum;
   set: StoreApi<State>['setState'];
@@ -29,6 +25,10 @@ export type State = Params & {
   ) => () => void;
   shiftPressed: boolean;
 };
+
+export const store = getDefaultStore();
+
+export const audioEnabledAtom = atom(false);
 
 export const spectrumSelector = (state: State) => state.spectrum;
 
@@ -42,7 +42,6 @@ export const useStore = create<State>()(
       treble: 0,
       frequencyData: [],
     },
-    audioEnabled: false,
     volumeControls: {},
     addVolumeControl: (newControls: Record<string, (n: number) => void>) => {
       const id = uniqueId();

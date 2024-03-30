@@ -121,7 +121,4 @@ export const barsConfig: Config = {
   Contents: Bars,
   CustomEffects: Effects,
   name: 'bars',
-  initialParams: {
-    audioEnabled: true,
-  },
 };
