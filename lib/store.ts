@@ -12,12 +12,9 @@ export type Config = {
   Contents: ComponentType;
 };
 
-export type Env = Omit<Config, 'initialParams'>;
-
 export type State = {
   spectrum: Spectrum;
   set: StoreApi<State>['setState'];
-  env: Env | null;
   volumeControls: Record<string, { id: string; control: (n: number) => void }>;
   addVolumeControl: (
     newValue: Record<string, (n: number) => void>,
@@ -35,45 +32,44 @@ export const { ray } = raycaster;
 export const spectrumSelector = (state: State) => state.spectrum;
 
 export const useStore = create<State>()(
-  subscribeWithSelector((set) => ({
-    ray: new THREE.Ray(),
-    spectrum: {
-      volume: 0,
-      bass: 0,
-      midrange: 0,
-      treble: 0,
-      frequencyData: [],
-    },
-    volumeControls: {},
-    addVolumeControl: (newControls: Record<string, (n: number) => void>) => {
-      const id = uniqueId();
+  subscribeWithSelector(
+    (set): State => ({
+      spectrum: {
+        volume: 0,
+        bass: 0,
+        midrange: 0,
+        treble: 0,
+        frequencyData: [],
+      },
+      volumeControls: {},
+      addVolumeControl: (newControls: Record<string, (n: number) => void>) => {
+        const id = uniqueId();
 
-      const newData = Object.fromEntries(
-        Object.entries(newControls).map(([k, v]) => [k, { id, control: v }]),
-      );
+        const newData = Object.fromEntries(
+          Object.entries(newControls).map(([k, v]) => [k, { id, control: v }]),
+        );
 
-      set(({ volumeControls }: State) => ({
-        volumeControls: { ...volumeControls, ...newData },
-      }));
+        set(({ volumeControls }: State) => ({
+          volumeControls: { ...volumeControls, ...newData },
+        }));
 
-      return () => {
-        set(({ volumeControls }: State) => {
-          const newControls = Object.fromEntries(
-            Object.entries(volumeControls).filter(([, value]) => {
-              return value.id !== id;
-            }),
-          );
+        return () => {
+          set(({ volumeControls }: State) => {
+            const newControls = Object.fromEntries(
+              Object.entries(volumeControls).filter(([, value]) => {
+                return value.id !== id;
+              }),
+            );
 
-          return {
-            volumeControls: newControls,
-          };
-        });
-      };
-    },
-    env: null,
-    set,
-    shiftPressed: false,
-  })),
+            return {
+              volumeControls: newControls,
+            };
+          });
+        };
+      },
+      set,
+    }),
+  ),
 );
 
 export const useSpectrum = (values: Record<string, (n: number) => void>) => {

@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useAtom, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Leva, button, folder, levaStore, useControls } from 'leva';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,7 +14,6 @@ import {
 } from 'lib/midi';
 import {
   type Config,
-  type Env,
   audioEnabledAtom,
   raycaster,
   shiftPressedAtom,
@@ -28,6 +27,12 @@ import Page from './page';
 import { FiberScene } from './scene';
 import { type SceneName, sceneNames, scenes } from './scenes';
 import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+
+const maybeConfigAtom = atom<Config | null>(null);
+const configAtom = atom((get) => get(maybeConfigAtom)!);
+const setConfigAtom = atom(null, (_get, set, config: Config) => {
+  set(maybeConfigAtom, config);
+});
 
 // In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {
@@ -117,7 +122,7 @@ export const Controls = () => {
   );
 };
 
-const Scene = ({ env }: { env: Env }) => {
+const Scene = ({ config }: { config: Config }) => {
   const gl = useThree((t) => t.gl);
   const camera = useThree((t) => t.camera);
   const [exportScene, setExportScene] = useRefState(() => {
@@ -173,14 +178,14 @@ const Scene = ({ env }: { env: Env }) => {
 
   return (
     <>
-      <env.Contents />
-      <Effects name={env.name} CustomEffects={env.CustomEffects} />
+      <config.Contents />
+      <Effects name={config.name} CustomEffects={config.CustomEffects} />
     </>
   );
 };
 
 const GuiControls = ({ name }: { name: Config['name'] }) => {
-  const set = useStore((state) => state.set);
+  const setConfig = useSetAtom(setConfigAtom);
   const [audioEnabled, setAudioEnabled] = useAtom(audioEnabledAtom);
   const [volumeScaler, setVolumeScaler] = useRefState(1);
   const [volumeThreshold, setVolumeThreshold] = useRefState(1);
@@ -191,8 +196,9 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
       value: name,
       options: Object.keys(scenes),
       onChange: (name: SceneName) => {
-        if (name !== useStore.getState().env?.name)
-          set({ env: { ...scenes[name] } });
+        if (name !== store.get(configAtom).name) {
+          setConfig({ ...scenes[name] });
+        }
       },
     },
     audio: folder({
@@ -265,8 +271,7 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
 };
 
 const Mixer = () => {
-  const env = useStore((state) => state.env);
-  if (!env) return null;
+  const config = useAtomValue(configAtom);
 
   return (
     <>
@@ -282,19 +287,20 @@ const Mixer = () => {
         // preserveDrawingBuffer: true,
         // }
         // }
-        controls={env.name !== 'cubefield' && env.name !== 'control'}
+        controls={config.name !== 'cubefield' && config.name !== 'control'}
       >
         <React.Suspense fallback={null}>
-          <Scene env={env} />
+          <Scene config={config} />
         </React.Suspense>
-        <GuiControls name={env.name} />
+        <GuiControls name={config.name} />
       </FiberScene>
     </>
   );
 };
 
 export default function MixerPage({ name }: { name: SceneName }) {
-  const set = useStore((state) => state.set);
+  const maybeConfig = useAtomValue(maybeConfigAtom);
+  const setConfig = useSetAtom(setConfigAtom);
 
   // Initialize function. When moving to React 18 this may be a problem if it is run twice.
   useEffect(() => {
@@ -307,11 +313,11 @@ export default function MixerPage({ name }: { name: SceneName }) {
         throw e;
       });
     return cleanup;
-  }, [set]);
+  }, []);
 
   useEffect(() => {
-    set({ env: scenes[name] });
-  }, [set, name]);
+    setConfig(scenes[name]);
+  }, [setConfig, name]);
 
   return (
     <Page>
@@ -321,7 +327,7 @@ export default function MixerPage({ name }: { name: SceneName }) {
         autoPlay
         playsInline
       ></video>
-      <Mixer />
+      {maybeConfig && <Mixer />}
     </Page>
   );
 }
