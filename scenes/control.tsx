@@ -3,7 +3,14 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { CSG } from 'three-csg-ts';
-import { type Config, audioEnabledAtom, store, useStore } from '../lib/store';
+import {
+  type Config,
+  audioEnabledAtom,
+  bassAtom,
+  frequencyDataAtom,
+  store,
+  volumeAtom,
+} from '../lib/store';
 
 type TunnelParams = {
   size: [number, number, number];
@@ -45,9 +52,8 @@ const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
     if (!mesh) return;
 
     const audioEnabled = store.get(audioEnabledAtom);
-    const { spectrum } = useStore.getState();
     if (audioEnabled) {
-      const { frequencyData } = spectrum;
+      const frequencyData = store.get(frequencyDataAtom);
       if (isEmpty(frequencyData)) return;
       mesh.rotation.z += (frequencyData[params.index] / 700) ** 2;
       material.color.setHSL(h, frequencyData[params.index] / 10, l);
@@ -59,14 +65,15 @@ const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
 const Control = () => {
   const lightRef = useRef<THREE.PointLight>(null);
   useFrame(({ camera }) => {
-    const { spectrum } = useStore.getState();
-    if (spectrum.volume > 10) camera.position.z -= spectrum.volume / 100;
+    const volume = store.get(volumeAtom);
+    if (volume > 10) camera.position.z -= volume / 100;
     if (camera.position.z < 150) camera.position.z = 1000;
 
     const light = lightRef.current;
     if (!light) return;
     light.position.set(...camera.position.toArray());
-    light.intensity = spectrum.bass * 10 + 100;
+    const bass = store.get(bassAtom);
+    light.intensity = bass * 10 + 100;
   });
 
   const zSize = 5;

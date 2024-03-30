@@ -1,10 +1,8 @@
-import { atom, getDefaultStore } from 'jotai';
+import { atom, getDefaultStore, useSetAtom } from 'jotai';
 import { uniqueId } from 'lodash';
 import { type ComponentType, useEffect } from 'react';
 import * as THREE from 'three';
-import { type StoreApi, create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
-import type { Spectrum } from './audio';
+import { Spectrum } from './audio';
 
 export type Config = {
   name: string;
@@ -12,68 +10,62 @@ export type Config = {
   Contents: ComponentType;
 };
 
-export type State = {
-  spectrum: Spectrum;
-  set: StoreApi<State>['setState'];
-  volumeControls: Record<string, { id: string; control: (n: number) => void }>;
-  addVolumeControl: (
-    newValue: Record<string, (n: number) => void>,
-  ) => () => void;
-};
-
 export const store = getDefaultStore();
 
 export const audioEnabledAtom = atom(false);
 export const shiftPressedAtom = atom(false);
 
+// Audio spectrum
+export const volumeAtom = atom(0);
+export const bassAtom = atom(0);
+export const midrangeAtom = atom(0);
+export const trebleAtom = atom(0);
+export const frequencyDataAtom = atom<number[]>([]);
+export const updateSpectrumAtom = atom(
+  null,
+  (_get, set, { volume, bass, midrange, treble, frequencyData }: Spectrum) => {
+    set(volumeAtom, volume);
+    set(bassAtom, bass);
+    set(midrangeAtom, midrange);
+    set(trebleAtom, treble);
+    set(frequencyDataAtom, frequencyData);
+  },
+);
+const baseVolumeControlsAtom = atom<
+  Record<string, { id: string; control: (n: number) => void }>
+>({});
+export const volumeControlsAtom = atom((get) => get(baseVolumeControlsAtom));
+const addVolumeControlAtom = atom(
+  null,
+  (get, set, newControls: Record<string, (n: number) => void>) => {
+    const id = uniqueId();
+
+    const newData = Object.fromEntries(
+      Object.entries(newControls).map(([k, v]) => [k, { id, control: v }]),
+    );
+
+    const volumeControls = get(baseVolumeControlsAtom);
+    set(baseVolumeControlsAtom, { ...volumeControls, ...newData });
+
+    return () => {
+      const volumeControls = get(baseVolumeControlsAtom);
+
+      const newControls = Object.fromEntries(
+        Object.entries(volumeControls).filter(([, value]) => {
+          return value.id !== id;
+        }),
+      );
+
+      set(baseVolumeControlsAtom, newControls);
+    };
+  },
+);
+
 export const raycaster = new THREE.Raycaster();
 export const { ray } = raycaster;
 
-export const spectrumSelector = (state: State) => state.spectrum;
-
-export const useStore = create<State>()(
-  subscribeWithSelector(
-    (set): State => ({
-      spectrum: {
-        volume: 0,
-        bass: 0,
-        midrange: 0,
-        treble: 0,
-        frequencyData: [],
-      },
-      volumeControls: {},
-      addVolumeControl: (newControls: Record<string, (n: number) => void>) => {
-        const id = uniqueId();
-
-        const newData = Object.fromEntries(
-          Object.entries(newControls).map(([k, v]) => [k, { id, control: v }]),
-        );
-
-        set(({ volumeControls }: State) => ({
-          volumeControls: { ...volumeControls, ...newData },
-        }));
-
-        return () => {
-          set(({ volumeControls }: State) => {
-            const newControls = Object.fromEntries(
-              Object.entries(volumeControls).filter(([, value]) => {
-                return value.id !== id;
-              }),
-            );
-
-            return {
-              volumeControls: newControls,
-            };
-          });
-        };
-      },
-      set,
-    }),
-  ),
-);
-
 export const useSpectrum = (values: Record<string, (n: number) => void>) => {
-  const addVolumeControl = useStore((state) => state.addVolumeControl);
+  const addVolumeControl = useSetAtom(addVolumeControlAtom);
 
   useEffect(() => addVolumeControl(values), [addVolumeControl, values]);
 };

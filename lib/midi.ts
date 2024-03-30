@@ -6,7 +6,7 @@ import {
   type NoteMessageEvent,
   WebMidi,
 } from 'webmidi';
-import { useStore } from './store';
+import { store as atomStore, volumeAtom } from './store';
 
 export const scaleMidi = (
   midi: number,
@@ -231,13 +231,11 @@ export const useMidiTwo = (
               } else {
                 unsubscribe.set(
                   param,
-                  useStore.subscribe(
-                    (state) => state.spectrum.volume,
-                    (value) => {
-                      const fullPath = `${folder}.${config[param]}`;
-                      store.setValueAtPath(fullPath, value, false);
-                    },
-                  ),
+                  atomStore.sub(volumeAtom, () => {
+                    const value = atomStore.get(volumeAtom);
+                    const fullPath = `${folder}.${config[param]}`;
+                    store.setValueAtPath(fullPath, value, false);
+                  }),
                 );
               }
             }

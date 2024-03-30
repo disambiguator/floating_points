@@ -15,18 +15,22 @@ import {
 import {
   type Config,
   audioEnabledAtom,
+  bassAtom,
+  midrangeAtom,
   raycaster,
   shiftPressedAtom,
-  spectrumSelector,
   store,
-  useStore,
+  trebleAtom,
+  updateSpectrumAtom,
+  volumeAtom,
+  volumeControlsAtom,
 } from 'lib/store';
 import { INITIAL_CAMERA_STATE } from './config';
 import { Effects } from './effects';
 import Page from './page';
 import { FiberScene } from './scene';
 import { type SceneName, sceneNames, scenes } from './scenes';
-import { type Spectrum, analyseSpectrum, useMicrophone } from '../lib/audio';
+import { analyseSpectrum, useMicrophone } from '../lib/audio';
 
 const maybeConfigAtom = atom<Config | null>(null);
 const configAtom = atom((get) => get(maybeConfigAtom)!);
@@ -44,7 +48,7 @@ const PopOutControls = ({ popOut }: { popOut: () => void }) => {
 };
 
 const VolumeControl = React.memo(function VolumeControl() {
-  const volumeControls = useStore((s) => s.volumeControls);
+  const volumeControls = useAtomValue(volumeControlsAtom);
   const { volumeControl, bassControl, trebleControl } = useControls(
     'audio',
     {
@@ -57,33 +61,27 @@ const VolumeControl = React.memo(function VolumeControl() {
 
   useEffect(() => {
     if (volumeControl) {
-      return useStore.subscribe(
-        (state) => state.spectrum.volume,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        volumeControls[volumeControl]?.control,
-      );
+      return store.sub(volumeAtom, () => {
+        volumeControls[volumeControl].control(store.get(volumeAtom));
+      });
     }
     return undefined;
   }, [volumeControl, volumeControls]);
 
   useEffect(() => {
     if (bassControl) {
-      return useStore.subscribe(
-        (state) => state.spectrum.bass,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        volumeControls[bassControl]?.control,
-      );
+      return store.sub(bassAtom, () => {
+        volumeControls[bassControl].control(store.get(bassAtom));
+      });
     }
     return undefined;
   }, [bassControl, volumeControls]);
 
   useEffect(() => {
     if (trebleControl) {
-      return useStore.subscribe(
-        (state) => state.spectrum.treble,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        volumeControls[trebleControl]?.control,
-      );
+      return store.sub(trebleAtom, () => {
+        volumeControls[trebleControl].control(store.get(trebleAtom));
+      });
     }
     return undefined;
   }, [trebleControl, volumeControls]);
@@ -184,9 +182,19 @@ const Scene = ({ config }: { config: Config }) => {
   );
 };
 
+const spectrumSelector = atom((get) => {
+  const volume = get(volumeAtom);
+  const bass = get(bassAtom);
+  const midrange = get(midrangeAtom);
+  const treble = get(trebleAtom);
+
+  return { volume, bass, midrange, treble };
+});
+
 const GuiControls = ({ name }: { name: Config['name'] }) => {
   const setConfig = useSetAtom(setConfigAtom);
   const [audioEnabled, setAudioEnabled] = useAtom(audioEnabledAtom);
+  const updateSpectrum = useSetAtom(updateSpectrumAtom);
   const [volumeScaler, setVolumeScaler] = useRefState(1);
   const [volumeThreshold, setVolumeThreshold] = useRefState(1);
   const audio = useMicrophone(audioEnabled);
@@ -224,23 +232,21 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
 
   useFrame(() => {
     if (audio) {
-      useStore.setState({
-        spectrum: analyseSpectrum(
-          audio,
-          volumeThreshold.current,
-          volumeScaler.current,
-        ),
-      });
+      updateSpectrum(
+        analyseSpectrum(audio, volumeThreshold.current, volumeScaler.current),
+      );
     }
   });
 
   useEffect(() => {
-    return useStore.subscribe(
-      spectrumSelector,
-      ({ volume, bass, midrange, treble }: Spectrum) => {
-        setControl({ volume, bass, midrange, treble });
-      },
-    );
+    return store.sub(spectrumSelector, () => {
+      setControl({
+        volume: store.get(volumeAtom),
+        bass: store.get(bassAtom),
+        midrange: store.get(midrangeAtom),
+        treble: store.get(trebleAtom),
+      });
+    });
   }, [setControl]);
 
   useMidiTwo(levaStore, 'audio.spectrum', {

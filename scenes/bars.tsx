@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 import type { AfterimagePass, Line2 } from 'three-stdlib';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
-import { type Config, useStore } from '../lib/store';
+import { type Config, frequencyDataAtom, store } from '../lib/store';
 
 const BarsShader = {
   uniforms: {
@@ -96,7 +96,7 @@ const Bars = React.memo(function Bars() {
 
   useFrame(({ size }) => {
     const { geometry } = lineRef.current!;
-    const { frequencyData } = useStore.getState().spectrum;
+    const frequencyData = store.get(frequencyDataAtom);
     if (isEmpty(frequencyData)) return;
 
     const vertices = frequencyData.flatMap((f, i) => {
