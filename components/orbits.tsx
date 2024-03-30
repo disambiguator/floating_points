@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import { useRef } from 'react';
+import { JSX, useRef } from 'react';
 import { Group } from 'three';
 
 export type Seed = {

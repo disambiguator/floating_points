@@ -2,7 +2,7 @@ import { Sky } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { type StoreApi, create } from 'zustand';
 import {

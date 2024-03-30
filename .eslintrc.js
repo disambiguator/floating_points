@@ -8,6 +8,7 @@ module.exports = {
     'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:@typescript-eslint/strict-type-checked',
     'plugin:@react-three/recommended',
+    'plugin:deprecation/recommended',
     'problems',
     'prettier',
   ],

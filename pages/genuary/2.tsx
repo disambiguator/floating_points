@@ -1,7 +1,7 @@
 import { Effects, OrbitControls, useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { JSX, useEffect, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
 import type { GLTF, OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';

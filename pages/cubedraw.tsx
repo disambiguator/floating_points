@@ -1,5 +1,5 @@
 import { type ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import React, { useRef, useState } from 'react';
+import React, { JSX, useRef, useState } from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';

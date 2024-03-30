@@ -1,5 +1,6 @@
 import { makeNoise2D } from 'open-simplex-noise';
 import React, {
+  JSX,
   useCallback,
   useEffect,
   useMemo,

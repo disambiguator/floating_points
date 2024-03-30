@@ -153,9 +153,9 @@ const Scene = ({ env }: { env: Env }) => {
     };
   }, [set]);
 
-  useFrame(({ camera, mouse }) => {
+  useFrame(({ camera, pointer }) => {
     if (useStore.getState().shiftPressed) {
-      raycaster.setFromCamera(mouse, camera);
+      raycaster.setFromCamera(pointer, camera);
       set({ ray: raycaster.ray });
     }
 
