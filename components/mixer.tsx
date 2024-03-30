@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { Leva, button, folder, levaStore, useControls } from 'leva';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,7 +17,9 @@ import {
   type Env,
   audioEnabledAtom,
   raycaster,
+  shiftPressedAtom,
   spectrumSelector,
+  store,
   useStore,
 } from 'lib/store';
 import { INITIAL_CAMERA_STATE } from './config';
@@ -128,7 +130,7 @@ const Scene = ({ env }: { env: Env }) => {
     }),
   });
 
-  const set = useStore((s) => s.set);
+  const setShiftPressed = useSetAtom(shiftPressedAtom);
 
   useMidi({
     center: () => {
@@ -140,7 +142,7 @@ const Scene = ({ env }: { env: Env }) => {
 
   useEffect(() => {
     const shiftPress = (e: KeyboardEvent) => {
-      set({ shiftPressed: e.shiftKey });
+      setShiftPressed(e.shiftKey);
     };
     document.addEventListener('keydown', shiftPress);
     document.addEventListener('keyup', shiftPress);
@@ -149,10 +151,10 @@ const Scene = ({ env }: { env: Env }) => {
       document.removeEventListener('keydown', shiftPress);
       document.removeEventListener('keyup', shiftPress);
     };
-  }, [set]);
+  }, [setShiftPressed]);
 
   useFrame(({ camera, pointer }) => {
-    if (useStore.getState().shiftPressed) {
+    if (store.get(shiftPressedAtom)) {
       raycaster.setFromCamera(pointer, camera);
     }
   });

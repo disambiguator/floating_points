@@ -11,7 +11,12 @@ import { NearestFilter, Vector2 } from 'three';
 import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
 import { scaleMidi, useMidi, useMidiTwo } from 'lib/midi';
 import TunnelShader from '../lib/shaders/tunnel';
-import { type Config, useSpectrum, useStore } from '../lib/store';
+import {
+  type Config,
+  shiftPressedAtom,
+  store,
+  useSpectrum,
+} from '../lib/store';
 
 extend({ AfterimagePass, UnrealBloomPass });
 
@@ -179,7 +184,7 @@ export const useTunnelEffects = () => {
 
   useFrame(({ pointer }, delta) => {
     const { uniforms } = pass;
-    if (useStore.getState().shiftPressed) {
+    if (store.get(shiftPressedAtom)) {
       uniforms.mouse.value.x = pointer.x * viewport.aspect;
       uniforms.mouse.value.y = pointer.y;
     }

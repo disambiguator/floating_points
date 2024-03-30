@@ -22,12 +22,12 @@ export type State = {
   addVolumeControl: (
     newValue: Record<string, (n: number) => void>,
   ) => () => void;
-  shiftPressed: boolean;
 };
 
 export const store = getDefaultStore();
 
 export const audioEnabledAtom = atom(false);
+export const shiftPressedAtom = atom(false);
 
 export const raycaster = new THREE.Raycaster();
 export const { ray } = raycaster;
