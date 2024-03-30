@@ -3,7 +3,7 @@ import { useControls } from 'leva';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { BoxGeometry, Group, type Mesh, Uniform, Vector3 } from 'three';
 import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
-import { type Config, useSpectrum, useStore } from '../lib/store';
+import { type Config, ray, useSpectrum } from '../lib/store';
 const renderSpeed = 1000;
 
 const Shader = () => ({
@@ -101,7 +101,12 @@ for (let i = 0; i < renderSpeed; i++) {
 
 export const Shapes = React.memo(function Shapes() {
   const groupRef = useRef<Group>(null!);
-  const shader = useMemo(Shader, []);
+  const shader = useMemo(() => {
+    const s = Shader();
+    s.uniforms.origin.value = ray.origin;
+    s.uniforms.direction.value = ray.direction;
+    return s;
+  }, []);
 
   const material = useMemo(() => {
     return <shaderMaterial args={[shader]} />;
@@ -139,10 +144,6 @@ export const Shapes = React.memo(function Shapes() {
 
   useFrame(() => {
     groupRef.current.rotateX(-0.005);
-    const { ray } = useStore.getState();
-
-    shader.uniforms.origin.value = ray.origin;
-    shader.uniforms.direction.value = ray.direction;
   });
 
   const cubes = useMemo(

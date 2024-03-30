@@ -2,12 +2,11 @@ import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
 import React, { useCallback, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
-import type { ShaderMaterial } from 'three';
 import { randInt } from 'lib/helpers';
 import { useRefState } from 'lib/hooks';
 import { scaleMidi, useMidi } from '../lib/midi';
 import SpiroShader from '../lib/shaders/spiro';
-import { type Config, useSpectrum, useStore } from '../lib/store';
+import { type Config, ray, useSpectrum } from '../lib/store';
 
 const MAX_VERTICES = 1000;
 
@@ -65,7 +64,12 @@ function generateVertices(numVertices: number, positions: Seed[]) {
 const initPositions = () => [randPosition(), randPosition()];
 
 const SpiroContents = () => {
-  const shaderMaterialRef = useRef<ShaderMaterial & typeof SpiroShader>(null);
+  const shaderMaterial = React.useMemo(() => {
+    const s = SpiroShader();
+    s.uniforms.origin.value = ray.origin;
+    s.uniforms.direction.value = ray.direction;
+    return s;
+  }, []);
 
   const positions = useRef(initPositions());
   const [speed, setSpeed] = useRefState(1);
@@ -80,17 +84,13 @@ const SpiroContents = () => {
       min: 0,
       max: 127,
       onChange: (v: number) => {
-        shaderMaterialRef.current!.uniforms.amplitude.value = scaleMidi(
-          v,
-          0,
-          0.005,
-        );
+        shaderMaterial.uniforms.amplitude.value = scaleMidi(v, 0, 0.005);
       },
     },
     color: {
       value: false,
       onChange: (v: boolean) => {
-        shaderMaterialRef.current!.uniforms.color.value = v ? 1 : 0;
+        shaderMaterial.uniforms.color.value = v ? 1 : 0;
       },
     },
     speed: {
@@ -121,14 +121,7 @@ const SpiroContents = () => {
       p.phi += p.phiSpeed * numVertices * speed.current;
     });
 
-    const { ray } = useStore.getState();
-
-    const shaderMaterial = shaderMaterialRef.current;
-    if (shaderMaterial) {
-      shaderMaterial.uniforms.origin.value = ray.origin;
-      shaderMaterial.uniforms.direction.value = ray.direction;
-      shaderMaterial.uniforms.time.value = clock.elapsedTime;
-    }
+    shaderMaterial.uniforms.time.value = clock.elapsedTime;
 
     const positionAttribute = positionAttributeRef.current;
     if (positionAttribute) {
@@ -150,7 +143,7 @@ const SpiroContents = () => {
           itemSize={3}
         />
       </bufferGeometry>
-      <shaderMaterial ref={shaderMaterialRef} args={[SpiroShader]} />
+      <shaderMaterial args={[shaderMaterial]} />
     </line>
   );
 };

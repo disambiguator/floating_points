@@ -4,7 +4,6 @@ import { Leva, button, folder, levaStore, useControls } from 'leva';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NewWindow from 'react-new-window';
-import * as THREE from 'three';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
 import {
@@ -17,6 +16,7 @@ import {
   type Config,
   type Env,
   audioEnabledAtom,
+  raycaster,
   spectrumSelector,
   useStore,
 } from 'lib/store';
@@ -115,7 +115,6 @@ export const Controls = () => {
   );
 };
 
-const raycaster = new THREE.Raycaster();
 const Scene = ({ env }: { env: Env }) => {
   const gl = useThree((t) => t.gl);
   const camera = useThree((t) => t.camera);
@@ -155,7 +154,6 @@ const Scene = ({ env }: { env: Env }) => {
   useFrame(({ camera, pointer }) => {
     if (useStore.getState().shiftPressed) {
       raycaster.setFromCamera(pointer, camera);
-      set({ ray: raycaster.ray });
     }
   });
 

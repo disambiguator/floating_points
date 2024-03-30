@@ -15,7 +15,6 @@ export type Config = {
 export type Env = Omit<Config, 'initialParams'>;
 
 export type State = {
-  ray: THREE.Ray;
   spectrum: Spectrum;
   set: StoreApi<State>['setState'];
   env: Env | null;
@@ -29,6 +28,9 @@ export type State = {
 export const store = getDefaultStore();
 
 export const audioEnabledAtom = atom(false);
+
+export const raycaster = new THREE.Raycaster();
+export const { ray } = raycaster;
 
 export const spectrumSelector = (state: State) => state.spectrum;
 
