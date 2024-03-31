@@ -1,10 +1,10 @@
 import { Sky } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { atom, useAtom } from 'jotai';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
 import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { type StoreApi, create } from 'zustand';
 import {
   type Audio,
   type Spectrum,
@@ -12,6 +12,7 @@ import {
   useAudioUrl,
 } from 'lib/audio';
 import { rand } from 'lib/helpers';
+import { store } from 'lib/store';
 import styles from './void.module.scss';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
@@ -29,18 +30,10 @@ const stringsStartTime = 67; // start rotating stars
 // fireflies running against the terrain as point lights
 // adding shapes to the peaks of the mountains like mushrooms or cacti
 
-type State = {
-  spectrum: Spectrum;
-  audio: Audio | undefined;
-  setState: StoreApi<State>['setState'];
-};
-const useStore = create<State>((set) => ({
-  spectrum: { volume: 0 } as Spectrum,
-  setState: set,
-  audio: undefined,
-}));
+const spectrumAtom = atom({ volume: 0 } as Spectrum);
+const audioAtom = atom<Audio | undefined>(undefined);
 
-const currentTime = ({ audio }: State) =>
+const currentTime = (audio: Audio | undefined) =>
   audio ? audio.listener.context.currentTime : 0;
 
 const length = 400;
@@ -108,10 +101,10 @@ const Stars = React.memo(function Stars() {
   );
 
   useFrame(() => {
-    const time = currentTime(useStore.getState());
+    const time = currentTime(store.get(audioAtom));
 
     if (time > bassStartTime) {
-      const { volume } = useStore.getState().spectrum;
+      const { volume } = store.get(spectrumAtom);
       const size = 20 + (volume / 4) ** 2;
       shader.uniforms.size.value = size;
     }
@@ -152,7 +145,7 @@ const Row = ({
 }) => {
   const noise = (x: number, y: number) =>
     Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 1) *
-    currentTime(useStore.getState()) *
+    currentTime(store.get(audioAtom)) *
     scale;
 
   const vertices = (x: number, y: number) => [
@@ -273,7 +266,7 @@ function Sunset() {
     }));
 
   useFrame(() => {
-    const time = currentTime(useStore.getState());
+    const time = currentTime(store.get(audioAtom));
     if (time < kickInTime + 1)
       set({ si: Math.min(-0.4 + (0.3 * time) / kickInTime, -0.1) });
   });
@@ -297,11 +290,12 @@ function Sunset() {
 
 function Scene() {
   const audio = useAudioUrl(assetUrl('void.mp3'));
-  const setState = useStore((state) => state.setState);
-  setState({ audio });
+  const [, setAudio] = useAtom(audioAtom);
+  const [, setSpectrum] = useAtom(spectrumAtom);
+  setAudio(audio);
 
   useFrame(() => {
-    if (audio) setState({ spectrum: analyseSpectrum(audio) });
+    if (audio) setSpectrum(analyseSpectrum(audio));
   });
 
   return (
