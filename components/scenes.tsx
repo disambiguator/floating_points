@@ -2,6 +2,7 @@ import DusenShader from 'lib/shaders/dusen';
 import FbmShader from 'lib/shaders/fbm';
 import MarbleShader from 'lib/shaders/marble';
 import StarkShader from 'lib/shaders/stark';
+import { Config } from 'lib/store';
 import { barsConfig } from 'scenes/bars';
 import { controlConfig } from 'scenes/control';
 import { cubefieldConfig } from 'scenes/cubefield';
@@ -44,7 +45,7 @@ export const scenes = {
   bars: barsConfig,
   // video: videoConfig,
   perlintunnel: perlinTunnelConfig,
-};
+} as const satisfies Record<string, Config>;
 
 export const sceneNames = Object.keys(scenes);
 

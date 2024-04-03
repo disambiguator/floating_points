@@ -32,11 +32,14 @@ import { FiberScene } from './scene';
 import { type SceneName, sceneNames, scenes } from './scenes';
 import { analyseSpectrum, useMicrophone } from '../lib/audio';
 
-const maybeConfigAtom = atom<Config | null>(null);
+const maybeConfigAtom = atom<(typeof scenes)[keyof typeof scenes] | null>(null);
 const configAtom = atom((get) => get(maybeConfigAtom)!);
-const setConfigAtom = atom(null, (_get, set, config: Config) => {
-  set(maybeConfigAtom, config);
-});
+const setConfigAtom = atom(
+  null,
+  (_get, set, config: (typeof scenes)[keyof typeof scenes]) => {
+    set(maybeConfigAtom, config);
+  },
+);
 
 // In its own component because there is no way to conditionally show controls in Leva
 const PopOutControls = ({ popOut }: { popOut: () => void }) => {

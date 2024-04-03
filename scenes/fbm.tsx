@@ -38,7 +38,7 @@ const FbmContents = React.memo(function FbmContents() {
   );
 });
 
-export const fbmConfig: Config = {
+export const fbmConfig = {
   name: 'fbm',
   Contents: FbmContents,
-};
+} as const satisfies Config;

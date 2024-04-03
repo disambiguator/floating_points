@@ -92,7 +92,7 @@ const Webcam = React.memo(function Shader() {
   );
 });
 
-export const webcamConfig: Config = {
+export const webcamConfig = {
   name: 'webcam',
   Contents: Webcam,
-};
+} as const satisfies Config;

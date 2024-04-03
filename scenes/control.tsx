@@ -95,7 +95,7 @@ const Control = () => {
   );
 };
 
-export const controlConfig: Config = {
+export const controlConfig = {
   name: 'control',
   Contents: Control,
-};
+} as const satisfies Config;

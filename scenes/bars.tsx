@@ -117,8 +117,8 @@ const Bars = React.memo(function Bars() {
   );
 });
 
-export const barsConfig: Config = {
+export const barsConfig = {
   Contents: Bars,
   CustomEffects: Effects,
   name: 'bars',
-};
+} as const satisfies Config;

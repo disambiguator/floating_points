@@ -148,7 +148,7 @@ const SpiroContents = () => {
   );
 };
 
-export const spiroConfig: Config = {
+export const spiroConfig = {
   Contents: SpiroContents,
   name: 'spiro',
-};
+} as const satisfies Config;

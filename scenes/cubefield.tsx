@@ -59,7 +59,7 @@ export const CubeField = () => {
   );
 };
 
-export const cubefieldConfig: Config = {
+export const cubefieldConfig = {
   name: 'cubefield',
   Contents: CubeField,
-};
+} as const satisfies Config;

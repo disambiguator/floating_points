@@ -123,7 +123,7 @@ const Halloween = React.memo(function Dusen() {
   );
 });
 
-export const skullConfig: Config = {
+export const skullConfig = {
   name: 'skull',
   Contents: Halloween,
-};
+} as const satisfies Config;

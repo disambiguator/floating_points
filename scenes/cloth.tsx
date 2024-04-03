@@ -74,7 +74,7 @@ const Cloth = React.memo(function Cloth() {
   );
 });
 
-export const clothConfig: Config = {
+export const clothConfig = {
   name: 'cloth',
   Contents: Cloth,
-};
+} as const satisfies Config;

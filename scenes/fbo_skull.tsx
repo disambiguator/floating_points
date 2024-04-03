@@ -104,7 +104,7 @@ function ScreenQuadScene() {
   );
 }
 
-export const fboSkullConfig: Config = {
+export const fboSkullConfig = {
   name: 'fboSkull',
   Contents: ScreenQuadScene,
-};
+} as const satisfies Config;

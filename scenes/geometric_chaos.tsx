@@ -159,7 +159,7 @@ export const Shapes = React.memo(function Shapes() {
   return <group ref={groupRef}>{cubes}</group>;
 });
 
-export const chaosConfig: Config = {
+export const chaosConfig = {
   name: 'chaos',
   Contents: Shapes,
-};
+} as const satisfies Config;

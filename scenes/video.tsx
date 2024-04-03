@@ -17,7 +17,7 @@ const Video = () => {
   );
 };
 
-export const videoConfig: Config = {
+export const videoConfig = {
   name: 'video',
   Contents: Video,
-};
+} as const satisfies Config;

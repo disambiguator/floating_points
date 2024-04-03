@@ -51,7 +51,7 @@ export const Dusen = memo(function Dusen() {
   );
 });
 
-export const dusenConfig: Config = {
+export const dusenConfig = {
   name: 'dusen',
   Contents: Dusen,
-};
+} as const satisfies Config;

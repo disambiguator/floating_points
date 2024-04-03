@@ -29,7 +29,7 @@ const Dusen = React.memo(function Dusen() {
   );
 });
 
-export const marbleConfig: Config = {
+export const marbleConfig = {
   name: 'shader',
   Contents: Dusen,
-};
+} as const satisfies Config;

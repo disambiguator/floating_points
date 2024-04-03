@@ -30,7 +30,7 @@ const Landscape = memo(function Dusen() {
   );
 });
 
-export const landscapeConfig: Config = {
+export const landscapeConfig = {
   name: 'landscape',
   Contents: Landscape,
-};
+} as const satisfies Config;

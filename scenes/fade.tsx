@@ -102,7 +102,7 @@ const Cloth = React.memo(function Cloth() {
   );
 });
 
-export const fadeConfig: Config = {
+export const fadeConfig = {
   name: 'fireworks',
   Contents: Cloth,
-};
+} as const satisfies Config;
