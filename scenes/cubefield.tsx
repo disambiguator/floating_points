@@ -62,4 +62,5 @@ export const CubeField = () => {
 export const cubefieldConfig = {
   name: 'cubefield',
   Contents: CubeField,
+  controls: false,
 } as const satisfies Config;

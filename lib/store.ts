@@ -1,6 +1,6 @@
 import { atom, getDefaultStore, useSetAtom } from 'jotai';
 import { uniqueId } from 'lodash';
-import { type ComponentType, useEffect } from 'react';
+import { type ComponentType, ReactNode, useEffect } from 'react';
 import * as THREE from 'three';
 import { Spectrum } from './audio';
 
@@ -8,6 +8,7 @@ export type Config = {
   name: string;
   CustomEffects?: ComponentType;
   Contents: ComponentType;
+  controls?: ReactNode;
 };
 
 export const store = getDefaultStore();

@@ -296,7 +296,7 @@ const Mixer = () => {
         // preserveDrawingBuffer: true,
         // }
         // }
-        controls={config.name !== 'cubefield' && config.name !== 'control'}
+        controls={'controls' in config ? config.controls : true}
       >
         <React.Suspense fallback={null}>
           <Scene config={config} />

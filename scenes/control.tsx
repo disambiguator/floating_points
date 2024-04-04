@@ -98,4 +98,5 @@ const Control = () => {
 export const controlConfig = {
   name: 'control',
   Contents: Control,
+  controls: false,
 } as const satisfies Config;

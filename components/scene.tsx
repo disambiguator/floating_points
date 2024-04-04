@@ -2,16 +2,16 @@ import { OrbitControls, PerformanceMonitor } from '@react-three/drei';
 import { Canvas, type Props } from '@react-three/fiber';
 import { useRouter } from 'next/router';
 import { Perf } from 'r3f-perf';
-import React, { useMemo, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 
 const increment = 0.1;
 
 export const FiberScene = ({
-  controls,
+  controls = true,
   children,
   gl,
   ...rest
-}: Props & { controls?: boolean }) => {
+}: Props & { controls?: ReactNode }) => {
   const router = useRouter();
   const debug = useMemo(() => !!router.query['debug'], [router]);
   const [dpr, setDpr] = useState(1.5);
@@ -45,7 +45,7 @@ export const FiberScene = ({
           });
         }}
       />
-      {controls && <OrbitControls makeDefault />}
+      {controls === true ? <OrbitControls makeDefault /> : controls}
       {/* {controls && <FlyControls makeDefault movementSpeed={50} />} */}
       {debug && <Perf />}
       {children}
