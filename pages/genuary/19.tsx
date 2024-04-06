@@ -27,25 +27,21 @@ const TunnelShader = {
   fragmentShader,
 };
 
-const Letter = ({ letter, angle }: { letter: string; angle: number }) => {
-  const textRef = useRef<typeof Text>();
-
-  return (
-    <group rotation={[0, 0, angle]}>
-      <Text
-        position={[0.15, 0, 0]}
-        ref={textRef}
-        color={new THREE.Color(1, 0, 0)}
-        outlineColor={new THREE.Color(0, 1, 0)}
-        outlineWidth={0.003}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {letter}
-      </Text>
-    </group>
-  );
-};
+const Letter = ({ letter, angle }: { letter: string; angle: number }) => (
+  <group rotation={[0, 0, angle]}>
+    <Text
+      fontSize={0.15}
+      position={[0.15, 0, 0]}
+      color={new THREE.Color(1, 0, 0)}
+      outlineColor={new THREE.Color(0, 1, 0)}
+      outlineWidth={0.003}
+      anchorX="center"
+      anchorY="middle"
+    >
+      {letter}
+    </Text>
+  </group>
+);
 
 declare class AfterimagePassType extends AfterimagePass {
   uniforms: (typeof TunnelShader)['uniforms'];
