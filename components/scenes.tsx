@@ -15,6 +15,7 @@ import { halloweenConfig } from 'scenes/halloween';
 // import { landscapeConfig } from 'scenes/landscape';
 import { marbleConfig } from 'scenes/marble';
 import { perlinTunnelConfig } from 'scenes/perlintunnel';
+import { rayworldConfig } from 'scenes/rayworld';
 import { skullConfig } from 'scenes/skull';
 import { spiroConfig } from 'scenes/spiro';
 // import { videoConfig } from 'scenes/video';
@@ -45,6 +46,7 @@ export const scenes = {
   bars: barsConfig,
   // video: videoConfig,
   perlintunnel: perlinTunnelConfig,
+  rayworld: rayworldConfig,
 } as const satisfies Record<string, Config>;
 
 export const sceneNames = Object.keys(scenes);
