@@ -125,7 +125,7 @@ void main() {
   uv.x *= aspect;
 
   vec3 ro = camera_position;
-  vec3 rd = cameraRay(ro, ta, uv, 1.0);
+  vec3 rd = cameraRay(ro, ro + ta, uv, 1.0);
 
   // vec3 ro = vec3(0.0, 0.0, -8.0);
   // vec3 rd = vec3(uv, 1.0);

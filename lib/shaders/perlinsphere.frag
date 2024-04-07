@@ -54,7 +54,7 @@ float map_the_world(vec3 p, vec3 rd) {
   );
 }
 
-#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, starting_distance=starting_distance)
+#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, starting_distance=starting_distance,time=time)
 
 #pragma glslify: cameraRay = require('glsl-camera-ray');
 
@@ -63,7 +63,7 @@ void main() {
   uv.x *= aspect;
 
   vec3 ro = camera_position;
-  vec3 rd = cameraRay(ro, ta, uv, 1.0);
+  vec3 rd = cameraRay(ro, ro + ta, uv, 1.0);
 
   vec3 shaded_color = raymarcher(ro, rd);
 
