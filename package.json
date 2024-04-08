@@ -48,7 +48,7 @@
     "webmidi": "^3.1.8"
   },
   "dependencies": {
-    "@react-three/drei": "^9.102.6",
+    "@react-three/drei": "^9.105.2",
     "@react-three/eslint-plugin": "^0.1.1",
     "@react-three/fiber": "^8.15.16",
     "@react-three/postprocessing": "^2.16.2",
