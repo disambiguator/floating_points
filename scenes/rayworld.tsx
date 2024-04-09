@@ -1,4 +1,4 @@
-import { FlyControls, ScreenQuad, Sphere } from '@react-three/drei';
+import { FlyControls, ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect } from 'react';
