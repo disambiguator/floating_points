@@ -1,10 +1,11 @@
-import { ScreenQuad } from '@react-three/drei';
+import { FlyControls, ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import React, { useEffect } from 'react';
 import { GLSL3, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three-stdlib';
 import { scaleExponential } from 'lib/helpers';
+import { useRefState } from 'lib/hooks';
 import { scaleMidi } from 'lib/midi';
 import fragmentShader from 'lib/shaders/perlintunnel.frag';
 import { type Config, useSpectrum } from '../lib/store';
@@ -34,6 +35,7 @@ const Bars = React.memo(function Bars() {
   const viewport = useThree((t) => t.viewport);
   const camera = useThree((t) => t.camera as PerspectiveCamera);
   const controls = useThree((t) => t.controls);
+  const [speed, setSpeed] = useRefState(1);
 
   useEffect(() => {
     const update = () => {
@@ -60,8 +62,8 @@ const Bars = React.memo(function Bars() {
     };
   }, [camera, controls]);
 
-  useFrame((t) => {
-    shader.uniforms.time.value = t.clock.elapsedTime;
+  useFrame((_, delta) => {
+    shader.uniforms.time.value += delta * speed.current;
     // const { volume } = useStore.getState().spectrum;
     // if (volume) {
     //   shader.uniforms.amp.value = scaleMidi(volume, 0, 2);
@@ -74,7 +76,7 @@ const Bars = React.memo(function Bars() {
       min: 0,
       max: 127,
       onChange: (v: number) => {
-        shader.uniforms.band.value = scaleMidi(v, 0, 1);
+        shader.uniforms.band.value = scaleMidi(v, 0.00000001, 0.7);
       },
     },
     starting_distance: {
@@ -99,6 +101,12 @@ const Bars = React.memo(function Bars() {
         shader.uniforms.band_center.value = 1 - scaleMidi(v, 0, 1);
       },
     },
+    speed: {
+      value: 1,
+      min: 0,
+      max: 2,
+      onChange: setSpeed,
+    },
   }));
 
   useSpectrum({
@@ -121,7 +129,10 @@ const Bars = React.memo(function Bars() {
   );
 });
 
-export const perlinTunnelConfig: Config = {
+export const perlinTunnelConfig = {
   Contents: Bars,
   name: 'perlintunnel',
-};
+  controls: (
+    <FlyControls makeDefault movementSpeed={1} rollSpeed={0.2} dragToLook />
+  ),
+} as const satisfies Config;

@@ -14,9 +14,19 @@ uniform float starting_distance;
 
 #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
+#pragma glslify: worley3D = require(glsl-worley/worley3D.glsl)
+// #pragma glslify: worley2x2x2 = require(glsl-worley/worley2x2x2.glsl)
+// #pragma glslify: worley2D = require(glsl-worley/worley2D.glsl)
+// #pragma glslify: worley2x2 = require(glsl-worley/worley2x2.glsl)
 
 float perlin_cavern(vec3 p) {
-  float noise = snoise4(vec4(p * 2.0, time / 20.0));
+  bool manhattanDistance = true;
+  vec2 n = worley3D(p, band_center, manhattanDistance);
+  //float noise = length(n);
+  // float noise = abs(max(n.x, n.y)) - 0.001;
+  float noise = n.x;
+  //return noise;
+  //float noise = snoise4(vec4(p * 2.0, time / 20.0));
 
   // return noise * 4.0;
 
@@ -30,8 +40,33 @@ float perlin_cavern(vec3 p) {
   }
 }
 
+// float distance_from_sphere(vec3 p, vec3 c, float r) {
+//   float d = 8.0;
+
+//   vec3 position = mod(p + d / 2.0, d) - d / 2.0;
+//   vec3 center = c * 10.0;
+//   float radius = r * 10.0 * snoise3(p - position);
+//   return length(position - center) - radius;
+// }
+
+float distance_from_sphere(vec3 p, vec3 c, float r) {
+  float d = 100.0;
+
+  vec3 position = mod(p + d / 2.0, d) - d / 2.0;
+  vec3 center = c * 10.0;
+  float jitter = 2.0;
+  bool manhattanDistance = true;
+  float radius = r * 10.0 * worley3D(p - position, jitter, manhattanDistance).y;
+
+  return length(position - center) - radius;
+}
+
 float map_the_world(vec3 p, vec3 rd) {
-  // float displacement = snoise4(vec4(p, time)) * 0.25 * amp;
+  // float jitter = 2.0;
+  // bool manhattanDistance = true;
+  // vec2 n = worley3D(vec3(p.x, p.y, time), band_center, manhattanDistance);
+  // float displacement = n.x;
+  // float displacement = snoise4(vec4(p, time)) * 10.0;
   // float sphere_0 = distance_from_sphere(p, vec3(0.0), 2.0);
 
   // return sphere_0 + displacement;
@@ -50,16 +85,7 @@ float map_the_world(vec3 p, vec3 rd) {
 
 }
 
-#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, starting_distance=starting_distance)
-
-float distance_from_sphere(vec3 p, vec3 c, float r) {
-  float d = 8.0;
-
-  vec3 position = mod(p + d / 2.0, d) - d / 2.0;
-  vec3 center = c * 10.0;
-  float radius = r * 10.0 * snoise3(p - position);
-  return length(position - center) - radius;
-}
+#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, starting_distance=starting_distance, time=time)
 
 float sphereSDF(vec3 p, vec3 c, float r) {
   return length(p - c) - r;
