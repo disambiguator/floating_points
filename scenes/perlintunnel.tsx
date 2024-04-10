@@ -79,6 +79,14 @@ const Bars = React.memo(function Bars() {
         shader.uniforms.band.value = scaleMidi(v, 0.00000001, 0.7);
       },
     },
+    amp: {
+      value: 1.0,
+      min: 0,
+      max: 127,
+      onChange: (v: number) => {
+        shader.uniforms.amp.value = scaleMidi(v, 0.0, 0.5);
+      },
+    },
     starting_distance: {
       value: 1,
       min: 0,
