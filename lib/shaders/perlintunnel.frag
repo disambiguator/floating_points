@@ -19,7 +19,26 @@ uniform float starting_distance;
 // #pragma glslify: worley2D = require(glsl-worley/worley2D.glsl)
 // #pragma glslify: worley2x2 = require(glsl-worley/worley2x2.glsl)
 
-float perlin_cavern(vec3 p) {
+struct Surface {
+  float dist;
+  vec3 color;
+  bool lighting;
+};
+
+// Grainy portions are really nice here
+vec3 get_color(vec3 current_position) {
+  float basis = 1.0;
+  basis = length(current_position) / 5.0;
+
+  vec3 color = vec3(1.0);
+  // color = vec3(basis);
+  color = mod(vec3(basis * 4.0, basis * 6.0, basis * 10.0), 1.0);
+  // color = normal;
+
+  return color * 2.0;
+}
+
+Surface perlin_cavern(vec3 p) {
   bool manhattanDistance = true;
   vec2 n = worley3D(p, band_center, manhattanDistance);
   //float noise = length(n);
@@ -31,13 +50,16 @@ float perlin_cavern(vec3 p) {
   // return noise * 4.0;
 
   // return noise;
-  return mod(noise, band);
+  float dist = mod(noise, band);
+  return Surface(dist, get_color(p), true);
 
-  if (noise < band_center - band || noise > band_center + band) {
-    return 0.03;
-  } else {
-    return 0.0;
-  }
+  // if (noise < band_center - band || noise > band_center + band) {
+  //   return 0.03;
+  // } else {
+  //   return 0.0;
+  // }
+  // return max(band_center - band - noise, noise - band_center - band);
+
 }
 
 // float distance_from_sphere(vec3 p, vec3 c, float r) {
@@ -61,7 +83,7 @@ float distance_from_sphere(vec3 p, vec3 c, float r) {
   return length(position - center) - radius;
 }
 
-float map_the_world(vec3 p, vec3 rd) {
+Surface map_the_world(vec3 p, vec3 rd) {
   // float jitter = 2.0;
   // bool manhattanDistance = true;
   // vec2 n = worley3D(vec3(p.x, p.y, time), band_center, manhattanDistance);
@@ -85,7 +107,7 @@ float map_the_world(vec3 p, vec3 rd) {
 
 }
 
-#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, starting_distance=starting_distance, time=time)
+#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, time=time, Surface=Surface)
 
 float sphereSDF(vec3 p, vec3 c, float r) {
   return length(p - c) - r;
@@ -156,7 +178,7 @@ void main() {
   // vec3 ro = vec3(0.0, 0.0, -8.0);
   // vec3 rd = vec3(uv, 1.0);
 
-  vec3 shaded_color = raymarcher(ro, rd);
+  vec3 shaded_color = raymarcher(ro, rd, starting_distance);
 
   o_color = vec4(shaded_color, 1.0);
 }

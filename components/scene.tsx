@@ -16,7 +16,7 @@ export const FiberScene = ({
 }: Props & { controls?: ReactNode }) => {
   const router = useRouter();
   const debug = useMemo(() => !!router.query['debug'], [router]);
-  const [dpr, setDpr] = useState(1.5);
+  const [dpr, setDpr] = useState(0.9);
 
   const canvasProps: Omit<Props, 'children'> = {
     ...rest,
