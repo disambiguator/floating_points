@@ -40,6 +40,8 @@ const Bars = React.memo(function Bars() {
   useEffect(() => {
     const update = () => {
       shader.uniforms.camera_position.value = camera.position;
+      console.log('position', camera.position);
+
       if (controls instanceof OrbitControls) {
         shader.uniforms.ta.value = controls.target;
       } else {
@@ -141,6 +143,6 @@ export const perlinTunnelConfig = {
   Contents: Bars,
   name: 'perlintunnel',
   controls: (
-    <FlyControls makeDefault movementSpeed={1} rollSpeed={0.2} dragToLook />
+    <FlyControls makeDefault movementSpeed={3} rollSpeed={0.8} dragToLook />
   ),
 } as const satisfies Config;

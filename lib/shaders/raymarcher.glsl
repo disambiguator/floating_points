@@ -1,17 +1,17 @@
 const float MINIMUM_HIT_DISTANCE = 0.001;
 
-vec3 calculate_normal(vec3 p, vec3 rd) {
+vec3 calculate_normal(vec3 p, vec3 ro, vec3 rd) {
   const vec3 small_step = vec3(0.001, 0.0, 0.0);
 
   float gradient_x =
-    map_the_world(p + small_step.xyy, rd).dist -
-    map_the_world(p - small_step.xyy, rd).dist;
+    map_the_world(p + small_step.xyy, ro, rd).dist -
+    map_the_world(p - small_step.xyy, ro, rd).dist;
   float gradient_y =
-    map_the_world(p + small_step.yxy, rd).dist -
-    map_the_world(p - small_step.yxy, rd).dist;
+    map_the_world(p + small_step.yxy, ro, rd).dist -
+    map_the_world(p - small_step.yxy, ro, rd).dist;
   float gradient_z =
-    map_the_world(p + small_step.yyx, rd).dist -
-    map_the_world(p - small_step.yyx, rd).dist;
+    map_the_world(p + small_step.yyx, ro, rd).dist -
+    map_the_world(p - small_step.yyx, ro, rd).dist;
 
   vec3 normal = vec3(gradient_x, gradient_y, gradient_z);
 
@@ -22,7 +22,7 @@ float softShadow(vec3 ro, vec3 rd, float mint, float maxt, float w) {
   float res = 1.0;
   float t = mint;
   for (int i = 0; i < 256 && t < maxt; i++) {
-    float h = map_the_world(ro + t * rd, rd).dist;
+    float h = map_the_world(ro + t * rd, ro, rd).dist;
     res = min(res, h / (w * t));
     t += clamp(h, 0.005, 0.5);
     if (res < -1.0 || t > maxt) break;
@@ -72,7 +72,7 @@ Sadsad closest_surface(vec3 ro, vec3 rd, float starting_distance) {
   for (int i = 0; i < NUMBER_OF_STEPS; ++i) {
     vec3 current_position = ro + total_distance_traveled * rd;
 
-    Surface surface = map_the_world(current_position, rd);
+    Surface surface = map_the_world(current_position, ro, rd);
 
     if (surface.dist < MINIMUM_HIT_DISTANCE) {
       return Sadsad(surface, current_position);
@@ -94,7 +94,7 @@ vec3 ray_march(vec3 ro, vec3 rd, float starting_distance) {
 
   if (surface.lighting) {
     // vec3 current_position = starting_distance + ro + rd * surface.dist;
-    vec3 normal = calculate_normal(s.current_position, rd);
+    vec3 normal = calculate_normal(s.current_position, ro, rd);
     vec3 direction_to_light = normalize(s.current_position);
 
     float diffuse_intensity = max(0.0, dot(normal, direction_to_light));

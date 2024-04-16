@@ -12,9 +12,14 @@ out vec4 o_color;
 
 uniform float starting_distance;
 
+const float MINIMUM_HIT_DISTANCE = 0.001;
+
 #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: worley3D = require(glsl-worley/worley3D.glsl)
+#pragma glslify: plane = require(./sdf/plane.glsl)
+#pragma glslify: sphere = require(./sdf/sphere.glsl)
+#pragma glslify: donuts = require(./perlinsphere.frag, time=time, band=band, band_center=band_center)
 // #pragma glslify: worley2x2x2 = require(glsl-worley/worley2x2x2.glsl)
 // #pragma glslify: worley2D = require(glsl-worley/worley2D.glsl)
 // #pragma glslify: worley2x2 = require(glsl-worley/worley2x2.glsl)
@@ -83,7 +88,24 @@ float distance_from_sphere(vec3 p, vec3 c, float r) {
   return length(position - center) - radius;
 }
 
-Surface map_the_world(vec3 p, vec3 rd) {
+Surface minByDistance(Surface a, Surface b) {
+  if (a.dist < b.dist) {
+    return a;
+  }
+  return b;
+}
+
+// Surface basicSpheres(vec3 p) {
+//   float dist =
+//     sphere(p, vec3(5.0, 5.0, 290.0), 4.0) + snoise4(vec4(p / 10.0, time)) * 5.0;
+//   if (dist > MINIMUM_HIT_DISTANCE) {
+//     return Surface(dist, vec3(1.0), false);
+//   }
+
+//   return Surface(sphere(mod(p, 3.0), vec3(1.5), 1.0), vec3(1.0), true);
+// }
+
+Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   // float jitter = 2.0;
   // bool manhattanDistance = true;
   // vec2 n = worley3D(vec3(p.x, p.y, time), band_center, manhattanDistance);
@@ -96,7 +118,48 @@ Surface map_the_world(vec3 p, vec3 rd) {
 
   // return perlin_field(p, rd, min(1.0, ceil(p.z)));
 
-  return perlin_cavern(p);
+  float planeDist = plane(p, vec3(0.0, 1.0, 0.0), 1.0);
+  vec3 intersection = p + rd * planeDist;
+  Surface floor_plane = Surface(
+    planeDist,
+    vec3(
+      smoothstep(
+        0.65,
+        1.0,
+        max(mod(intersection.x * 5.0, 1.0), mod(intersection.z * 5.0, 1.0))
+      )
+    ),
+    false
+  );
+  Surface closest_surface = floor_plane;
+
+  // closest_surface = minByDistance(closest_surface, basicSpheres(p));
+
+  float cullingSphere = sphere(p, ro, starting_distance);
+  float boundingSphereDistance = max(
+    sphere(p, vec3(5.0, 5.0, 290.0), 5.0) + snoise4(vec4(p / 10.0, time)) * 5.0,
+    -cullingSphere
+  );
+  Surface cavern;
+  if (boundingSphereDistance > MINIMUM_HIT_DISTANCE) {
+    cavern = Surface(boundingSphereDistance, vec3(0.0), false);
+  } else {
+    cavern = perlin_cavern(p);
+  }
+  closest_surface = minByDistance(floor_plane, cavern);
+
+  float donutBoundingSphereDistance = max(
+    sphere(p, vec3(-5.0, 5.0, 290.0), 5.0) +
+      snoise4(vec4(p / 10.0, time)) * 5.0,
+    -cullingSphere
+  );
+  Surface donutSurface;
+  if (donutBoundingSphereDistance > MINIMUM_HIT_DISTANCE) {
+    donutSurface = Surface(donutBoundingSphereDistance, vec3(0.0), false);
+  } else {
+    donutSurface = Surface(donuts(p, rd), get_color(p), true);
+  }
+  closest_surface = minByDistance(closest_surface, donutSurface);
 
   // float d = length(p);
 
@@ -105,6 +168,7 @@ Surface map_the_world(vec3 p, vec3 rd) {
   //   perlin_sphere(p, rd, d - mod(d, spacing) + spacing)
   // );
 
+  return closest_surface;
 }
 
 #pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, time=time, Surface=Surface)
@@ -178,7 +242,7 @@ void main() {
   // vec3 ro = vec3(0.0, 0.0, -8.0);
   // vec3 rd = vec3(uv, 1.0);
 
-  vec3 shaded_color = raymarcher(ro, rd, starting_distance);
+  vec3 shaded_color = raymarcher(ro, rd, 0.0);
 
   o_color = vec4(shaded_color, 1.0);
 }

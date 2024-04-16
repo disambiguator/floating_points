@@ -1,27 +1,10 @@
 precision highp float;
 
-in vec2 vUV;
-uniform float aspect;
-uniform float time;
-uniform float band;
-uniform float band_center;
-uniform vec3 camera_position;
-uniform vec3 ta;
-uniform float amp;
-out vec4 o_color;
-
-uniform float starting_distance;
-
-const float spacing = 1.0;
-
 #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
-#pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
+#pragma glslify: sphereSDF = require(./sdf/sphere.glsl)
 
 const float MINIMUM_HIT_DISTANCE = 0.001;
-
-float sphereSDF(vec3 p, vec3 c, float r) {
-  return length(p - c) - r;
-}
+const float spacing = 1.0;
 
 float perlin_sphere(vec3 p, vec3 rd, float r) {
   vec3 center = vec3(0.0, 0.0, 0.0);
@@ -54,18 +37,4 @@ float map_the_world(vec3 p, vec3 rd) {
   );
 }
 
-#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, starting_distance=starting_distance,time=time)
-
-#pragma glslify: cameraRay = require('glsl-camera-ray');
-
-void main() {
-  vec2 uv = vUV;
-  uv.x *= aspect;
-
-  vec3 ro = camera_position;
-  vec3 rd = cameraRay(ro, ro + ta, uv, 1.0);
-
-  vec3 shaded_color = raymarcher(ro, rd);
-
-  o_color = vec4(shaded_color, 1.0);
-}
+#pragma glslify: export(map_the_world);
