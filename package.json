@@ -45,7 +45,7 @@
     "prettier-plugin-glsl": "^0.2.0",
     "raw-loader": "^4.0.2",
     "typescript": "^5.4.5",
-    "webmidi": "^3.1.8"
+    "webmidi": "^3.1.9"
   },
   "dependencies": {
     "@react-three/drei": "^9.105.4",
