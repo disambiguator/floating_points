@@ -38,7 +38,7 @@
     "eslint-plugin-deprecation": "^2.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "glsl-dither": "^1.0.1",
     "glslify-loader": "^2.0.0",
     "prettier": "^3.2.5",
