@@ -53,9 +53,9 @@ const BarsShader = {
   `,
 };
 
-declare class AfterimagePassType extends AfterimagePass {
+type AfterimagePassType = Omit<AfterimagePass, 'uniforms'> & {
   uniforms: (typeof BarsShader)['uniforms'];
-}
+};
 
 const Effects = () => {
   const ref = useRef<AfterimagePassType>(null);

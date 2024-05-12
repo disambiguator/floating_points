@@ -48,6 +48,8 @@
     "webmidi": "^3.1.9"
   },
   "dependencies": {
+    "@babel/preset-typescript": "^7.24.1",
+    "@babel/template": "^7.24.0",
     "@react-three/drei": "^9.105.6",
     "@react-three/eslint-plugin": "^0.1.1",
     "@react-three/fiber": "^8.16.3",

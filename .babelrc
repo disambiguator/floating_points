@@ -1,0 +1,7 @@
+{
+  "presets": [
+    ["@babel/preset-typescript", { "allowDeclareFields": true }],
+    "next/babel",
+    "jotai/babel/preset" // When @swc-jotai/react-refresh is stable, switch to that.
+  ]
+}

@@ -38,9 +38,9 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-declare class AfterimagePassType extends AfterimagePass {
+type AfterimagePassType = Omit<AfterimagePass, 'uniforms'> & {
   uniforms: (typeof TunnelShader)['uniforms'];
-}
+};
 
 const midiConfig = {
   1: 'trails',

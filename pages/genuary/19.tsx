@@ -42,10 +42,9 @@ const Letter = ({ letter, angle }: { letter: string; angle: number }) => (
     </Text>
   </group>
 );
-
-declare class AfterimagePassType extends AfterimagePass {
+type AfterimagePassType = Omit<AfterimagePass, 'uniforms'> & {
   uniforms: (typeof TunnelShader)['uniforms'];
-}
+};
 
 const Postprocessing = () => {
   const viewport = useThree((t) => t.viewport);
