@@ -298,9 +298,7 @@ const Mixer = () => {
         // }
         controls={'controls' in config ? config.controls : true}
       >
-        <React.Suspense fallback={null}>
-          <Scene config={config} />
-        </React.Suspense>
+        <Scene config={config} />
         <GuiControls name={config.name} />
       </FiberScene>
     </>
