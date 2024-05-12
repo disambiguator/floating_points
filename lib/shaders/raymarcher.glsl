@@ -66,7 +66,7 @@ struct Sadsad {
 
 Sadsad closest_surface(vec3 ro, vec3 rd, float starting_distance) {
   float total_distance_traveled = starting_distance;
-  const int NUMBER_OF_STEPS = 64;
+  const int NUMBER_OF_STEPS = 128;
   const float MAXIMUM_TRACE_DISTANCE = 1000.0;
 
   for (int i = 0; i < NUMBER_OF_STEPS; ++i) {
@@ -75,6 +75,10 @@ Sadsad closest_surface(vec3 ro, vec3 rd, float starting_distance) {
     Surface surface = map_the_world(current_position, ro, rd);
 
     if (surface.dist < MINIMUM_HIT_DISTANCE) {
+      surface.color *= min(
+        1.0,
+        100.0 / (total_distance_traveled * total_distance_traveled)
+      );
       return Sadsad(surface, current_position);
     }
 

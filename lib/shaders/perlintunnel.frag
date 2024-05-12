@@ -19,6 +19,7 @@ const float MINIMUM_HIT_DISTANCE = 0.001;
 #pragma glslify: worley3D = require(glsl-worley/worley3D.glsl)
 #pragma glslify: plane = require(./sdf/plane.glsl)
 #pragma glslify: sphere = require(./sdf/sphere.glsl)
+#pragma glslify: box = require(./sdf/box.glsl)
 #pragma glslify: donuts = require(./perlinsphere.frag, time=time, band=band, band_center=band_center)
 // #pragma glslify: worley2x2x2 = require(glsl-worley/worley2x2x2.glsl)
 // #pragma glslify: worley2D = require(glsl-worley/worley2D.glsl)
@@ -114,26 +115,16 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   // float sphere_0 = distance_from_sphere(p, vec3(0.0), 2.0);
 
   // return sphere_0 + displacement;
-  // return min(sphereSDF(p, vec3(1.0), 2.0), p.y + 1.0);
+  // return min(sphere(p, vec3(1.0), 2.0), p.y + 1.0);
 
   // return perlin_field(p, rd, min(1.0, ceil(p.z)));
 
-  float planeDist = plane(p, vec3(0.0, 1.0, 0.0), 1.0);
-  vec3 intersection = p + rd * planeDist;
   Surface floor_plane = Surface(
-    planeDist,
-    vec3(
-      smoothstep(
-        0.65,
-        1.0,
-        max(mod(intersection.x * 5.0, 1.0), mod(intersection.z * 5.0, 1.0))
-      )
-    ),
+    box(p, vec3(0.0, -5.0, 0.0), vec3(1000.0, 0.01, 1000.0)),
+    vec3(smoothstep(0.65, 1.0, max(mod(p.x * 5.0, 1.0), mod(p.z * 5.0, 1.0)))),
     false
   );
   Surface closest_surface = floor_plane;
-
-  // closest_surface = minByDistance(closest_surface, basicSpheres(p));
 
   float cullingSphere = sphere(p, ro, starting_distance);
   float boundingSphereDistance = max(
@@ -173,10 +164,6 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
 
 #pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, time=time, Surface=Surface)
 
-float sphereSDF(vec3 p, vec3 c, float r) {
-  return length(p - c) - r;
-}
-
 vec3 rayPlaneIntersection(
   vec3 ray_origin,
   vec3 ray_direction,
@@ -209,7 +196,7 @@ const float spacing = 1.0;
 // float perlin_sphere(vec3 p, vec3 rd, float r) {
 //   vec3 center = vec3(0.0, 0.0, 0.0);
 
-//   float distance = sphereSDF(p, vec3(0.0), r);
+//   float distance = sphere(p, vec3(0.0), r);
 
 //   // float band = 0.01;
 
