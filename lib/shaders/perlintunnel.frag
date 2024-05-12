@@ -106,6 +106,24 @@ Surface minByDistance(Surface a, Surface b) {
 //   return Surface(sphere(mod(p, 3.0), vec3(1.5), 1.0), vec3(1.0), true);
 // }
 
+float sdBoxFrame(vec3 p, vec3 center, vec3 b, float e) {
+  p = p - center;
+
+  p = abs(p) - b;
+  vec3 q = abs(p + e) - e;
+  return min(
+    min(
+      length(max(vec3(p.x, q.y, q.z), 0.0)) + min(max(p.x, max(q.y, q.z)), 0.0),
+      length(max(vec3(q.x, p.y, q.z), 0.0)) + min(max(q.x, max(p.y, q.z)), 0.0)
+    ),
+    length(max(vec3(q.x, q.y, p.z), 0.0)) + min(max(q.x, max(q.y, p.z)), 0.0)
+  );
+}
+
+vec3 cmod(vec3 a, float b) {
+  return mod(a + b / 2.0, b) - b / 2.0;
+}
+
 Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   // float jitter = 2.0;
   // bool manhattanDistance = true;
@@ -126,31 +144,40 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   );
   Surface closest_surface = floor_plane;
 
-  float cullingSphere = sphere(p, ro, starting_distance);
-  float boundingSphereDistance = max(
-    sphere(p, vec3(5.0, 5.0, 290.0), 5.0) + snoise4(vec4(p / 10.0, time)) * 5.0,
-    -cullingSphere
+  closest_surface = minByDistance(
+    Surface(
+      sdBoxFrame(cmod(p, 20.0), vec3(5.0, 5.0, 0.0), vec3(1.0), 0.1),
+      vec3(1.0),
+      false
+    ),
+    closest_surface
   );
-  Surface cavern;
-  if (boundingSphereDistance > MINIMUM_HIT_DISTANCE) {
-    cavern = Surface(boundingSphereDistance, vec3(0.0), false);
-  } else {
-    cavern = perlin_cavern(p);
-  }
-  closest_surface = minByDistance(floor_plane, cavern);
 
-  float donutBoundingSphereDistance = max(
-    sphere(p, vec3(-5.0, 5.0, 290.0), 5.0) +
-      snoise4(vec4(p / 10.0, time)) * 5.0,
-    -cullingSphere
-  );
-  Surface donutSurface;
-  if (donutBoundingSphereDistance > MINIMUM_HIT_DISTANCE) {
-    donutSurface = Surface(donutBoundingSphereDistance, vec3(0.0), false);
-  } else {
-    donutSurface = Surface(donuts(p, rd), get_color(p), true);
-  }
-  closest_surface = minByDistance(closest_surface, donutSurface);
+  // float cullingSphere = sphere(p, ro, starting_distance);
+  // float boundingSphereDistance = max(
+  //   sphere(p, vec3(5.0, 5.0, 290.0), 5.0) + snoise4(vec4(p / 10.0, time)) * 5.0,
+  //   -cullingSphere
+  // );
+  // Surface cavern;
+  // if (boundingSphereDistance > MINIMUM_HIT_DISTANCE) {
+  //   cavern = Surface(boundingSphereDistance, vec3(0.0), false);
+  // } else {
+  //   cavern = perlin_cavern(p);
+  // }
+  // closest_surface = minByDistance(floor_plane, cavern);
+
+  // float donutBoundingSphereDistance = max(
+  //   sphere(p, vec3(-5.0, 5.0, 290.0), 5.0) +
+  //     snoise4(vec4(p / 10.0, time)) * 5.0,
+  //   -cullingSphere
+  // );
+  // Surface donutSurface;
+  // if (donutBoundingSphereDistance > MINIMUM_HIT_DISTANCE) {
+  //   donutSurface = Surface(donutBoundingSphereDistance, vec3(0.0), false);
+  // } else {
+  //   donutSurface = Surface(donuts(p, rd), get_color(p), true);
+  // }
+  // closest_surface = minByDistance(closest_surface, donutSurface);
 
   // float d = length(p);
 
