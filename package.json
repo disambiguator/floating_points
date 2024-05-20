@@ -25,7 +25,7 @@
   "homepage": "https://github.com/disambiguator/floating_points#readme",
   "devDependencies": {
     "@tsconfig/next": "^2.0.1",
-    "@types/lodash": "^4.14.201",
+    "@types/lodash": "^4.17.4",
     "@types/p5": "^1.7.6",
     "@types/react": "^18.3.1",
     "@types/react-responsive": "^8.0.8",
