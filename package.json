@@ -58,7 +58,7 @@
     "glsl-camera-ray": "^1.0.0",
     "glsl-hsv2rgb": "^1.0.0",
     "glsl-worley": "^1.0.2",
-    "jotai": "^2.8.0",
+    "jotai": "^2.8.2",
     "leva": "^0.9.31",
     "lodash": "^4.17.20",
     "next": "^14.2.3",
