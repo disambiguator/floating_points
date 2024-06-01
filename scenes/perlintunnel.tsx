@@ -143,6 +143,6 @@ export const perlinTunnelConfig = {
   Contents: Bars,
   name: 'perlintunnel',
   controls: (
-    <FlyControls makeDefault movementSpeed={3} rollSpeed={0.8} dragToLook />
+    <FlyControls makeDefault movementSpeed={30} rollSpeed={0.8} dragToLook />
   ),
 } as const satisfies Config;

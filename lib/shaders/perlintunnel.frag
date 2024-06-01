@@ -96,6 +96,32 @@ Surface minByDistance(Surface a, Surface b) {
   return b;
 }
 
+vec3 rayPlaneIntersection(
+  vec3 ray_origin,
+  vec3 ray_direction,
+  vec3 plane_normal,
+  vec3 plane_point
+) {
+  float t =
+    dot(plane_point - ray_origin, plane_normal) /
+    dot(ray_direction, plane_normal);
+  return ray_origin + t * ray_direction;
+}
+
+Surface perlin_field(vec3 p, vec3 rd, float z) {
+  vec3 intersection = rayPlaneIntersection(
+    p,
+    rd,
+    vec3(0.0, 0.0, 1.0),
+    vec3(0.0, 0.0, z)
+  );
+  float noise = snoise4(vec4(intersection, time / 2.0));
+  // if (noise > 0.3) {
+  float dist = noise < 0.001 ? length(intersection - p) : 1.0;
+
+  return Surface(dist, get_color(p), false);
+}
+
 // Surface basicSpheres(vec3 p) {
 //   float dist =
 //     sphere(p, vec3(5.0, 5.0, 290.0), 4.0) + snoise4(vec4(p / 10.0, time)) * 5.0;
@@ -104,6 +130,11 @@ Surface minByDistance(Surface a, Surface b) {
 //   }
 
 //   return Surface(sphere(mod(p, 3.0), vec3(1.5), 1.0), vec3(1.0), true);
+// }
+
+// float smoothmin(float a, float b, float k) {
+//   float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+//   return mix(b, a, h) - k * h * (1.0 - h);
 // }
 
 Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
@@ -117,14 +148,19 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   // return sphere_0 + displacement;
   // return min(sphere(p, vec3(1.0), 2.0), p.y + 1.0);
 
-  // return perlin_field(p, rd, min(1.0, ceil(p.z)));
-
   Surface floor_plane = Surface(
     box(p, vec3(0.0, -5.0, 0.0), vec3(1000.0, 0.01, 1000.0)),
     vec3(smoothstep(0.65, 1.0, max(mod(p.x * 5.0, 1.0), mod(p.z * 5.0, 1.0)))),
     false
   );
   Surface closest_surface = floor_plane;
+
+  // Surface field = perlin_field(
+  //   p,
+  //   rd,
+  //   max(200.0, p.z > 200.0 ? floor(p.z) : ceil(p.z))
+  // );
+  // return minByDistance(field, closest_surface);
 
   float cullingSphere = sphere(p, ro, starting_distance);
   float boundingSphereDistance = max(
@@ -163,33 +199,6 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
 }
 
 #pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, time=time, Surface=Surface)
-
-vec3 rayPlaneIntersection(
-  vec3 ray_origin,
-  vec3 ray_direction,
-  vec3 plane_normal,
-  vec3 plane_point
-) {
-  float t =
-    dot(plane_point - ray_origin, plane_normal) /
-    dot(ray_direction, plane_normal);
-  return ray_origin + t * ray_direction;
-}
-
-float perlin_field(vec3 p, vec3 rd, float z) {
-  vec3 intersection = rayPlaneIntersection(
-    p,
-    rd,
-    vec3(0.0, 0.0, 1.0),
-    vec3(0.0, 0.0, z)
-  );
-  float noise = snoise4(vec4(intersection, time / 2.0));
-  // if (noise > 0.3) {
-  if (noise < 0.001) {
-    return length(intersection - p);
-  }
-  return 1.0;
-}
 
 const float spacing = 1.0;
 
