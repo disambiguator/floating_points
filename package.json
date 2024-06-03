@@ -52,7 +52,7 @@
     "@react-three/eslint-plugin": "^0.1.1",
     "@react-three/fiber": "^8.16.7",
     "@react-three/postprocessing": "^2.16.2",
-    "@types/three": "^0.164.1",
+    "@types/three": "^0.165.0",
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
     "glsl-camera-ray": "^1.0.0",
@@ -73,7 +73,7 @@
     "react-p5-wrapper": "^4.1.2",
     "react-responsive": "^10.0.0",
     "sass": "^1.77.2",
-    "three": "^0.164.1",
+    "three": "^0.165.0",
     "three-csg-ts": "^3.2.0",
     "three-stdlib": "^2.30.1"
   }
