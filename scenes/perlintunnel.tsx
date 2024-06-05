@@ -20,6 +20,7 @@ const shader = {
     band: { value: 0.1 },
     starting_distance: { value: 1.0 },
     band_center: { value: 0.5 },
+    door_open: { value: false },
   },
   vertexShader: `
     out vec2 vUV;
@@ -64,12 +65,35 @@ const Bars = React.memo(function Bars() {
     };
   }, [camera, controls]);
 
+  const doorPosition = new Vector3(-4.5, 0.0, 297.0);
+  let atDoor = false;
   useFrame((_, delta) => {
     shader.uniforms.time.value += delta * speed.current;
     // const { volume } = useStore.getState().spectrum;
     // if (volume) {
     //   shader.uniforms.amp.value = scaleMidi(volume, 0, 2);
     // }
+
+    const distanceToDoor = camera.position.distanceTo(doorPosition);
+    console.log('distanceToDoor', distanceToDoor);
+    if (atDoor) {
+      if (distanceToDoor > 1) {
+        atDoor = false;
+      }
+    } else if (distanceToDoor < 1) {
+      atDoor = true;
+      shader.uniforms.door_open.value = !shader.uniforms.door_open.value;
+
+      shader.uniforms.band.value = scaleMidi(
+        Math.random() * 127,
+        0.00000001,
+        0.7,
+      );
+      shader.uniforms.amp.value = scaleMidi(Math.random() * 127, 0.0, 0.5);
+
+      shader.uniforms.band_center.value =
+        1 - scaleMidi(Math.random() * 127, 0, 1);
+    }
   });
 
   const [, setControls] = useControls('raymarch', () => ({

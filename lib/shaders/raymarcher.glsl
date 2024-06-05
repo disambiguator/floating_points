@@ -77,7 +77,8 @@ Sadsad closest_surface(vec3 ro, vec3 rd, float starting_distance) {
     if (surface.dist < MINIMUM_HIT_DISTANCE) {
       surface.color *= min(
         1.0,
-        100.0 / (total_distance_traveled * total_distance_traveled)
+        // 100.0 / (total_distance_traveled * total_distance_traveled)
+        100.0
       );
       return Sadsad(surface, current_position);
     }

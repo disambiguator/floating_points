@@ -6,6 +6,7 @@ uniform float time;
 uniform float band;
 uniform float band_center;
 uniform vec3 camera_position;
+uniform bool door_open;
 uniform vec3 ta;
 uniform float amp;
 out vec4 o_color;
@@ -126,31 +127,41 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   );
   Surface closest_surface = floor_plane;
 
-  float cullingSphere = sphere(p, ro, starting_distance);
-  float boundingSphereDistance = max(
-    sphere(p, vec3(5.0, 5.0, 290.0), 5.0) + snoise4(vec4(p / 10.0, time)) * 5.0,
-    -cullingSphere
-  );
-  Surface cavern;
-  if (boundingSphereDistance > MINIMUM_HIT_DISTANCE) {
-    cavern = Surface(boundingSphereDistance, vec3(0.0), false);
-  } else {
-    cavern = perlin_cavern(p);
-  }
-  closest_surface = minByDistance(floor_plane, cavern);
+  if (door_open) {
+    float cullingSphere = sphere(p, ro, starting_distance);
+    float boundingSphereDistance = max(
+      sphere(p, vec3(5.0, 5.0, 290.0), 5.0) +
+        snoise4(vec4(p / 10.0, time)) * 5.0,
+      -cullingSphere
+    );
+    Surface cavern;
+    if (boundingSphereDistance > MINIMUM_HIT_DISTANCE) {
+      cavern = Surface(boundingSphereDistance, vec3(0.0), false);
+    } else {
+      cavern = perlin_cavern(p);
+    }
+    closest_surface = minByDistance(floor_plane, cavern);
 
-  float donutBoundingSphereDistance = max(
-    sphere(p, vec3(-5.0, 5.0, 290.0), 5.0) +
-      snoise4(vec4(p / 10.0, time)) * 5.0,
-    -cullingSphere
-  );
-  Surface donutSurface;
-  if (donutBoundingSphereDistance > MINIMUM_HIT_DISTANCE) {
-    donutSurface = Surface(donutBoundingSphereDistance, vec3(0.0), false);
-  } else {
-    donutSurface = Surface(donuts(p, rd), get_color(p), true);
+    float donutBoundingSphereDistance = max(
+      sphere(p, vec3(-5.0, 5.0, 290.0), 5.0) +
+        snoise4(vec4(p / 10.0, time)) * 5.0,
+      -cullingSphere
+    );
+    Surface donutSurface;
+    if (donutBoundingSphereDistance > MINIMUM_HIT_DISTANCE) {
+      donutSurface = Surface(donutBoundingSphereDistance, vec3(0.0), false);
+    } else {
+      donutSurface = Surface(donuts(p, rd), get_color(p), true);
+    }
+    closest_surface = minByDistance(closest_surface, donutSurface);
   }
-  closest_surface = minByDistance(closest_surface, donutSurface);
+
+  Surface door = Surface(
+    sphere(p, vec3(-4.5, 0.0, 297.0), 0.5),
+    vec3(1.0),
+    false
+  );
+  closest_surface = minByDistance(closest_surface, door);
 
   // float d = length(p);
 
