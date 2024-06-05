@@ -1,4 +1,4 @@
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { NextPageContext } from 'next';
 import { CSSProperties, useEffect, useState } from 'react';
 import { rand, randInt } from 'lib/helpers';
 import styles from './blends.module.scss';
@@ -42,7 +42,7 @@ const newNode = (): Node => {
   };
 };
 
-const NodeComponent = ({ node }: { node: Node }) => {
+const NodeComponent = ({ node, images }: { node: Node; images: boolean }) => {
   const styles: CSSProperties = {
     top: `${node.top}%`,
     left: `${node.left}%`,
@@ -50,25 +50,26 @@ const NodeComponent = ({ node }: { node: Node }) => {
     height: `${node.height}px`,
     position: 'absolute',
     mixBlendMode: node.blendMode,
-    backgroundColor: node.color,
+    backgroundColor: images ? undefined : node.color,
     transition: 'top 2s, left 2s',
     transitionTimingFunction: 'ease',
   };
 
+  if (images) {
+    const imgSrc = `http://loremflickr.com/${Math.floor(node.width)}/${Math.floor(node.height)}`;
+
+    return <img src={imgSrc} style={styles} />;
+  }
   return <div style={styles}></div>;
 };
 
-export const getStaticProps = (() => {
-  const nodes = new Array(200).fill(undefined).map(newNode);
-
-  return { props: { nodes } };
-}) satisfies GetStaticProps<{
-  nodes: Node[];
-}>;
-
 export default function Blends({
   nodes,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
+  images,
+}: {
+  nodes: Node[];
+  images: boolean;
+}) {
   const [nodeState, setNodes] = useState(nodes);
 
   useEffect(() => {
@@ -109,9 +110,15 @@ export default function Blends({
       `}</style>
       <div className={styles['page']}>
         {nodeState.map((n, i) => (
-          <NodeComponent node={n} key={i} />
+          <NodeComponent node={n} key={i} images={images} />
         ))}
       </div>
     </>
   );
 }
+
+Blends.getInitialProps = (ctx: NextPageContext) => {
+  const nodes = new Array(200).fill(undefined).map(newNode);
+
+  return { nodes, images: !!ctx.query['images'] };
+};
