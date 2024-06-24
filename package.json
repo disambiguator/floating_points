@@ -41,7 +41,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "glsl-dither": "^1.0.1",
     "glslify-loader": "^2.0.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.2",
     "prettier-plugin-glsl": "^0.2.0",
     "raw-loader": "^4.0.2",
     "typescript": "^5.4.5",
