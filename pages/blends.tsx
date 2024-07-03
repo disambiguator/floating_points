@@ -58,6 +58,7 @@ const NodeComponent = ({ node, images }: { node: Node; images: boolean }) => {
   if (images) {
     const imgSrc = `http://loremflickr.com/${Math.floor(node.width)}/${Math.floor(node.height)}`;
 
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     return <img src={imgSrc} style={styles} />;
   }
   return <div style={styles}></div>;
