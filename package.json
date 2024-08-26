@@ -52,7 +52,7 @@
     "@react-three/eslint-plugin": "^0.1.1",
     "@react-three/fiber": "^8.17.5",
     "@react-three/postprocessing": "^2.16.2",
-    "@types/three": "^0.167.1",
+    "@types/three": "^0.167.2",
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
     "glsl-camera-ray": "^1.0.0",
