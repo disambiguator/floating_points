@@ -89,7 +89,7 @@ export const useAudioUrl = (url: string, enabled = true) => {
     });
     return () => {
       camera.remove(listener);
-      sound.source && sound.stop();
+      if (sound.source) sound.stop();
     };
   }, [enabled, camera, url]);
 
@@ -127,10 +127,9 @@ export function useMicrophone(enabled = true) {
         });
     } else if (audio) {
       camera.remove(audio.listener);
-      stream &&
-        stream.getTracks().forEach(function (track) {
-          track.stop();
-        });
+      stream?.getTracks().forEach(function (track) {
+        track.stop();
+      });
     }
     // TODO fix
     // eslint-disable-next-line react-hooks/exhaustive-deps
