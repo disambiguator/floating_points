@@ -32,7 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
     "eslint": "^8.56.0",
-    "eslint-config-next": "^14.2.5",
+    "eslint-config-next": "^14.2.6",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-problems": "^8.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
@@ -50,7 +50,7 @@
   "dependencies": {
     "@react-three/drei": "^9.111.3",
     "@react-three/eslint-plugin": "^0.1.1",
-    "@react-three/fiber": "^8.17.5",
+    "@react-three/fiber": "^8.17.6",
     "@react-three/postprocessing": "^2.16.2",
     "@types/three": "^0.167.2",
     "component-material": "^1.0.7",
