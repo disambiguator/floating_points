@@ -36,7 +36,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-problems": "^8.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
-    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "glsl-dither": "^1.0.1",
