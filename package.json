@@ -51,7 +51,7 @@
     "@react-three/drei": "^9.112.0",
     "@react-three/eslint-plugin": "^0.1.1",
     "@react-three/fiber": "^8.17.8",
-    "@react-three/postprocessing": "^2.16.2",
+    "@react-three/postprocessing": "^2.16.3",
     "@types/three": "^0.167.2",
     "component-material": "^1.0.7",
     "glsl-blend": "^1.0.3",
