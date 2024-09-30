@@ -238,8 +238,6 @@ const Scatter = () => {
           </div>
           <div>
             {'contact me: '}
-            <a href="mailto:paras@disambiguo.us">email</a>
-            {' | '}
             <a href="https://www.instagram.com/disambiguator/">instagram</a>
             {' | '}
             <a href="https://github.com/disambiguator">github</a>
