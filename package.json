@@ -27,7 +27,7 @@
     "@tsconfig/next": "^2.0.1",
     "@types/lodash": "^4.17.10",
     "@types/p5": "^1.7.6",
-    "@types/react": "^18.3.5",
+    "@types/react": "^18.3.11",
     "@types/react-responsive": "^8.0.8",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.4.0",
