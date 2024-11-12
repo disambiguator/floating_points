@@ -57,9 +57,11 @@ const Bars = React.memo(function Bars() {
         // @ts-expect-error - window not domelement
         controls.listenToKeyEvents(window);
       }
+      // @ts-expect-error - no idea how to get event types
       controls.addEventListener('change', update);
     }
     return () => {
+      // @ts-expect-error - no idea how to get event types
       controls?.removeEventListener('change', update);
     };
   }, [camera, controls]);
