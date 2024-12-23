@@ -1,10 +1,8 @@
-import { OrbitControls, PerformanceMonitor } from '@react-three/drei';
+import { AdaptiveDpr, OrbitControls } from '@react-three/drei';
 import { Canvas, type Props } from '@react-three/fiber';
 import { useRouter } from 'next/router';
 import { Perf } from 'r3f-perf';
-import React, { ReactNode, useMemo, useState } from 'react';
-
-const increment = 0.1;
+import React from 'react';
 
 const ENABLE_DPR_SCALING = false;
 
@@ -13,10 +11,9 @@ export const FiberScene = ({
   children,
   gl,
   ...rest
-}: Props & { controls?: ReactNode }) => {
+}: Props & { controls?: React.ReactNode }) => {
   const router = useRouter();
-  const debug = useMemo(() => !!router.query['debug'], [router]);
-  const [dpr, setDpr] = useState(0.9);
+  const debug = React.useMemo(() => !!router.query['debug'], [router]);
 
   const canvasProps: Omit<Props, 'children'> = {
     ...rest,
@@ -24,33 +21,14 @@ export const FiberScene = ({
       localClippingEnabled: true,
       ...gl,
     },
-    dpr,
+    dpr: 0.9,
   };
 
   return (
     <Canvas {...canvasProps}>
       {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        ENABLE_DPR_SCALING && (
-          <PerformanceMonitor
-            onIncline={() => {
-              setDpr((d) => {
-                const newDpr = Math.min(2, d + increment);
-                // eslint-disable-next-line no-console
-                console.log('incline', newDpr);
-                return newDpr;
-              });
-            }}
-            onDecline={() => {
-              setDpr((d) => {
-                const newDpr = Math.max(0.1, d - increment);
-                // eslint-disable-next-line no-console
-                console.log('decline', newDpr);
-                return newDpr;
-              });
-            }}
-          />
-        )
+        ENABLE_DPR_SCALING && <AdaptiveDpr />
       }
       {controls === true ? <OrbitControls makeDefault /> : controls}
       {/* {controls && <FlyControls makeDefault movementSpeed={50} />} */}
