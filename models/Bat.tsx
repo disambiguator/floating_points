@@ -8,7 +8,7 @@ Title: Bat
 */
 
 import { useAnimations, useGLTF } from '@react-three/drei';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { mergeRefs } from 'react-merge-refs';
 import * as THREE from 'three';
 import { GLTF } from 'three-stdlib';
@@ -35,11 +35,11 @@ type GLTFResult = GLTF & {
 };
 
 export default forwardModelRef(function Bat(props, ref) {
-  const group = useRef<THREE.Group>();
+  const group = React.useRef<THREE.Group>();
   const { nodes, materials, animations } = useGLTF('/bat.glb') as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
-  useEffect(() => {
+  React.useEffect(() => {
     actions.ArmatureAction?.play();
   }, [actions]);
 

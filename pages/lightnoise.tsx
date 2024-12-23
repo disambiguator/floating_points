@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import Material, { type GenericMaterial } from 'component-material';
 import { useControls } from 'leva';
-import React, { useRef } from 'react';
+import React from 'react';
 import type { PointLight } from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
@@ -14,7 +14,7 @@ type MyMaterial = GenericMaterial & {
   radius: number;
 };
 function CustomMaterial() {
-  const ref = useRef<MyMaterial>();
+  const ref = React.useRef<MyMaterial>();
   const viewport = useThree((t) => t.viewport);
   const { depth } = useControls({
     depth: { value: 100, min: 0, max: 1000 },
@@ -57,7 +57,7 @@ function CustomMaterial() {
 
 function Scene() {
   const size = useThree((t) => t.size);
-  const lightRef = useRef<PointLight>(null);
+  const lightRef = React.useRef<PointLight>(null);
 
   // useFrame(({ clock }) => {
   //   lightRef.current!.position.y = Math.sin(clock.elapsedTime) * 100;

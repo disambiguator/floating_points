@@ -1,5 +1,5 @@
 import { sample } from 'lodash';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { randInt } from 'lib/helpers';
 
 const translateDistance = 1;
@@ -42,7 +42,7 @@ const setNewFragmentWidth = () => randInt(1, 6);
 const Scatter = () => {
   let fragmentWidth = setNewFragmentWidth();
   let timer = 0;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
   let slopeX = 0;
   let slopeY = 0;
   let points: [Point, Point];
@@ -133,7 +133,7 @@ const Scatter = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     reset();
 
     const animateInterval = window.setInterval(animate, 1000 / 60);

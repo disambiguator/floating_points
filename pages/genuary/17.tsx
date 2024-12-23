@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useMemo } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
@@ -24,7 +24,7 @@ const Scene = React.memo(function Scene() {
     striations: { value: 30, min: 0, max: 50 },
     height: { value: 30, min: 0, max: 200 },
   });
-  const shader = useMemo(Shader, []);
+  const shader = React.useMemo(Shader, []);
   useFrame(({ clock }) => {
     shader.uniforms.time.value = clock.elapsedTime;
   });

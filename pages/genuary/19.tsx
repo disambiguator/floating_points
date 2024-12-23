@@ -1,6 +1,6 @@
 import { Effects, Text } from '@react-three/drei';
 import { extend, useFrame, useThree } from '@react-three/fiber';
-import React, { useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { AfterimagePass } from 'three-stdlib';
 import Page from 'components/page';
@@ -49,7 +49,7 @@ declare class AfterimagePassType extends AfterimagePass {
 
 const Postprocessing = () => {
   const viewport = useThree((t) => t.viewport);
-  const effectsRef = useRef<AfterimagePassType>(null);
+  const effectsRef = React.useRef<AfterimagePassType>(null);
   useFrame(({ clock }) => {
     effectsRef.current!.uniforms.time.value = clock.elapsedTime;
   });
@@ -66,7 +66,7 @@ const Postprocessing = () => {
 };
 
 export const Shapes = React.memo(function Shapes() {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = React.useRef<THREE.Group>(null);
   useFrame(() => {
     groupRef.current!.rotation.z += 0.01;
   });

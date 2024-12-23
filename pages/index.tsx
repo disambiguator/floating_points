@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { rand, randInt } from 'lib/helpers';
 import styles from './index.module.scss';
 import assetUrl from '../lib/assetUrl';
@@ -130,7 +130,7 @@ const setNewFragmentWidth = () => randInt(1, 16);
 const Scatter = () => {
   const fragmentWidth = setNewFragmentWidth();
   let timer = 0;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
   let slopeX = 0;
   let slopeY = 0;
   let points: [Point, Point];
@@ -203,7 +203,7 @@ const Scatter = () => {
     timer++;
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     updateDimensions();
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;

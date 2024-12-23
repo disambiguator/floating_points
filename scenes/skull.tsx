@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
-import React, { useCallback, useRef, useState } from 'react';
+import React from 'react';
 import {
   Color,
   Group,
@@ -46,10 +46,12 @@ const objects = [
 ] as const;
 
 function Model() {
-  const ref = useRef<Group>(null);
-  const materialRef = useRef<MeshStandardMaterial>(null);
-  const [[Obj, props], setObj] = useState<(typeof objects)[0]>(objects[0]);
-  const nextObject = useCallback(() => {
+  const ref = React.useRef<Group>(null);
+  const materialRef = React.useRef<MeshStandardMaterial>(null);
+  const [[Obj, props], setObj] = React.useState<(typeof objects)[0]>(
+    objects[0],
+  );
+  const nextObject = React.useCallback(() => {
     setObj((o: any): any => objects[(objects.indexOf(o) + 1) % objects.length]);
   }, [setObj]);
 
@@ -77,8 +79,8 @@ function Model() {
 }
 
 const Halloween = React.memo(function Dusen() {
-  const groupRef = useRef<Group>(null);
-  const lightsRef = useRef<PointLight[]>([]);
+  const groupRef = React.useRef<Group>(null);
+  const lightsRef = React.useRef<PointLight[]>([]);
 
   const [, setControl] = useControls(() => ({
     light: {
@@ -93,7 +95,7 @@ const Halloween = React.memo(function Dusen() {
     },
   }));
 
-  const setSize = useCallback((v: number) => {
+  const setSize = React.useCallback((v: number) => {
     groupRef.current!.scale.set(v, v, v);
   }, []);
 

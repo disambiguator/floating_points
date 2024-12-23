@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
@@ -30,13 +30,13 @@ const Box = ({
   data: Data;
   index: number;
 }) => {
-  const canvasTextureRef = useRef<THREE.CanvasTexture>(null);
+  const canvasTextureRef = React.useRef<THREE.CanvasTexture>(null);
   const canvas = document.createElement('canvas');
 
   canvas.width = width;
   canvas.height = height;
 
-  useEffect(() => {
+  React.useEffect(() => {
     const ctx = canvas.getContext('2d')!;
 
     const interval = setInterval(() => {
@@ -132,7 +132,7 @@ const Rain = () => {
     particles.push(newParticle);
   }
   const mat = new THREE.PointsMaterial({ color: 0x0033ff, size: 10 });
-  const positionAttributeRef = useRef<THREE.BufferAttribute>(null);
+  const positionAttributeRef = React.useRef<THREE.BufferAttribute>(null);
 
   useFrame(() => {
     particles.forEach((p) => {
@@ -172,7 +172,7 @@ const Rain = () => {
 };
 
 const Boxes = () => {
-  const boxes: JSX.Element[] = [];
+  const boxes: React.JSX.Element[] = [];
   let index = 0;
   const htttData = [
     [
@@ -317,7 +317,7 @@ const Boxes = () => {
     });
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     const interval = setInterval(() => {
       previousHappy = happy;
       previousBirthday = birthday;
@@ -335,7 +335,7 @@ const Boxes = () => {
 const HTTF = () => {
   const scene = useThree((t) => t.scene);
 
-  useEffect(() => {
+  React.useEffect(() => {
     scene.background = new THREE.Color(0x7ec0ee);
   }, [scene]);
 
@@ -350,7 +350,7 @@ const HTTF = () => {
 };
 
 export default function HTTFPage() {
-  const [started, start] = useState(false);
+  const [started, start] = React.useState(false);
 
   return (
     <Page

@@ -1,11 +1,11 @@
 import { useFrame } from '@react-three/fiber';
-import type { BoxData } from 'pages/cubedraw';
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
+import type { BoxData } from 'pages/cubedraw';
 import type { Config } from '../lib/store';
 
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
-  const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>(null);
+  const meshRef = React.useRef<THREE.Mesh<THREE.BoxGeometry>>(null);
   useFrame(({ clock }) => {
     const mesh = meshRef.current;
     if (!mesh) return;
@@ -23,8 +23,8 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 };
 
 export const CubeField = () => {
-  const [boxes, setBoxes] = useState<JSX.Element[]>([]);
-  const lightRef = useRef<THREE.PointLight>(null);
+  const [boxes, setBoxes] = React.useState<React.JSX.Element[]>([]);
+  const lightRef = React.useRef<THREE.PointLight>(null);
 
   useFrame(({ clock, camera }, delta) => {
     lightRef.current!.translateZ(-delta * 500);

@@ -1,7 +1,7 @@
 import { Effects, OrbitControls, useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { JSX, useEffect, useMemo, useRef } from 'react';
+import React from 'react';
 import type * as THREE from 'three';
 import type { GLTF, OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';
@@ -27,8 +27,8 @@ type GLTFResult = GLTF & {
   };
 };
 
-function Model(props: JSX.IntrinsicElements['group']) {
-  const group = useRef<THREE.Group>(null);
+function Model(props: React.JSX.IntrinsicElements['group']) {
+  const group = React.useRef<THREE.Group>(null);
   const { nodes, materials } = useGLTF(
     '/male_face/scene.gltf',
   ) as unknown as GLTFResult;
@@ -64,11 +64,11 @@ const Dither = () => ({
 
 export const Shapes = React.memo(function Shapes() {
   const gl = useThree((t) => t.gl);
-  const controlsRef = useRef<OrbitControlsImpl>(null);
-  const shader = useMemo(Dither, []);
-  const groupRef = useRef<THREE.Group>(null);
+  const controlsRef = React.useRef<OrbitControlsImpl>(null);
+  const shader = React.useMemo(Dither, []);
+  const groupRef = React.useRef<THREE.Group>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     gl.setPixelRatio(0.4);
   }, [gl]);
 

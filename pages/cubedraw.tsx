@@ -1,5 +1,5 @@
 import { type ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import React, { JSX, useRef, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import Page from 'components/page';
 import { FiberScene } from 'components/scene';
@@ -11,7 +11,7 @@ export type BoxData = {
   creationTime: number;
 };
 const Box = ({ position, color, rotation, creationTime }: BoxData) => {
-  const meshRef = useRef<THREE.Mesh<THREE.BoxGeometry>>(null);
+  const meshRef = React.useRef<THREE.Mesh<THREE.BoxGeometry>>(null);
   useFrame(({ clock }) => {
     const mesh = meshRef.current!;
     const factor = Math.sin(creationTime + clock.elapsedTime / 3);
@@ -33,7 +33,7 @@ const Box = ({ position, color, rotation, creationTime }: BoxData) => {
 // });
 
 const CubeDraw = () => {
-  const [boxes, setBoxes] = useState<JSX.Element[]>([]);
+  const [boxes, setBoxes] = React.useState<React.JSX.Element[]>([]);
   const clock = useThree((t) => t.clock);
   const addCube = (e: ThreeEvent<PointerEvent>) => {
     const intersection = e.intersections[0].point.toArray() as [

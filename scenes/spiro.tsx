@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import { button, useControls } from 'leva';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React from 'react';
 import type * as THREE from 'three';
 import { randInt } from 'lib/helpers';
 import { useRefState } from 'lib/hooks';
@@ -71,9 +71,9 @@ const SpiroContents = () => {
     return s;
   }, []);
 
-  const positions = useRef(initPositions());
+  const positions = React.useRef(initPositions());
   const [speed, setSpeed] = useRefState(1);
-  const newPositions = useCallback(() => {
+  const newPositions = React.useCallback(() => {
     positions.current = initPositions();
   }, []);
 
@@ -111,9 +111,9 @@ const SpiroContents = () => {
     numVertices: { min: 0, max: 1000, value: MAX_VERTICES },
   });
 
-  useMidi(useMemo(() => ({ function1: newPositions }), [newPositions]));
+  useMidi(React.useMemo(() => ({ function1: newPositions }), [newPositions]));
 
-  const positionAttributeRef = useRef<THREE.BufferAttribute>(null);
+  const positionAttributeRef = React.useRef<THREE.BufferAttribute>(null);
 
   useFrame(({ clock }) => {
     positions.current.forEach((p) => {

@@ -1,15 +1,15 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { memo, useMemo } from 'react';
+import React from 'react';
 import { Vector3 } from 'three';
 import type { Config } from 'lib/store';
 import Shader from '../lib/shaders/landscape';
 
 const colorVector = new Vector3();
 
-const Landscape = memo(function Dusen() {
+const Landscape = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const shader = useMemo(Shader, []);
+  const shader = React.useMemo(Shader, []);
   useFrame(({ clock }) => {
     const time = (clock.elapsedTime / 2) % 1;
     if (time < shader.uniforms.time.value) {

@@ -2,7 +2,7 @@ import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
-import React, { useMemo, useRef } from 'react';
+import React from 'react';
 import type { Line2 } from 'three-stdlib';
 import { useRefState } from 'lib/hooks';
 import { scaleMidi } from '../lib/midi';
@@ -36,8 +36,8 @@ const Cloth = React.memo(function Cloth() {
       onChange: setFreezeColor,
     },
   });
-  const lineRef = useRef<Line2>(null);
-  const noise2D = useMemo(() => makeNoise2D(Date.now()), []);
+  const lineRef = React.useRef<Line2>(null);
+  const noise2D = React.useMemo(() => makeNoise2D(Date.now()), []);
   useSpectrum({ amplitude: setAmplitude });
 
   useFrame(({ clock, size }) => {

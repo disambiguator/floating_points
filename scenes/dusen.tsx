@@ -1,14 +1,14 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { memo, useMemo } from 'react';
+import React from 'react';
 import { scaleMidi, useMidi } from '../lib/midi';
 import DusenShader from '../lib/shaders/dusen';
 import { type Config, useSpectrum } from '../lib/store';
 
-export const Dusen = memo(function Dusen() {
+export const Dusen = React.memo(function Dusen() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const shader = useMemo(DusenShader, []);
+  const shader = React.useMemo(DusenShader, []);
   const [{ speed }, setControls] = useControls('dusen', () => ({
     radius: {
       value: 27,
@@ -27,7 +27,7 @@ export const Dusen = memo(function Dusen() {
   });
 
   useMidi(
-    useMemo(
+    React.useMemo(
       () => ({
         1: (value, modifiers) => {
           if (modifiers['shift']) {

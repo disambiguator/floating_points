@@ -2,7 +2,7 @@ import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { isEmpty } from 'lodash';
-import React, { useRef } from 'react';
+import React from 'react';
 import type { AfterimagePass, Line2 } from 'three-stdlib';
 import { SAMPLE_LENGTH } from '../lib/audio';
 import { scaleMidi } from '../lib/midi';
@@ -58,7 +58,7 @@ declare class AfterimagePassType extends AfterimagePass {
 }
 
 const Effects = () => {
-  const ref = useRef<AfterimagePassType>(null);
+  const ref = React.useRef<AfterimagePassType>(null);
 
   useControls('bars', {
     damp: {
@@ -88,7 +88,7 @@ const Effects = () => {
 
 const color = 'cyan';
 const Bars = React.memo(function Bars() {
-  const lineRef = useRef<Line2>(null);
+  const lineRef = React.useRef<Line2>(null);
 
   const { lineWidth } = useControls('bars', {
     lineWidth: { value: 10, min: 0, max: 127 },

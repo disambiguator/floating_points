@@ -1,6 +1,6 @@
 import { DataInput, StoreType } from 'leva/dist/declarations/src/types';
 import { noop } from 'lodash';
-import { useEffect } from 'react';
+import React from 'react';
 import {
   type ControlChangeMessageEvent,
   type NoteMessageEvent,
@@ -155,7 +155,7 @@ export const initMidiController = async (): Promise<() => void> => {
 };
 
 export const useMidi = (config: MidiConfig) => {
-  useEffect(() => {
+  React.useEffect(() => {
     if (!WebMidi.enabled) {
       return;
     }
@@ -201,7 +201,7 @@ export const useMidiTwo = (
   folder: string,
   config: Record<string, string>,
 ) => {
-  useEffect(() => {
+  React.useEffect(() => {
     if (!WebMidi.enabled) {
       return;
     }
@@ -257,7 +257,7 @@ export const useMidiTwo = (
     };
   }, [store, folder, config]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!WebMidi.enabled) {
       return;
     }

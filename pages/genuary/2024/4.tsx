@@ -1,6 +1,6 @@
 import { ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { GLSL3, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three-stdlib';
 import Page from 'components/page';
@@ -35,7 +35,7 @@ const Bars = React.memo(function Bars() {
   const camera = useThree((t) => t.camera as PerspectiveCamera);
   const controls = useThree((t) => t.controls);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const update = () => {
       shader.uniforms.camera_position.value = camera.position;
       if (controls instanceof OrbitControls) {

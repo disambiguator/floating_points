@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React from 'react';
 import { BoxGeometry, Group, type Mesh, Uniform, Vector3 } from 'three';
 import { type MidiConfig, scaleMidi, useMidi } from '../lib/midi';
 import { type Config, ray, useSpectrum } from '../lib/store';
@@ -62,10 +62,10 @@ const Box = ({
   displacement: Float32Array;
   material: JSX.Element;
 }) => {
-  const meshRef = useRef<Mesh>(null);
-  const geometryRef = useRef<BoxGeometry>(null);
+  const meshRef = React.useRef<Mesh>(null);
+  const geometryRef = React.useRef<BoxGeometry>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const m = meshRef.current!;
     m.rotation.x += (Math.PI / 64) * Math.random() * 100;
     m.rotation.y += (Math.PI / 64) * Math.random() * 100;
@@ -100,15 +100,15 @@ for (let i = 0; i < renderSpeed; i++) {
 }
 
 export const Shapes = React.memo(function Shapes() {
-  const groupRef = useRef<Group>(null!);
-  const shader = useMemo(() => {
+  const groupRef = React.useRef<Group>(null!);
+  const shader = React.useMemo(() => {
     const s = Shader();
     s.uniforms.origin.value = ray.origin;
     s.uniforms.direction.value = ray.direction;
     return s;
   }, []);
 
-  const material = useMemo(() => {
+  const material = React.useMemo(() => {
     return <shaderMaterial args={[shader]} />;
   }, [shader]);
 
@@ -130,7 +130,7 @@ export const Shapes = React.memo(function Shapes() {
   });
 
   useMidi(
-    useMemo(
+    React.useMemo(
       (): MidiConfig => ({
         1: (value, modifiers) => {
           if (modifiers['shift']) {
@@ -146,7 +146,7 @@ export const Shapes = React.memo(function Shapes() {
     groupRef.current.rotateX(-0.005);
   });
 
-  const cubes = useMemo(
+  const cubes = React.useMemo(
     () =>
       Array(500)
         .fill(undefined)

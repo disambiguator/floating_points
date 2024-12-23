@@ -6,7 +6,7 @@ import {
   useThree,
 } from '@react-three/fiber';
 import { button, folder, levaStore, useControls } from 'leva';
-import { useEffect, useMemo, useRef } from 'react';
+import React from 'react';
 import { NearestFilter, Vector2 } from 'three';
 import { AfterimagePass, UnrealBloomPass } from 'three-stdlib';
 import { scaleMidi, useMidi, useMidiTwo } from 'lib/midi';
@@ -54,7 +54,7 @@ const midiConfig = {
 };
 export const useTunnelEffects = () => {
   // Could use r3f's extend here if we go back to only using this declaratively.
-  const pass = useMemo<AfterimagePassType>(() => {
+  const pass = React.useMemo<AfterimagePassType>(() => {
     const p = new AfterimagePass(0.96, TunnelShader);
     p.textureComp.texture.minFilter = NearestFilter;
     // p.textureComp.texture.magFilter = LinearFilter;
@@ -62,7 +62,7 @@ export const useTunnelEffects = () => {
   }, []);
   const viewport = useThree((three) => three.viewport);
   const size = useThree((three) => three.size);
-  const trailNoiseTimeRef = useRef(0);
+  const trailNoiseTimeRef = React.useRef(0);
 
   const [, setControl] = useControls('postprocessing', () => ({
     trails: {
@@ -193,7 +193,7 @@ export const useTunnelEffects = () => {
 
   const gl = useThree((three) => three.gl);
 
-  useEffect(() => {
+  React.useEffect(() => {
     pass.uniforms.aspect.value = viewport.aspect;
     pass.uniforms.resolution.value = new Vector2(
       size.width,
@@ -211,7 +211,7 @@ export const Effects = ({
   CustomEffects: Config['CustomEffects'] | undefined;
 }) => {
   const tunnelEffects = useTunnelEffects();
-  const bloomRef = useRef<UnrealBloomPass>(null);
+  const bloomRef = React.useRef<UnrealBloomPass>(null);
   const [, setControl] = useControls('postprocessing', () => ({
     bloom: {
       value: 0,

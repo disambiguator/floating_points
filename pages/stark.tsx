@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useRef } from 'react';
+import React from 'react';
 import { DataTexture, RedFormat, ShaderMaterial } from 'three';
 import StarkShader from 'lib/shaders/stark';
 import Page from '../components/page';
@@ -10,7 +10,9 @@ import { useMicrophone } from '../lib/audio';
 const Shaders = React.memo(function Shader() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const ref = useRef<ShaderMaterial & ReturnType<typeof StarkShader>>(null);
+  const ref = React.useRef<ShaderMaterial & ReturnType<typeof StarkShader>>(
+    null,
+  );
   const audio = useMicrophone();
   const { s } = useControls({ s: { value: 0.02, min: 0, max: 0.1 } });
 

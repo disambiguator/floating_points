@@ -1,6 +1,6 @@
 import { Effects, Instance, Instances, OrbitControls } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import React, { useMemo, useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Page from 'components/page';
@@ -71,15 +71,15 @@ const KaleidoscopeShader = {
 };
 
 export const Shapes = React.memo(function Shapes() {
-  const controlsRef = useRef<OrbitControlsImpl>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const controlsRef = React.useRef<OrbitControlsImpl>(null);
+  const materialRef = React.useRef<THREE.ShaderMaterial>(null);
   useFrame(({ clock }) => {
     const controls = controlsRef.current!;
     controls.setAzimuthalAngle(clock.elapsedTime * 0.6);
     controls.setPolarAngle(clock.elapsedTime * 0.3);
   });
 
-  const cubes = useMemo(() => {
+  const cubes = React.useMemo(() => {
     const c = Array<React.JSX.Element>(numCubes);
     for (let i = 0; i < numCubes; i++) {
       c[i] = <BoxInstance key={i} />;

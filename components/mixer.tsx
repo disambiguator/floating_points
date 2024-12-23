@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Leva, button, folder, levaStore, useControls } from 'leva';
 import { noop } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import NewWindow from 'react-new-window';
 import { useRefState } from 'lib/hooks';
 import { useIsMobile } from 'lib/mediaQueries';
@@ -62,7 +62,7 @@ const VolumeControl = React.memo(function VolumeControl() {
     [volumeControls],
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (volumeControl) {
       return store.sub(volumeAtom, () => {
         volumeControls[volumeControl].control(store.get(volumeAtom));
@@ -71,7 +71,7 @@ const VolumeControl = React.memo(function VolumeControl() {
     return undefined;
   }, [volumeControl, volumeControls]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (bassControl) {
       return store.sub(bassAtom, () => {
         volumeControls[bassControl].control(store.get(bassAtom));
@@ -80,7 +80,7 @@ const VolumeControl = React.memo(function VolumeControl() {
     return undefined;
   }, [bassControl, volumeControls]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (trebleControl) {
       return store.sub(trebleAtom, () => {
         volumeControls[trebleControl].control(store.get(trebleAtom));
@@ -94,11 +94,11 @@ const VolumeControl = React.memo(function VolumeControl() {
 
 export const Controls = () => {
   const isMobile = useIsMobile();
-  const [poppedOut, setPoppedOut] = useState(false);
-  const popOut = useCallback(() => {
+  const [poppedOut, setPoppedOut] = React.useState(false);
+  const popOut = React.useCallback(() => {
     setPoppedOut(true);
   }, []);
-  const popIn = useCallback(() => {
+  const popIn = React.useCallback(() => {
     setPoppedOut(false);
   }, []);
 
@@ -146,7 +146,7 @@ const Scene = ({ config }: { config: Config }) => {
     },
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     const shiftPress = (e: KeyboardEvent) => {
       setShiftPressed(e.shiftKey);
     };
@@ -165,7 +165,7 @@ const Scene = ({ config }: { config: Config }) => {
     }
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     setExportScene(() => {
       const href = gl.domElement.toDataURL();
       const link = document.createElement('a');
@@ -241,7 +241,7 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
     }
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     return store.sub(spectrumSelector, () => {
       setControl({
         volume: store.get(volumeAtom),
@@ -260,7 +260,7 @@ const GuiControls = ({ name }: { name: Config['name'] }) => {
   });
 
   useMidi(
-    useMemo(
+    React.useMemo(
       (): MidiConfig => ({
         button1: () => {
           setControl({ Contents: sceneNames[0] });
@@ -312,7 +312,7 @@ export default function MixerPage({ name }: { name: SceneName }) {
   const setConfig = useSetAtom(setConfigAtom);
 
   // Initialize function. When moving to React 18 this may be a problem if it is run twice.
-  useEffect(() => {
+  React.useEffect(() => {
     let cleanup = noop;
     initMidiController()
       .then((cleanupMidi) => {
@@ -324,7 +324,7 @@ export default function MixerPage({ name }: { name: SceneName }) {
     return cleanup;
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setConfig(scenes[name]);
   }, [setConfig, name]);
 

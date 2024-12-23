@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { shaders } from 'components/scenes';
 import type { Config } from 'lib/store';
 
@@ -15,7 +15,10 @@ const Dusen = React.memo(function Dusen() {
     },
   });
 
-  const shader = useMemo(() => shaders[name as keyof typeof shaders](), [name]);
+  const shader = React.useMemo(
+    () => shaders[name as keyof typeof shaders](),
+    [name],
+  );
 
   useFrame(({ clock }) => {
     shader.uniforms.time.value = clock.elapsedTime;

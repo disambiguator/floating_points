@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import { JSX, useRef } from 'react';
+import React from 'react';
 import { Group } from 'three';
 
 export type Seed = {
@@ -16,9 +16,9 @@ export const Orbits = ({
   children,
 }: {
   seed: Seed;
-  children: JSX.Element;
+  children: React.JSX.Element;
 }) => {
-  const groupRef = useRef<Group>(null);
+  const groupRef = React.useRef<Group>(null);
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;

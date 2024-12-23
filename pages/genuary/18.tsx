@@ -97,7 +97,7 @@ const Scene = React.memo(function Scene() {
     Shader.uniforms.time.value = clock.elapsedTime;
   });
   // const gl = useThree((t) => t.gl);
-  // useEffect(() => {
+  // React.useEffect(() => {
   //   gl.setPixelRatio(0.1);
   // }, [gl]);
 

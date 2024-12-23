@@ -1,6 +1,6 @@
 import { useThree } from '@react-three/fiber';
 import { mean } from 'lodash';
-import { useEffect, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 
 export type Audio = {
@@ -68,9 +68,9 @@ export const analyseSpectrum = (
 
 export const useAudioUrl = (url: string, enabled = true) => {
   const camera = useThree((t) => t.camera);
-  const [audio, setAudio] = useState<Audio>();
+  const [audio, setAudio] = React.useState<Audio>();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!enabled) return;
 
     const audioLoader = new THREE.AudioLoader();
@@ -98,10 +98,10 @@ export const useAudioUrl = (url: string, enabled = true) => {
 
 export function useMicrophone(enabled = true) {
   const camera = useThree((t) => t.camera);
-  const [audio, setAudio] = useState<Audio>();
-  const [stream, setStream] = useState<MediaStream>();
+  const [audio, setAudio] = React.useState<Audio>();
+  const [stream, setStream] = React.useState<MediaStream>();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (enabled) {
       const listener = new THREE.AudioListener();
       camera.add(listener);

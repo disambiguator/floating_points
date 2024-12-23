@@ -1,6 +1,6 @@
 import { Effects } from '@react-three/drei';
 import { extend, useThree } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { AfterimagePass, type ShaderPass } from 'three-stdlib';
 import Page from 'components/page';
@@ -81,12 +81,12 @@ const ValentineShader = {
 };
 
 const Quad = () => {
-  const ref = useRef<ShaderPass>(null);
+  const ref = React.useRef<ShaderPass>(null);
   const aspect = useThree((t) => t.viewport.aspect);
   const video: HTMLVideoElement = document.getElementById(
     'webcam',
   ) as HTMLVideoElement;
-  useEffect(() => {
+  React.useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({
         video: { width: 1280, height: 720, facingMode: 'user' },

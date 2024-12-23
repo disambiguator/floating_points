@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next';
-import { CSSProperties, useEffect, useState } from 'react';
+import React from 'react';
 import { rand, randInt } from 'lib/helpers';
 import styles from './blends.module.scss';
 
@@ -8,11 +8,11 @@ type Node = {
   left: number;
   width: number;
   height: number;
-  blendMode: CSSProperties['mixBlendMode'];
+  blendMode: React.CSSProperties['mixBlendMode'];
   color: string;
 };
 
-const allBlendModes: CSSProperties['mixBlendMode'][] = [
+const allBlendModes: React.CSSProperties['mixBlendMode'][] = [
   // 'normal',
   'multiply',
   'screen',
@@ -43,7 +43,7 @@ const newNode = (): Node => {
 };
 
 const NodeComponent = ({ node, images }: { node: Node; images: boolean }) => {
-  const styles: CSSProperties = {
+  const styles: React.CSSProperties = {
     top: `${node.top}%`,
     left: `${node.left}%`,
     width: `${node.width}px`,
@@ -71,9 +71,9 @@ export default function Blends({
   nodes: Node[];
   images: boolean;
 }) {
-  const [nodeState, setNodes] = useState(nodes);
+  const [nodeState, setNodes] = React.useState(nodes);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const interval = setInterval(() => {
       setNodes((oldNodes) => {
         return oldNodes.map((oldNode) => {

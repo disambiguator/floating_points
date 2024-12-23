@@ -35,7 +35,7 @@ export const Shapes = React.memo(function Shapes() {
   const screenCopy1 = useFBO();
   const screenCopy2 = useFBO();
   const material = new THREE.MeshBasicMaterial();
-  //   const rendererRef = useRef(null);
+  //   const rendererRef = React.useRef(null);
 
   let i = 0;
   useFrame((state) => {

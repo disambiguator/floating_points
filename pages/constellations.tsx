@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { BufferGeometry } from 'three';
 import Page from '../components/page';
@@ -69,11 +69,11 @@ class Ray {
 }
 
 const Constellations = React.memo(function Constellations() {
-  const t = useRef(0);
-  const raysRef = useRef<Ray[]>([]);
+  const t = React.useRef(0);
+  const raysRef = React.useRef<Ray[]>([]);
   const { scene } = useThree();
 
-  const material = useMemo(() => {
+  const material = React.useMemo(() => {
     const pointShader = {
       uniforms: {
         size: { value: 10 },
@@ -100,7 +100,7 @@ const Constellations = React.memo(function Constellations() {
 
     return m;
   }, []);
-  useEffect(() => {
+  React.useEffect(() => {
     scene.background = new THREE.Color(8 / 255, 38 / 255, 69 / 255);
     const rays = raysRef.current;
     return () => {

@@ -1,14 +1,14 @@
 import { atom, getDefaultStore, useSetAtom } from 'jotai';
 import { uniqueId } from 'lodash';
-import { type ComponentType, ReactNode, useEffect } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { Spectrum } from './audio';
 
 export type Config = {
   name: string;
-  CustomEffects?: ComponentType;
-  Contents: ComponentType;
-  controls?: ReactNode;
+  CustomEffects?: React.ComponentType;
+  Contents: React.ComponentType;
+  controls?: React.ReactNode;
 };
 
 export const store = getDefaultStore();
@@ -68,5 +68,5 @@ export const { ray } = raycaster;
 export const useSpectrum = (values: Record<string, (n: number) => void>) => {
   const addVolumeControl = useSetAtom(addVolumeControlAtom);
 
-  useEffect(() => addVolumeControl(values), [addVolumeControl, values]);
+  React.useEffect(() => addVolumeControl(values), [addVolumeControl, values]);
 };

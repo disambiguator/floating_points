@@ -1,12 +1,6 @@
 import { Box } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { FiberScene } from 'components/scene';
 import { rand, randInt } from 'lib/helpers';
@@ -24,10 +18,10 @@ const Electron = React.memo(function Electron({
   direction: THREE.Vector3;
   remove: () => void;
 }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = React.useRef<THREE.Mesh>(null);
   const scene = useThree((t) => t.scene);
 
-  const raycaster = useMemo(
+  const raycaster = React.useMemo(
     () => new THREE.Raycaster(undefined, undefined, 0, 1),
     [],
   );
@@ -78,7 +72,7 @@ const randomPosition = (): {
 };
 
 const Eclipse = React.memo(function Shader() {
-  const [electrons, setElectrons] = useState<
+  const [electrons, setElectrons] = React.useState<
     {
       key: string;
       remove: () => void;
@@ -87,24 +81,24 @@ const Eclipse = React.memo(function Shader() {
     }[]
   >([]);
 
-  const removeElectron = useCallback(
+  const removeElectron = React.useCallback(
     (key: string) => () => {
       setElectrons((electrons) => electrons.filter((e) => e.key !== key));
     },
     [],
   );
 
-  const newElectron = useCallback(() => {
+  const newElectron = React.useCallback(() => {
     const key = String(Math.random());
     return { key, remove: removeElectron(key), ...randomPosition() };
   }, [removeElectron]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const initElectrons = Array(200).fill(0).map(newElectron);
     setElectrons(initElectrons);
   }, [newElectron, removeElectron]);
 
-  // const i = useRef(0);
+  // const i = React.useRef(0);
   useFrame(() => {
     // i.current++;
     // if (i.current % 10 !== 0) return;

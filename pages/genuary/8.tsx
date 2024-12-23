@@ -1,7 +1,7 @@
 import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { makeNoise2D } from 'open-simplex-noise';
-import React, { useMemo, useRef, useState } from 'react';
+import React from 'react';
 import type { Line2 } from 'three-stdlib';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
@@ -12,9 +12,9 @@ const height = 50;
 const noise = makeNoise2D(123);
 
 const Eclipse = React.memo(function Shader() {
-  const lineRef = useRef<Line2>(null);
-  const [points, setPoints] = useState<[number, number, number][]>([]);
-  const [index, setIndex] = useState(0);
+  const lineRef = React.useRef<Line2>(null);
+  const [points, setPoints] = React.useState<[number, number, number][]>([]);
+  const [index, setIndex] = React.useState(0);
 
   useFrame(() => {
     const line = lineRef.current;
@@ -37,7 +37,7 @@ const Eclipse = React.memo(function Shader() {
     }
   });
 
-  const transformedPoints: [number, number, number][] = useMemo(() => {
+  const transformedPoints: [number, number, number][] = React.useMemo(() => {
     return points.map((p, i) => {
       return [p[0], Math.max(p[1], height - (10 * (index - i)) / height), p[2]];
     });

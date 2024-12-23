@@ -1,12 +1,5 @@
 import { makeNoise2D } from 'open-simplex-noise';
-import React, {
-  JSX,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React from 'react';
 import styles from './7.module.scss';
 
 const squares = ['🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '🟫', '⬛'];
@@ -52,10 +45,10 @@ const generateLine = (index: number) => {
 };
 
 function Wordle({ height }: { height: number; width: number }) {
-  const [lines, setLines] = useState<JSX.Element[]>([]);
-  const numLines = useMemo(() => Math.floor((height - 1) / 32), [height]);
-  const lineIndex = useRef<number>(0);
-  const style: React.CSSProperties = useMemo(() => {
+  const [lines, setLines] = React.useState<React.JSX.Element[]>([]);
+  const numLines = React.useMemo(() => Math.floor((height - 1) / 32), [height]);
+  const lineIndex = React.useRef<number>(0);
+  const style: React.CSSProperties = React.useMemo(() => {
     const l = (height - 1) / Math.max(lines.length, numLines);
 
     const letterSpacing = Math.max(
@@ -79,7 +72,7 @@ function Wordle({ height }: { height: number; width: number }) {
     };
   }, [lines.length, height, numLines]);
 
-  const animate = useCallback(() => {
+  const animate = React.useCallback(() => {
     const i = lineIndex.current++;
 
     if (i < 6) return;
@@ -116,7 +109,7 @@ function Wordle({ height }: { height: number; width: number }) {
     });
   }, [numLines]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const animateInterval = window.setInterval(animate, 100);
 
     return () => {
@@ -131,8 +124,8 @@ function Wordle({ height }: { height: number; width: number }) {
 }
 
 export default function WorldlePage() {
-  const [size, setSize] = useState<[number, number] | undefined>();
-  useEffect(() => {
+  const [size, setSize] = React.useState<[number, number] | undefined>();
+  React.useEffect(() => {
     setSize([innerHeight, innerWidth]);
   }, []);
 

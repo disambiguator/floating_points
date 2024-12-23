@@ -1,5 +1,5 @@
 import { useControls } from 'leva';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import type { Config } from '../lib/store';
 
@@ -57,13 +57,13 @@ void main()
 };
 
 const Webcam = React.memo(function Shader() {
-  const ref = useRef<THREE.ShaderMaterial>(null);
+  const ref = React.useRef<THREE.ShaderMaterial>(null);
   const { depth } = useControls({ depth: { value: 30, min: 0, max: 500 } });
   const video: HTMLVideoElement = document.getElementById(
     'webcam',
   ) as HTMLVideoElement;
 
-  useEffect(() => {
+  React.useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({
         video: { width: 1280, height: 720, facingMode: 'user' },

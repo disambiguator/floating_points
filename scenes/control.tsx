@@ -1,6 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { isEmpty } from 'lodash';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { CSG } from 'three-csg-ts';
 import {
@@ -19,12 +19,12 @@ type TunnelParams = {
   index: number;
 };
 const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
-  const meshRef = useRef<THREE.Mesh>();
-  const material = useMemo(() => new THREE.MeshPhongMaterial(), []);
+  const meshRef = React.useRef<THREE.Mesh>();
+  const material = React.useMemo(() => new THREE.MeshPhongMaterial(), []);
   const h = Math.random() * 360;
   const l = Math.random();
   const scene = useThree((t) => t.scene);
-  useEffect(() => {
+  React.useEffect(() => {
     const { size, position, rotation } = params;
     const meshA = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
     meshA.position.set(...position);
@@ -63,7 +63,7 @@ const Tunnel = React.memo(function Tunnel(params: TunnelParams) {
 });
 
 const Control = () => {
-  const lightRef = useRef<THREE.PointLight>(null);
+  const lightRef = React.useRef<THREE.PointLight>(null);
   useFrame(({ camera }) => {
     const volume = store.get(volumeAtom);
     if (volume > 10) camera.position.z -= volume / 100;

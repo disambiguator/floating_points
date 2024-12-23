@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { atom, useAtom } from 'jotai';
 import { useControls } from 'leva';
 import { makeNoise2D } from 'open-simplex-noise';
-import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import {
   type Audio,
@@ -87,15 +87,15 @@ const pointShader = () => ({
 });
 
 const Stars = React.memo(function Stars() {
-  const shader = useMemo(pointShader, []);
+  const shader = React.useMemo(pointShader, []);
   const starsCount = 4000;
   const { speed } = useControls({
     speed: { label: 'starSpeed', min: 0, max: 0.01, value: 0.0005 },
   });
 
-  const pointsRef = useRef<THREE.Points>(null);
+  const pointsRef = React.useRef<THREE.Points>(null);
 
-  const vertices = useMemo(
+  const vertices = React.useMemo(
     () => new Array(starsCount).fill(undefined).flatMap(newPosition),
     [starsCount],
   );
@@ -141,7 +141,7 @@ const Row = ({
 }: {
   y: number;
   scale: number;
-  material: JSX.Element;
+  material: React.JSX.Element;
 }) => {
   const noise = (x: number, y: number) =>
     Math.min(noiseFunction((x * zoomX) / length, (y * zoomY) / width), 1) *
@@ -154,9 +154,9 @@ const Row = ({
     -planeWidth / 2 + y * lengthSpacing,
   ];
 
-  const meshRef = useRef<THREE.Mesh>(null);
-  const geometryRef = useRef<THREE.BufferGeometry>(null);
-  useEffect(() => {
+  const meshRef = React.useRef<THREE.Mesh>(null);
+  const geometryRef = React.useRef<THREE.BufferGeometry>(null);
+  React.useEffect(() => {
     geometryRef.current!.computeVertexNormals();
   }, []);
 
@@ -204,10 +204,10 @@ const Terrain = React.memo(function Terrain() {
     scale: { label: 'terrainScale', min: 0, max: 1000, value: 10 },
   });
 
-  const iRef = useRef(-1);
-  const yRef = useRef(-1);
-  const groupRef = useRef<THREE.Group>(null);
-  const material = useMemo(
+  const iRef = React.useRef(-1);
+  const yRef = React.useRef(-1);
+  const groupRef = React.useRef<THREE.Group>(null);
+  const material = React.useMemo(
     () => (
       <meshLambertMaterial
         side={THREE.BackSide}
@@ -216,7 +216,7 @@ const Terrain = React.memo(function Terrain() {
     ),
     [],
   );
-  const [meshes, setMeshes] = useState(
+  const [meshes, setMeshes] = React.useState(
     new Array(length)
       .fill(undefined)
       .map((_, y) => <Row key={y} y={y} scale={scale} material={material} />),
@@ -323,7 +323,7 @@ function PerlinField() {
 }
 
 export default function VoidPage() {
-  const [started, start] = useState(false);
+  const [started, start] = React.useState(false);
   return (
     <Page
       onClick={() => {

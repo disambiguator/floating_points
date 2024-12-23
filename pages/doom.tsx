@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { DataTexture, RedFormat } from 'three';
 import defaultForwardUV from 'lib/shaders/defaultForwardUV.vert';
 import doomFrag from 'lib/shaders/doom.frag';
@@ -21,7 +21,7 @@ const Shader = () => ({
 const Shaders = React.memo(function Shaders() {
   const viewport = useThree((t) => t.viewport);
   const size = useThree((t) => t.size);
-  const shader = useMemo(Shader, []);
+  const shader = React.useMemo(Shader, []);
 
   useFrame(({ clock }) => {
     shader.uniforms.time.value = clock.elapsedTime;

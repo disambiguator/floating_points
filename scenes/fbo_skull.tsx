@@ -1,7 +1,7 @@
 import { useFBO } from '@react-three/drei';
 import { createPortal, useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useMemo } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { scenes } from 'components/scenes';
 import { Config, useSpectrum } from 'lib/store';
@@ -50,7 +50,7 @@ const DusenScreen = () => {
   });
   const innerScene = controls.innerScene as keyof typeof scenes;
 
-  const Contents = useMemo(() => {
+  const Contents = React.useMemo(() => {
     return scenes[innerScene].Contents;
   }, [innerScene]);
 
@@ -58,13 +58,13 @@ const DusenScreen = () => {
 };
 
 function ScreenQuadScene() {
-  const shader = useMemo(Shader, []);
+  const shader = React.useMemo(Shader, []);
 
   const target = useFBO(res, res, {
     magFilter: THREE.NearestFilter,
     minFilter: THREE.NearestFilter,
   });
-  const bufferScene = useMemo(() => new THREE.Scene(), []);
+  const bufferScene = React.useMemo(() => new THREE.Scene(), []);
   const bufferCamera = new THREE.PerspectiveCamera(100, 1, 1000, 100);
 
   useFrame((state) => {

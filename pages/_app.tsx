@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAnalytics } from '../hooks/useAnalytics';
 
 // https://johnkueh.com/articles/adding-a-use-analytics-hook
@@ -8,7 +8,7 @@ import { useAnalytics } from '../hooks/useAnalytics';
 function MyApp({ Component, pageProps }: AppProps) {
   const { init, trackPageViewed } = useAnalytics();
   const router = useRouter();
-  useEffect(() => {
+  React.useEffect(() => {
     init('UA-168065998-1');
     trackPageViewed();
     router.events.on('routeChangeComplete', () => {

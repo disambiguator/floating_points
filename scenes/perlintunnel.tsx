@@ -1,7 +1,7 @@
 import { FlyControls, ScreenQuad } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { GLSL3, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three-stdlib';
 import { scaleExponential } from 'lib/helpers';
@@ -37,10 +37,9 @@ const Bars = React.memo(function Bars() {
   const controls = useThree((t) => t.controls);
   const [speed, setSpeed] = useRefState(1);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const update = () => {
       shader.uniforms.camera_position.value = camera.position;
-      console.log('position', camera.position);
 
       if (controls instanceof OrbitControls) {
         shader.uniforms.ta.value = controls.target;

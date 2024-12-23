@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import styles from './divide.module.scss';
 import Page from '../components/page';
 
@@ -11,9 +11,9 @@ const Divide = () => {
   let bottomX = 0;
   let timer = 0;
 
-  const ref = useRef<HTMLCanvasElement>(null);
+  const ref = React.useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const mount = ref.current!;
     const ctx = mount.getContext('2d')!;
     ctx.lineWidth = 5;
@@ -62,7 +62,7 @@ const Divide = () => {
     timer++;
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const interval = setInterval(animate, 20);
 
     return () => {

@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import React, { useMemo, useRef, useState } from 'react';
+import React from 'react';
 import type { BoxGeometry } from 'three';
 import Page from '../components/page';
 import { FiberScene } from '../components/scene';
@@ -13,8 +13,8 @@ const Cube = ({
   position: [number, number, number];
   rotation: [number, number, number];
 }) => {
-  const boxGeometry = useRef<BoxGeometry>(null);
-  const colors = useMemo(() => {
+  const boxGeometry = React.useRef<BoxGeometry>(null);
+  const colors = React.useMemo(() => {
     const d = new Float32Array(24 * 3);
     for (let i = 0; i < 24; i++) {
       d[i * 3] = Math.random();
@@ -44,9 +44,9 @@ const Cube = ({
 };
 
 const Cubes = () => {
-  const [timer, setTimer] = useState(0);
-  const [isRotating, setIsRotating] = useState(false);
-  const [rotation, setRotation] = useState(0);
+  const [timer, setTimer] = React.useState(0);
+  const [isRotating, setIsRotating] = React.useState(false);
+  const [rotation, setRotation] = React.useState(0);
 
   const greenLength = 100;
   const yellowLength = 500;

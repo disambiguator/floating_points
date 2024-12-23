@@ -1,6 +1,6 @@
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { scaleMidi } from 'lib/midi';
 import vertexShader from 'lib/shaders/defaultForwardUV.vert';
@@ -46,8 +46,8 @@ const Cloth = React.memo(function Cloth() {
     fadeTime: { value: 10, min: 0, max: 127 },
   });
 
-  const [circles, setCircles] = useState<Circle[]>([]);
-  useEffect(() => {
+  const [circles, setCircles] = React.useState<Circle[]>([]);
+  React.useEffect(() => {
     const c = shader.uniforms.circle.value;
     circles.forEach(({ x, y, time, color }, i) => {
       c[i].set(x, y);
@@ -57,7 +57,7 @@ const Cloth = React.memo(function Cloth() {
     shader.uniforms.numCircles.value = circles.length;
   }, [circles]);
 
-  const lastClear = useRef(0);
+  const lastClear = React.useRef(0);
   useFrame(() => {
     shader.uniforms.time.value = clock.elapsedTime;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { rand } from 'lib/helpers';
 import Page from '../components/page';
 import type { Dimensions } from '../lib/types';
@@ -11,7 +11,7 @@ type Point = {
 };
 
 const Scatter = ({ width, height }: Dimensions) => {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const ref = React.useRef<HTMLCanvasElement>(null);
   let points: Point[];
 
   const inRange = (point: Point) =>
@@ -56,7 +56,7 @@ const Scatter = ({ width, height }: Dimensions) => {
     timer++;
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const mount = ref.current!;
     const ctx = mount.getContext('2d')!;
     ctx.lineWidth = 5;

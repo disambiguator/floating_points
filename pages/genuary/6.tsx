@@ -1,6 +1,6 @@
 import { Cone, Sphere, Torus } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import type * as THREE from 'three';
 import { FiberScene } from 'components/scene';
 import Page from '../../components/page';
@@ -21,8 +21,8 @@ const Eye = ({ position }: { position: [number, number, number] }) => {
 const radius = 10;
 
 const Person = ({ timeOffset }: { timeOffset: number }) => {
-  const ref = useRef<THREE.Group>(null);
-  const mainGroupRef = useRef<THREE.Group>(null);
+  const ref = React.useRef<THREE.Group>(null);
+  const mainGroupRef = React.useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     const group = ref.current!;
     const t = clock.elapsedTime - timeOffset;
@@ -59,8 +59,8 @@ const Person = ({ timeOffset }: { timeOffset: number }) => {
 };
 
 const Eclipse = React.memo(function Shader() {
-  const [people, setPeople] = useState<React.ReactElement[]>([]);
-  const timeRef = useRef(0);
+  const [people, setPeople] = React.useState<React.ReactElement[]>([]);
+  const timeRef = React.useRef(0);
   useFrame(({ clock }) => {
     if (clock.elapsedTime > 2 && timeRef.current > 30) {
       setPeople([

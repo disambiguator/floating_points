@@ -1,7 +1,7 @@
 import { useFBO } from '@react-three/drei';
 import { createPortal, useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { useMemo } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { EffectComposer, RenderPass } from 'three-stdlib';
 import { useTunnelEffects } from 'components/effects';
@@ -49,7 +49,7 @@ const DusenScreen = () => {
   });
   const innerScene = controls.innerScene as keyof typeof scenes;
 
-  const Contents = useMemo(() => {
+  const Contents = React.useMemo(() => {
     return scenes[innerScene].Contents;
   }, [innerScene]);
 
@@ -64,8 +64,8 @@ function ScreenQuadScene() {
   const gl = useThree((t) => t.gl);
   const tunnelPass = useTunnelEffects();
 
-  const bufferScene = useMemo(() => new THREE.Scene(), []);
-  const composer = useMemo(() => {
+  const bufferScene = React.useMemo(() => new THREE.Scene(), []);
+  const composer = React.useMemo(() => {
     const bufferCamera = new THREE.PerspectiveCamera(100, 1, 1000, 100);
     const c = new EffectComposer(gl, target);
     c.renderToScreen = false;
