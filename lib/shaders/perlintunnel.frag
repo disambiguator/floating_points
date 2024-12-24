@@ -1,12 +1,10 @@
 precision highp float;
 
 in vec2 vUV;
-uniform float aspect;
 uniform float time;
 uniform float band;
 uniform float band_center;
 uniform vec3 camera_position;
-uniform vec3 ta;
 uniform float amp;
 out vec4 o_color;
 
@@ -198,7 +196,7 @@ Surface map_the_world(vec3 p, vec3 ro, vec3 rd) {
   return closest_surface;
 }
 
-#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, time=time, Surface=Surface)
+#pragma glslify: raymarcher = require(./raymarcher.glsl, map_the_world=map_the_world, time=time, Surface=Surface, vUV=vUV)
 
 const float spacing = 1.0;
 
@@ -226,17 +224,16 @@ const float spacing = 1.0;
 //   // return 1.0;
 // }
 
-#pragma glslify: cameraRay = require('glsl-camera-ray');
-
+uniform mat4 camToWorldMat;
+uniform mat4 camInvProjMat;
 void main() {
   vec2 uv = vUV;
-  uv.x *= aspect;
 
+  // Get ray origin and direction from camera uniforms
   vec3 ro = camera_position;
-  vec3 rd = cameraRay(ro, ro + ta, uv, 1.0);
-
-  // vec3 ro = vec3(0.0, 0.0, -8.0);
-  // vec3 rd = vec3(uv, 1.0);
+  vec3 rd = (camInvProjMat * vec4(uv * 2.0 - 1.0, 0, 1)).xyz;
+  rd = (camToWorldMat * vec4(rd, 0)).xyz;
+  rd = normalize(rd);
 
   vec3 shaded_color = raymarcher(ro, rd, 0.0);
 

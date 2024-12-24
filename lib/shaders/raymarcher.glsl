@@ -1,7 +1,7 @@
 const float MINIMUM_HIT_DISTANCE = 0.001;
 
 vec3 calculate_normal(vec3 p, vec3 ro, vec3 rd) {
-  const vec3 small_step = vec3(0.001, 0.0, 0.0);
+  const vec2 small_step = vec2(0.001, 0.0);
 
   float gradient_x =
     map_the_world(p + small_step.xyy, ro, rd).dist -
@@ -67,7 +67,7 @@ struct Sadsad {
 Sadsad closest_surface(vec3 ro, vec3 rd, float starting_distance) {
   float total_distance_traveled = starting_distance;
   const int NUMBER_OF_STEPS = 128;
-  const float MAXIMUM_TRACE_DISTANCE = 1000.0;
+  float MAXIMUM_TRACE_DISTANCE = 100.0;
 
   for (int i = 0; i < NUMBER_OF_STEPS; ++i) {
     vec3 current_position = ro + total_distance_traveled * rd;
@@ -85,9 +85,7 @@ Sadsad closest_surface(vec3 ro, vec3 rd, float starting_distance) {
     if (total_distance_traveled > MAXIMUM_TRACE_DISTANCE) {
       break;
     }
-    float backoff = 0.0;
-    // backoff = 0.5;
-    total_distance_traveled += surface.dist + backoff;
+    total_distance_traveled += surface.dist;
   }
   return Sadsad(Surface(total_distance_traveled, vec3(0.0), false), vec3(0.0));
 }
