@@ -3,6 +3,7 @@ import { Canvas, type Props } from '@react-three/fiber';
 import { useRouter } from 'next/router';
 import { Perf } from 'r3f-perf';
 import React, { useEffect } from 'react';
+import { WebGLRendererParameters } from 'three';
 
 const ENABLE_DPR_SCALING = false;
 
@@ -33,7 +34,10 @@ export const FiberScene = ({
   children,
   gl,
   ...rest
-}: Props & { controls?: React.ReactNode }) => {
+}: Omit<Props, 'gl'> & {
+  gl?: WebGLRendererParameters;
+  controls?: React.ReactNode;
+}) => {
   const router = useRouter();
   const debug = React.useMemo(() => !!router.query['debug'], [router]);
   const focused = useDocumentFocus();

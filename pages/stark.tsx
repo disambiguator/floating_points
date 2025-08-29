@@ -37,6 +37,7 @@ const Shaders = React.memo(function Shader() {
         uniforms-s-value={s}
         uniforms-audio-value={
           new DataTexture(
+            // @ts-expect-error - arraybuffer types?
             audio.analyser.data,
             audio.analyser.analyser.frequencyBinCount,
             1,
